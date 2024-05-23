@@ -1,6 +1,8 @@
 {
-  "dashboard": "Dashboard",
-  "myGroups": "My Groups",
-  "findGroup": "Find Group",
-  "createGroup": "Create Group"
+  "Home": "Home",
+  "Annual Report": "Annual Report",
+  "Term management": "Term management",
+  "Financial report": "Financial report",
+  "Financial plan": "Financial plan",
+  "User management": "User management"
 }

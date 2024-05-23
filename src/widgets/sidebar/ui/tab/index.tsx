@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { TERipple } from "tw-elements-react";
+import { TERipple, TETooltip } from "tw-elements-react";
 
 interface Props {
   icon?: React.ReactNode;
@@ -20,16 +20,23 @@ export const Tab: React.FC<Props> = ({
     <TERipple
       ref={ref}
       rippleColor="primary"
-      className={`flex flex-row items-center gap-5 px-5 py-4 cursor-pointer text-primary-500 ${
+      className={`pl-5 pr-2 py-4 cursor-pointer w-full ${
         selected
           ? "bg-primary-100 dark:bg-primary-950"
           : "hover:bg-primary-50 hover:dark:bg-primary-950/50"
       } rounded-lg duration-300 overflow-hidden`}
     >
-      <div>{icon}</div>
-      {isExpanded && (
-        <div className="text-sm font-bold select-none">{text}</div>
-      )}
+      <TETooltip
+        className={`flex flex-row items-center gap-5 text-primary-500 w-full`}
+        title={text}
+        placement="right"
+        enabled={!isExpanded}
+      >
+        <div className="opacity-80">{icon}</div>
+        {isExpanded && (
+          <div className="text-sm font-bold select-none">{text}</div>
+        )}
+      </TETooltip>
     </TERipple>
   );
 };

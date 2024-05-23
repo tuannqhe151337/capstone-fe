@@ -10,8 +10,10 @@ export const Header: React.FC = () => {
       <div className="ml-6">
         <Link to={`/`}>
           <p className="text-primary">
-            <span className="text-4xl font-black">SD</span>
-            <span className="text-2xl font-bold">Budget</span>
+            <span className="text-4xl font-black">F</span>
+            <span className="text-3xl font-extrabold">in</span>
+            <span className="text-4xl font-black">P</span>
+            <span className="text-3xl font-extrabold">lanning</span>
           </p>
         </Link>
       </div>

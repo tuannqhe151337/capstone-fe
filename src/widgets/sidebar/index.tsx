@@ -1,7 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { ResizableBox } from "react-resizable";
-import { MdDashboard, MdGroupAdd, MdPersonSearch } from "react-icons/md";
+import { MdDashboard } from "react-icons/md";
 import { FaUserGroup } from "react-icons/fa6";
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { HiDocumentReport } from "react-icons/hi";
+import { FaChartPie, FaChartLine } from "react-icons/fa";
 import { Tab } from "./ui/tab";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -41,48 +44,72 @@ export const Sidebar = () => {
       }}
     >
       <div>
-        {/* Dashboard */}
+        {/* Home */}
         <div>
           <Link to={`/`}>
             <Tab
               icon={<MdDashboard className="text-2xl" />}
-              text={t("dashboard")}
+              text={t("Home")}
               selected={location.pathname === "/"}
               isExpanded={isExpanded}
             />
           </Link>
         </div>
 
-        {/* My Groups */}
+        {/* Annual report */}
         <div>
           <Link to={`/`}>
             <Tab
-              icon={<FaUserGroup className="text-xl mr-1" />}
-              text={t("myGroups")}
+              icon={<FaChartPie className="text-2xl" />}
+              text={t("Annual Report")}
               // selected={location.pathname === "/"}
               isExpanded={isExpanded}
             />
           </Link>
         </div>
 
-        {/* Find Group */}
+        {/* Term management */}
         <div>
           <Link to={`/`}>
             <Tab
-              icon={<MdPersonSearch className="text-2xl" />}
-              text={t("findGroup")}
+              icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
+              text={t("Term management")}
               // selected={location.pathname === "/"}
               isExpanded={isExpanded}
             />
           </Link>
         </div>
 
-        {/* Create group */}
+        {/* Financial report */}
         <div>
           <Link to={`/`}>
             <Tab
-              icon={<MdGroupAdd className="text-2xl" />}
-              text={t("createGroup")}
+              icon={<HiDocumentReport className="text-3xl -ml-1" />}
+              text={t("Financial report")}
+              // selected={location.pathname === "/"}
+              isExpanded={isExpanded}
+            />
+          </Link>
+        </div>
+
+        {/* Financial plan */}
+        <div>
+          <Link to={`/`}>
+            <Tab
+              icon={<FaChartLine className="text-2xl" />}
+              text={t("Financial plan")}
+              // selected={location.pathname === "/"}
+              isExpanded={isExpanded}
+            />
+          </Link>
+        </div>
+
+        {/* User management */}
+        <div>
+          <Link to={`/`}>
+            <Tab
+              icon={<FaUserGroup className="text-2xl -ml-0.5" />}
+              text={t("User management")}
               // selected={location.pathname === "/"}
               isExpanded={isExpanded}
             />
