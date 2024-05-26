@@ -38,10 +38,10 @@ export const SearchBox: React.FC<Props> = ({
   return (
     <div
       className={cn(
-        "flex flex-row flex-wrap items-center w-full border-2 rounded-lg border-neutral-200 focus-within:border-primary-300 outline outline-[6px] outline-transparent focus-within:outline-primary-50 dark:border-primary-900/80 dark:focus-within:border-primary-800 dark:focus-within:outline-primary-950/50 cursor-text duration-200",
+        "flex flex-row flex-wrap items-center w-full border-2 rounded-lg border-neutral-200 focus-within:border-primary-300 outline outline-[6px] outline-transparent focus-within:outline-primary-50 dark:border-neutral-700 dark:focus-within:border-primary-800 dark:focus-within:outline-primary-950/50 cursor-text duration-200",
         containerClassName,
         {
-          "hover:border-neutral-300 dark:hover:border-primary-800": !isFocus,
+          "hover:border-neutral-300 dark:hover:border-neutral-600": !isFocus,
         }
       )}
       onClick={() => {
