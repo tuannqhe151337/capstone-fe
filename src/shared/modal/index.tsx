@@ -92,7 +92,7 @@ export const Modal: React.FC<Props> = ({
                 <motion.div
                   ref={modalRef}
                   className={cn(
-                    "bg-white dark:bg-neutral-800 w-[500px] h-[500px] m-auto shadow-[0px_0px_50px] shadow-neutral-300 rounded-xl cursor-auto",
+                    "bg-white dark:bg-neutral-800 w-[500px] h-[500px] m-auto shadow-[0px_0px_50px] shadow-neutral-300 dark:shadow-black rounded-xl cursor-auto",
                     className
                   )}
                   initial={AnimationStage.HIDDEN}
