@@ -17,7 +17,7 @@ export const TermCard: React.FC<Props> = ({
 }) => {
   return (
     <TERipple rippleColor="primary">
-      <div className="flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:bg-primary-950/10 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200">
+      <div className="flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:bg-primary-950/10 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200">
         <p className="font-bold text-sm text-primary-500 w-[250px]">
           {termName}
         </p>
