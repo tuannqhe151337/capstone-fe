@@ -3,13 +3,15 @@ import { LoginPage } from "../../pages/login-page";
 import { SignupPage } from "../../pages/signup-page";
 
 const router = createBrowserRouter([
+  // Auth pages
   {
     path: "/auth",
     lazy: async () => {
-      const Page = (await import("../../pages/auth-root-page")).AuthRootPage;
+      const AuthRootPage = (await import("../../pages/auth-root-page"))
+        .AuthRootPage;
 
       return {
-        element: <Page />,
+        element: <AuthRootPage />,
       };
     },
     children: [
@@ -23,16 +25,39 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  // Protected pages
   {
     path: "/",
     lazy: async () => {
-      const Page = (await import("../../pages/protected-root-page"))
-        .ProtectedRootPage;
+      const ProtectedRootPage = (
+        await import("../../pages/protected-root-page")
+      ).ProtectedRootPage;
 
       return {
-        element: <Page />,
+        element: <ProtectedRootPage />,
       };
     },
+    children: [
+      // Plan management pages
+      {
+        path: "plan-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const PlanManagementListPage = (
+                await import("../../pages/plan-management-list")
+              ).PlanManagementList;
+
+              return {
+                element: <PlanManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+    ],
   },
 ]);
 

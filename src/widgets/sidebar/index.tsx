@@ -94,11 +94,11 @@ export const Sidebar = () => {
 
         {/* Financial plan */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/plan-management`}>
             <Tab
               icon={<FaChartLine className="text-2xl" />}
               text={t("Financial plan")}
-              // selected={location.pathname === "/"}
+              selected={location.pathname === "/plan-management"}
               isExpanded={isExpanded}
             />
           </Link>
