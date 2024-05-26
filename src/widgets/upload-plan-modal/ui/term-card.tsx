@@ -1,8 +1,10 @@
 import { TERipple } from "tw-elements-react";
 import { FaAngleRight } from "react-icons/fa6";
 import { format } from "date-fns";
+import { cn } from "../../../shared/utils/cn";
 
 interface Props {
+  selected?: boolean;
   termName: string;
   type: string;
   startDate: Date;
@@ -10,6 +12,7 @@ interface Props {
 }
 
 export const TermCard: React.FC<Props> = ({
+  selected,
   termName,
   type,
   startDate,
@@ -17,7 +20,15 @@ export const TermCard: React.FC<Props> = ({
 }) => {
   return (
     <TERipple rippleColor="primary">
-      <div className="flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200">
+      <div
+        className={cn(
+          "flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200",
+          {
+            "bg-primary-50 border-primary-300 dark:border-primary-800 dark:bg-primary-950/30":
+              selected,
+          }
+        )}
+      >
         <p className="font-bold text-sm dark:text-base text-primary-500 w-[275px]">
           {termName}
         </p>

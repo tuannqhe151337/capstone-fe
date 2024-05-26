@@ -2,10 +2,10 @@ import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { SearchBox } from "../../shared/search-box";
-import { TermCard } from "./ui/term-card";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { FaUpload } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
+import { TermList } from "./component/term-list";
 
 const DUMMY_TERM_LIST = [
   {
@@ -111,17 +111,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
             <div className="w-3/4 mt-5">
               <SearchBox autoFocus />
 
-              <div className="flex flex-col flex-wrap py-6 gap-3">
-                {DUMMY_TERM_LIST.map((term) => (
-                  <TermCard
-                    key={term.id}
-                    termName={term.termName}
-                    type={term.type}
-                    startDate={term.startDate}
-                    endDate={term.endDate}
-                  />
-                ))}
-              </div>
+              <TermList terms={DUMMY_TERM_LIST} />
             </div>
           </div>
         </div>

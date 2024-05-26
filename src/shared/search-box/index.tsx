@@ -25,7 +25,7 @@ export const SearchBox: React.FC<Props> = ({
   });
 
   useHotkeys(
-    "esc",
+    ["up", "down", "esc"],
     (e) => {
       if (inputRef.current) {
         e.preventDefault();
