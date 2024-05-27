@@ -1,49 +1,12 @@
 import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
-import { SearchBox } from "../../shared/search-box";
-import { RiCalendarScheduleFill } from "react-icons/ri";
-import { FaUpload } from "react-icons/fa";
-import { FaListUl } from "react-icons/fa6";
-import { TermList } from "./component/term-list";
 
-const DUMMY_TERM_LIST = [
-  {
-    id: 1,
-    termName: "Financial plan December Q3 2021",
-    type: "Quarterly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 2,
-    termName: "Financial plan December Q3 2021",
-    type: "Half year",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 3,
-    termName: "Financial plan December Q3 2021",
-    type: "Quarterly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 4,
-    termName: "Financial plan December 2021",
-    type: "Monthly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 5,
-    termName: "Financial plan December Q3 2021",
-    type: "Monthly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-];
+import { useEffect, useState } from "react";
+import { StepProgress } from "./component/step-progress";
+import { ChooseTermStage } from "./component/choose-term-stage";
+import { UploadFileStage } from "./component/upload-file-stage";
+import { ConfirmExpensesStage } from "./component/confirm-expenses-stage";
 
 interface Props {
   show: boolean;
@@ -51,6 +14,22 @@ interface Props {
 }
 
 export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
+  const [stage, setStage] = useState<number>(0);
+
+  useEffect(() => {
+    if (show) {
+      const timeoutId = setTimeout(() => {
+        setStage(1);
+      }, 100);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    } else {
+      setStage(0);
+    }
+  }, [show]);
+
   return (
     <Modal className={`w-[90vw] h-[95vh]`} show={show} onClose={onClose}>
       <>
@@ -72,47 +51,38 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
 
         {/* Body */}
         <div className="pt-6">
-          <div className="flex flex-row flex-wrap items-center justify-center w-full">
-            <div className="relative w-full h-fit px-[70px]">
-              <div className="absolute w-full h-full top-[23px] left-0 px-[70px] z-0">
-                <div className="h-1 w-full bg-neutral-100 rounded-full"></div>
-              </div>
+          <div className="flex flex-col flex-wrap items-center justify-center w-full">
+            <StepProgress stage={stage} />
 
-              <div className="relative z-10">
-                <div className="flex flex-row flex-wrap items-center justify-around">
-                  <div className="flex flex-col flex-wrap items-center">
-                    <div className="flex flex-row flex-wrap items-center justify-center size-[50px] bg-neutral-200 rounded-full">
-                      <RiCalendarScheduleFill className="text-xl text-white" />
-                    </div>
-                    <p className="mt-1.5 text-xs font-bold text-neutral-300">
-                      Select term
-                    </p>
-                  </div>
-                  <div className="flex flex-col flex-wrap items-center">
-                    <div className="flex flex-row flex-wrap items-center justify-center size-[50px] bg-neutral-200 rounded-full">
-                      <FaUpload className="text-lg text-white mb-1" />
-                    </div>
-                    <p className="mt-1.5 text-xs font-bold text-neutral-300">
-                      Upload plan
-                    </p>
-                  </div>
-                  <div className="flex flex-col flex-wrap items-center">
-                    <div className="flex flex-row flex-wrap items-center justify-center size-[50px] bg-neutral-200 rounded-full">
-                      <FaListUl className="text-lg text-white" />
-                    </div>
-                    <p className="mt-1.5 text-xs font-bold text-neutral-300">
-                      Select term
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {stage === 1 && (
+              <ChooseTermStage
+                onTermSelected={() => {
+                  setStage(2);
+                }}
+              />
+            )}
 
-            <div className="w-3/4 mt-5">
-              <SearchBox autoFocus />
+            {stage === 2 && (
+              <UploadFileStage
+                onPreviousState={() => {
+                  setStage(1);
+                }}
+                onNextStage={() => {
+                  setStage(3);
+                }}
+              />
+            )}
 
-              <TermList terms={DUMMY_TERM_LIST} />
-            </div>
+            {stage === 3 && (
+              <ConfirmExpensesStage
+                onPreviousState={() => {
+                  setStage(2);
+                }}
+                onNextStage={() => {
+                  setStage(4);
+                }}
+              />
+            )}
           </div>
         </div>
       </>
