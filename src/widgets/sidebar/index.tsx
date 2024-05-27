@@ -28,7 +28,7 @@ export const Sidebar = () => {
   });
 
   useEffect(() => {
-    setWidth(isExpanded ? 250 : 85);
+    setWidth(isExpanded ? 275 : 85);
   }, [isExpanded]);
 
   return (

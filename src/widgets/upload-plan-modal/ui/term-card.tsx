@@ -5,6 +5,7 @@ import { cn } from "../../../shared/utils/cn";
 
 interface Props {
   selected?: boolean;
+  onClick?: () => any;
   termName: string;
   type: string;
   startDate: Date;
@@ -13,13 +14,19 @@ interface Props {
 
 export const TermCard: React.FC<Props> = ({
   selected,
+  onClick,
   termName,
   type,
   startDate,
   endDate,
 }) => {
   return (
-    <TERipple rippleColor="primary">
+    <TERipple
+      rippleColor="primary"
+      onClick={() => {
+        onClick && onClick();
+      }}
+    >
       <div
         className={cn(
           "flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200",

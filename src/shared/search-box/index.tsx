@@ -53,7 +53,7 @@ export const SearchBox: React.FC<Props> = ({
         type="text"
         placeholder="Search"
         className={cn(
-          "flex-1 py-3 px-5 bg-transparent outline-none h-full text-sm",
+          "flex-1 py-3 px-5 bg-transparent outline-none h-full text-sm font-semibold",
           className
         )}
         onFocus={() => {

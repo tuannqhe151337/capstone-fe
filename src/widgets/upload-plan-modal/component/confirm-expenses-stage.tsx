@@ -1,0 +1,169 @@
+import { Button } from "../../../shared/button";
+import { Pagination } from "../../../shared/pagination";
+import { DisabledSelect } from "../ui/disabled-select";
+
+const DUMMY_EXPENSES = [
+  {
+    id: 1,
+    expenseName: "Promotion event",
+    costType: "Direct cost",
+    unitPrice: 200000000,
+    amount: 3,
+    projectName: "IN22",
+    supplierName: "Internal",
+    pic: "AnhMN2",
+    notes: "N/A",
+  },
+  {
+    id: 2,
+    expenseName: "Social media",
+    costType: "Direct cost",
+    unitPrice: 15000000,
+    amount: 50,
+    projectName: "CAM1",
+    supplierName: "Internal",
+    pic: "LanNT12",
+    notes: "N/A",
+  },
+  {
+    id: 3,
+    expenseName: "Office supplies",
+    costType: "Administration cost",
+    unitPrice: 1000000,
+    amount: 100,
+    projectName: "REC1",
+    supplierName: "Hong Ha",
+    pic: "HongHD9",
+    notes: "N/A",
+  },
+  {
+    id: 4,
+    expenseName: "Internal training",
+    costType: "Operating cost",
+    unitPrice: 2000000,
+    amount: 6,
+    projectName: "RECT",
+    supplierName: "Fresher Academy",
+    pic: "LinhHM2",
+    notes: "N/A",
+  },
+  {
+    id: 5,
+    expenseName: "Team Building",
+    costType: "Administration cost",
+    unitPrice: 100000000,
+    amount: 6,
+    projectName: "TB1",
+    supplierName: "Saigon Tourist",
+    pic: "TuNM",
+    notes: "Approximate",
+  },
+  {
+    id: 6,
+    expenseName: "Customer visit",
+    costType: "Indirect cost",
+    unitPrice: 400000000,
+    amount: 1,
+    projectName: "NSK",
+    supplierName: "Internal",
+    pic: "TrungDQ",
+    notes: "Deposit required",
+  },
+];
+
+interface Props {
+  onPreviousState?: () => any;
+  onNextStage?: () => any;
+}
+
+export const ConfirmExpensesStage: React.FC<Props> = ({
+  onPreviousState,
+  onNextStage,
+}) => {
+  return (
+    <div className="w-max">
+      {/* Disabled term and department select box */}
+      <div className="flex flex-row flex-wrap items-center justify-center gap-5 mt-5">
+        <DisabledSelect
+          className="flex-1"
+          label="Term"
+          value="Financial plan December Q3 2021"
+        />
+        <DisabledSelect
+          className="w-[300px]"
+          label="Department"
+          value="BU 01"
+        />
+      </div>
+
+      <table className="table-auto mt-5 mx-auto">
+        <thead className="md:text-base sm:text-sm text-neutral-300 dark:text-neutral-500">
+          <tr>
+            <th className="px-1 py-1 font-semibold">Expenses</th>
+            <th className="px-1 py-1 font-semibold">Cost type</th>
+            <th className="px-1 py-1 font-semibold">Unit price (VND)</th>
+            <th className="px-1 py-1 font-semibold">Amount</th>
+            <th className="px-1 py-1 font-semibold">Total (VND)</th>
+            <th className="px-1 py-1 font-semibold">Project name</th>
+            <th className="px-1 py-1 font-semibold">Supplier name</th>
+            <th className="px-1 py-1 font-semibold">PiC</th>
+            <th className="px-1 py-1 font-semibold">Notes</th>
+          </tr>
+        </thead>
+        <tbody className="md:text-base sm:text-sm text-neutral-500">
+          {DUMMY_EXPENSES.map((expense) => (
+            <tr key={expense.id}>
+              <td className="px-2 py-2 font-bold text-left">
+                {expense.expenseName}
+              </td>
+              <td className="px-2 py-2 font-bold">{expense.costType}</td>
+              <td className="px-2 py-2 font-bold text-right">
+                {expense.unitPrice}
+              </td>
+              <td className="px-2 py-2 font-bold text-center">
+                {expense.amount}
+              </td>
+              <td className="px-2 py-2 font-bold text-right">
+                {expense.unitPrice * expense.amount}
+              </td>
+              <td className="px-2 py-2 font-bold text-center">
+                {expense.projectName}
+              </td>
+              <td className="px-2 py-2 font-bold text-center">
+                {expense.supplierName}
+              </td>
+              <td className="px-2 py-2 font-bold text-center">{expense.pic}</td>
+              <td className="px-2 py-2 text-center font-bold">
+                {expense.notes}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* Pagination */}
+      <Pagination className="mt-3" page={1} totalPage={20} />
+
+      {/* Buttons */}
+      <div className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full">
+        <Button
+          buttonType="secondary"
+          className="w-[300px]"
+          onClick={() => {
+            onPreviousState && onPreviousState();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          containerClassName="flex-1"
+          onClick={() => {
+            onNextStage && onNextStage();
+          }}
+        >
+          Create new plan
+        </Button>
+      </div>
+    </div>
+  );
+};

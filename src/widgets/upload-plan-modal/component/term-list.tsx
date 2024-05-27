@@ -13,11 +13,19 @@ export interface Term {
 
 interface Props {
   terms: Term[];
+  onClick?: (term: Term) => any;
 }
 
-export const TermList: React.FC<Props> = ({ terms }) => {
+export const TermList: React.FC<Props> = ({ terms, onClick }) => {
   // State
   const [selectedTermIndex, setSelectedTermIndex] = useState<number>();
+
+  // Enter
+  useHotkeys("enter", () => {
+    if (selectedTermIndex !== undefined && selectedTermIndex !== null) {
+      onClick && onClick(terms[selectedTermIndex]);
+    }
+  });
 
   // Up and down hotkey
   useHotkeys(
@@ -81,6 +89,9 @@ export const TermList: React.FC<Props> = ({ terms }) => {
       {terms.map((term, index) => (
         <TermCard
           key={term.id}
+          onClick={() => {
+            onClick && onClick(term);
+          }}
           selected={selectedTermIndex === index}
           termName={term.termName}
           type={term.type}
