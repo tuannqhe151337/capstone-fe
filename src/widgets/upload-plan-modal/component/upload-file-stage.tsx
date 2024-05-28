@@ -4,6 +4,8 @@ import { useFileUpload } from "../hook/use-file-upload";
 import { useRef, useState } from "react";
 import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
+import { TEInput } from "tw-elements-react";
+import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 
 interface Props {
   onPreviousState?: () => any;
@@ -33,33 +35,40 @@ export const UploadFileStage: React.FC<Props> = ({
     });
 
   return (
-    <div className="w-full pt-5 px-[70px]">
+    <div className="pt-5 md:w-full lg:w-[900px] xl:w-[1000px]">
       {/* Disabled term and department select box */}
-      <div className="flex flex-row flex-wrap items-center justify-center gap-5">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-3">
+        <div className="flex-1 pt-5">
+          <TEInput className="w-full" label="Plan name" />
+        </div>
         <DisabledSelect
-          className="flex-1"
+          className="w-[300px]"
           label="Term"
           value="Financial plan December Q3 2021"
         />
         <DisabledSelect
-          className="w-[300px]"
+          className="w-[200px]"
           label="Department"
           value="BU 01"
         />
       </div>
 
       {/* File dropzone */}
-      <div className="mt-5">
-        <a
-          href="#"
-          className="block w-max ml-auto underline font-semibold text-sm text-primary-500 dark:text-primary-600 hover:text-primary-600 dark:hover:text-primary-500 duration-200"
+      <div className="flex flex-row flex-wrap items-center mt-3">
+        <Button
+          variant="secondary"
+          containerClassName="ml-auto"
+          className="flex flex-row flex-wrap items-center"
         >
-          Download template
-        </a>
+          <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-700" />
+          <span className="text-sm dark:text-primary-600">
+            Download template
+          </span>
+        </Button>
       </div>
       <div
         className={cn({
-          "flex flex-col flex-wrap items-center justify-center mt-2 gap-16 group border-2 border-primary-200 hover:border-primary-300 dark:border-primary-900 dark:hover:border-primary-600/70 dark:bg-primary-950/40 border-dashed pt-14 pb-3 rounded-lg cursor-pointer duration-200":
+          "flex flex-col flex-wrap items-center justify-center mt-2 gap-16 group border-2 border-primary-200 hover:border-primary-300 dark:border-primary-900 dark:hover:border-primary-600/70 dark:bg-primary-950/40 border-dashed pt-10 pb-3 rounded-lg cursor-pointer duration-200":
             true,
           "bg-primary-50": !isFileOver,
           "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
@@ -108,7 +117,7 @@ export const UploadFileStage: React.FC<Props> = ({
       {/* Buttons */}
       <div className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full">
         <Button
-          buttonType="secondary"
+          variant="tertiary"
           className="w-[300px]"
           onClick={() => {
             onPreviousState && onPreviousState();
