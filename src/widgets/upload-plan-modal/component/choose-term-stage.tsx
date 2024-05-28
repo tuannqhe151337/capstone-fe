@@ -52,7 +52,7 @@ export const ChooseTermStage: React.FC<Props> = ({ onTermSelected }) => {
   const [page, setPage] = useState<number | undefined | null>(1);
 
   return (
-    <div className="w-3/4 pt-6">
+    <div className="pt-6">
       <SearchBox autoFocus />
 
       <TermList

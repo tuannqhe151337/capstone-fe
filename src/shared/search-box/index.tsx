@@ -64,7 +64,7 @@ export const SearchBox: React.FC<Props> = ({
         }}
         {...props}
       />
-      <div className="flex flex-wrap flex-row items-center justify-center py-1 px-2 bg-primary-300 dark:bg-primary-800 dark:text-neutral-300 rounded-lg text-xs font-bold text-white select-none cursor-pointer">
+      <div className="flex flex-wrap flex-row items-center justify-center py-1 px-2 bg-primary-400 dark:bg-primary-800 dark:text-neutral-300 rounded-lg text-xs font-bold text-white select-none cursor-pointer">
         Ctrl+K
       </div>
       <div className="ml-4 mr-5">

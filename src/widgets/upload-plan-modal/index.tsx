@@ -1,12 +1,43 @@
+import { useEffect, useState } from "react";
+import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
-
-import { useEffect, useState } from "react";
 import { StepProgress } from "./component/step-progress";
 import { ChooseTermStage } from "./component/choose-term-stage";
 import { UploadFileStage } from "./component/upload-file-stage";
 import { ConfirmExpensesStage } from "./component/confirm-expenses-stage";
+import clsx from "clsx";
+
+enum AnimationStage {
+  LEFT = "left",
+  VISIBLE = "visible",
+  RIGHT = "right",
+}
+
+const stageAnimation: Variants = {
+  left: {
+    opacity: 0,
+    x: -100,
+    transition: {
+      bounce: 0,
+    },
+  },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      bounce: 0,
+    },
+  },
+  right: {
+    opacity: 0,
+    x: 100,
+    transition: {
+      bounce: 0,
+    },
+  },
+};
 
 interface Props {
   show: boolean;
@@ -44,6 +75,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
           </p>
           <div className="absolute top-3 right-5">
             <IconButton
+              className="hover:bg-neutral-100"
               onClick={() => {
                 onClose && onClose();
               }}
@@ -58,35 +90,78 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="flex flex-col flex-wrap items-center justify-center w-full">
             <StepProgress stage={stage} />
 
-            {stage === 1 && (
-              <ChooseTermStage
-                onTermSelected={() => {
-                  setStage(2);
-                }}
-              />
-            )}
+            <div className="relative w-full">
+              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
+                <motion.div
+                  className={clsx({
+                    "w-3/4": true,
+                    block: stage === 1,
+                    hidden: stage !== 1,
+                  })}
+                  initial={AnimationStage.RIGHT}
+                  animate={
+                    stage > 1 ? AnimationStage.LEFT : AnimationStage.VISIBLE
+                  }
+                  variants={stageAnimation}
+                >
+                  <ChooseTermStage
+                    onTermSelected={() => {
+                      setStage(2);
+                    }}
+                  />
+                </motion.div>
+              </div>
 
-            {stage === 2 && (
-              <UploadFileStage
-                onPreviousState={() => {
-                  setStage(1);
-                }}
-                onNextStage={() => {
-                  setStage(3);
-                }}
-              />
-            )}
+              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
+                <motion.div
+                  className={clsx({
+                    block: stage === 2,
+                    hidden: stage !== 2,
+                  })}
+                  initial={AnimationStage.RIGHT}
+                  animate={(() => {
+                    if (stage < 2) return AnimationStage.RIGHT;
+                    if (stage === 2) return AnimationStage.VISIBLE;
+                    if (stage > 2) return AnimationStage.LEFT;
+                  })()}
+                  variants={stageAnimation}
+                >
+                  <UploadFileStage
+                    onPreviousState={() => {
+                      setStage(1);
+                    }}
+                    onNextStage={() => {
+                      setStage(3);
+                    }}
+                  />
+                </motion.div>
+              </div>
 
-            {stage === 3 && (
-              <ConfirmExpensesStage
-                onPreviousState={() => {
-                  setStage(2);
-                }}
-                onNextStage={() => {
-                  setStage(4);
-                }}
-              />
-            )}
+              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
+                <motion.div
+                  className={clsx({
+                    block: stage === 3,
+                    hidden: stage !== 3,
+                  })}
+                  initial={AnimationStage.RIGHT}
+                  animate={(() => {
+                    if (stage < 3) return AnimationStage.RIGHT;
+                    if (stage === 3) return AnimationStage.VISIBLE;
+                    if (stage > 3) return AnimationStage.LEFT;
+                  })()}
+                  variants={stageAnimation}
+                >
+                  <ConfirmExpensesStage
+                    onPreviousState={() => {
+                      setStage(2);
+                    }}
+                    onNextStage={() => {
+                      setStage(4);
+                    }}
+                  />
+                </motion.div>
+              </div>
+            </div>
           </div>
         </div>
       </>
