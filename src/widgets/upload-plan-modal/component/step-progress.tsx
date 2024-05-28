@@ -10,12 +10,12 @@ interface Props {
 
 export const StepProgress: React.FC<Props> = ({ stage }) => {
   return (
-    <div className="relative w-full h-fit px-[70px]">
-      <div className="absolute w-full h-full top-[23px] left-0 px-[70px] z-0">
+    <div className="relative md:w-[800px] xl:w-[1000px] h-fit">
+      <div className="absolute w-full h-full top-[23px] left-0 z-0">
         <div className="h-1 w-full bg-neutral-200 dark:bg-neutral-600 rounded-full z-10"></div>
       </div>
 
-      <div className="absolute w-full h-full top-[23px] left-0 px-[70px] z-0">
+      <div className="absolute w-full h-full top-[23px] left-0 z-0">
         <motion.div
           layout
           className={clsx({

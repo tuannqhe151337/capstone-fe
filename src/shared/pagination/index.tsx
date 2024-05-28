@@ -28,7 +28,7 @@ export const Pagination: React.FC<Props> = ({
       )}
     >
       <Button
-        buttonType="tertiary"
+        variant="quaternary"
         className="flex flex-row flex-wrap items-center text-sm font-bold "
         onClick={() => {
           onPrevious && onPrevious();
@@ -92,7 +92,7 @@ export const Pagination: React.FC<Props> = ({
       </div>
 
       <Button
-        buttonType="tertiary"
+        variant="quaternary"
         className="flex flex-row flex-wrap items-center"
         onClick={() => {
           onNext && onNext();
