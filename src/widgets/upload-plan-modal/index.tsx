@@ -31,7 +31,11 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
   }, [show]);
 
   return (
-    <Modal className={`w-[90vw] h-[95vh]`} show={show} onClose={onClose}>
+    <Modal
+      className={`w-[95vw] xl:w-[90vw] h-[95vh]`}
+      show={show}
+      onClose={onClose}
+    >
       <>
         {/* Header */}
         <div className="relative pt-5">
