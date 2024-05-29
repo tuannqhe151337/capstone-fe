@@ -1,7 +1,40 @@
+import { Variants, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { TermCard } from "../ui/term-card";
 import { useHotkeys } from "react-hotkeys-hook";
 import { produce, nothing } from "immer";
+
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.1,
+      staggerDirection: -1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  hidden: {
+    opacity: 0.2,
+  },
+  visible: {
+    opacity: 1,
+  },
+};
 
 export interface Term {
   id: string | number;
@@ -12,11 +45,12 @@ export interface Term {
 }
 
 interface Props {
+  hide?: boolean;
   terms: Term[];
   onClick?: (term: Term) => any;
 }
 
-export const TermList: React.FC<Props> = ({ terms, onClick }) => {
+export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
   // State
   const [selectedTermIndex, setSelectedTermIndex] = useState<number>();
 
@@ -85,20 +119,31 @@ export const TermList: React.FC<Props> = ({ terms, onClick }) => {
   }, []);
 
   return (
-    <div ref={ref} className="flex flex-col flex-wrap py-6 gap-3">
+    <motion.div
+      ref={ref}
+      className="flex flex-col flex-wrap py-6 gap-3 w-full"
+      initial={AnimationStage.HIDDEN}
+      animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
+      variants={staggerChildrenAnimation}
+    >
       {terms.map((term, index) => (
-        <TermCard
+        <motion.div
           key={term.id}
-          onClick={() => {
-            onClick && onClick(term);
-          }}
-          selected={selectedTermIndex === index}
-          termName={term.termName}
-          type={term.type}
-          startDate={term.startDate}
-          endDate={term.endDate}
-        />
+          className="w-full"
+          variants={childrenAnimation}
+        >
+          <TermCard
+            onClick={() => {
+              onClick && onClick(term);
+            }}
+            selected={selectedTermIndex === index}
+            termName={term.termName}
+            type={term.type}
+            startDate={term.startDate}
+            endDate={term.endDate}
+          />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };

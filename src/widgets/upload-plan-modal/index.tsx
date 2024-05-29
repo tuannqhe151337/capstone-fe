@@ -18,9 +18,10 @@ enum AnimationStage {
 const stageAnimation: Variants = {
   left: {
     opacity: 0,
-    x: -100,
+    x: -200,
     transition: {
       bounce: 0,
+      duration: 0.5,
     },
   },
   visible: {
@@ -32,9 +33,10 @@ const stageAnimation: Variants = {
   },
   right: {
     opacity: 0,
-    x: 100,
+    x: 200,
     transition: {
       bounce: 0,
+      duration: 0.5,
     },
   },
 };
@@ -80,7 +82,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                 onClose && onClose();
               }}
             >
-              <IoClose className="text-3xl text-neutral-400" />
+              <IoClose className="text-3xl text-neutral-500" />
             </IconButton>
           </div>
         </div>
@@ -105,6 +107,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <ChooseTermStage
+                    hide={stage !== 1}
                     onTermSelected={() => {
                       setStage(2);
                     }}
@@ -127,6 +130,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <UploadFileStage
+                    hide={stage !== 2}
                     onPreviousState={() => {
                       setStage(1);
                     }}
@@ -152,6 +156,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <ConfirmExpensesStage
+                    hide={stage !== 3}
                     onPreviousState={() => {
                       setStage(2);
                     }}

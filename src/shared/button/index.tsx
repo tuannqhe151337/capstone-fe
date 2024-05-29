@@ -34,9 +34,9 @@ export const Button: React.FC<Props> = ({
         className={cn(
           "inline-block w-full rounded-lg px-4 pb-1.5 pt-2 text-base font-medium leading-normal transition duration-200 ease-in-out focus:outline-none focus:ring-0",
           {
-            "bg-primary border-2 border-primary dark:bg-primary-900 dark:border-primary-900 text-white hover:bg-primary-600 dark:hover:bg-primary-800 focus:bg-primary-600 dark:focus:bg-primary-800 active:bg-primary-700 hover:border-primary-600 dark:hover:border-primary-800 focus:border-primary-600 dark:focus:border-primary-800 active:border-primary-700":
+            "bg-primary border-2 border-primary dark:bg-primary-800 dark:border-primary-800 text-white hover:bg-primary-600 dark:hover:bg-primary-700 focus:bg-primary-600 dark:focus:bg-primary-700 active:bg-primary-700 hover:border-primary-600 dark:hover:border-primary-700 focus:border-primary-600 dark:focus:border-primary-700 active:border-primary-700":
               variant === "primary",
-            "font-semibold bg-primary-100 border-2 border-primary-100 dark:bg-primary-950/50 dark:border-primary-950/50 text-primary-500 hover:bg-primary-200/70 dark:hover:bg-primary-900/70 focus:bg-primary-200 dark:focus:bg-primary-900/70 active:bg-primary-200 hover:border-primary-200/70 dark:hover:border-primary-900/70 focus:border-primary-200 dark:focus:border-primary-900/70 active:border-primary-200 dark:active:border-primary-900/70":
+            "font-semibold bg-primary-100 border-2 border-primary-100 dark:bg-primary-900/50 dark:border-primary-900/50 text-primary-500 hover:bg-primary-200/70 dark:hover:bg-primary-900/70 focus:bg-primary-200 dark:focus:bg-primary-900/70 active:bg-primary-200 hover:border-primary-200/70 dark:hover:border-primary-900/70 focus:border-primary-200 dark:focus:border-primary-900/70 active:border-primary-200 dark:active:border-primary-900/70":
               variant === "secondary",
             "bg-white border-2 border-primary-300/70 dark:border-primary-800 dark:bg-neutral-800 text-primary-500 hover:bg-primary-50 active:bg-primary-100":
               variant === "tertiary",

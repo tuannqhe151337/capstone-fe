@@ -1,3 +1,4 @@
+import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { Button } from "../../../shared/button";
 import { Pagination } from "../../../shared/pagination";
@@ -73,19 +74,82 @@ const DUMMY_EXPENSES = [
   // },
 ];
 
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.1,
+      staggerDirection: -1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0.2,
+    y: 10,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
+const tableRowAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0.3,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
+const callToActionAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0.8,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+  },
+};
+
 interface Props {
+  hide?: boolean;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
 
 export const ConfirmExpensesStage: React.FC<Props> = ({
+  hide,
   onPreviousState,
   onNextStage,
 }) => {
   return (
-    <div className="w-max">
+    <motion.div
+      className="w-max"
+      initial={AnimationStage.HIDDEN}
+      animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
+      variants={staggerChildrenAnimation}
+    >
       {/* Disabled term and department select box */}
-      <div className="flex flex-row flex-wrap items-center justify-center gap-3 mt-5">
+      <motion.div
+        className="flex flex-row flex-wrap items-center justify-center gap-3 mt-5"
+        variants={childrenAnimation}
+      >
         <div className="flex-1 pt-5">
           <TEInput className="w-full" label="Plan name" />
         </div>
@@ -99,25 +163,53 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
           label="Department"
           value="BU 01"
         />
-      </div>
+      </motion.div>
 
-      <table className="table-auto sm:mt-3 lg:mt-7 mx-auto">
-        <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-300 dark:text-neutral-500 dark:font-extrabold">
+      <motion.table
+        className="table-auto sm:mt-3 lg:mt-7 mx-auto"
+        initial={AnimationStage.HIDDEN}
+        animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
+        variants={childrenAnimation}
+      >
+        <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-400/70 dark:text-neutral-500">
           <tr>
-            <th className="px-1 xl:py-1 font-semibold">Expenses</th>
-            <th className="px-1 xl:py-1 font-semibold">Cost type</th>
-            <th className="px-1 xl:py-1 font-semibold">Unit price (VND)</th>
-            <th className="px-1 xl:py-1 font-semibold">Amount</th>
-            <th className="px-1 xl:py-1 font-semibold">Total (VND)</th>
-            <th className="px-1 xl:py-1 font-semibold">Project name</th>
-            <th className="px-1 xl:py-1 font-semibold">Supplier name</th>
-            <th className="px-1 xl:py-1 font-semibold">PiC</th>
-            <th className="px-1 xl:py-1 font-semibold">Notes</th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Expenses
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Cost type
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Unit price (VND)
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Amount
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Total (VND)
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Project name
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Supplier name
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              PiC
+            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+              Notes
+            </th>
           </tr>
         </thead>
-        <tbody className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-700/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500 dark:text-neutral-400">
+        <motion.tbody
+          className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-700/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500/80 dark:text-neutral-400"
+          initial={AnimationStage.HIDDEN}
+          animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
+          variants={staggerChildrenAnimation}
+        >
           {DUMMY_EXPENSES.map((expense) => (
-            <tr key={expense.id}>
+            <motion.tr key={expense.id} variants={tableRowAnimation}>
               <td className="px-2 py-3 lg:w-min sm:w-[100px] font-extrabold text-left">
                 {expense.expenseName}
               </td>
@@ -154,16 +246,21 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
               <td className="px-2 py-3 lg:w-min sm:w-[100px] font-bold text-center text-neutral-400 dark:text-neutral-500">
                 {expense.notes}
               </td>
-            </tr>
+            </motion.tr>
           ))}
-        </tbody>
-      </table>
+        </motion.tbody>
+      </motion.table>
 
       {/* Pagination */}
-      <Pagination className="mt-3" page={1} totalPage={20} />
+      <motion.div variants={childrenAnimation}>
+        <Pagination className="mt-3" page={1} totalPage={20} />
+      </motion.div>
 
       {/* Buttons */}
-      <div className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full">
+      <motion.div
+        className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full"
+        variants={callToActionAnimation}
+      >
         <Button
           variant="tertiary"
           className="w-[300px]"
@@ -181,7 +278,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
         >
           Create new plan
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
