@@ -54,6 +54,8 @@ export const ProcessingFileUI: React.FC<Props> = ({
     if (fileUploadStage === FileUploadStage.SUCCESS) {
       setStage(Stage.CHECK);
 
+      // TODO: Add logic read excel file here
+
       const timeoutId = setTimeout(() => {
         setStage(Stage.SUCCESS);
       }, 500);
