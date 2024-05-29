@@ -25,7 +25,10 @@ export const Button: React.FC<Props> = ({
     <TERipple
       className={containerClassName}
       rippleColor={clsx({
-        light: variant === "primary" || (variant === "tertiary" && isDarkmode),
+        light:
+          variant === "primary" ||
+          (variant === "quaternary" && isDarkmode) ||
+          (variant === "tertiary" && isDarkmode),
         primary: variant === "secondary",
         dark: variant === "tertiary" && !isDarkmode,
       })}
