@@ -173,37 +173,33 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
       >
         <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-400/70 dark:text-neutral-500">
           <tr>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Expenses
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Cost type
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Unit price (VND)
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Amount
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Total (VND)
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Project name
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">
               Supplier name
             </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
-              PiC
-            </th>
-            <th className="px-1 lg:py-1 font-semibold dark:font-extrabold">
-              Notes
-            </th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">PiC</th>
+            <th className="px-1 lg:py-1 font-semibold dark:font-bold">Notes</th>
           </tr>
         </thead>
         <motion.tbody
-          className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-700/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500/80 dark:text-neutral-400"
+          className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-700/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500/80 dark:text-neutral-400/80"
           initial={AnimationStage.HIDDEN}
           animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
           variants={staggerChildrenAnimation}

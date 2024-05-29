@@ -6,8 +6,8 @@ import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
 import { TEInput } from "tw-elements-react";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
-import { EmptyFileUploadUI } from "../ui/empty-file-upload";
-import { ProcessingFileUI } from "../ui/processing-file";
+import { EmptyFileUploadUI } from "../ui/empty-file-upload-ui";
+import { ProcessingFileUI } from "../ui/processing-file-ui";
 import { FileUploadStage } from "../type";
 
 enum AnimationStage {
@@ -164,13 +164,13 @@ export const UploadFileStage: React.FC<Props> = ({
         className={cn({
           "relative h-[290px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
             true,
-          "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70":
+          "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
             fileUploadStage === FileUploadStage.EMPTY,
           "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
             fileUploadStage === FileUploadStage.EMPTY && isFileOver,
-          "bg-primary-50 border-primary-300":
+          "bg-primary-50 border-primary-300 dark:bg-neutral-700/50 dark:border-neutral-500":
             fileUploadStage === FileUploadStage.PROCESSING,
-          "bg-green-200/30 dark:bg-green-800/40 border-green-200 dark:border-green-800":
+          "bg-green-200/30 dark:bg-green-950/40 border-green-200 dark:border-green-900":
             fileUploadStage === FileUploadStage.SUCCESS,
         })}
         onDrop={dropHandler}

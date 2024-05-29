@@ -8,7 +8,7 @@ export const EmptyFileUploadUI: React.FC = () => {
           <FaUpload
             size={75}
             className={
-              "text-primary-200/70 group-hover:text-primary-200/90 dark:text-primary-900/80 dark:group-hover:text-primary-900 duration-150"
+              "text-primary-200/70 group-hover:text-primary-200/90 dark:text-primary-800/80 dark:group-hover:text-primary-700 duration-150"
             }
           />
         </div>
