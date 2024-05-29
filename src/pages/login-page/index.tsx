@@ -49,16 +49,7 @@ export const LoginPage: React.FC = () => {
           variants={staggerChildrenAnimation}
         >
           <motion.div
-            variants={{
-              [AnimationStage.HIDDEN]: {
-                opacity: 0,
-                y: 10,
-              },
-              [AnimationStage.VISIBLE]: {
-                opacity: 1,
-                y: 0,
-              },
-            }}
+            variants={childrenAnimation}
             className="mb-8 font-bold text-center text-3xl text-primary-500"
           >
             {t("login")}

@@ -22,6 +22,7 @@ export const TermCard: React.FC<Props> = ({
 }) => {
   return (
     <TERipple
+      className="w-full"
       rippleColor="primary"
       onClick={() => {
         onClick && onClick();
