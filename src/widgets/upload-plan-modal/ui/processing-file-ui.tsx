@@ -66,7 +66,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
 
   return (
     <div className="flex flex-row flex-wrap items-center justify-center w-full h-full">
-      <div className="relative bg-white dark:bg-neutral-800 rounded-lg shadow min-w-[175px] min-h-[225px] px-5 py-3">
+      <div className="relative bg-white dark:bg-neutral-700/50 rounded-lg shadow min-w-[175px] min-h-[225px] px-5 py-3">
         <div className="absolute -top-4 -right-4">
           <IconButton
             className="p-1.5 bg-neutral-200/50 dark:bg-neutral-700/70 hover:bg-neutral-200"
@@ -107,7 +107,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
                   variants={fadingAnimation}
                 >
                   <div className="flex flex-row flex-wrap justify-center items-center w-full h-full">
-                    <div className="bg-green-400 dark:bg-green-900 p-3 rounded-full w-min h-min">
+                    <div className="bg-green-400 dark:bg-green-700 p-3 rounded-full w-min h-min">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -117,7 +117,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
                         className="size-16"
                       >
                         <motion.path
-                          className="stroke-white dark:stroke-neutral-200/50"
+                          className="stroke-white dark:stroke-neutral-300"
                           strokeWidth={3.5}
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -143,7 +143,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
                   transition={{ delay: 0.5 }}
                 >
                   <div className="flex flex-row flex-wrap justify-center items-center w-full h-full">
-                    <RiFileExcel2Fill className="text-[110px] text-green-600 dark:text-green-500" />
+                    <RiFileExcel2Fill className="text-[110px] text-green-600 dark:text-green-700" />
                   </div>
                 </motion.div>
               )}
