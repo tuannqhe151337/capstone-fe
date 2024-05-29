@@ -1,20 +1,14 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { cn } from "../../../shared/utils/cn";
-import { useFileUpload } from "../hook/use-file-upload";
+import { useFileUpload } from "../../../shared/hooks/use-file-upload";
 import { useRef, useState } from "react";
 import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
 import { TEInput } from "tw-elements-react";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
-import { EmptyFileUpload } from "../ui/empty-file-upload";
-import { ProcessingFile } from "../ui/processing-file";
-
-enum FileUploadStage {
-  EMPTY = "empty",
-  PROCESSING = "processing",
-  FAILED = "failed",
-  SUCCESS = "success",
-}
+import { EmptyFileUploadUI } from "../ui/empty-file-upload";
+import { ProcessingFileUI } from "../ui/processing-file";
+import { FileUploadStage } from "../type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -91,21 +85,33 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileUploadStage, setFileUploadStage] = useState<FileUploadStage>(
     FileUploadStage.EMPTY
   );
+  const [fileName, setFileName] = useState<string>();
+  const [fileSize, setFileSize] = useState<number>();
 
   // Handling upload file
   const { dragLeaveHandler, dragOverHandler, dropHandler, inputFileHandler } =
     useFileUpload({
-      fileDropHandler(event) {
+      fileDropHandler() {
         setIsFileOver(false);
       },
-      fileLeaveHandler(event) {
+      fileLeaveHandler() {
         setIsFileOver(false);
       },
-      fileOverHandler(event) {
+      fileOverHandler() {
         setIsFileOver(true);
       },
       fileUploadHandler(files) {
-        setFileUploadStage(FileUploadStage.PROCESSING);
+        if (files.length > 0) {
+          const file = files[0];
+
+          setFileUploadStage(FileUploadStage.PROCESSING);
+          setFileName(file.name);
+          setFileSize(file.size);
+
+          setTimeout(() => {
+            setFileUploadStage(FileUploadStage.SUCCESS);
+          }, 2000);
+        }
       },
     });
 
@@ -156,12 +162,16 @@ export const UploadFileStage: React.FC<Props> = ({
       {/* File dropzone */}
       <div
         className={cn({
-          "relative h-[290px] mt-2 gap-16 group border-2 bg-primary-50 border-primary-200 dark:border-primary-900 dark:bg-primary-950/40 border-dashed rounded-lg duration-200":
+          "relative h-[290px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
             true,
+          "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70":
+            fileUploadStage === FileUploadStage.EMPTY,
           "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
             fileUploadStage === FileUploadStage.EMPTY && isFileOver,
-          "cursor-pointer hover:border-primary-300 dark:hover:border-primary-600/70":
-            fileUploadStage === FileUploadStage.EMPTY,
+          "bg-primary-50 border-primary-300":
+            fileUploadStage === FileUploadStage.PROCESSING,
+          "bg-green-200/30 dark:bg-green-800/40 border-green-200 dark:border-green-800":
+            fileUploadStage === FileUploadStage.SUCCESS,
         })}
         onDrop={dropHandler}
         onDragOver={dragOverHandler}
@@ -188,13 +198,13 @@ export const UploadFileStage: React.FC<Props> = ({
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <EmptyFileUpload />
+              <EmptyFileUploadUI />
             </motion.div>
           )}
         </AnimatePresence>
 
         <AnimatePresence>
-          {fileUploadStage === FileUploadStage.PROCESSING && (
+          {fileUploadStage !== FileUploadStage.EMPTY && (
             <motion.div
               className="absolute w-full h-full"
               initial={AnimationStage.HIDDEN}
@@ -202,7 +212,10 @@ export const UploadFileStage: React.FC<Props> = ({
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <ProcessingFile
+              <ProcessingFileUI
+                fileUploadStage={fileUploadStage}
+                fileName={fileName}
+                fileSize={fileSize}
                 onCancel={() => {
                   setFileUploadStage(FileUploadStage.EMPTY);
                 }}

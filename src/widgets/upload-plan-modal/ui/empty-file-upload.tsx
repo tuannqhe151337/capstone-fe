@@ -1,6 +1,6 @@
 import { FaUpload } from "react-icons/fa";
 
-export const EmptyFileUpload: React.FC = () => {
+export const EmptyFileUploadUI: React.FC = () => {
   return (
     <div className="flex flex-col flex-wrap items-center justify-evenly w-full h-full">
       <div className="flex flex-col flex-wrap items-center justify-center mt-10">
