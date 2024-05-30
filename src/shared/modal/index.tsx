@@ -85,7 +85,7 @@ export const Modal: React.FC<Props> = ({
       {showModal &&
         ReactDOM.createPortal(
           <div
-            className={`absolute flex w-full h-full top-0 left-0 backdrop-blur z-30 cursor-pointer`}
+            className={`fixed flex w-full h-full top-0 left-0 backdrop-blur z-30 cursor-pointer`}
           >
             <AnimatePresence>
               {show && (
