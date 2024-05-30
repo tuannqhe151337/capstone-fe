@@ -11,6 +11,7 @@ enum Stage {
   PROCESSING = "processing",
   CHECK = "check",
   SUCCESS = "success",
+  FAILED = "failed",
 }
 
 enum AnimationStage {
@@ -58,15 +59,19 @@ export const ProcessingFileUI: React.FC<Props> = ({
 
       const timeoutId = setTimeout(() => {
         setStage(Stage.SUCCESS);
-      }, 500);
+      }, 750);
 
-      return () => clearTimeout(timeoutId);
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    } else if (fileUploadStage === FileUploadStage.FAILED) {
+      setStage(Stage.FAILED);
     }
   }, [fileUploadStage]);
 
   return (
     <div className="flex flex-row flex-wrap items-center justify-center w-full h-full">
-      <div className="relative bg-white dark:bg-neutral-700/50 rounded-lg shadow min-w-[175px] min-h-[225px] px-5 py-3">
+      <div className="relative bg-white dark:bg-neutral-700/50 rounded-lg shadow min-w-[200px] min-h-[225px] px-5 py-3">
         <div className="absolute -top-4 -right-4">
           <IconButton
             className="p-1.5 bg-neutral-200/50 dark:bg-neutral-700/70 hover:bg-neutral-200"
@@ -79,6 +84,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
         </div>
 
         <div className="flex flex-col flex-wrap items-center justify-center w-full h-full font-semibold dark:font-bold text-center">
+          {/* File icon */}
           <div className="relative w-full h-[110px]">
             <AnimatePresence>
               {stage === Stage.PROCESSING && (
@@ -148,12 +154,29 @@ export const ProcessingFileUI: React.FC<Props> = ({
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <AnimatePresence>
+              {stage === Stage.FAILED && (
+                <motion.div
+                  className="absolute w-full h-full"
+                  initial={AnimationStage.HIDDEN}
+                  animate={AnimationStage.VISIBLE}
+                  exit={AnimationStage.HIDDEN}
+                  variants={fadingAnimation}
+                  transition={{ delay: 0.5 }}
+                >
+                  <div className="flex flex-row flex-wrap justify-center items-center w-full h-full">
+                    <RiFileExcel2Fill className="text-[110px] text-red-600 dark:text-red-700" />
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* File name and file size */}
           <p
             className={clsx({
-              "mt-3": true,
+              "mt-2": true,
               "text-neutral-200 dark:text-neutral-500 animate-pulse duration-300":
                 stage === Stage.PROCESSING,
               "text-neutral-400": stage !== Stage.PROCESSING,
@@ -175,9 +198,9 @@ export const ProcessingFileUI: React.FC<Props> = ({
           )}
 
           {/* File's status */}
-          <div className="mt-5">
+          <div>
             {stage === Stage.PROCESSING && (
-              <p className="text-neutral-200 dark:text-neutral-500 animate-pulse">
+              <p className="mt-7 text-neutral-200 dark:text-neutral-500 animate-pulse">
                 <span>Processing</span>
                 <motion.span
                   className="font-bold"
@@ -204,7 +227,28 @@ export const ProcessingFileUI: React.FC<Props> = ({
             )}
 
             {(stage === Stage.CHECK || stage === Stage.SUCCESS) && (
-              <p className="font-bold text-green-600">Process successfully!</p>
+              <p className="mt-7 font-bold text-green-600">
+                Process successfully!
+              </p>
+            )}
+
+            {stage === Stage.FAILED && (
+              <div className="mt-2">
+                <p className="font-extrabold text-red-600">
+                  Invalid file format!
+                </p>
+                <p className="mt-1 font-bold text-red-700 text-sm">
+                  Please download the file template <br /> and{" "}
+                  <span
+                    className="underline text-red-600 hover:text-red-500 cursor-pointer duration-200"
+                    onClick={() => {
+                      onCancel && onCancel();
+                    }}
+                  >
+                    try again!
+                  </span>
+                </p>
+              </div>
             )}
           </div>
         </div>

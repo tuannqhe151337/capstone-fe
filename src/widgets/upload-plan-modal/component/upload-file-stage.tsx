@@ -1,7 +1,7 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { cn } from "../../../shared/utils/cn";
 import { useFileUpload } from "../../../shared/hooks/use-file-upload";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
 import { TEInput } from "tw-elements-react";
@@ -88,6 +88,19 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileName, setFileName] = useState<string>();
   const [fileSize, setFileSize] = useState<number>();
 
+  // Auto move to next stage
+  useEffect(() => {
+    if (fileUploadStage === FileUploadStage.SUCCESS) {
+      const timeoutId = setTimeout(() => {
+        onNextStage && onNextStage();
+      }, 1250);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [fileUploadStage]);
+
   // Handling upload file
   const { dragLeaveHandler, dragOverHandler, dropHandler, inputFileHandler } =
     useFileUpload({
@@ -162,7 +175,7 @@ export const UploadFileStage: React.FC<Props> = ({
       {/* File dropzone */}
       <div
         className={cn({
-          "relative h-[290px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
+          "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
             true,
           "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
             fileUploadStage === FileUploadStage.EMPTY,
@@ -172,6 +185,8 @@ export const UploadFileStage: React.FC<Props> = ({
             fileUploadStage === FileUploadStage.PROCESSING,
           "bg-green-200/30 dark:bg-green-950/40 border-green-200 dark:border-green-900":
             fileUploadStage === FileUploadStage.SUCCESS,
+          "bg-red-200/30 dark:bg-red-950/40 border-red-200 dark:border-red-900":
+            fileUploadStage === FileUploadStage.FAILED,
         })}
         onDrop={dropHandler}
         onDragOver={dragOverHandler}
@@ -240,6 +255,7 @@ export const UploadFileStage: React.FC<Props> = ({
           Cancel
         </Button>
         <Button
+          disabled={fileUploadStage !== FileUploadStage.SUCCESS}
           containerClassName="flex-1"
           onClick={() => {
             onNextStage && onNextStage();
