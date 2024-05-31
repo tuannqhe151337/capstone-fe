@@ -34,7 +34,7 @@ export const LanguageChanger: React.FC = () => {
   });
 
   const handleOnClick = () => {
-    setIsOpened(!isOpened);
+    setIsOpened((prevState) => !prevState);
   };
 
   let modalLanguage;
@@ -89,16 +89,16 @@ export const LanguageChanger: React.FC = () => {
   }
 
   return (
-    <div className="relative z-10 mr-3" ref={ref}>
-      <div
+    <div ref={ref} className="relative z-10 rounded-lg">
+      <TERipple
+        className="flex flex-row flex-wrap items-center px-3 group gap-2 mb-1 cursor-pointer"
         onClick={handleOnClick}
-        className="flex flex-row flex-wrap items-center gap-2 mb-1 cursor-pointer"
       >
-        <span className="text-lg mt-0.5 font-bold text-primary-500 dark:text-primary-600 select-none ">
+        <span className="text-lg mt-0.5 font-bold text-primary-500/80 group-hover:text-primary-500 dark:text-primary-600 select-none duration-200">
           {language}
         </span>{" "}
-        <FaChevronDown className="text-sm text-primary-500/60 hover:text-primary-500/80 mt-1" />
-      </div>
+        <FaChevronDown className="text-sm text-primary-500/60 group-hover:text-primary-500/80 mt-1 duration-200" />
+      </TERipple>
 
       <AnimatePresence>{modalLanguage}</AnimatePresence>
     </div>

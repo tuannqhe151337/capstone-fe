@@ -87,7 +87,7 @@ export const Pagination: React.FC<Props> = ({
             }
           }}
         />
-        <span className="text-neutral-300">/</span>
+        <span className="text-neutral-300 dark:text-neutral-500">/</span>
         <span className="ml-2.5">{totalPage}</span>
       </div>
 

@@ -1,7 +1,7 @@
 import { ChangeEventHandler, DragEventHandler } from "react";
 
 interface Props {
-  fileUploadHandler?: any;
+  fileUploadHandler?: (files: File[]) => any;
   fileDropHandler?: DragEventHandler<HTMLDivElement>;
   fileOverHandler?: DragEventHandler<HTMLDivElement>;
   fileLeaveHandler?: DragEventHandler<HTMLDivElement>;
@@ -16,15 +16,16 @@ export const useFileUpload = ({
   const inputFileHandler: ChangeEventHandler<HTMLInputElement> = async (
     event
   ) => {
-    //   const sets: any[] = [];
+    const files: File[] = [];
 
     const filesLength = event.currentTarget.files?.length || 0;
     for (let i = 0; i < filesLength; i++) {
       const file = event.currentTarget.files?.item(i);
-      // sets.push(...(await readfile(file, { addUniqueId: true })));
+
+      file && files.push(file);
     }
 
-    fileUploadHandler && fileUploadHandler(event);
+    fileUploadHandler && fileUploadHandler(files);
   };
 
   const dropHandler: DragEventHandler<HTMLDivElement> = async (event) => {
@@ -32,7 +33,7 @@ export const useFileUpload = ({
     event.preventDefault();
 
     // Read data from files
-    //   const sets: SetWithTermWithId[] = [];
+    const files: File[] = [];
 
     if (event.dataTransfer) {
       if (event.dataTransfer.items) {
@@ -42,21 +43,21 @@ export const useFileUpload = ({
             // If dropped items aren't files, reject them
             if (item.kind === "file") {
               const file = item.getAsFile();
-              // sets.push(...(await readfile(file, { addUniqueId: true })));
+              file && files.push(file);
             }
           })
         );
       } else {
         // Use DataTransfer interface to access the file(s)
         await Promise.all(
-          [...event.dataTransfer.files].map(async (file, i) => {
-            //   sets.push(...(await readfile(file, { addUniqueId: true })));
+          [...event.dataTransfer.files].map(async (file) => {
+            file && files.push(file);
           })
         );
       }
     }
 
-    fileUploadHandler && fileUploadHandler(event);
+    fileUploadHandler && fileUploadHandler(files);
     fileDropHandler && fileDropHandler(event);
   };
 

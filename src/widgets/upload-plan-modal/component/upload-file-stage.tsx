@@ -1,43 +1,145 @@
-import { FaUpload } from "react-icons/fa";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { cn } from "../../../shared/utils/cn";
-import { useFileUpload } from "../hook/use-file-upload";
-import { useRef, useState } from "react";
+import { useFileUpload } from "../../../shared/hooks/use-file-upload";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
 import { TEInput } from "tw-elements-react";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
+import { EmptyFileUploadUI } from "../ui/empty-file-upload-ui";
+import { ProcessingFileUI } from "../ui/processing-file-ui";
+import { FileUploadStage } from "../type";
+
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.1,
+      staggerDirection: -1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0.2,
+    y: 5,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
+const callToActionAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0.8,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+  },
+};
+
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+    y: 10,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
 
 interface Props {
+  hide?: boolean;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
 
 export const UploadFileStage: React.FC<Props> = ({
+  hide,
   onPreviousState,
   onNextStage,
 }) => {
+  // UI: file over
   const [isFileOver, setIsFileOver] = useState<boolean>(false);
 
+  // Ref
   let inputFile = useRef<HTMLInputElement>(null);
 
+  // UI: file processing
+  const [fileUploadStage, setFileUploadStage] = useState<FileUploadStage>(
+    FileUploadStage.EMPTY
+  );
+  const [fileName, setFileName] = useState<string>();
+  const [fileSize, setFileSize] = useState<number>();
+
+  // Auto move to next stage
+  useEffect(() => {
+    if (fileUploadStage === FileUploadStage.SUCCESS) {
+      const timeoutId = setTimeout(() => {
+        onNextStage && onNextStage();
+      }, 1250);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
+  }, [fileUploadStage]);
+
+  // Handling upload file
   const { dragLeaveHandler, dragOverHandler, dropHandler, inputFileHandler } =
     useFileUpload({
-      fileDropHandler(event) {
+      fileDropHandler() {
         setIsFileOver(false);
       },
-      fileLeaveHandler(event) {
+      fileLeaveHandler() {
         setIsFileOver(false);
       },
-      fileOverHandler(event) {
+      fileOverHandler() {
         setIsFileOver(true);
       },
-      fileUploadHandler() {},
+      fileUploadHandler(files) {
+        if (files.length > 0) {
+          const file = files[0];
+
+          setFileUploadStage(FileUploadStage.PROCESSING);
+          setFileName(file.name);
+          setFileSize(file.size);
+
+          setTimeout(() => {
+            setFileUploadStage(FileUploadStage.SUCCESS);
+          }, 2000);
+        }
+      },
     });
 
   return (
-    <div className="pt-5 md:w-full lg:w-[900px] xl:w-[1000px]">
+    <motion.div
+      className="pt-5 md:w-full lg:w-[900px] xl:w-[1000px]"
+      initial={AnimationStage.HIDDEN}
+      animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
+      variants={staggerChildrenAnimation}
+    >
       {/* Disabled term and department select box */}
-      <div className="flex flex-row flex-wrap items-center justify-center gap-3">
+      <motion.div
+        className="flex flex-row flex-wrap items-center justify-center gap-3"
+        variants={childrenAnimation}
+      >
         <div className="flex-1 pt-5">
           <TEInput className="w-full" label="Plan name" />
         </div>
@@ -51,28 +153,40 @@ export const UploadFileStage: React.FC<Props> = ({
           label="Department"
           value="BU 01"
         />
-      </div>
+      </motion.div>
 
-      {/* File dropzone */}
-      <div className="flex flex-row flex-wrap items-center mt-3">
+      {/* Download template button */}
+      <motion.div
+        className="flex flex-row flex-wrap items-center mt-3"
+        variants={childrenAnimation}
+      >
         <Button
           variant="secondary"
           containerClassName="ml-auto"
           className="flex flex-row flex-wrap items-center"
         >
-          <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-700" />
-          <span className="text-sm dark:text-primary-600">
+          <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
+          <span className="text-sm dark:text-primary-500">
             Download template
           </span>
         </Button>
-      </div>
+      </motion.div>
+
+      {/* File dropzone */}
       <div
         className={cn({
-          "flex flex-col flex-wrap items-center justify-center mt-2 gap-16 group border-2 border-primary-200 hover:border-primary-300 dark:border-primary-900 dark:hover:border-primary-600/70 dark:bg-primary-950/40 border-dashed pt-10 pb-3 rounded-lg cursor-pointer duration-200":
+          "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
             true,
-          "bg-primary-50": !isFileOver,
+          "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
+            fileUploadStage === FileUploadStage.EMPTY,
           "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
-            isFileOver,
+            fileUploadStage === FileUploadStage.EMPTY && isFileOver,
+          "bg-primary-50 border-primary-300 dark:bg-neutral-700/50 dark:border-neutral-500":
+            fileUploadStage === FileUploadStage.PROCESSING,
+          "bg-green-200/30 dark:bg-green-950/40 border-green-200 dark:border-green-900":
+            fileUploadStage === FileUploadStage.SUCCESS,
+          "bg-red-200/30 dark:bg-red-950/40 border-red-200 dark:border-red-900":
+            fileUploadStage === FileUploadStage.FAILED,
         })}
         onDrop={dropHandler}
         onDragOver={dragOverHandler}
@@ -81,41 +195,56 @@ export const UploadFileStage: React.FC<Props> = ({
           inputFile.current && inputFile.current.click();
         }}
       >
-        <div className="flex flex-col flex-wrap justify-center items-center">
-          <input
-            ref={inputFile}
-            hidden
-            type="file"
-            onChange={inputFileHandler}
-          />
-          <div>
-            <FaUpload
-              size={75}
-              className={
-                "text-primary-200/70 group-hover:text-primary-200/90 dark:text-primary-900/80 dark:group-hover:text-primary-900 duration-150"
-              }
-            />
-          </div>
-          <p className="mt-3 text-xl font-bold text-primary-500/50 group-hover:text-primary-500/80 duration-150">
-            Select plan file to upload
-          </p>
-          <p className="text-sm text-primary-400/60 group-hover:text-primary-500/60 dark:group-hover:text-primary-500/90 font-semibold duration-150">
-            or drag and drop here
-          </p>
-        </div>
+        <input
+          key={new Date().toISOString()}
+          ref={inputFile}
+          hidden
+          type="file"
+          onChange={inputFileHandler}
+          disabled={fileUploadStage !== FileUploadStage.EMPTY}
+        />
 
-        <div className="flex flex-col flex-wrap items-center justify-center gap-1">
-          <p className="text-sm text-primary-400/60 dark:text-primary-600/70 group-hover:text-primary-500/60 dark:group-hover:text-primary-500/90 font-bold duration-150">
-            Allow file type: xls, xlsx, csv
-          </p>
-          <p className="text-xs text-primary-400/60 dark:text-primary-600/70 group-hover:text-primary-500/60 dark:group-hover:text-primary-500/90 font-semibold duration-150">
-            Maximum file size: 500Mb
-          </p>
-        </div>
+        <AnimatePresence>
+          {fileUploadStage === FileUploadStage.EMPTY && (
+            <motion.div
+              className="absolute w-full h-full"
+              initial={AnimationStage.HIDDEN}
+              animate={AnimationStage.VISIBLE}
+              exit={AnimationStage.HIDDEN}
+              variants={animation}
+            >
+              <EmptyFileUploadUI />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {fileUploadStage !== FileUploadStage.EMPTY && (
+            <motion.div
+              className="absolute w-full h-full"
+              initial={AnimationStage.HIDDEN}
+              animate={AnimationStage.VISIBLE}
+              exit={AnimationStage.HIDDEN}
+              variants={animation}
+            >
+              <ProcessingFileUI
+                fileUploadStage={fileUploadStage}
+                fileName={fileName}
+                fileSize={fileSize}
+                onCancel={() => {
+                  setFileUploadStage(FileUploadStage.EMPTY);
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Buttons */}
-      <div className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full">
+      <motion.div
+        className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full"
+        variants={callToActionAnimation}
+      >
         <Button
           variant="tertiary"
           className="w-[300px]"
@@ -126,6 +255,7 @@ export const UploadFileStage: React.FC<Props> = ({
           Cancel
         </Button>
         <Button
+          disabled={fileUploadStage !== FileUploadStage.SUCCESS}
           containerClassName="flex-1"
           onClick={() => {
             onNextStage && onNextStage();
@@ -133,7 +263,7 @@ export const UploadFileStage: React.FC<Props> = ({
         >
           Continue to confirm expenses
         </Button>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
