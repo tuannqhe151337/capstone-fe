@@ -252,7 +252,7 @@ export const UploadFileStage: React.FC<Props> = ({
             onPreviousState && onPreviousState();
           }}
         >
-          Cancel
+          Back
         </Button>
         <Button
           disabled={fileUploadStage !== FileUploadStage.SUCCESS}

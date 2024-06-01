@@ -264,7 +264,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
             onPreviousState && onPreviousState();
           }}
         >
-          Cancel
+          Back
         </Button>
         <Button
           containerClassName="flex-1"
