@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { FaUpload } from "react-icons/fa";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
+import { FaUpload } from "react-icons/fa6";
+import { ListPlanFiler } from "../../widgets/list-plan-filter";
+import { TablePlanManagement } from "../../widgets/table-plan";
 
 export const PlanManagementList: React.FC = () => {
   const [showUploadPlanModal, setShowUploadPlanModal] =
@@ -30,6 +32,10 @@ export const PlanManagementList: React.FC = () => {
           </div>
         </div>
       </BubbleBanner>
+
+      <ListPlanFiler />
+
+      <TablePlanManagement />
 
       <UploadPlanModal
         show={showUploadPlanModal}
