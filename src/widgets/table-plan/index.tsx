@@ -30,7 +30,7 @@ const renderButton = (status: StatusType) => {
     case "denied":
       return (
         <Tag background="unfilled" variant="denied">
-          Denined
+          Denied
         </Tag>
       );
     default:
@@ -147,7 +147,7 @@ export const TablePlanManagement: React.FC = () => {
           {tablePlanDataList.map((row, index) => (
             <tr
               key={row.id}
-              className={`group border-b cursor-pointer ${
+              className={`group border-b cursor-pointer duration-200 ${
                 index % 2 === 0
                   ? "bg-white hover:bg-primary-50/50 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
                   : "bg-primary-50 hover:bg-primary-100 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70"
