@@ -57,6 +57,25 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // User management pages
+      {
+        path: "user-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const UserManagementListPage = (
+                await import("../../pages/user-management-list")
+              ).UserManagementList;
+
+              return {
+                element: <UserManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);
