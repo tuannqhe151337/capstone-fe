@@ -106,11 +106,11 @@ export const Sidebar = () => {
 
         {/* User management */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/user-management`}>
             <Tab
               icon={<FaUserGroup className="text-2xl -ml-0.5" />}
               text={t("User management")}
-              // selected={location.pathname === "/"}
+              selected={location.pathname === "/user-management"}
               isExpanded={isExpanded}
             />
           </Link>
