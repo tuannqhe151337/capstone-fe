@@ -9,6 +9,77 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { EmptyFileUploadUI } from "../ui/empty-file-upload-ui";
 import { ProcessingFileUI } from "../ui/processing-file-ui";
 import { FileUploadStage } from "../type";
+import { ExpensesTable } from "./epxenses-table";
+import clsx from "clsx";
+
+const DUMMY_EXPENSES = [
+  {
+    id: 1,
+    expenseName: "Promotion event",
+    costType: "Direct cost",
+    unitPrice: 200000000,
+    amount: 3,
+    projectName: "IN22",
+    supplierName: "Internal",
+    pic: "AnhMN2",
+    notes: "N/A",
+  },
+  {
+    id: 2,
+    expenseName: "Social media",
+    costType: "Direct cost",
+    unitPrice: 15000000,
+    amount: 50,
+    projectName: "CAM1",
+    supplierName: "Internal",
+    pic: "LanNT12",
+    notes: "N/A",
+  },
+  {
+    id: 3,
+    expenseName: "Office supplies",
+    costType: "Administration cost",
+    unitPrice: 1000000,
+    amount: 100,
+    projectName: "REC1",
+    supplierName: "Hong Ha",
+    pic: "HongHD9",
+    notes: "N/A",
+  },
+  {
+    id: 4,
+    expenseName: "Internal training",
+    costType: "Operating cost",
+    unitPrice: 2000000,
+    amount: 6,
+    projectName: "RECT",
+    supplierName: "Fresher Academy",
+    pic: "LinhHM2",
+    notes: "N/A",
+  },
+  {
+    id: 5,
+    expenseName: "Team Building",
+    costType: "Administration cost",
+    unitPrice: 100000000,
+    amount: 6,
+    projectName: "TB1",
+    supplierName: "Saigon Tourist",
+    pic: "TuNM",
+    notes: "Approximate",
+  },
+  // {
+  //   id: 6,
+  //   expenseName: "Customer visit",
+  //   costType: "Indirect cost",
+  //   unitPrice: 400000000,
+  //   amount: 1,
+  //   projectName: "NSK",
+  //   supplierName: "Internal",
+  //   pic: "TrungDQ",
+  //   notes: "Deposit required",
+  // },
+];
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -121,8 +192,10 @@ export const UploadFileStage: React.FC<Props> = ({
           setFileName(file.name);
           setFileSize(file.size);
 
+          // TODO: Handle file upload logic here
+
           setTimeout(() => {
-            setFileUploadStage(FileUploadStage.SUCCESS);
+            setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
           }, 2000);
         }
       },
@@ -130,7 +203,12 @@ export const UploadFileStage: React.FC<Props> = ({
 
   return (
     <motion.div
-      className="pt-5 md:w-full lg:w-[900px] xl:w-[1000px]"
+      className={clsx({
+        "pt-5": true,
+        "md:w-full lg:w-[900px] xl:w-[1000px]":
+          fileUploadStage !== FileUploadStage.VALIDATION_ERROR,
+        "w-max": fileUploadStage === FileUploadStage.VALIDATION_ERROR,
+      })}
       initial={AnimationStage.HIDDEN}
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
@@ -156,85 +234,121 @@ export const UploadFileStage: React.FC<Props> = ({
       </motion.div>
 
       {/* Download template button */}
-      <motion.div
-        className="flex flex-row flex-wrap items-center mt-3"
-        variants={childrenAnimation}
-      >
-        <Button
-          variant="secondary"
-          containerClassName="ml-auto"
-          className="flex flex-row flex-wrap items-center"
-        >
-          <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
-          <span className="text-sm dark:text-primary-500">
-            Download template
-          </span>
-        </Button>
-      </motion.div>
-
-      {/* File dropzone */}
-      <div
-        className={cn({
-          "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
-            true,
-          "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
-            fileUploadStage === FileUploadStage.EMPTY,
-          "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
-            fileUploadStage === FileUploadStage.EMPTY && isFileOver,
-          "bg-primary-50 border-primary-300 dark:bg-neutral-700/50 dark:border-neutral-500":
-            fileUploadStage === FileUploadStage.PROCESSING,
-          "bg-green-200/30 dark:bg-green-950/40 border-green-200 dark:border-green-900":
-            fileUploadStage === FileUploadStage.SUCCESS,
-          "bg-red-200/30 dark:bg-red-950/40 border-red-200 dark:border-red-900":
-            fileUploadStage === FileUploadStage.FAILED,
-        })}
-        onDrop={dropHandler}
-        onDragOver={dragOverHandler}
-        onDragLeave={dragLeaveHandler}
-        onClick={() => {
-          inputFile.current && inputFile.current.click();
-        }}
-      >
-        <input
-          key={new Date().toISOString()}
-          ref={inputFile}
-          hidden
-          type="file"
-          onChange={inputFileHandler}
-          disabled={fileUploadStage !== FileUploadStage.EMPTY}
-        />
-
+      <motion.div variants={childrenAnimation}>
         <AnimatePresence>
-          {fileUploadStage === FileUploadStage.EMPTY && (
+          {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
             <motion.div
-              className="absolute w-full h-full"
+              className="flex flex-row flex-wrap items-center w-full mt-3"
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <EmptyFileUploadUI />
+              <Button
+                variant="secondary"
+                containerClassName="ml-auto"
+                className="flex flex-row flex-wrap items-center"
+              >
+                <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
+                <span className="text-sm dark:text-primary-500">
+                  Download template
+                </span>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* File dropzone */}
+      <div className="relative h-[300px]">
+        <AnimatePresence>
+          {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
+            <motion.div
+              className="absolute w-full"
+              initial={AnimationStage.HIDDEN}
+              animate={AnimationStage.VISIBLE}
+              exit={AnimationStage.HIDDEN}
+              variants={animation}
+            >
+              <div
+                className={cn({
+                  "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
+                    true,
+                  "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
+                    fileUploadStage === FileUploadStage.EMPTY,
+                  "bg-primary-300/30 dark:bg-primary-800/40 border-primary-400 dark:border-primary-800 shadow-inner":
+                    fileUploadStage === FileUploadStage.EMPTY && isFileOver,
+                  "bg-primary-50 border-primary-300 dark:bg-neutral-700/50 dark:border-neutral-500":
+                    fileUploadStage === FileUploadStage.PROCESSING,
+                  "bg-green-200/30 dark:bg-green-950/40 border-green-200 dark:border-green-900":
+                    fileUploadStage === FileUploadStage.SUCCESS,
+                  "bg-red-200/30 dark:bg-red-950/40 border-red-200 dark:border-red-900":
+                    fileUploadStage === FileUploadStage.INVALID_FORMAT_ERROR,
+                })}
+                onDrop={dropHandler}
+                onDragOver={dragOverHandler}
+                onDragLeave={dragLeaveHandler}
+                onClick={() => {
+                  inputFile.current && inputFile.current.click();
+                }}
+              >
+                <input
+                  key={new Date().toISOString()}
+                  ref={inputFile}
+                  hidden
+                  type="file"
+                  onChange={inputFileHandler}
+                  disabled={fileUploadStage !== FileUploadStage.EMPTY}
+                />
+
+                <AnimatePresence>
+                  {fileUploadStage === FileUploadStage.EMPTY && (
+                    <motion.div
+                      className="absolute w-full h-full"
+                      initial={AnimationStage.HIDDEN}
+                      animate={AnimationStage.VISIBLE}
+                      exit={AnimationStage.HIDDEN}
+                      variants={animation}
+                    >
+                      <EmptyFileUploadUI />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
+                  {fileUploadStage !== FileUploadStage.EMPTY && (
+                    <motion.div
+                      className="absolute w-full h-full"
+                      initial={AnimationStage.HIDDEN}
+                      animate={AnimationStage.VISIBLE}
+                      exit={AnimationStage.HIDDEN}
+                      variants={animation}
+                    >
+                      <ProcessingFileUI
+                        fileUploadStage={fileUploadStage}
+                        fileName={fileName}
+                        fileSize={fileSize}
+                        onCancel={() => {
+                          setFileUploadStage(FileUploadStage.EMPTY);
+                        }}
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         <AnimatePresence>
-          {fileUploadStage !== FileUploadStage.EMPTY && (
+          {fileUploadStage === FileUploadStage.VALIDATION_ERROR && (
             <motion.div
-              className="absolute w-full h-full"
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <ProcessingFileUI
-                fileUploadStage={fileUploadStage}
-                fileName={fileName}
-                fileSize={fileSize}
-                onCancel={() => {
-                  setFileUploadStage(FileUploadStage.EMPTY);
-                }}
-              />
+              <ExpensesTable expenses={DUMMY_EXPENSES} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -254,15 +368,27 @@ export const UploadFileStage: React.FC<Props> = ({
         >
           Back
         </Button>
-        <Button
-          disabled={fileUploadStage !== FileUploadStage.SUCCESS}
-          containerClassName="flex-1"
-          onClick={() => {
-            onNextStage && onNextStage();
-          }}
-        >
-          Continue to confirm expenses
-        </Button>
+
+        {fileUploadStage === FileUploadStage.VALIDATION_ERROR ? (
+          <Button
+            containerClassName="flex-1"
+            onClick={() => {
+              setFileUploadStage(FileUploadStage.EMPTY);
+            }}
+          >
+            Upload again
+          </Button>
+        ) : (
+          <Button
+            disabled={fileUploadStage !== FileUploadStage.SUCCESS}
+            containerClassName="flex-1"
+            onClick={() => {
+              onNextStage && onNextStage();
+            }}
+          >
+            Continue to confirm expenses
+          </Button>
+        )}
       </motion.div>
     </motion.div>
   );
