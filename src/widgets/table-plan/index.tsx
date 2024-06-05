@@ -89,16 +89,18 @@ enum AnimationStage {
 }
 
 const animation: Variants = {
-  hidden: {
+  [AnimationStage.HIDDEN]: {
     opacity: 0,
+    y: 10,
     transition: {
-      duration: 0.25,
+      delay: 0.4,
     },
   },
-  visible: {
+  [AnimationStage.VISIBLE]: {
     opacity: 1,
+    y: 0,
     transition: {
-      duration: 0.25,
+      delay: 0.4,
     },
   },
 };
@@ -198,7 +200,13 @@ export const TablePlanManagement: React.FC = () => {
         </tbody>
       </table>
 
-      <Pagination page={1} totalPage={20} className="mt-6" />
+      <motion.div
+        initial={AnimationStage.HIDDEN}
+        animate={AnimationStage.VISIBLE}
+        variants={animation}
+      >
+        <Pagination page={1} totalPage={20} className="mt-6" />
+      </motion.div>
     </div>
   );
 };

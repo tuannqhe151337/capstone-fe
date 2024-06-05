@@ -5,13 +5,53 @@ import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { FaUpload } from "react-icons/fa6";
 import { ListPlanFiler } from "../../widgets/list-plan-filter";
 import { TablePlanManagement } from "../../widgets/table-plan";
+import { Variants, motion } from "framer-motion";
+
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.1,
+      staggerDirection: -1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 10,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+  },
+};
 
 export const PlanManagementList: React.FC = () => {
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
   return (
-    <div className="px-6">
+    <motion.div
+      className="px-6 pb-10"
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+      variants={staggerChildrenAnimation}
+    >
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
@@ -33,9 +73,13 @@ export const PlanManagementList: React.FC = () => {
         </div>
       </BubbleBanner>
 
-      <ListPlanFiler />
+      <motion.div variants={childrenAnimation}>
+        <ListPlanFiler />
+      </motion.div>
 
-      <TablePlanManagement />
+      <motion.div variants={childrenAnimation}>
+        <TablePlanManagement />
+      </motion.div>
 
       <UploadPlanModal
         show={showUploadPlanModal}
@@ -43,6 +87,6 @@ export const PlanManagementList: React.FC = () => {
           setShowUploadPlanModal(false);
         }}
       />
-    </div>
+    </motion.div>
   );
 };
