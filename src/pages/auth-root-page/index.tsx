@@ -45,7 +45,7 @@ export const AuthRootPage: React.FC = () => {
         </div>
       </div>
 
-     <BubbleBackground></BubbleBackground>
+      <BubbleBackground></BubbleBackground>
 
       <div className="flex flex-row flex-wrap w-full">
         <div className="flex-1">

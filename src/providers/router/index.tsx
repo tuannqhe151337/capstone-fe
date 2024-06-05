@@ -1,27 +1,30 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { LoginPage } from "../../pages/login-page";
-import { SignupPage } from "../../pages/signup-page";
 
 const router = createBrowserRouter([
   // Auth pages
   {
     path: "/auth",
-    lazy: async () => {
-      const AuthRootPage = (await import("../../pages/auth-root-page"))
-        .AuthRootPage;
-
-      return {
-        element: <AuthRootPage />,
-      };
-    },
     children: [
       {
         path: "login",
-        element: <LoginPage />,
+        lazy: async () => {
+          const LoginPage = (await import("../../pages/login-page")).LoginPage;
+
+          return {
+            element: <LoginPage />,
+          };
+        },
       },
       {
-        path: "signup",
-        element: <SignupPage />,
+        path: "change-password",
+        lazy: async () => {
+          const ChangePasswordPage = (
+            await import("../../pages/change-password-page")
+          ).ChangePasswordPage;
+          return {
+            element: <ChangePasswordPage />,
+          };
+        },
       },
     ],
   },
@@ -71,6 +74,22 @@ const router = createBrowserRouter([
 
               return {
                 element: <UserManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Profile pages
+      {
+        path: "profile",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProfilePage = (await import("../../pages/profile")).Profile;
+              return {
+                element: <ProfilePage />,
               };
             },
           },

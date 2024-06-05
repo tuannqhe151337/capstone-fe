@@ -56,8 +56,8 @@ const imageAnimation: Variants = {
   },
 };
 
-export const LoginPage: React.FC = () => {
-  const { t } = useTranslation(["login"]);
+export const ChangePasswordPage: React.FC = () => {
+  const { t } = useTranslation(["change-password"]);
 
   return (
     <div className="flex flex-row flex-wrap w-full">
@@ -87,8 +87,9 @@ export const LoginPage: React.FC = () => {
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               variants={imageAnimation}
-              src="/images/lamviec.svg"
+              src="/images/doimatkhau.svg"
               alt=""
+              className="h-[500px]"
             />
           </motion.div>
         </div>
@@ -105,13 +106,13 @@ export const LoginPage: React.FC = () => {
                 variants={childrenAnimation}
                 className="mb-8 font-bold text-center text-3xl text-primary-500"
               >
-                {t("login")}
+                {t("changePassword")}
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
                 <TEInput
-                  type="text"
-                  label="Username"
+                  type="password"
+                  label={t("oldPassword")}
                   className="mb-4 w-full bg-white dark:bg-neutral-900 "
                   size="lg"
                 ></TEInput>
@@ -119,8 +120,17 @@ export const LoginPage: React.FC = () => {
 
               <motion.div variants={childrenAnimation}>
                 <TEInput
-                  type="text"
-                  label="Password"
+                  type="password"
+                  label={t("newPassword")}
+                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  size="lg"
+                ></TEInput>
+              </motion.div>
+
+              <motion.div variants={childrenAnimation}>
+                <TEInput
+                  type="password"
+                  label={t("confirmNewPassword")}
                   className="mb-4 w-full bg-white dark:bg-neutral-900"
                   size="lg"
                 ></TEInput>
@@ -132,7 +142,7 @@ export const LoginPage: React.FC = () => {
                     type="button"
                     className="!p-3 w-full inline-block rounded bg-primary-500 px-6 pb-2 pt-2.5 text-xs font-semibold uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
                   >
-                    {t("login")}
+                    {t("changeNewPassword")}
                   </button>
                 </TERipple>
               </motion.div>
