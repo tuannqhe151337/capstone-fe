@@ -50,14 +50,14 @@ export const UserManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary font-extrabold text-lg w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
             User management
           </p>
           <div className="ml-auto">
             <Button>
-              <div className="flex flex-row flex-wrap gap-3">
-                <HiUserAdd className="text-2xl" />
-                <p className="text-sm font-semibold">Add new user</p>
+              <div className="flex flex-row flex-wrap items-center gap-2">
+                <HiUserAdd className="text-xl mb-0.5" />
+                <p className="text-sm font-bold">Add new user</p>
               </div>
             </Button>
           </div>

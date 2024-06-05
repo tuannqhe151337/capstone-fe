@@ -387,6 +387,7 @@ export const ListUserFiler: React.FC = () => {
       <motion.div className="flex justify-end mt-4">
         <motion.div variants={childrenAnimation} className="mr-4">
           <AsyncPaginate
+            classNamePrefix="custom-select"
             className="w-[340px] cursor-pointer"
             value={selectedOptionRole}
             // isLoading={isFetching}
@@ -398,6 +399,7 @@ export const ListUserFiler: React.FC = () => {
 
         <motion.div variants={childrenAnimation} className="mr-4">
           <AsyncPaginate
+            classNamePrefix="custom-select"
             className="w-[200px] cursor-pointer"
             value={selectedOptionDept}
             // isLoading={isFetching}
@@ -409,6 +411,7 @@ export const ListUserFiler: React.FC = () => {
 
         <motion.div variants={childrenAnimation} className="">
           <AsyncPaginate
+            classNamePrefix="custom-select"
             className="w-[180px] cursor-pointer"
             value={selectedOptionPosition}
             // isLoading={isFetching}
