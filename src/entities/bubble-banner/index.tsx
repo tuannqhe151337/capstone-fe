@@ -1,4 +1,4 @@
-import { Variants, motion, AnimatePresence } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -17,7 +17,7 @@ const animation: Variants = {
 };
 
 interface Props {
-  children: React.ReactElement;
+  children?: React.ReactElement;
 }
 
 export const BubbleBanner: React.FC<Props> = ({ children }) => {
