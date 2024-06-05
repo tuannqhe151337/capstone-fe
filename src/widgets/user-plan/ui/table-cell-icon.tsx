@@ -2,6 +2,7 @@ import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../../shared/icon-button";
 import { FaCheckCircle, FaTrash } from "react-icons/fa";
 import { FaPowerOff } from "react-icons/fa6";
+import { LuPowerOff } from "react-icons/lu";
 
 type Status = "active" | "de-active";
 
@@ -46,10 +47,9 @@ export const TableCellIcon: React.FC<Props> = ({
       variants={animation}
     >
       <IconButton>
-        {/* <FaTrash className="text-red-600 text-xl" /> */}
-
         {status === "active" ? (
-          <FaTrash className="text-red-600 text-xl" />
+          // <FaTrash className="text-red-600 text-xl" />
+          <LuPowerOff className="text-red-600 text-xl" />
         ) : (
           <FaPowerOff className="text-primary-500 text-xl" />
         )}
