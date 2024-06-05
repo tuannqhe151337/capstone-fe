@@ -381,9 +381,9 @@ export const ListPlanFiler: React.FC = () => {
       variants={staggerChildrenAnimation}
     >
       <motion.div className="flex justify-end mt-4">
-        <motion.div variants={childrenAnimation} className="mr-4">
+        <motion.div variants={childrenAnimation} className="mr-4 ">
           <AsyncPaginate
-            className="w-[340px] cursor-pointer"
+            className="w-[340px] cursor-pointer "
             value={selectedOptionTerm}
             // isLoading={isFetching}
             onChange={(value) => setSelectedOptionTerm(value)}
