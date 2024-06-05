@@ -92,43 +92,43 @@ export const TableUserManagement: React.FC = () => {
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               ID
             </th>
             <th
               scope="col"
-              className="px-6 py-4 w-[220px] font-extrabold text-primary-500 dark:text-primary-600 text-left"
+              className="px-6 py-4 w-[220px] font-extrabold text-primary-500/80 dark:text-primary-600/80 text-left"
             >
               Username
             </th>
             <th
               scope="col"
-              className="px-6 py-4 w-[160px] font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 w-[160px] font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Role
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Email
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Deparment
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Position
             </th>
             <th scope="col">
               <IconButton className="px-3">
-                <FaPlusCircle className="text-2xl text-primary-500/80 hover:text-primary-500/80 mt-1" />
+                <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
               </IconButton>
             </th>
           </tr>

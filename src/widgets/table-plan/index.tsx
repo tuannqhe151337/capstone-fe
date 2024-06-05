@@ -91,21 +91,17 @@ enum AnimationStage {
 const animation: Variants = {
   [AnimationStage.HIDDEN]: {
     opacity: 0,
-    y: 10,
-    transition: {
-      delay: 0.4,
-    },
   },
   [AnimationStage.VISIBLE]: {
     opacity: 1,
-    y: 0,
-    transition: {
-      delay: 0.4,
-    },
   },
 };
 
-export const TablePlanManagement: React.FC = () => {
+interface Props {
+  onCreatePlanClick?: () => any;
+}
+
+export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   return (
@@ -115,32 +111,37 @@ export const TablePlanManagement: React.FC = () => {
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Plan
             </th>
             {/* <th scope="col" className="px-6 py-4"></th> */}
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Term
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Department
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
               Version
             </th>
             <th scope="col">
-              <IconButton className="px-3">
-                <FaPlusCircle className="text-2xl text-primary-500/80 hover:text-primary-500/80 mt-1" />
+              <IconButton
+                className="px-3"
+                onClick={() => {
+                  onCreatePlanClick && onCreatePlanClick();
+                }}
+              >
+                <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
               </IconButton>
             </th>
           </tr>

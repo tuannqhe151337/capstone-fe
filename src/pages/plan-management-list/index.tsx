@@ -55,13 +55,13 @@ export const PlanManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary font-extrabold text-lg w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
             Plan management
           </p>
           <div className="ml-auto">
             <Button
               onClick={() => {
-                setShowUploadPlanModal((prevProps) => !prevProps);
+                setShowUploadPlanModal(true);
               }}
             >
               <div className="flex flex-row flex-wrap gap-3">
@@ -78,7 +78,11 @@ export const PlanManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TablePlanManagement />
+        <TablePlanManagement
+          onCreatePlanClick={() => {
+            setShowUploadPlanModal(true);
+          }}
+        />
       </motion.div>
 
       <UploadPlanModal

@@ -11,7 +11,8 @@ enum Stage {
   PROCESSING = "processing",
   CHECK = "check",
   SUCCESS = "success",
-  FAILED = "failed",
+  INVALID_FORMAT_ERROR = "invalid_format_error",
+  VALIDATION_ERROR = "validation_err",
 }
 
 enum AnimationStage {
@@ -55,8 +56,6 @@ export const ProcessingFileUI: React.FC<Props> = ({
     if (fileUploadStage === FileUploadStage.SUCCESS) {
       setStage(Stage.CHECK);
 
-      // TODO: Add logic read excel file here
-
       const timeoutId = setTimeout(() => {
         setStage(Stage.SUCCESS);
       }, 750);
@@ -64,8 +63,8 @@ export const ProcessingFileUI: React.FC<Props> = ({
       return () => {
         clearTimeout(timeoutId);
       };
-    } else if (fileUploadStage === FileUploadStage.FAILED) {
-      setStage(Stage.FAILED);
+    } else if (fileUploadStage === FileUploadStage.INVALID_FORMAT_ERROR) {
+      setStage(Stage.INVALID_FORMAT_ERROR);
     }
   }, [fileUploadStage]);
 
@@ -156,7 +155,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
             </AnimatePresence>
 
             <AnimatePresence>
-              {stage === Stage.FAILED && (
+              {stage === Stage.INVALID_FORMAT_ERROR && (
                 <motion.div
                   className="absolute w-full h-full"
                   initial={AnimationStage.HIDDEN}
@@ -232,7 +231,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
               </p>
             )}
 
-            {stage === Stage.FAILED && (
+            {stage === Stage.INVALID_FORMAT_ERROR && (
               <div className="mt-2">
                 <p className="font-extrabold text-red-600">
                   Invalid file format!
