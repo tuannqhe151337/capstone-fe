@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useCloseOutside } from "../../shared/hooks/useClosePopup";
 import { TERipple } from "tw-elements-react";
+import { Link } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -53,9 +54,11 @@ export const AccountIcon: React.FC = () => {
             variants={animation}
           >
             <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
-              <div className="w-full min-w-max px-7 py-2.5 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
-                {t("profile")}
-              </div>
+              <Link to={`/profile`}>
+                <div className="w-full min-w-max px-7 py-2.5 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
+                  {t("profile")}
+                </div>
+              </Link>
             </TERipple>
             <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
               <div className="w-full min-w-max px-7 py-2.5 text-red-500 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
