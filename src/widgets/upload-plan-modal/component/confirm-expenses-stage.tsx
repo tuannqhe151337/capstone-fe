@@ -2,7 +2,7 @@ import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { Button } from "../../../shared/button";
 import { DisabledSelect } from "../ui/disabled-select";
-import { ExpensesTable } from "./epxenses-table";
+import { ExpensesTable } from "./expenses-table";
 
 const DUMMY_EXPENSES = [
   {

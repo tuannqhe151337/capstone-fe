@@ -424,10 +424,10 @@ export const ListUserFiler: React.FC = () => {
   return (
     <>
       <div className="flex flex-row flex-wrap w-full items-center mt-14 ">
-        <div className="w-11/12">
+        <div className="flex-1">
           <SearchBox></SearchBox>
         </div>
-        <div className="pl-8">
+        <div className="pl-3">
           <div className="relative z-10 mr-3">
             <IconButton
               className="px-3"

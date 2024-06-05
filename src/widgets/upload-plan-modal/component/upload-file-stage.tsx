@@ -9,7 +9,7 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { EmptyFileUploadUI } from "../ui/empty-file-upload-ui";
 import { ProcessingFileUI } from "../ui/processing-file-ui";
 import { FileUploadStage } from "../type";
-import { ExpensesTable } from "./epxenses-table";
+import { ExpensesTable } from "./expenses-table";
 import clsx from "clsx";
 
 const DUMMY_EXPENSES = [
@@ -207,7 +207,8 @@ export const UploadFileStage: React.FC<Props> = ({
         "pt-5": true,
         "md:w-full lg:w-[900px] xl:w-[1000px]":
           fileUploadStage !== FileUploadStage.VALIDATION_ERROR,
-        "w-max": fileUploadStage === FileUploadStage.VALIDATION_ERROR,
+        "lg:w-[950px] xl:w-[1100px]":
+          fileUploadStage === FileUploadStage.VALIDATION_ERROR,
       })}
       initial={AnimationStage.HIDDEN}
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
@@ -233,34 +234,8 @@ export const UploadFileStage: React.FC<Props> = ({
         />
       </motion.div>
 
-      {/* Download template button */}
-      <motion.div variants={childrenAnimation}>
-        <AnimatePresence>
-          {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
-            <motion.div
-              className="flex flex-row flex-wrap items-center w-full mt-3"
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-              variants={animation}
-            >
-              <Button
-                variant="secondary"
-                containerClassName="ml-auto"
-                className="flex flex-row flex-wrap items-center"
-              >
-                <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
-                <span className="text-sm dark:text-primary-500">
-                  Download template
-                </span>
-              </Button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
       {/* File dropzone */}
-      <div className="relative h-[300px]">
+      <div className="relative h-[380px]">
         <AnimatePresence>
           {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
             <motion.div
@@ -270,6 +245,27 @@ export const UploadFileStage: React.FC<Props> = ({
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
+              {/* Download template button */}
+              <motion.div
+                className="flex flex-row flex-wrap items-center w-full mt-3"
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+                variants={animation}
+              >
+                <Button
+                  variant="secondary"
+                  containerClassName="ml-auto"
+                  className="flex flex-row flex-wrap items-center"
+                >
+                  <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
+                  <span className="text-sm dark:text-primary-500">
+                    Download template
+                  </span>
+                </Button>
+              </motion.div>
+
+              {/* File dropzone */}
               <div
                 className={cn({
                   "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
@@ -343,12 +339,15 @@ export const UploadFileStage: React.FC<Props> = ({
         <AnimatePresence>
           {fileUploadStage === FileUploadStage.VALIDATION_ERROR && (
             <motion.div
+              className="absolute w-full"
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <ExpensesTable expenses={DUMMY_EXPENSES} />
+              <div className="pt-3">
+                <ExpensesTable expenses={DUMMY_EXPENSES} />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -356,7 +355,7 @@ export const UploadFileStage: React.FC<Props> = ({
 
       {/* Buttons */}
       <motion.div
-        className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full"
+        className="flex flex-row flex-wrap items-center gap-5 w-full mt-auto"
         variants={callToActionAnimation}
       >
         <Button
