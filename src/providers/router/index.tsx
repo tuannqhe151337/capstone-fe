@@ -76,6 +76,22 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // Profile pages
+      {
+        path: "profile",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProfilePage = (await import("../../pages/profile")).Profile;
+              return {
+                element: <ProfilePage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);
