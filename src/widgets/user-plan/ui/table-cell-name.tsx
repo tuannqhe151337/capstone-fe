@@ -1,3 +1,5 @@
+import { Tag } from "../../../shared/tag";
+
 type Status = "active" | "de-active";
 
 interface Props {
@@ -18,9 +20,9 @@ export const TableCellName: React.FC<Props> = ({ children, status }) => (
     </p>
 
     {status === "de-active" && (
-      <div className="py-1 px-2 border shadow rounded-lg text-gray-500/70 dark:text-gray-500 dark:group-hover:text-gray-400 group-hover:text-gray-500 inline-block dark:border-black">
+      <Tag className="m-0" background="unfilled" variant="deactivate">
         Deactive
-      </div>
+      </Tag>
     )}
   </td>
 );
