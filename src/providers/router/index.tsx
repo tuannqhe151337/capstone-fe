@@ -77,6 +77,17 @@ const router = createBrowserRouter([
               };
             },
           },
+          {
+            path: "detail",
+            lazy: async () => {
+              const UserDetailPage = (
+                await import("../../pages/user-detail-page")
+              ).UserDetail;
+              return {
+                element: <UserDetailPage />,
+              };
+            },
+          },
         ],
       },
 
