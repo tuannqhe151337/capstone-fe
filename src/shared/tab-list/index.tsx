@@ -140,7 +140,7 @@ export const TabList: React.FC<Props> = ({
       {items.map((item, index) => (
         <motion.div
           key={item.id}
-          className="px-4 py-2 min-w-fit relative cursor-pointer border-b-2 border-b-neutral-300 dark:border-b-neutral-700"
+          className="px-4 py-2 min-w-fit relative cursor-pointer border-b-2 border-b-neutral-200 dark:border-b-neutral-700"
           variants={buttonAnimation}
           onClick={() => {
             if (item.id === selectedItemId) {
@@ -152,17 +152,17 @@ export const TabList: React.FC<Props> = ({
           }}
         >
           <p
-            className={`duration-100 first-letter ${
+            className={`duration-200 first-letter font-bold text-neutral-400 ${
               item.id === selectedItemId
                 ? "text-primary-500 dark:text-primary-400"
-                : "hover:text-slate-700 hover:dark:text-neutral-300"
+                : "hover:text-neutral-500 hover:dark:text-neutral-300"
             } `}
           >
             {item.name}
           </p>
           {item.id === selectedItemId ? (
             <motion.div
-              className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-primary-500"
+              className="absolute z-20 -bottom-0.5 left-0 h-0.5 w-full bg-primary-500"
               layoutId={layoutId}
             ></motion.div>
           ) : null}
