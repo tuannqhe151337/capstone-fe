@@ -4,6 +4,7 @@ import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
+import { useNavigate } from "react-router-dom";
 
 // Định nghĩa kiểu cho status
 type StatusType = "new" | "approve" | "waiting for approval" | "denied";
@@ -11,25 +12,25 @@ const renderButton = (status: StatusType) => {
   switch (status) {
     case "new":
       return (
-        <Tag background="unfilled" variant="new">
+        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
           New
         </Tag>
       );
     case "approve":
       return (
-        <Tag background="filled" variant="reviewed">
+        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
           Reviewed
         </Tag>
       );
     case "waiting for approval":
       return (
-        <Tag background="unfilled" variant="waiting">
+        <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
           Waiting for approval
         </Tag>
       );
     case "denied":
       return (
-        <Tag background="unfilled" variant="denied">
+        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
           Denied
         </Tag>
       );
@@ -102,6 +103,10 @@ interface Props {
 }
 
 export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
+  // Navigation
+  const navigate = useNavigate();
+
+  // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   return (
@@ -160,6 +165,9 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
               }}
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
+              }}
+              onClick={() => {
+                navigate("detail");
               }}
             >
               <td className="whitespace-nowrap px-6 py-4 font-medium">
