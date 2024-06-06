@@ -122,7 +122,7 @@ export const TablePlanExpenses: React.FC = () => {
   return (
     <div>
       <table className="table-auto sm:mt-3 lg:mt-7 xl:mx-auto">
-        <thead className="border-b-2 border-primary-100 xl:text-base lg:text-sm md:text-sm sm:text-sm">
+        <thead className="border-b-2 border-primary-100 dark:border-neutral-700/60 xl:text-base lg:text-sm md:text-sm sm:text-sm">
           <tr>
             <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               <Checkbox className="ml-1 mt-0.5" />
@@ -160,7 +160,7 @@ export const TablePlanExpenses: React.FC = () => {
           </tr>
         </thead>
         <motion.tbody
-          className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-700/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500/90 dark:text-neutral-400/80"
+          className="[&>*:nth-child(even)]:bg-primary-50/70 [&>*:nth-child(even)]:dark:bg-neutral-800/50 xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-500/90 dark:text-neutral-400/80"
           initial={AnimationStage.HIDDEN}
           animate={AnimationStage.VISIBLE}
           variants={staggerChildrenAnimation}

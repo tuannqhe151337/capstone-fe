@@ -46,7 +46,7 @@ export const Button: React.FC<Props> = ({
               variant === "tertiary",
             "bg-white border-2 dark:bg-transparent text-neutral-400 border-neutral-100 hover:border-neutral-200 dark:border-neutral-700 dark:hover:border-neutral-600":
               variant === "quaternary",
-            "text-white border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500":
+            "text-white dark:text-neutral-200 border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500 dark:bg-red-800 dark:border-red-800 dark:hover:bg-red-700 dark:hover:border-red-700 dark:active:bg-red-700 dark:active:border-red-700 dark:focus:bg-red-700 dark:focus:border-red-700":
               variant === "error",
           },
           className

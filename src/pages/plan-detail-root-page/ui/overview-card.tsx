@@ -52,8 +52,10 @@ export const OverviewCard: React.FC<Props> = ({
         transformStyle: "preserve-3d",
       }}
     >
-      <div className="flex-1 flex flex-row flex-wrap items-center px-8 py-6 border shadow rounded-xl">
-        <div className="mr-6 text-primary-300">{icon}</div>
+      <div className="flex-1 flex flex-row flex-wrap items-center px-8 py-6 border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl">
+        <div className="mr-6 text-primary-300 dark:text-primary-800">
+          {icon}
+        </div>
         <div className="flex-1 flex flex-col flex-wrap gap-1">
           <p className="text-sm font-bold text-primary-400/80">{label}</p>
           <p className="text-base font-extrabold text-primary-500/80">
