@@ -77,6 +77,18 @@ const router = createBrowserRouter([
               };
             },
           },
+
+          {
+            path: "user-create",
+            lazy: async () => {
+              const UserCreate = (await import("../../pages/user-create-page"))
+                .UserCreate;
+
+              return {
+                element: <UserCreate />,
+              };
+            },
+          },
         ],
       },
 
