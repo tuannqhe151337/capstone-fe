@@ -58,6 +58,32 @@ const router = createBrowserRouter([
               };
             },
           },
+          {
+            path: "detail",
+            lazy: async () => {
+              const PlanDetailRootPage = (
+                await import("../../pages/plan-detail-root-page")
+              ).PlanDetailRootPage;
+
+              return {
+                element: <PlanDetailRootPage />,
+              };
+            },
+            children: [
+              {
+                path: "expenses",
+                lazy: async () => {
+                  const PlanDetailExpensePage = (
+                    await import("../../pages/plan-detail-expense-page")
+                  ).PlanDetailExpensePage;
+
+                  return {
+                    element: <PlanDetailExpensePage />,
+                  };
+                },
+              },
+            ],
+          },
         ],
       },
 
