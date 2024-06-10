@@ -167,7 +167,7 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                 setHoverRowIndex(undefined);
               }}
               onClick={() => {
-                navigate("detail");
+                navigate("detail/expenses");
               }}
             >
               <td className="whitespace-nowrap px-6 py-4 font-medium">
