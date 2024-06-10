@@ -5,9 +5,11 @@ import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
+import { FaPlay } from "react-icons/fa6";
+import { Button } from "../../shared/button";
 
 // Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "waiting for approval" | "denied";
+type StatusType = "new" | "approve" | "inProgress" | "denied";
 const renderButton = (status: StatusType) => {
   switch (status) {
     case "new":
@@ -16,22 +18,16 @@ const renderButton = (status: StatusType) => {
           New
         </Tag>
       );
-    case "approve":
+    case "inProgress":
       return (
-        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
-          Reviewed
-        </Tag>
-      );
-    case "waiting for approval":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
-          Waiting for approval
+        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
+          In progess
         </Tag>
       );
     case "denied":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Denied
+          Closed
         </Tag>
       );
     default:
@@ -42,44 +38,39 @@ const renderButton = (status: StatusType) => {
 // Định nghĩa kiểu cho dữ liệu bảng
 type TablePlanDataType = {
   id: number;
-  plan: string;
   term: string;
-  department: string;
-  version: string;
+  startDate: string;
+  endDate: string;
   status: StatusType;
 };
 
 const tablePlanDataList: TablePlanDataType[] = [
   {
     id: 1,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v1",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
     status: "new",
   },
   {
     id: 2,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v2",
-    status: "approve",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
+    status: "inProgress",
   },
   {
     id: 3,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v3",
-    status: "waiting for approval",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
+    status: "denied",
   },
   {
     id: 4,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v4",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
     status: "denied",
   },
 ];
@@ -102,7 +93,7 @@ interface Props {
   onCreatePlanClick?: () => any;
 }
 
-export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
+export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
   // Navigation
   const navigate = useNavigate();
 
@@ -118,27 +109,22 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Plan
-            </th>
-            {/* <th scope="col" className="px-6 py-4"></th> */}
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
               Term
             </th>
+            {/* <th></th> */}
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Department
+              Start date
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Version
+              End date
             </th>
+
             <th scope="col">
               <IconButton
                 className="px-3"
@@ -156,6 +142,8 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             <tr
               key={row.id}
               className={`group border-b cursor-pointer duration-200 ${
+                row.status === "denied" ? "opacity-70" : ""
+              } ${
                 index % 2 === 0
                   ? "bg-white hover:bg-primary-50/50 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
                   : "bg-primary-50 hover:bg-primary-100 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70"
@@ -170,39 +158,46 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                 navigate("detail");
               }}
             >
-              <td className="whitespace-nowrap px-6 py-4 font-medium">
+              <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
                 <div className="flex flex-row flex-wrap">
                   <p className="text-primary-500 dark:text-primary-600 font-extrabold py-2 group-hover:text-primary-600 dark:group-hover:text-primary-500/90 ml-14">
-                    {row.plan}
+                    {row.term}
                   </p>
                   <div>{renderButton(row.status)}</div>
                 </div>
               </td>
-              {/* <td></td> */}
+              {/* <td className="">
+                <div className="flex flex-row flex-wrap">
+                  <div>{renderButton(row.status)}</div>
+                </div>
+              </td> */}
               <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
-                {row.term}
+                {row.startDate}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
-                {row.department}
+                {row.endDate}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
-                {row.version}
-              </td>
+
               <td className="whitespace-nowrap px-6 py-4">
-                <motion.div
-                  initial={AnimationStage.HIDDEN}
-                  animate={
-                    hoverRowIndex === index
-                      ? AnimationStage.VISIBLE
-                      : AnimationStage.HIDDEN
-                  }
-                  exit={AnimationStage.HIDDEN}
-                  variants={animation}
-                >
-                  <IconButton>
-                    <FaTrash className="text-red-600 text-xl" />
-                  </IconButton>
-                </motion.div>
+                {row.status === "new" && (
+                  <motion.div
+                    initial={AnimationStage.HIDDEN}
+                    animate={
+                      hoverRowIndex === index
+                        ? AnimationStage.VISIBLE
+                        : AnimationStage.HIDDEN
+                    }
+                    exit={AnimationStage.HIDDEN}
+                    variants={animation}
+                  >
+                    <Button className="py-0.5 px-2">
+                      <FaPlay className="text-white text-xl inline-block mr-1" />
+                      <div className="inline-block text-sm font-bold">
+                        Start
+                      </div>
+                    </Button>
+                  </motion.div>
+                )}
               </td>
             </tr>
           ))}
