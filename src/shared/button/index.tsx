@@ -3,7 +3,7 @@ import { cn } from "../utils/cn";
 import clsx from "clsx";
 import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
 
-type Variant = "primary" | "secondary" | "tertiary" | "quaternary" | "error";
+type Variant = "primary" | "secondary" | "tertiary" | "quaternary";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
@@ -28,8 +28,7 @@ export const Button: React.FC<Props> = ({
         light:
           variant === "primary" ||
           (variant === "quaternary" && isDarkmode) ||
-          (variant === "tertiary" && isDarkmode) ||
-          variant === "error",
+          (variant === "tertiary" && isDarkmode),
         primary: variant === "secondary",
         dark: variant === "tertiary" && !isDarkmode,
       })}
@@ -46,8 +45,6 @@ export const Button: React.FC<Props> = ({
               variant === "tertiary",
             "bg-white border-2 dark:bg-transparent text-neutral-400 border-neutral-100 hover:border-neutral-200 dark:border-neutral-700 dark:hover:border-neutral-600":
               variant === "quaternary",
-            "text-white dark:text-neutral-200 border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500 dark:bg-red-800 dark:border-red-800 dark:hover:bg-red-700 dark:hover:border-red-700 dark:active:bg-red-700 dark:active:border-red-700 dark:focus:bg-red-700 dark:focus:border-red-700":
-              variant === "error",
           },
           className
         )}
