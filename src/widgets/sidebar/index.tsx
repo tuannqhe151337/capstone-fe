@@ -70,7 +70,7 @@ export const Sidebar = () => {
 
         {/* Term management */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/term-management`}>
             <Tab
               icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
               text={t("Term management")}

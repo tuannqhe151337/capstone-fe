@@ -140,6 +140,25 @@ const router = createBrowserRouter([
         ],
       },
 
+      // Term management pages
+      {
+        path: "term-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const TermManagementListPage = (
+                await import("../../pages/term-management-list")
+              ).TermManagementList;
+
+              return {
+                element: <TermManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
       // Profile pages
       {
         path: "profile",
