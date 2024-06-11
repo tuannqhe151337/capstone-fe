@@ -22,7 +22,8 @@ export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="absolute top-3 right-5">
             <IconButton
               className="hover:bg-neutral-100"
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 onClose && onClose();
               }}
             >

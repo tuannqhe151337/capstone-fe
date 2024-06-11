@@ -49,7 +49,10 @@ export const TableCellIcon: React.FC<Props> = ({
       variants={animation}
     >
       <IconButton
-        onClick={onIconClick}
+        onClick={(event) => {
+          event.stopPropagation();
+          onIconClick();
+        }}
       >
         {status === "active" ? (
           // <FaTrash className="text-red-600 text-xl" />

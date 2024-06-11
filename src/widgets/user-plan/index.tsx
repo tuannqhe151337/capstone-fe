@@ -177,7 +177,8 @@ export const TableUserManagement: React.FC = () => {
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
               }}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 navigate("detail");
               }}
             >
