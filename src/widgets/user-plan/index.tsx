@@ -8,7 +8,8 @@ import { TableCell } from "./ui/table-cell";
 import { TableCellName } from "./ui/table-cell-name";
 import { TableCellIcon } from "./ui/table-cell-icon";
 import { useNavigate } from "react-router-dom";
-
+import { ActiveConfirmModal } from "../user-active-confirm-modal";
+import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
 // Định nghĩa kiểu cho dữ liệu bảng
 type Status = "active" | "de-active";
 
@@ -88,6 +89,25 @@ export const TableUserManagement: React.FC = () => {
   const navigate = useNavigate();
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
+  const [activeModal, setActiveModal] = useState<boolean>(false);
+  const [deactiveModal, setDeactiveModal] = useState<boolean>(false);
+
+  const handleIconClick = (status: Status) => {
+    if (status !== "active") {
+      setActiveModal(true);
+    } else {
+      setDeactiveModal(true);
+    }
+  };
+
+  const handleCloseActiveModal = () => {
+    setActiveModal(false);
+  };
+
+  const handleCloseDeactiveModal = () => {
+    setDeactiveModal(false);
+  };
+
   return (
     <div>
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded">
@@ -157,7 +177,8 @@ export const TableUserManagement: React.FC = () => {
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
               }}
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 navigate("detail");
               }}
             >
@@ -171,6 +192,7 @@ export const TableUserManagement: React.FC = () => {
                 index={index}
                 hoverRowIndex={hoverRowIndex}
                 status={row.status}
+                onIconClick={() => handleIconClick(row.status)}
               ></TableCellIcon>
             </tr>
           ))}
@@ -184,6 +206,12 @@ export const TableUserManagement: React.FC = () => {
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
+
+      <ActiveConfirmModal show={activeModal} onClose={handleCloseActiveModal} />
+      <DeactiveConfirmModal
+        show={deactiveModal}
+        onClose={handleCloseDeactiveModal}
+      />
     </div>
   );
 };
