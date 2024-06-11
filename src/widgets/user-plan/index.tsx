@@ -7,9 +7,9 @@ import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
 import { TableCellName } from "./ui/table-cell-name";
 import { TableCellIcon } from "./ui/table-cell-icon";
+import { useNavigate } from "react-router-dom";
 import { ActiveConfirmModal } from "../user-active-confirm-modal";
 import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
-
 // Định nghĩa kiểu cho dữ liệu bảng
 type Status = "active" | "de-active";
 
@@ -85,6 +85,8 @@ const animation: Variants = {
 };
 
 export const TableUserManagement: React.FC = () => {
+  // Navigation
+  const navigate = useNavigate();
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   const [activeModal, setActiveModal] = useState<boolean>(false);
@@ -174,6 +176,9 @@ export const TableUserManagement: React.FC = () => {
               }}
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
+              }}
+              onClick={() => {
+                navigate("detail");
               }}
             >
               <TableCell status={row.status}>{row.id}</TableCell>

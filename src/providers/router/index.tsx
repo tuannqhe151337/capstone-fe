@@ -103,6 +103,40 @@ const router = createBrowserRouter([
               };
             },
           },
+
+          {
+            path: "detail",
+            children: [
+              {
+                path: "",
+                lazy: async () => {
+                  const UserDetailPage = (
+                    await import("../../pages/user-detail-page")
+                  ).UserDetail;
+
+                  return {
+                    element: <UserDetailPage />,
+                  };
+                },
+              },
+            ],
+          },
+        ],
+      },
+
+      // Profile pages
+      {
+        path: "profile",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProfilePage = (await import("../../pages/profile")).Profile;
+              return {
+                element: <ProfilePage />,
+              };
+            },
+          },
         ],
       },
 
