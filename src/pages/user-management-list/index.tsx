@@ -4,6 +4,8 @@ import { ListUserFiler } from "../../widgets/list-user-filter";
 import { HiUserAdd } from "react-icons/hi";
 import { TableUserManagement } from "../../widgets/user-plan";
 import { motion, Variants } from "framer-motion";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -55,10 +57,12 @@ export const UserManagementList: React.FC = () => {
           </p>
           <div className="ml-auto">
             <Button>
-              <div className="flex flex-row flex-wrap items-center gap-2">
-                <HiUserAdd className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">Add new user</p>
-              </div>
+              <Link to={`/user-management/user-create`}>
+                <div className="flex flex-row flex-wrap items-center gap-2">
+                  <HiUserAdd className="text-xl mb-0.5" />
+                  <p className="text-sm font-bold">Add new user</p>
+                </div>
+              </Link>
             </Button>
           </div>
         </div>
