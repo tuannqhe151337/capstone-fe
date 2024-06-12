@@ -105,6 +105,19 @@ const router = createBrowserRouter([
           },
 
           {
+            path: "detail",
+            lazy: async () => {
+              const UserDetailPage = (
+                await import("../../pages/user-detail-page")
+              ).UserDetail;
+
+              return {
+                element: <UserDetailPage />,
+              };
+            },
+          },
+
+          {
             path: "user-create",
             lazy: async () => {
               const UserCreate = (await import("../../pages/user-create-page"))
@@ -112,6 +125,41 @@ const router = createBrowserRouter([
 
               return {
                 element: <UserCreate />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Profile pages
+      {
+        path: "profile",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProfilePage = (await import("../../pages/profile")).Profile;
+              return {
+                element: <ProfilePage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Term management pages
+      {
+        path: "term-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const TermManagementListPage = (
+                await import("../../pages/term-management-list")
+              ).TermManagementList;
+
+              return {
+                element: <TermManagementListPage />,
               };
             },
           },

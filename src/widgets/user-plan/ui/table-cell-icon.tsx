@@ -10,6 +10,7 @@ interface Props {
   index: number;
   hoverRowIndex?: number;
   status: Status;
+  onIconClick: () => void;
 }
 
 enum AnimationStage {
@@ -36,6 +37,7 @@ export const TableCellIcon: React.FC<Props> = ({
   index,
   hoverRowIndex,
   status,
+  onIconClick,
 }) => (
   <td className="whitespace-nowrap px-6 py-4">
     <motion.div
@@ -46,7 +48,12 @@ export const TableCellIcon: React.FC<Props> = ({
       exit={AnimationStage.HIDDEN}
       variants={animation}
     >
-      <IconButton>
+      <IconButton
+        onClick={(event) => {
+          event.stopPropagation();
+          onIconClick();
+        }}
+      >
         {status === "active" ? (
           // <FaTrash className="text-red-600 text-xl" />
           <LuPowerOff className="text-red-600 text-xl" />
