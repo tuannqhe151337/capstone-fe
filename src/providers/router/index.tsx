@@ -26,6 +26,18 @@ const router = createBrowserRouter([
           };
         },
       },
+
+      {
+        path: "forgot-password",
+        lazy: async () => {
+          const ForgotPasswordPage = (
+            await import("../../pages/forgot-password-page")
+          ).ForgotPasswordPage;
+          return {
+            element: <ForgotPasswordPage />,
+          };
+        },
+      },
     ],
   },
 
