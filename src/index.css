@@ -86,7 +86,7 @@
 
 /* css placeholder khi chưa tương tác với ô select */
 .custom-select__single-value {
-  @apply text-black dark:text-primary-600 font-bold;
+  @apply text-black dark:text-neutral-400 opacity-60;
 }
 
 /* css cho trạng thái ban đầu của hộp select */
@@ -116,4 +116,10 @@
 /* Thiết lập chiều rộng của thanh cuộn */
 ::-webkit-scrollbar {
   width: 12px;
+}
+
+/* CSS CHO CÁC LABEL TRONG Ô INPUT */
+.custom-wrapper label {
+  /* color: red;  */
+  @apply dark:text-neutral-400 opacity-60
 }
