@@ -2,7 +2,13 @@ import clsx from "clsx";
 import { cn } from "../utils/cn";
 
 type Background = "filled" | "unfilled";
-type Variant = "new" | "reviewed" | "waiting" | "denied" | "deactivate";
+type Variant =
+  | "new"
+  | "reviewed"
+  | "waiting"
+  | "denied"
+  | "deactivate"
+  | "inProgress";
 
 interface Props {
   children?: React.ReactNode;
@@ -31,6 +37,8 @@ export const Tag: React.FC<Props> = ({
             background === "unfilled" && variant === "new",
           "bg-green-600 text-white/90 font-bold dark:bg-green-700  dark:border-neutral-800 dark:text-white/70 group-hover:text-white group-hover:bg-green-700 dark:group-hover:bg-green-800 dark:group-hover:text-white/80":
             background === "filled" && variant === "reviewed",
+          "bg-primary-500 text-white/90 font-bold dark:bg-primary-700  dark:border-neutral-800 dark:text-white/70 group-hover:text-white group-hover:bg-primary-600 dark:group-hover:bg-primary-800 dark:group-hover:text-white/80":
+            background === "filled" && variant === "inProgress",
           "bg-white text-primary-500 font-bold dark:bg-neutral-800  dark:border-neutral-800 group-hover:text-primary-700 group-hover:bg-white/85 dark:group-hover:text-primary-600 dark:group-hover:bg-neutral-900/70":
             background === "unfilled" && variant === "waiting",
           "bg-white text-red-600 font-bold dark:text-red-700 dark:bg-neutral-800  dark:border-neutral-800 group-hover:text-red-700/95 group-hover:bg-white/85 dark:group-hover:text-red-600 dark:group-hover:bg-neutral-900/70":

@@ -26,6 +26,18 @@ const router = createBrowserRouter([
           };
         },
       },
+
+      {
+        path: "forgot-password",
+        lazy: async () => {
+          const ForgotPasswordPage = (
+            await import("../../pages/forgot-password-page")
+          ).ForgotPasswordPage;
+          return {
+            element: <ForgotPasswordPage />,
+          };
+        },
+      },
     ],
   },
 
@@ -106,20 +118,27 @@ const router = createBrowserRouter([
 
           {
             path: "detail",
-            children: [
-              {
-                path: "",
-                lazy: async () => {
-                  const UserDetailPage = (
-                    await import("../../pages/user-detail-page")
-                  ).UserDetail;
+            lazy: async () => {
+              const UserDetailPage = (
+                await import("../../pages/user-detail-page")
+              ).UserDetail;
 
-                  return {
-                    element: <UserDetailPage />,
-                  };
-                },
-              },
-            ],
+              return {
+                element: <UserDetailPage />,
+              };
+            },
+          },
+
+          {
+            path: "user-create",
+            lazy: async () => {
+              const UserCreate = (await import("../../pages/user-create-page"))
+                .UserCreate;
+
+              return {
+                element: <UserCreate />,
+              };
+            },
           },
         ],
       },
@@ -134,6 +153,25 @@ const router = createBrowserRouter([
               const ProfilePage = (await import("../../pages/profile")).Profile;
               return {
                 element: <ProfilePage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Term management pages
+      {
+        path: "term-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const TermManagementListPage = (
+                await import("../../pages/term-management-list")
+              ).TermManagementList;
+
+              return {
+                element: <TermManagementListPage />,
               };
             },
           },
