@@ -1,23 +1,15 @@
 import { useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import {
-  FaLocationDot,
-  FaRegBuilding,
-  FaUpload,
-  FaUser,
-} from "react-icons/fa6";
-import { ListPlanFiler } from "../../widgets/list-plan-filter";
-import { TablePlanManagement } from "../../widgets/table-plan";
+import { FaLocationDot, FaUser } from "react-icons/fa6";
 import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
-import { FcDepartment } from "react-icons/fc";
 import { PiTreeStructure } from "react-icons/pi";
+import { DatePickerInput } from "../../shared/date-picker-input";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -79,7 +71,6 @@ const termDummyData = [
     name: "Term 3",
   },
 ];
-
 export const UserCreate: React.FC = () => {
   // Select state
   const [selectedOptionTerm, setSelectedOptionTerm] =
@@ -133,7 +124,10 @@ export const UserCreate: React.FC = () => {
           <div>
             <FaUser className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation} className="w-[500px]">
+          <motion.div
+            variants={childrenAnimation}
+            className="w-[500px] custom-wrapper"
+          >
             <TEInput
               type="text"
               label="Full name"
@@ -160,9 +154,12 @@ export const UserCreate: React.FC = () => {
 
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
-            <FaPhoneAlt className="text-2xl mt-2 opacity-30" />
+            <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
           </div>
-          <motion.div variants={childrenAnimation} className="w-[500px]">
+          <motion.div
+            variants={childrenAnimation}
+            className="w-[500px] custom-wrapper"
+          >
             <TEInput
               type="text"
               label="Phone"
@@ -175,7 +172,10 @@ export const UserCreate: React.FC = () => {
           <div>
             <HiOutlineMailOpen className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation} className="w-[500px]">
+          <motion.div
+            variants={childrenAnimation}
+            className="w-[500px] custom-wrapper"
+          >
             <TEInput
               type="email"
               label="Email"
@@ -184,12 +184,10 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-50"></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-30 "></div>
 
         <div className="flex flex-row gap-6 pl-10 mt-8">
           <div>
-            {/* <FcDepartment className="text-2xl mt-2 opacity-30" /> */}
-            {/* <FaRegBuilding className="text-2xl mt-2 opacity-30" /> */}
             <PiTreeStructure className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
@@ -220,17 +218,14 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-50"></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-30"></div>
 
         <div className="flex flex-row gap-6 pl-10 mt-6">
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation}>
-            <TEInput
-              type="date"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
-            ></TEInput>
+          <motion.div variants={childrenAnimation} className="custom-wrapper">
+            <DatePickerInput value={new Date()} allowEmpty />
           </motion.div>
         </div>
 
@@ -238,17 +233,20 @@ export const UserCreate: React.FC = () => {
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation} className="w-[500px]">
+          <motion.div
+            variants={childrenAnimation}
+            className="w-[500px] custom-wrapper"
+          >
             <TEInput
               type="text"
               label="Address"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
+              className="mb-4 w-full bg-white dark:bg-neutral-900"
             ></TEInput>
           </motion.div>
         </div>
 
         <div className="w-10/12 mx-auto flex justify-center mt-10">
-          <Button className="w-[1180px] py-2 ">Create user</Button>
+          <Button className="w-[1180px] py-2 dark:text-white/80">Create user</Button>
         </div>
       </div>
     </motion.div>
