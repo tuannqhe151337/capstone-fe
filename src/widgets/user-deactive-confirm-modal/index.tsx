@@ -13,50 +13,43 @@ interface Props {
 export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
   return (
     <Modal
-      className={`w-[70vw] xl:w-[60vw] h-[70vh]`}
+      className="w-[70vw] xl:w-[60vw] h-[70vh] flex flex-col justify-center items-center"
       show={show}
       onClose={onClose}
     >
-      <>
-        <div className="relative pt-5">
-          <div className="absolute top-3 right-5">
-            <IconButton
-              className="hover:bg-neutral-100"
-              onClick={(event) => {
-                event.stopPropagation();
-                onClose && onClose();
-              }}
-            >
-              <IoClose className="text-3xl text-neutral-500" />
-            </IconButton>
-          </div>
+      <div className="relative pt-5 w-full h-full flex flex-col items-center justify-center">
+        <div className="absolute top-3 right-5">
+          <IconButton
+            className="hover:bg-neutral-100"
+            onClick={(event) => {
+              event.stopPropagation();
+              onClose && onClose();
+            }}
+          >
+            <IoClose className="text-3xl text-neutral-500" />
+          </IconButton>
+        </div>
 
-          <div className="absolute right-[380px]">
-            <RiErrorWarningFill className="text-[140px] text-red-500 dark:opacity-80" />
-          </div>
-
-          <div className="absolute right-[380px] top-[180px] font-bold text-2xl text-primary-600 dark:text-primary-600">
+        <div className="flex flex-col items-center">
+          <RiErrorWarningFill className="text-[140px] text-red-500 dark:opacity-80" />
+          <div className="font-bold text-2xl text-primary-600 dark:text-primary-600 mt-4">
             Deactive user
           </div>
-
-          <div className="absolute right-[300px] top-[240px] font-bold text-primary-600 dark:text-primary-600">
+          <div className="font-bold text-primary-600 dark:text-primary-600 mt-2">
             You're going to deactivate user "AnhLN7".
           </div>
-
-          <div className="absolute right-[400px] top-[300px] font-bold text-primary-600 dark:text-primary-600">
+          <div className="font-bold text-primary-600 dark:text-primary-600 mt-2">
             Are you sure?
-          </div>
-
-          <div className="absolute right-[50px] top-[360px] flex flex-row gap-6">
-            <Button className="font-bold w-[400px] p-3 ">No, cancel</Button>
-            <Button className="font-bold w-[400px] p-3 text-red-500 bg-white hover:text-white hover:bg-red-500 focus:bg-red-500  focus:text-white border-neutral-200 active:bg-red-500 dark:text-white/80 dark:hover:text-white dark:bg-red-600 dark:border-red-600 dark:hover:bg-red-700 dark:focus:bg-red-700 dark:hover:border-red-600 dark:focus:border-red-600">
-              Yes, deactive
-            </Button>
           </div>
         </div>
 
-        <div className="pt-6"></div>
-      </>
+        <div className="mt-8 flex flex-row gap-6">
+          <Button className="font-bold w-[200px] p-3">No, cancel</Button>
+          <Button className="font-bold w-[200px] p-3 text-red-500 bg-white hover:text-white hover:bg-red-500 focus:bg-red-500 focus:text-white border-neutral-200 active:bg-red-500 dark:text-white/80 dark:hover:text-white dark:bg-red-600 dark:border-red-600 dark:hover:bg-red-700 dark:focus:bg-red-700 dark:hover:border-red-600 dark:focus:border-red-600">
+            Yes, deactive
+          </Button>
+        </div>
+      </div>
     </Modal>
   );
 };
