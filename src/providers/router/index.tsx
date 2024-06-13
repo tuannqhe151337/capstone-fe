@@ -106,20 +106,27 @@ const router = createBrowserRouter([
 
           {
             path: "detail",
-            children: [
-              {
-                path: "",
-                lazy: async () => {
-                  const UserDetailPage = (
-                    await import("../../pages/user-detail-page")
-                  ).UserDetail;
+            lazy: async () => {
+              const UserDetailPage = (
+                await import("../../pages/user-detail-page")
+              ).UserDetail;
 
-                  return {
-                    element: <UserDetailPage />,
-                  };
-                },
-              },
-            ],
+              return {
+                element: <UserDetailPage />,
+              };
+            },
+          },
+
+          {
+            path: "user-create",
+            lazy: async () => {
+              const UserCreate = (await import("../../pages/user-create-page"))
+                .UserCreate;
+
+              return {
+                element: <UserCreate />,
+              };
+            },
           },
         ],
       },
