@@ -4,7 +4,7 @@ import { ListUserFiler } from "../../widgets/list-user-filter";
 import { HiUserAdd } from "react-icons/hi";
 import { TableUserManagement } from "../../widgets/user-plan";
 import { motion, Variants } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
@@ -42,6 +42,8 @@ const childrenAnimation: Variants = {
 };
 
 export const UserManagementList: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -56,13 +58,15 @@ export const UserManagementList: React.FC = () => {
             User management
           </p>
           <div className="ml-auto">
-            <Button>
-              <Link to={`/user-management/user-create`}>
-                <div className="flex flex-row flex-wrap items-center gap-2">
-                  <HiUserAdd className="text-xl mb-0.5" />
-                  <p className="text-sm font-bold">Add new user</p>
-                </div>
-              </Link>
+            <Button
+              onClick={() => {
+                navigate(`/user-management/create`);
+              }}
+            >
+              <div className="flex flex-row flex-wrap items-center gap-2">
+                <HiUserAdd className="text-xl mb-0.5" />
+                <p className="text-sm font-bold">Add new user</p>
+              </div>
             </Button>
           </div>
         </div>

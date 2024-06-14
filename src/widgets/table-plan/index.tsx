@@ -5,6 +5,7 @@ import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
+import clsx from "clsx";
 
 // Định nghĩa kiểu cho status
 type StatusType = "new" | "approve" | "waiting for approval" | "denied";
@@ -111,7 +112,7 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
 
   return (
     <div>
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded">
+      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
             <th
@@ -142,6 +143,7 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             <th scope="col">
               <IconButton
                 className="px-3"
+                tooltip="Add new plan"
                 onClick={() => {
                   onCreatePlanClick && onCreatePlanClick();
                 }}
@@ -155,11 +157,16 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
           {tablePlanDataList.map((row, index) => (
             <tr
               key={row.id}
-              className={`group border-b cursor-pointer duration-200 ${
-                index % 2 === 0
-                  ? "bg-white hover:bg-primary-50/50 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
-                  : "bg-primary-50 hover:bg-primary-100 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70"
-              }`}
+              className={clsx({
+                "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
+                  true,
+                "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                  true,
+                "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                  index % 2 === 0,
+                "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                  index % 2 === 1,
+              })}
               onMouseEnter={() => {
                 setHoverRowIndex(index);
               }}
@@ -172,20 +179,18 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             >
               <td className="whitespace-nowrap px-6 py-4 font-medium">
                 <div className="flex flex-row flex-wrap">
-                  <p className="text-primary-500 dark:text-primary-600 font-extrabold py-2 group-hover:text-primary-600 dark:group-hover:text-primary-500/90 ml-14">
-                    {row.plan}
-                  </p>
+                  <p className="font-extrabold py-2 ml-14">{row.plan}</p>
                   <div>{renderButton(row.status)}</div>
                 </div>
               </td>
               {/* <td></td> */}
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.term}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.department}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.version}
               </td>
               <td className="whitespace-nowrap px-6 py-4">

@@ -166,7 +166,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "user-edit",
+            path: "edit",
             lazy: async () => {
               const UserEdit = (await import("../../pages/user-edit-page"))
                 .UserEdit;

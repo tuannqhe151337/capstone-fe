@@ -132,6 +132,7 @@ export const UserCreate: React.FC = () => {
               type="text"
               label="Full name"
               className="mb-4 bg-white dark:bg-neutral-900"
+              autoFocus
             ></TEInput>
           </motion.div>
         </div>
@@ -184,9 +185,9 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-30 "></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10 "></div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-8">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             {/* <FcDepartment className="text-2xl mt-2 opacity-30" /> */}
             {/* <FaRegBuilding className="text-2xl mt-2 opacity-30" /> */}
@@ -204,7 +205,7 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-8">
           <div>
             <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
           </div>
@@ -220,9 +221,9 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-30"></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-10"></div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
@@ -231,7 +232,7 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
           </div>
@@ -247,7 +248,7 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto flex justify-center mt-10">
+        <div className="w-10/12 mx-auto flex justify-center mt-12">
           <Button className="w-[1180px] py-2 dark:text-white/80">
             Create user
           </Button>

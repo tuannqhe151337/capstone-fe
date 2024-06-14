@@ -7,6 +7,9 @@ import { HiOutlineMailOpen } from "react-icons/hi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { Button } from "../../shared/button";
 import { RiPencilFill } from "react-icons/ri";
+import { UserAvatarCard } from "../../widgets/user-avatar-card";
+import { UserDetailCard } from "../../widgets/user-detail-card";
+import { useNavigate } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -56,111 +59,41 @@ const userDetailData = {
 };
 
 export const UserDetail: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative px-6">
       {/* Banner */}
       <BubbleBanner />
 
       <motion.div
-        className="absolute pb-10 top-[80%] left-1/2 transform -translate-x-1/2 w-11/12 z-20"
+        className="relative z-10 pb-10 w-11/12 -mt-10 mx-auto"
         initial={AnimationStage.HIDDEN}
         animate={AnimationStage.VISIBLE}
         exit={AnimationStage.HIDDEN}
         variants={staggerChildrenAnimation}
       >
         <motion.div
-          className="flex w-full gap-4 h-[340px]"
+          className="flex w-full gap-4 h-max"
           variants={childrenAnimation}
         >
-          <div className="w-1/3 border rounded-lg p-4 bg-white shadow dark:bg-black/80 dark:border-black dark:shadow-black">
-            <div className="flex justify-center items-center dark:brightness-50 mx-auto rounded-full">
-              <FaCircleUser className="text-[160px] opacity-80 text-primary-200 dark:text-primary-300" />
-            </div>
+          <UserAvatarCard className="w-1/3" user={userDetailData} />
 
-            <div className="mt-4 text-primary-600/80 font-extrabold text-2xl text-center dark:text-primary-800">
-              {userDetailData.username}
-            </div>
-            <div className="mt-4 py-2 bg-primary-500 text-center text-white font-bold mx-auto w-1/2 rounded dark:bg-primary-800 dark:text-white/80">
-              {userDetailData.role}
-            </div>
-            <div className="mt-4 !opacity-40 font-bold text-xl text-center dark:opacity-60">
-              {userDetailData.position} at {userDetailData.department}
-            </div>
-          </div>
-
-          <div className="w-2/3 border rounded-lg p-6 bg-white shadow dark:bg-black/80 dark:border-black dark:shadow-black">
-            <div className="flex mt-2">
-              <div className="w-1/12 pt-3 pl-4">
-                <FaUser className="text-xl opacity-40 dark:opacity-50" />
-              </div>
-              <div className="w-8/12">
-                <div className="font-bold text-sm opacity-40 dark:opacity-50">
-                  Full name
-                </div>
-                <div className="text-xm font-bold opacity-80 dark:opacity-75">
-                  {userDetailData.name}
-                </div>
-              </div>
-
-              <Button className="flex flex-row flex-wrap gap-3">
-                <RiPencilFill className="text-xl" />
-
-                <p className="text-sm font-semibold">Update user</p>
+          <UserDetailCard
+            className="w-2/3"
+            user={userDetailData}
+            actionComponent={
+              <Button
+                className="flex flex-row flex-wrap gap-2 items-center"
+                onClick={() => {
+                  navigate("/user-management/edit");
+                }}
+              >
+                <RiPencilFill className="text-xl mb-0.5" />
+                <p className="text-sm font-bold">Update user</p>
               </Button>
-            </div>
-            <div className="flex mt-4">
-              <div className="w-1/12 pt-3 pl-4">
-                <FaPhoneAlt className="text-xl opacity-40 dark:opacity-50" />
-              </div>
-              <div className="w-11/12">
-                <p className="font-bold text-sm opacity-40 dark:opacity-50">
-                  Phone
-                </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-75">
-                  {userDetailData.phone}
-                </p>
-              </div>
-            </div>
-            <div className="flex mt-4">
-              <div className="w-1/12 pt-3 pl-3">
-                <HiOutlineMailOpen className="text-2xl opacity-40 dark:opacity-50" />
-              </div>
-              <div className="w-11/12">
-                <p className="font-bold text-sm opacity-40 dark:opacity-50">
-                  Email
-                </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-75">
-                  {userDetailData.email}
-                </p>
-              </div>
-            </div>
-            <div className="flex mt-4">
-              <div className="w-1/12 pt-2 pl-2">
-                <LiaBirthdayCakeSolid className="text-3xl opacity-40 dark:opacity-50" />
-              </div>
-              <div className="w-11/12">
-                <p className="font-bold text-sm opacity-40 dark:opacity-50">
-                  Date of birth
-                </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-75">
-                  {userDetailData.dateOfBirth}
-                </p>
-              </div>
-            </div>
-            <div className="flex mt-4">
-              <div className="w-1/12 pt-2 pl-3">
-                <FaLocationDot className="text-2xl opacity-40 dark:opacity-50" />
-              </div>
-              <div className="w-11/12">
-                <p className="font-bold text-sm opacity-40 dark:opacity-50">
-                  Address
-                </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-75">
-                  {userDetailData.address}
-                </p>
-              </div>
-            </div>
-          </div>
+            }
+          />
         </motion.div>
       </motion.div>
     </div>

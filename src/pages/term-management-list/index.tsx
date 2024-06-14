@@ -1,10 +1,5 @@
-import { useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import { FaUpload } from "react-icons/fa6";
-import { ListPlanFiler } from "../../widgets/list-plan-filter";
-import { TablePlanManagement } from "../../widgets/table-plan";
 import { Variants, motion } from "framer-motion";
 import { IoIosAddCircle } from "react-icons/io";
 import { TableTermManagement } from "../../widgets/table-term";
@@ -60,10 +55,10 @@ export const TermManagementList: React.FC = () => {
           </p>
           <div className="ml-auto">
             <Button>
-              <div className="flex flex-row flex-wrap gap-3">
-                <IoIosAddCircle className=" mt-0.5" />
+              <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
+                <IoIosAddCircle className="text-2xl -mt-0.5" />
 
-                <p className="text-sm font-semibold">Add new term</p>
+                <p className="text-sm font-bold">Add new term</p>
               </div>
             </Button>
           </div>

@@ -1,4 +1,4 @@
-import { FaPlusCircle, FaTrash } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
@@ -8,9 +8,10 @@ import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
 import { StartTermModal } from "../start-term-modal";
+import clsx from "clsx";
 
 // Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "inProgress" | "denied";
+type StatusType = "new" | "approve" | "inProgress" | "closed";
 const renderButton = (status: StatusType) => {
   switch (status) {
     case "new":
@@ -25,7 +26,7 @@ const renderButton = (status: StatusType) => {
           In progess
         </Tag>
       );
-    case "denied":
+    case "closed":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
           Closed
@@ -65,14 +66,14 @@ const tablePlanDataList: TablePlanDataType[] = [
     term: "Financial plan December Q3 2021",
     startDate: "25 December 2021",
     endDate: "30 December 2021",
-    status: "denied",
+    status: "closed",
   },
   {
     id: 4,
     term: "Financial plan December Q3 2021",
     startDate: "25 December 2021",
     endDate: "30 December 2021",
-    status: "denied",
+    status: "closed",
   },
 ];
 
@@ -112,7 +113,7 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
 
   return (
     <div>
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded">
+      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
             <th
@@ -138,6 +139,7 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             <th scope="col">
               <IconButton
                 className="px-3"
+                tooltip="Add new term"
                 onClick={() => {
                   onCreatePlanClick && onCreatePlanClick();
                 }}
@@ -151,13 +153,18 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
           {tablePlanDataList.map((row, index) => (
             <tr
               key={row.id}
-              className={`group border-b cursor-pointer duration-200 ${
-                row.status === "denied" ? "opacity-70" : ""
-              } ${
-                index % 2 === 0
-                  ? "bg-white hover:bg-primary-50/50 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800"
-                  : "bg-primary-50 hover:bg-primary-100 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70"
-              }`}
+              className={clsx({
+                "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
+                  true,
+                "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                  row.status !== "closed",
+                "text-primary-500/70 hover:text-primary-500 dark:text-primary-800 dark:hover:text-primary-600":
+                  row.status === "closed",
+                "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                  index % 2 === 0,
+                "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                  index % 2 === 1,
+              })}
               onMouseEnter={() => {
                 setHoverRowIndex(index);
               }}
@@ -170,9 +177,7 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             >
               <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
                 <div className="flex flex-row flex-wrap">
-                  <p className="text-primary-500 dark:text-primary-600 font-extrabold py-2 group-hover:text-primary-600 dark:group-hover:text-primary-500/90 ml-14">
-                    {row.term}
-                  </p>
+                  <p className="font-extrabold py-2 ml-14">{row.term}</p>
                   <div>{renderButton(row.status)}</div>
                 </div>
               </td>
@@ -181,10 +186,10 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                   <div>{renderButton(row.status)}</div>
                 </div>
               </td> */}
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.startDate}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold text-primary-500 dark:text-primary-600 group-hover:text-primary-600 dark:group-hover:text-primary-500/90">
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.endDate}
               </td>
 
@@ -201,14 +206,14 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                     variants={animation}
                   >
                     <Button
-                      className="py-0.5 px-2"
+                      className="flex flex-row flex-wrap py-1.5 px-3"
                       onClick={(event) => {
                         event.stopPropagation();
                         handleClick();
                       }}
                     >
-                      <FaPlay className="text-white text-xl inline-block mr-1" />
-                      <div className="inline-block text-sm font-bold">
+                      <FaPlay className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
+                      <div className="text-white dark:text-neutral-300 text-sm font-bold">
                         Start
                       </div>
                     </Button>

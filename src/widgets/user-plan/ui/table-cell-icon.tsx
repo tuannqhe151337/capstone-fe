@@ -1,6 +1,5 @@
 import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../../shared/icon-button";
-import { FaCheckCircle, FaTrash } from "react-icons/fa";
 import { FaPowerOff } from "react-icons/fa6";
 import { LuPowerOff } from "react-icons/lu";
 
@@ -49,6 +48,7 @@ export const TableCellIcon: React.FC<Props> = ({
       variants={animation}
     >
       <IconButton
+        tooltip={status === "active" ? "Deactivate user" : "Activate user"}
         onClick={(event) => {
           event.stopPropagation();
           onIconClick();

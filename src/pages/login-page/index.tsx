@@ -114,6 +114,7 @@ export const LoginPage: React.FC = () => {
                   label="Username"
                   className="mb-4 w-full bg-white dark:bg-neutral-900 "
                   size="lg"
+                  autoFocus
                 ></TEInput>
               </motion.div>
 
