@@ -26,17 +26,6 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
-const childrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-    y: 10,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-    y: 0,
-  },
-};
-
 const rowAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
     opacity: 0,
@@ -81,7 +70,7 @@ export const PlanDetailVersionPage: React.FC = () => {
     <div className="flex flex-col flex-wrap py-5 px-4">
       <div className="flex flex-row flex-wrap items-center ml-auto">
         <BsStack className="text-xl text-primary-300 dark:text-primary-700 mr-4" />
-        <span className="text-lg font-extrabold text-primary-500 dark:text-primary-600 mr-1.5">
+        <span className="text-lg font-extrabold text-primary-400 dark:text-primary-600 mr-1.5">
           2
         </span>
         <span className="text-base font-bold text-primary-400/80 dark:text-primary-600/90">

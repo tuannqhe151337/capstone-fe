@@ -8,7 +8,7 @@ import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
-import { PiTreeStructure } from "react-icons/pi";
+import { PiTreeStructureFill } from "react-icons/pi";
 import { DatePickerInput } from "../../shared/date-picker-input";
 
 enum AnimationStage {
@@ -130,11 +130,11 @@ export const UserEdit: React.FC = () => {
       </BubbleBanner>
 
       <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black ">
-        <div className="text-primary-500 dark:text-primary-700 text-3xl font-bold pl-10 pt-10">
+        <div className="text-primary-500 dark:text-primary-700 text-2xl font-extrabold pl-10 pt-7">
           AnhLN7
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 pt-10">
+        <div className="flex flex-row gap-6 pl-10 pt-12">
           <div>
             <FaUser className="text-2xl mt-2 opacity-30" />
           </div>
@@ -201,11 +201,11 @@ export const UserEdit: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-30 "></div>
+        <div className="mx-10 border-t-[2px] mt-6 dark:opacity-10 "></div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-8">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
-            <PiTreeStructure className="text-2xl mt-2 opacity-30" />
+            <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
             <AsyncPaginate
@@ -219,7 +219,7 @@ export const UserEdit: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-8">
           <div>
             <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
           </div>
@@ -235,9 +235,9 @@ export const UserEdit: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-30"></div>
+        <div className="mx-10 border-t-[2px] mt-10 dark:opacity-10"></div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
@@ -246,7 +246,7 @@ export const UserEdit: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-6">
+        <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
           </div>
@@ -263,7 +263,7 @@ export const UserEdit: React.FC = () => {
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto flex justify-center mt-10">
+        <div className="w-10/12 mx-auto flex justify-center mt-12">
           <Button className="w-[1180px] py-2 dark:text-white/80">
             Update user
           </Button>

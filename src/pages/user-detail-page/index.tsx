@@ -9,6 +9,7 @@ import { Button } from "../../shared/button";
 import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { UserDetailCard } from "../../widgets/user-detail-card";
+import { useNavigate } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -58,6 +59,8 @@ const userDetailData = {
 };
 
 export const UserDetail: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative px-6">
       {/* Banner */}
@@ -75,7 +78,22 @@ export const UserDetail: React.FC = () => {
           variants={childrenAnimation}
         >
           <UserAvatarCard className="w-1/3" user={userDetailData} />
-          <UserDetailCard className="w-2/3 " user={userDetailData} />
+
+          <UserDetailCard
+            className="w-2/3"
+            user={userDetailData}
+            actionComponent={
+              <Button
+                className="flex flex-row flex-wrap gap-2 items-center"
+                onClick={() => {
+                  navigate("/user-management/edit");
+                }}
+              >
+                <RiPencilFill className="text-xl mb-0.5" />
+                <p className="text-sm font-bold">Update user</p>
+              </Button>
+            }
+          />
         </motion.div>
       </motion.div>
     </div>

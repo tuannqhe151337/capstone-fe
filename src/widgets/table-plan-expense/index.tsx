@@ -208,7 +208,7 @@ export const TablePlanExpenses: React.FC = () => {
               </td>
               <td className="px-2 py-3">
                 <Tag background="filled" variant="reviewed">
-                  Reviewed
+                  Accepted
                 </Tag>
               </td>
             </motion.tr>

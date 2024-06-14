@@ -151,7 +151,13 @@ export const TableUserManagement: React.FC = () => {
               Position
             </th>
             <th scope="col">
-              <IconButton className="px-3" tooltip="Add new user">
+              <IconButton
+                className="px-3"
+                tooltip="Add new user"
+                onClick={() => {
+                  navigate(`/user-management/create`);
+                }}
+              >
                 <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
               </IconButton>
             </th>
