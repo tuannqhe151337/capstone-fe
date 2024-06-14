@@ -1,25 +1,57 @@
 import { TERipple } from "tw-elements-react";
 import { cn } from "../utils/cn";
+import clsx from "clsx";
+import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
 
-interface Props {
+type Variant = "primary" | "secondary" | "tertiary" | "quaternary" | "error";
+
+interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
-  buttonType?: React.ButtonHTMLAttributes<HTMLButtonElement>["type"];
+  variant?: Variant;
+  containerClassName?: string;
   className?: string;
 }
 
 export const Button: React.FC<Props> = ({
   children,
-  buttonType,
+  variant = "primary",
+  containerClassName,
   className,
+  ...props
 }) => {
+  const isDarkmode = useDetectDarkmode();
+
   return (
-    <TERipple rippleColor="light">
+    <TERipple
+      className={containerClassName}
+      rippleColor={clsx({
+        light:
+          variant === "primary" ||
+          (variant === "quaternary" && isDarkmode) ||
+          (variant === "tertiary" && isDarkmode) ||
+          variant === "error",
+        primary: variant === "secondary",
+        dark: variant === "tertiary" && !isDarkmode,
+      })}
+    >
       <button
-        type={buttonType}
         className={cn(
-          "inline-block rounded bg-primary dark:bg-primary-900 px-4 pb-1.5 pt-2 text-base font-medium leading-normal text-white transition duration-150 ease-in-out hover:bg-primary-600 focus:bg-primary-600 focus:outline-none focus:ring-0 active:bg-primary-700",
+          "inline-block w-full rounded-lg px-4 pb-1.5 pt-2 text-base font-medium leading-normal transition duration-200 ease-in-out focus:outline-none focus:ring-0",
+          {
+            "bg-primary disabled:bg-primary-500/50 border-2 border-primary disabled:border-primary-500/5 dark:bg-primary-800 dark:border-primary-800 text-white hover:bg-primary-600 dark:hover:bg-primary-700 focus:bg-primary-600 dark:focus:bg-primary-700 active:bg-primary-700 hover:border-primary-600/10 dark:hover:border-primary-700 focus:border-primary-600/10 dark:focus:border-primary-700 active:border-primary-700 dark:disabled:bg-primary-800/20 dark:disabled:border-primary-800/5 dark:disabled:text-neutral-500":
+              variant === "primary",
+            "font-semibold bg-primary-100 border-2 border-primary-100 dark:bg-primary-900/50 dark:border-primary-900/10 text-primary-500 hover:bg-primary-200/70 dark:hover:bg-primary-900/70 focus:bg-primary-200 dark:focus:bg-primary-900/70 active:bg-primary-200 hover:border-primary-200/10 dark:hover:border-primary-900/10 focus:border-primary-200 dark:focus:border-primary-900/10 active:border-primary-200 dark:active:border-primary-900/10":
+              variant === "secondary",
+            "bg-white border-2 border-primary-300/70 text-primary-500 hover:bg-primary-50 active:bg-primary-100 dark:bg-neutral-800 dark:border-primary-800 dark:hover:bg-neutral-700/30":
+              variant === "tertiary",
+            "bg-white border-2 dark:bg-transparent text-neutral-400 border-neutral-100 hover:border-neutral-200 dark:border-neutral-700 dark:hover:border-neutral-600":
+              variant === "quaternary",
+            "text-white dark:text-neutral-200 border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500 dark:bg-red-800 dark:border-red-800 dark:hover:bg-red-700 dark:hover:border-red-700 dark:active:bg-red-700 dark:active:border-red-700 dark:focus:bg-red-700 dark:focus:border-red-700":
+              variant === "error",
+          },
           className
         )}
+        {...props}
       >
         {children}
       </button>

@@ -33,7 +33,7 @@ export const IconButton: React.FC<Props> = ({
           placement="bottom"
           enabled={tooltip ? true : false}
           className={cn(
-            "inline-block rounded-full p-[10px] uppercase leading-normal transition duration-150 ease-in-out hover:bg-slate-200 dark:hover:bg-neutral-700 focus:outline-none focus:ring-0",
+            "inline-block rounded-full p-[10px] uppercase leading-normal transition duration-150 ease-in-out hover:bg-primary-200 dark:hover:bg-neutral-700 focus:outline-none focus:ring-0",
             className
           )}
         >

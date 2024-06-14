@@ -13,6 +13,12 @@ export default {
       fontFamily: {
         nunito: ["Nunito", "sans-serif"],
       },
+      keyframes: {
+        fatter: {
+          "0%, 100%": { transform: "scale(0.95  ) translateY(0)", opacity: 0.4, },
+          "50%": { transform: "scale(1) translateY(10px)", opacity: 0.2 },
+        },
+      },
     },
   },
   darkMode: ["class"],
