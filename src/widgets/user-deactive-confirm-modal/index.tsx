@@ -38,7 +38,7 @@ export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
           </div>
           <div className="font-semibold dark:font-bold text-neutral-400 dark:text-neutral-500 mt-5">
             You're going to deactivate user{" "}
-            <span className="font-extrabold dark:text-neutral-400/70">
+            <span className="font-extrabold text-red-500 dark:text-red-600">
               "AnhLN7"
             </span>
             .
