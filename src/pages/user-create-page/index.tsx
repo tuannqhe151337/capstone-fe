@@ -8,7 +8,7 @@ import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
-import { PiTreeStructure } from "react-icons/pi";
+import { PiTreeStructureFill } from "react-icons/pi";
 import { DatePickerInput } from "../../shared/date-picker-input";
 
 enum AnimationStage {
@@ -179,7 +179,7 @@ export const UserCreate: React.FC = () => {
             <TEInput
               type="email"
               label="Email"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
+              className="mb-4 w-full bg-white dark:bg-neutral-900"
             ></TEInput>
           </motion.div>
         </div>
@@ -188,7 +188,9 @@ export const UserCreate: React.FC = () => {
 
         <div className="flex flex-row gap-6 pl-10 mt-8">
           <div>
-            <PiTreeStructure className="text-2xl mt-2 opacity-30" />
+            {/* <FcDepartment className="text-2xl mt-2 opacity-30" /> */}
+            {/* <FaRegBuilding className="text-2xl mt-2 opacity-30" /> */}
+            <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
             <AsyncPaginate
@@ -246,7 +248,9 @@ export const UserCreate: React.FC = () => {
         </div>
 
         <div className="w-10/12 mx-auto flex justify-center mt-10">
-          <Button className="w-[1180px] py-2 dark:text-white/80">Create user</Button>
+          <Button className="w-[1180px] py-2 dark:text-white/80">
+            Create user
+          </Button>
         </div>
       </div>
     </motion.div>

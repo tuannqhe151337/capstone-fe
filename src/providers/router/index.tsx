@@ -94,6 +94,18 @@ const router = createBrowserRouter([
                   };
                 },
               },
+              {
+                path: "information",
+                lazy: async () => {
+                  const PlanDetailInformationPage = (
+                    await import("../../pages/plan-detail-information-page")
+                  ).PlanDetailInformationPage;
+
+                  return {
+                    element: <PlanDetailInformationPage />,
+                  };
+                },
+              },
             ],
           },
         ],
@@ -130,7 +142,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "user-create",
+            path: "create",
             lazy: async () => {
               const UserCreate = (await import("../../pages/user-create-page"))
                 .UserCreate;
