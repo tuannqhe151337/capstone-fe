@@ -189,7 +189,7 @@ export const Profile: React.FC = () => {
             <div className="mt-4 py-2 bg-primary-500 text-center text-white font-bold mx-auto w-1/2 rounded dark:bg-primary-800 dark:text-white/80">
               {profileData.role}
             </div>
-            <div className="mt-4 !opacity-40 font-bold text-lg text-center dark:opacity-60">
+            <div className="mt-4 opacity-40 font-bold text-lg text-center dark:opacity-60">
               {profileData.position} at {profileData.department}
             </div>
           </div>
@@ -203,7 +203,7 @@ export const Profile: React.FC = () => {
                 <div className="font-bold text-sm opacity-40 dark:opacity-30">
                   Full name
                 </div>
-                <div className="text-xm font-bold opacity-80 dark:opacity-60">
+                <div className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
                   {profileData.name}
                 </div>
               </div>
@@ -216,7 +216,7 @@ export const Profile: React.FC = () => {
                 <p className="font-bold text-sm opacity-40 dark:opacity-30">
                   Phone
                 </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-60">
+                <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
                   {profileData.phone}
                 </p>
               </div>
@@ -229,7 +229,7 @@ export const Profile: React.FC = () => {
                 <p className="font-bold text-sm opacity-40 dark:opacity-30">
                   Email
                 </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-60">
+                <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
                   {profileData.email}
                 </p>
               </div>
@@ -242,7 +242,7 @@ export const Profile: React.FC = () => {
                 <p className="font-bold text-sm opacity-40 dark:opacity-30">
                   Date of birth
                 </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-60">
+                <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
                   {profileData.dateOfBirth}
                 </p>
               </div>
@@ -255,7 +255,7 @@ export const Profile: React.FC = () => {
                 <p className="font-bold text-sm opacity-40 dark:opacity-30">
                   Address
                 </p>
-                <p className="text-xm font-bold opacity-80 dark:opacity-60">
+                <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
                   {profileData.address}
                 </p>
               </div>

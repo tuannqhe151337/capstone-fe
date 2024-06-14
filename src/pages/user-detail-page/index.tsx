@@ -72,7 +72,7 @@ export const UserDetail: React.FC = () => {
           className="flex w-full gap-4 h-[340px]"
           variants={childrenAnimation}
         >
-          <div className="w-1/3 border rounded-lg p-4 bg-white shadow dark:bg-black/80 dark:border-black dark:shadow-black">
+          <div className="w-1/3 border rounded-lg p-4 bg-white shadow dark:bg-neutral-900 dark:border-neutral-900 dark:shadow-[0_0_15px_rgb(0,0,0,0.2)]">
             <div className="flex justify-center items-center dark:brightness-50 mx-auto rounded-full">
               <FaCircleUser className="text-[160px] opacity-80 text-primary-200 dark:text-primary-300" />
             </div>
@@ -83,12 +83,12 @@ export const UserDetail: React.FC = () => {
             <div className="mt-4 py-2 bg-primary-500 text-center text-white font-bold mx-auto w-1/2 rounded dark:bg-primary-800 dark:text-white/80">
               {userDetailData.role}
             </div>
-            <div className="mt-4 !opacity-40 font-bold text-xl text-center dark:opacity-60">
+            <div className="mt-4 opacity-40 font-bold text-lg text-center dark:opacity-60">
               {userDetailData.position} at {userDetailData.department}
             </div>
           </div>
 
-          <div className="w-2/3 border rounded-lg p-6 bg-white shadow dark:bg-black/80 dark:border-black dark:shadow-black">
+          <div className="w-2/3 border rounded-lg p-6 bg-white shadow dark:bg-neutral-900 dark:border-neutral-900 dark:shadow-[0_0_15px_rgb(0,0,0,0.2)]">
             <div className="flex mt-2">
               <div className="w-1/12 pt-3 pl-4">
                 <FaUser className="text-xl opacity-40 dark:opacity-50" />

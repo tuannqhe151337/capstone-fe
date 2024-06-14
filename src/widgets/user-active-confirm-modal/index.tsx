@@ -31,7 +31,7 @@ export const ActiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
         </div>
 
         <div className="flex flex-col items-center">
-          <FaCheckCircle className="text-[120px] text-primary-500 dark:text-primary-800" />
+          <FaCheckCircle className="text-[100px] text-primary-400 dark:text-primary-800" />
           <div className="font-bold text-2xl text-primary-500 dark:text-neutral-500 mt-5">
             Activate user
           </div>
