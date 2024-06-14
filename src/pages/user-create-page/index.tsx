@@ -179,7 +179,7 @@ export const UserCreate: React.FC = () => {
             <TEInput
               type="email"
               label="Email"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
+              className="mb-4 w-full bg-white dark:bg-neutral-900"
             ></TEInput>
           </motion.div>
         </div>
