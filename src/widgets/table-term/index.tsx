@@ -7,6 +7,7 @@ import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
+import { StartTermModal } from "../start-term-modal";
 
 // Định nghĩa kiểu cho status
 type StatusType = "new" | "approve" | "inProgress" | "denied";
@@ -99,6 +100,15 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleCloseStartTermModal = () => {
+    setStartModal(false);
+  };
 
   return (
     <div>
@@ -190,7 +200,13 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                     exit={AnimationStage.HIDDEN}
                     variants={animation}
                   >
-                    <Button className="py-0.5 px-2">
+                    <Button
+                      className="py-0.5 px-2"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleClick();
+                      }}
+                    >
                       <FaPlay className="text-white text-xl inline-block mr-1" />
                       <div className="inline-block text-sm font-bold">
                         Start
@@ -211,6 +227,8 @@ export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
+
+      <StartTermModal show={startModal} onClose={handleCloseStartTermModal} />
     </div>
   );
 };
