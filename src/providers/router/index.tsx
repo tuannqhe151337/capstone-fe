@@ -106,6 +106,18 @@ const router = createBrowserRouter([
                   };
                 },
               },
+              {
+                path: "version",
+                lazy: async () => {
+                  const PlanDetailVersionPage = (
+                    await import("../../pages/plan-detail-version-page")
+                  ).PlanDetailVersionPage;
+
+                  return {
+                    element: <PlanDetailVersionPage />,
+                  };
+                },
+              },
             ],
           },
         ],
