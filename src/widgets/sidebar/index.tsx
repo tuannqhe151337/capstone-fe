@@ -28,7 +28,7 @@ export const Sidebar = () => {
   });
 
   useEffect(() => {
-    setWidth(isExpanded ? 250 : 85);
+    setWidth(isExpanded ? 275 : 85);
   }, [isExpanded]);
 
   return (
@@ -70,7 +70,7 @@ export const Sidebar = () => {
 
         {/* Term management */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/term-management`}>
             <Tab
               icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
               text={t("Term management")}
@@ -94,11 +94,11 @@ export const Sidebar = () => {
 
         {/* Financial plan */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/plan-management`}>
             <Tab
               icon={<FaChartLine className="text-2xl" />}
               text={t("Financial plan")}
-              // selected={location.pathname === "/"}
+              selected={location.pathname === "/plan-management"}
               isExpanded={isExpanded}
             />
           </Link>
@@ -106,11 +106,11 @@ export const Sidebar = () => {
 
         {/* User management */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/user-management`}>
             <Tab
               icon={<FaUserGroup className="text-2xl -ml-0.5" />}
               text={t("User management")}
-              // selected={location.pathname === "/"}
+              selected={location.pathname === "/user-management"}
               isExpanded={isExpanded}
             />
           </Link>

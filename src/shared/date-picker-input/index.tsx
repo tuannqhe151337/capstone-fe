@@ -150,14 +150,15 @@ export const DatePickerInput: React.FC<Props> = ({
   }, [showCalender]);
 
   return (
-    <div ref={containerRef} className={`relative w-full h-full ${className}`}>
+    <div ref={containerRef} className={cn(`relative w-full h-full`, className)}>
       <PatternFormat
         getInputRef={inputRef}
         className={cn(
-          "focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary duration-500",
-          isInputValueValid === false
-            ? "outline-offset-1 outline-[2px] outline-red-600"
-            : undefined
+          "focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary dark:!text-neutral-400 duration-500",
+          {
+            "outline-offset-1 outline-[2px] outline-red-600":
+              isInputValueValid === false,
+          }
         )}
         value={inputValue}
         pattern="##/##/####"
