@@ -6,6 +6,7 @@ import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
+import { DeleteReportModal } from "../delete-report-modal";
 
 // Định nghĩa kiểu cho status
 type StatusType = "new" | "approve" | "waiting for approval" | "denied";
@@ -112,6 +113,17 @@ export const TableReportManagement: React.FC<Props> = ({
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
+  // UI: show delete button
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleDeleteReportModal = () => {
+    setStartModal(false);
+  };
+
   return (
     <div>
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
@@ -206,7 +218,12 @@ export const TableReportManagement: React.FC<Props> = ({
                   exit={AnimationStage.HIDDEN}
                   variants={animation}
                 >
-                  <IconButton>
+                  <IconButton
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleClick();
+                    }}
+                  >
                     <FaTrash className="text-red-600 text-xl" />
                   </IconButton>
                 </motion.div>
@@ -223,6 +240,8 @@ export const TableReportManagement: React.FC<Props> = ({
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
+
+      <DeleteReportModal show={startModal} onClose={handleDeleteReportModal} />
     </div>
   );
 };
