@@ -1,14 +1,17 @@
-import { FaPlusCircle, FaTrash } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
+import { FaPlay } from "react-icons/fa6";
+import { Button } from "../../shared/button";
+import { StartTermModal } from "../start-term-modal";
 import clsx from "clsx";
 
 // Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "waiting for approval" | "denied";
+type StatusType = "new" | "approve" | "inProgress" | "closed";
 const renderButton = (status: StatusType) => {
   switch (status) {
     case "new":
@@ -17,22 +20,16 @@ const renderButton = (status: StatusType) => {
           New
         </Tag>
       );
-    case "approve":
+    case "inProgress":
       return (
-        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
-          Reviewed
+        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
+          In progess
         </Tag>
       );
-    case "waiting for approval":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
-          Waiting for approval
-        </Tag>
-      );
-    case "denied":
+    case "closed":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Denied
+          Closed
         </Tag>
       );
     default:
@@ -43,45 +40,40 @@ const renderButton = (status: StatusType) => {
 // Định nghĩa kiểu cho dữ liệu bảng
 type TablePlanDataType = {
   id: number;
-  plan: string;
   term: string;
-  department: string;
-  version: string;
+  startDate: string;
+  endDate: string;
   status: StatusType;
 };
 
 const tablePlanDataList: TablePlanDataType[] = [
   {
     id: 1,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v1",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
     status: "new",
   },
   {
     id: 2,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v2",
-    status: "approve",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
+    status: "inProgress",
   },
   {
     id: 3,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v3",
-    status: "waiting for approval",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
+    status: "closed",
   },
   {
     id: 4,
-    plan: "BU name_termplan",
     term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v4",
-    status: "denied",
+    startDate: "25 December 2021",
+    endDate: "30 December 2021",
+    status: "closed",
   },
 ];
 
@@ -103,12 +95,21 @@ interface Props {
   onCreatePlanClick?: () => any;
 }
 
-export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
+export const TableTermManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
   // Navigation
   const navigate = useNavigate();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleCloseStartTermModal = () => {
+    setStartModal(false);
+  };
 
   return (
     <div>
@@ -119,31 +120,26 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Plan
-            </th>
-            {/* <th scope="col" className="px-6 py-4"></th> */}
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
               Term
             </th>
+            {/* <th></th> */}
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Department
+              Start date
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Version
+              End date
             </th>
+
             <th scope="col">
               <IconButton
                 className="px-3"
-                tooltip="Add new plan"
+                tooltip="Add new term"
                 onClick={() => {
                   onCreatePlanClick && onCreatePlanClick();
                 }}
@@ -161,7 +157,9 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                 "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
                   true,
                 "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
-                  true,
+                  row.status !== "closed",
+                "text-primary-500/70 hover:text-primary-500 dark:text-primary-800 dark:hover:text-primary-600":
+                  row.status === "closed",
                 "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
                   index % 2 === 0,
                 "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
@@ -174,40 +172,53 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
                 setHoverRowIndex(undefined);
               }}
               onClick={() => {
-                navigate("detail/expenses");
+                navigate("detail");
               }}
             >
-              <td className="whitespace-nowrap px-6 py-4 font-medium">
+              <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
                 <div className="flex flex-row flex-wrap">
-                  <p className="font-extrabold py-2 ml-14">{row.plan}</p>
+                  <p className="font-extrabold py-2 ml-14">{row.term}</p>
                   <div>{renderButton(row.status)}</div>
                 </div>
               </td>
-              {/* <td></td> */}
+              {/* <td className="">
+                <div className="flex flex-row flex-wrap">
+                  <div>{renderButton(row.status)}</div>
+                </div>
+              </td> */}
               <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.term}
+                {row.startDate}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.department}
+                {row.endDate}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.version}
-              </td>
+
               <td className="whitespace-nowrap px-6 py-4">
-                <motion.div
-                  initial={AnimationStage.HIDDEN}
-                  animate={
-                    hoverRowIndex === index
-                      ? AnimationStage.VISIBLE
-                      : AnimationStage.HIDDEN
-                  }
-                  exit={AnimationStage.HIDDEN}
-                  variants={animation}
-                >
-                  <IconButton>
-                    <FaTrash className="text-red-600 text-xl" />
-                  </IconButton>
-                </motion.div>
+                {row.status === "new" && (
+                  <motion.div
+                    initial={AnimationStage.HIDDEN}
+                    animate={
+                      hoverRowIndex === index
+                        ? AnimationStage.VISIBLE
+                        : AnimationStage.HIDDEN
+                    }
+                    exit={AnimationStage.HIDDEN}
+                    variants={animation}
+                  >
+                    <Button
+                      className="flex flex-row flex-wrap py-1.5 px-3"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleClick();
+                      }}
+                    >
+                      <FaPlay className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
+                      <div className="text-white dark:text-neutral-300 text-sm font-bold">
+                        Start
+                      </div>
+                    </Button>
+                  </motion.div>
+                )}
               </td>
             </tr>
           ))}
@@ -221,6 +232,8 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
+
+      <StartTermModal show={startModal} onClose={handleCloseStartTermModal} />
     </div>
   );
 };

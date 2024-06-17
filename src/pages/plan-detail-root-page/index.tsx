@@ -4,9 +4,11 @@ import { Tag } from "../../shared/tag";
 import { OverviewCard } from "./ui/overview-card";
 import { FaMoneyBillTrendUp, FaCoins } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export const PlanDetailRootPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="px-6 pb-10">
       <BubbleBanner></BubbleBanner>
@@ -60,6 +62,24 @@ export const PlanDetailRootPage: React.FC = () => {
                 { id: "detail", name: "Detail" },
                 { id: "version", name: "Version" },
               ]}
+              onItemChangeHandler={({ id }) => {
+                switch (id) {
+                  case "expenses":
+                    navigate("./expenses");
+                    break;
+
+                  case "detail":
+                    navigate("./information");
+                    break;
+
+                  case "version":
+                    navigate("./version");
+                    break;
+
+                  default:
+                    break;
+                }
+              }}
             />
           </div>
 

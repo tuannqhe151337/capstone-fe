@@ -4,10 +4,12 @@ import clsx from "clsx";
 import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
 
 type Variant = "primary" | "secondary" | "tertiary" | "quaternary" | "error";
+type ButtonType = "filled" | "outlined";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   variant?: Variant;
+  buttonType?: ButtonType;
   containerClassName?: string;
   className?: string;
 }
@@ -15,6 +17,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button: React.FC<Props> = ({
   children,
   variant = "primary",
+  buttonType = "filled",
   containerClassName,
   className,
   ...props
@@ -47,7 +50,9 @@ export const Button: React.FC<Props> = ({
             "bg-white border-2 dark:bg-transparent text-neutral-400 border-neutral-100 hover:border-neutral-200 dark:border-neutral-700 dark:hover:border-neutral-600":
               variant === "quaternary",
             "text-white dark:text-neutral-200 border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500 dark:bg-red-800 dark:border-red-800 dark:hover:bg-red-700 dark:hover:border-red-700 dark:active:bg-red-700 dark:active:border-red-700 dark:focus:bg-red-700 dark:focus:border-red-700":
-              variant === "error",
+              variant === "error" && buttonType === "filled",
+            "font-bold dark:font-extrabold border-2 text-red-500 bg-white hover:bg-red-50 focus:bg-red-100 border-red-200 active:bg-red-100 dark:text-red-600 dark:bg-transparent dark:border-red-900/60 dark:hover:bg-red-900/50 dark:focus:bg-red-900/50":
+              variant === "error" && buttonType === "outlined",
           },
           className
         )}

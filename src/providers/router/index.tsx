@@ -26,6 +26,18 @@ const router = createBrowserRouter([
           };
         },
       },
+
+      {
+        path: "forgot-password",
+        lazy: async () => {
+          const ForgotPasswordPage = (
+            await import("../../pages/forgot-password-page")
+          ).ForgotPasswordPage;
+          return {
+            element: <ForgotPasswordPage />,
+          };
+        },
+      },
     ],
   },
 
@@ -82,6 +94,30 @@ const router = createBrowserRouter([
                   };
                 },
               },
+              {
+                path: "information",
+                lazy: async () => {
+                  const PlanDetailInformationPage = (
+                    await import("../../pages/plan-detail-information-page")
+                  ).PlanDetailInformationPage;
+
+                  return {
+                    element: <PlanDetailInformationPage />,
+                  };
+                },
+              },
+              {
+                path: "version",
+                lazy: async () => {
+                  const PlanDetailVersionPage = (
+                    await import("../../pages/plan-detail-version-page")
+                  ).PlanDetailVersionPage;
+
+                  return {
+                    element: <PlanDetailVersionPage />,
+                  };
+                },
+              },
             ],
           },
         ],
@@ -100,6 +136,78 @@ const router = createBrowserRouter([
 
               return {
                 element: <UserManagementListPage />,
+              };
+            },
+          },
+
+          {
+            path: "detail",
+            lazy: async () => {
+              const UserDetailPage = (
+                await import("../../pages/user-detail-page")
+              ).UserDetail;
+
+              return {
+                element: <UserDetailPage />,
+              };
+            },
+          },
+
+          {
+            path: "create",
+            lazy: async () => {
+              const UserCreate = (await import("../../pages/user-create-page"))
+                .UserCreate;
+
+              return {
+                element: <UserCreate />,
+              };
+            },
+          },
+
+          {
+            path: "edit",
+            lazy: async () => {
+              const UserEdit = (await import("../../pages/user-edit-page"))
+                .UserEdit;
+
+              return {
+                element: <UserEdit />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Profile pages
+      {
+        path: "profile",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProfilePage = (await import("../../pages/profile")).Profile;
+              return {
+                element: <ProfilePage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Term management pages
+      {
+        path: "term-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const TermManagementListPage = (
+                await import("../../pages/term-management-list")
+              ).TermManagementList;
+
+              return {
+                element: <TermManagementListPage />,
               };
             },
           },

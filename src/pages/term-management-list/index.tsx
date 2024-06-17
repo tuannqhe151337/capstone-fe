@@ -1,11 +1,9 @@
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { ListUserFiler } from "../../widgets/list-user-filter";
-import { HiUserAdd } from "react-icons/hi";
-import { TableUserManagement } from "../../widgets/user-plan";
-import { motion, Variants } from "framer-motion";
-import { Link, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Variants, motion } from "framer-motion";
+import { IoIosAddCircle } from "react-icons/io";
+import { TableTermManagement } from "../../widgets/table-term";
+import { ListTermFiler } from "../../widgets/list-term-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -41,9 +39,7 @@ const childrenAnimation: Variants = {
   },
 };
 
-export const UserManagementList: React.FC = () => {
-  const navigate = useNavigate();
-
+export const TermManagementList: React.FC = () => {
   return (
     <motion.div
       className="px-6 pb-10"
@@ -55,17 +51,14 @@ export const UserManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            User management
+            Term management
           </p>
           <div className="ml-auto">
-            <Button
-              onClick={() => {
-                navigate(`/user-management/create`);
-              }}
-            >
-              <div className="flex flex-row flex-wrap items-center gap-2">
-                <HiUserAdd className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">Add new user</p>
+            <Button>
+              <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
+                <IoIosAddCircle className="text-2xl -mt-0.5" />
+
+                <p className="text-sm font-bold">Add new term</p>
               </div>
             </Button>
           </div>
@@ -73,11 +66,11 @@ export const UserManagementList: React.FC = () => {
       </BubbleBanner>
 
       <motion.div variants={childrenAnimation}>
-        <ListUserFiler />
+        <ListTermFiler />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TableUserManagement />
+        <TableTermManagement />
       </motion.div>
     </motion.div>
   );

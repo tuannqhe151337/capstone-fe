@@ -1,4 +1,4 @@
-import { FaPlusCircle, FaTrash } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
@@ -7,6 +7,9 @@ import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
 import { TableCellName } from "./ui/table-cell-name";
 import { TableCellIcon } from "./ui/table-cell-icon";
+import { useNavigate } from "react-router-dom";
+import { ActiveConfirmModal } from "../user-active-confirm-modal";
+import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
 
 // Định nghĩa kiểu cho dữ liệu bảng
 type Status = "active" | "de-active";
@@ -83,7 +86,28 @@ const animation: Variants = {
 };
 
 export const TableUserManagement: React.FC = () => {
+  // Navigation
+  const navigate = useNavigate();
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+
+  const [activeModal, setActiveModal] = useState<boolean>(false);
+  const [deactiveModal, setDeactiveModal] = useState<boolean>(false);
+
+  const handleIconClick = (status: Status) => {
+    if (status !== "active") {
+      setActiveModal(true);
+    } else {
+      setDeactiveModal(true);
+    }
+  };
+
+  const handleCloseActiveModal = () => {
+    setActiveModal(false);
+  };
+
+  const handleCloseDeactiveModal = () => {
+    setDeactiveModal(false);
+  };
 
   return (
     <div>
@@ -127,7 +151,13 @@ export const TableUserManagement: React.FC = () => {
               Position
             </th>
             <th scope="col">
-              <IconButton className="px-3">
+              <IconButton
+                className="px-3"
+                tooltip="Add new user"
+                onClick={() => {
+                  navigate(`/user-management/create`);
+                }}
+              >
                 <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
               </IconButton>
             </th>
@@ -138,21 +168,26 @@ export const TableUserManagement: React.FC = () => {
             <tr
               key={row.id}
               className={clsx({
-                "group border-b cursor-pointer duration-200": true,
-                "bg-white hover:bg-primary-50/50 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800":
-                  index % 2 === 0 && row.status === "active",
-                "bg-primary-50 hover:bg-primary-100 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70":
-                  index % 2 !== 0 && row.status === "active",
-                "bg-white/70 opacity-80 hover:opacity-1 dark:opacity-70 dark:hover:opacity-1 dark:border-neutral-900 dark:bg-neutral-800/70 dark:hover:bg-neutral-800":
-                  index % 2 === 0 && row.status === "de-active",
-                "bg-primary-50 opacity-80 hover:opacity-1 dark:opacity-70 dark:hover:opacity-1 dark:border-neutral-900 dark:bg-primary-950/30 dark:hover:bg-primary-950/70":
-                  index % 2 !== 0 && row.status === "de-active",
+                "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
+                  true,
+                "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                  row.status !== "de-active",
+                "text-primary-500/70 hover:text-primary-500 dark:text-primary-800 dark:hover:text-primary-600":
+                  row.status === "de-active",
+                "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                  index % 2 === 0,
+                "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                  index % 2 === 1,
               })}
               onMouseEnter={() => {
                 setHoverRowIndex(index);
               }}
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
+              }}
+              onClick={(event) => {
+                event.stopPropagation();
+                navigate("detail");
               }}
             >
               <TableCell status={row.status}>{row.id}</TableCell>
@@ -165,6 +200,7 @@ export const TableUserManagement: React.FC = () => {
                 index={index}
                 hoverRowIndex={hoverRowIndex}
                 status={row.status}
+                onIconClick={() => handleIconClick(row.status)}
               ></TableCellIcon>
             </tr>
           ))}
@@ -178,6 +214,12 @@ export const TableUserManagement: React.FC = () => {
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
+
+      <ActiveConfirmModal show={activeModal} onClose={handleCloseActiveModal} />
+      <DeactiveConfirmModal
+        show={deactiveModal}
+        onClose={handleCloseDeactiveModal}
+      />
     </div>
   );
 };

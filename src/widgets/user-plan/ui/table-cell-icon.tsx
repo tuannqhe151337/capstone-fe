@@ -1,6 +1,5 @@
 import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../../shared/icon-button";
-import { FaCheckCircle, FaTrash } from "react-icons/fa";
 import { FaPowerOff } from "react-icons/fa6";
 import { LuPowerOff } from "react-icons/lu";
 
@@ -10,6 +9,7 @@ interface Props {
   index: number;
   hoverRowIndex?: number;
   status: Status;
+  onIconClick: () => void;
 }
 
 enum AnimationStage {
@@ -36,6 +36,7 @@ export const TableCellIcon: React.FC<Props> = ({
   index,
   hoverRowIndex,
   status,
+  onIconClick,
 }) => (
   <td className="whitespace-nowrap px-6 py-4">
     <motion.div
@@ -46,7 +47,13 @@ export const TableCellIcon: React.FC<Props> = ({
       exit={AnimationStage.HIDDEN}
       variants={animation}
     >
-      <IconButton>
+      <IconButton
+        tooltip={status === "active" ? "Deactivate user" : "Activate user"}
+        onClick={(event) => {
+          event.stopPropagation();
+          onIconClick();
+        }}
+      >
         {status === "active" ? (
           // <FaTrash className="text-red-600 text-xl" />
           <LuPowerOff className="text-red-600 text-xl" />
