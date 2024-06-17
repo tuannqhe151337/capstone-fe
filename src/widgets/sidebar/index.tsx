@@ -82,7 +82,7 @@ export const Sidebar = () => {
 
         {/* Financial report */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/report-management`}>
             <Tab
               icon={<HiDocumentReport className="text-3xl -ml-1" />}
               text={t("Financial report")}

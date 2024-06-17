@@ -214,6 +214,25 @@ const router = createBrowserRouter([
         ],
       },
 
+      // Financial Report pages
+      {
+        path: "report-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ReportManagementListPage = (
+                await import("../../pages/report-management-page")
+              ).ReportManagementList;
+
+              return {
+                element: <ReportManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
       // Profile pages
       {
         path: "profile",
