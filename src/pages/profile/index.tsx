@@ -6,9 +6,12 @@ import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { FaCircleUser } from "react-icons/fa6";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { Checkbox } from "../../shared/checkbox";
+import { Switch } from "../../shared/switch";
 
 interface TermOption {
-  value: number;
+  value: string | number;
   label: string;
 }
 
@@ -116,20 +119,10 @@ const childrenAnimation: Variants = {
   },
 };
 
-// Profile data object
-const profileData = {
-  name: "Nguyễn Lan Anh",
-  username: "AnhNL2",
-  role: "Accountant",
-  position: "Techlead",
-  department: "Department 1",
-  phone: "0983231234",
-  email: "user@email.com",
-  dateOfBirth: "29 December 2002",
-  address: "22 Avenue Street",
-};
-
 export const Profile: React.FC = () => {
+  // Get data
+  const { data } = useMeQuery();
+
   // Select state
   const [selectedOptionTerm, setSelectedOptionTerm] =
     useState<TermOption | null>(defaultOptionTerm);
@@ -177,8 +170,21 @@ export const Profile: React.FC = () => {
           className="flex flex-row w-full gap-4 h-max"
           variants={childrenAnimation}
         >
-          <UserAvatarCard className="w-1/3" user={profileData} />
-          <UserDetailCard className="w-2/3 " user={profileData} />
+          <UserAvatarCard
+            className="w-1/3"
+            username={data?.username || ""}
+            role={data?.role.name || ""}
+            position={data?.position.name || ""}
+            department={data?.department.name || ""}
+          />
+          <UserDetailCard
+            className="w-2/3"
+            address={data?.address || ""}
+            dateOfBirth={data?.dob || ""}
+            email={data?.email || ""}
+            fullName={data?.fullName || ""}
+            phone={data?.phoneNumber || ""}
+          />
         </motion.div>
 
         <motion.div
@@ -189,80 +195,90 @@ export const Profile: React.FC = () => {
             Settings
           </p>
 
-          <motion.div
-            className="flex gap-3 mt-3"
-            initial={AnimationStage.HIDDEN}
-            animate={AnimationStage.VISIBLE}
-            exit={AnimationStage.HIDDEN}
-            variants={staggerChildrenAnimation}
-          >
-            <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-              Language
-            </p>
-            <motion.div variants={childrenAnimation} className="ml-10 mt-5 ">
-              <AsyncPaginate
-                className="w-[200px] cursor-pointer "
-                value={selectedOptionTerm}
-                onChange={(value) => setSelectedOptionTerm(value)}
-                options={[defaultOptionTerm]}
-                loadOptions={loadTermOptions}
-                classNamePrefix="custom-select"
-              />
-            </motion.div>
-          </motion.div>
+          {data && (
+            <>
+              <motion.div
+                className="flex gap-3 mt-3"
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+                variants={staggerChildrenAnimation}
+              >
+                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                  Language
+                </p>
+                <motion.div
+                  variants={childrenAnimation}
+                  className="ml-10 mt-5 "
+                >
+                  <AsyncPaginate
+                    className="w-[200px] cursor-pointer"
+                    value={{
+                      value: data.settings.language,
+                      label: data.settings.language,
+                    }}
+                    onChange={(value) => setSelectedOptionTerm(value)}
+                    options={[defaultOptionTerm]}
+                    loadOptions={loadTermOptions}
+                    classNamePrefix="custom-select"
+                  />
+                </motion.div>
+              </motion.div>
 
-          <motion.div
-            className="flex gap-3"
-            initial={AnimationStage.HIDDEN}
-            animate={AnimationStage.VISIBLE}
-            exit={AnimationStage.HIDDEN}
-            variants={staggerChildrenAnimation}
-          >
-            <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-              Theme
-            </p>
-            <motion.div variants={childrenAnimation} className="ml-10 mt-5">
-              <AsyncPaginate
-                className="w-[200px] cursor-pointer"
-                value={selectedOptionTerm}
-                onChange={(value) => setSelectedOptionTerm(value)}
-                options={[defaultOptionTerm]}
-                loadOptions={loadTermOptions}
-                classNamePrefix="custom-select"
-              />
-            </motion.div>
-          </motion.div>
+              <motion.div
+                className="flex gap-3"
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+                variants={staggerChildrenAnimation}
+              >
+                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                  Theme
+                </p>
+                <motion.div variants={childrenAnimation} className="ml-10 mt-5">
+                  <AsyncPaginate
+                    className="w-[200px] cursor-pointer"
+                    value={{
+                      value: data.settings.theme,
+                      label: data.settings.theme,
+                    }}
+                    onChange={(value) => setSelectedOptionTerm(value)}
+                    options={[defaultOptionTerm]}
+                    loadOptions={loadTermOptions}
+                    classNamePrefix="custom-select"
+                  />
+                </motion.div>
+              </motion.div>
 
-          <motion.div
-            className="flex gap-3"
-            initial={AnimationStage.HIDDEN}
-            animate={AnimationStage.VISIBLE}
-            exit={AnimationStage.HIDDEN}
-            variants={staggerChildrenAnimation}
-          >
-            <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-              Mode
-            </p>
-            <motion.div variants={childrenAnimation} className="ml-10 mt-5">
-              <AsyncPaginate
-                className="w-[200px] cursor-pointer"
-                value={selectedOptionTerm}
-                onChange={(value) => setSelectedOptionTerm(value)}
-                options={[defaultOptionTerm]}
-                loadOptions={loadTermOptions}
-                classNamePrefix="custom-select"
-              />
-            </motion.div>
-          </motion.div>
+              <motion.div
+                className="flex gap-3"
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+                variants={staggerChildrenAnimation}
+              >
+                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                  Mode
+                </p>
+                <motion.div variants={childrenAnimation} className="ml-10 mt-5">
+                  <Switch
+                    size="lg"
+                    checked={data.settings.darkMode}
+                    onChange={() => {}}
+                  />
+                </motion.div>
+              </motion.div>
 
-          <div>
-            <p className="mt-12 font-bold opacity-40 inline-block dark:opacity-30">
-              Need to change password?{" "}
-            </p>
-            <span className="ml-2 inline-block font-bold text-primary-500 underline dark:text-primary-700">
-              <a href="">Click here</a>
-            </span>
-          </div>
+              <div>
+                <p className="mt-12 font-bold opacity-40 inline-block dark:opacity-30">
+                  Need to change password?{" "}
+                </p>
+                <span className="ml-2 inline-block font-bold text-primary-500 underline dark:text-primary-700">
+                  <a href="">Click here</a>
+                </span>
+              </div>
+            </>
+          )}
         </motion.div>
       </motion.div>
     </div>
