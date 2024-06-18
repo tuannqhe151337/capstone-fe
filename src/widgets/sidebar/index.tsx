@@ -58,7 +58,7 @@ export const Sidebar = () => {
 
         {/* Annual report */}
         <div>
-          <Link to={`/`}>
+          <Link to={`/annual-report`}>
             <Tab
               icon={<FaChartPie className="text-2xl" />}
               text={t("Annual Report")}
