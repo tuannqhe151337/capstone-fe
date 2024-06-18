@@ -1,11 +1,19 @@
 import { TERipple, TEInput } from "tw-elements-react";
-import { Variants, motion } from "framer-motion";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
+import { useState } from "react";
+import { Button } from "../../shared/button";
+import {
+  LocalStorageItemKey,
+  useLoginMutation,
+} from "../../providers/store/api/authApi";
+import { FaCircleExclamation } from "react-icons/fa6";
+import { CgSpinner } from "react-icons/cg";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -56,8 +64,61 @@ const imageAnimation: Variants = {
   },
 };
 
+const errorMessageAnimation: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+  },
+};
+
+const heightPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.5,
+    },
+  },
+  visible: {
+    height: 60,
+  },
+};
+
 export const LoginPage: React.FC = () => {
+  // Navigate
+  const navigate = useNavigate();
+
+  // Use translation
   const { t } = useTranslation(["login"]);
+
+  // Mutation
+  const [login, { isLoading, isError }] = useLoginMutation();
+
+  // Username input state
+  const [username, setUsername] = useState<string>("");
+  const [isUsernameDirty, setIsUsernameDirty] = useState<boolean>(false);
+
+  // Password input state
+  const [password, setPassword] = useState<string>("");
+  const [isPasswordDirty, setIsPasswordDirty] = useState<boolean>(false);
+
+  // Handling submit
+  const handleSubmit = async () => {
+    if (username !== "" && password !== "") {
+      const { data } = await login({ username, password });
+
+      if (data) {
+        localStorage.setItem(LocalStorageItemKey.TOKEN, data.token);
+        localStorage.setItem(
+          LocalStorageItemKey.REFRESH_TOKEN,
+          data.refreshToken
+        );
+
+        navigate("/");
+      }
+    }
+  };
 
   return (
     <div className="flex flex-row flex-wrap w-full">
@@ -96,45 +157,132 @@ export const LoginPage: React.FC = () => {
         <div className="flex-1 z-10">
           <div className="flex justify-center items-center h-full">
             <motion.div
-              className="w-[560px] "
+              className="w-[560px]"
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               variants={staggerChildrenAnimation}
             >
+              {/* Title */}
               <motion.div
                 variants={childrenAnimation}
-                className="mb-8 font-bold text-center text-3xl text-primary-500"
+                className="mb-4 font-bold text-center text-3xl text-primary-500"
               >
                 {t("login")}
               </motion.div>
 
+              <div className="relative w-full">
+                <AnimatePresence>
+                  {!isLoading && isError && (
+                    <div className="absolute w-full">
+                      <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+                        <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+                        <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+                          Wrong username or password
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </AnimatePresence>
+
+                <motion.div
+                  initial={AnimationStage.HIDDEN}
+                  animate={
+                    isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+                  }
+                  variants={heightPlaceholderAnimation}
+                />
+              </div>
+
+              {/* Username input */}
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="text"
                   label="Username"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900 "
+                  className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
-                ></TEInput>
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.currentTarget.value);
+                  }}
+                  onKeyDown={(e) => {
+                    if (!isUsernameDirty) {
+                      setIsUsernameDirty(true);
+                    }
+
+                    if (e.key === "Enter") {
+                      handleSubmit();
+                    }
+                  }}
+                />
               </motion.div>
 
+              <motion.div
+                className="pl-3 mb-3 text-sm text-red-500 font-semibold"
+                initial={AnimationStage.HIDDEN}
+                animate={
+                  username === "" && isUsernameDirty
+                    ? AnimationStage.VISIBLE
+                    : AnimationStage.HIDDEN
+                }
+                variants={errorMessageAnimation}
+              >
+                Username can not be empty.
+              </motion.div>
+
+              {/* Password input */}
               <motion.div variants={childrenAnimation}>
                 <TEInput
-                  type="text"
+                  type="password"
                   label="Password"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                ></TEInput>
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.currentTarget.value);
+                  }}
+                  onKeyDown={async (e) => {
+                    if (!isPasswordDirty) {
+                      setIsPasswordDirty(true);
+                    }
+
+                    if (e.key === "Enter") {
+                      await handleSubmit();
+                    }
+                  }}
+                />
               </motion.div>
 
+              <motion.div
+                className="pl-3 mb-3 text-sm text-red-500 font-semibold"
+                initial={AnimationStage.HIDDEN}
+                animate={
+                  password === "" && isPasswordDirty
+                    ? AnimationStage.VISIBLE
+                    : AnimationStage.HIDDEN
+                }
+                variants={errorMessageAnimation}
+              >
+                Password can not be empty.
+              </motion.div>
+
+              {/* Submit button */}
               <motion.div className="mt-5" variants={childrenAnimation}>
                 <TERipple className="w-full">
-                  <button
+                  <Button
                     type="button"
-                    className="!p-3 w-full inline-block rounded bg-primary-500 px-6 pb-2 pt-2.5 text-xs font-semibold uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+                    containerClassName="w-full"
+                    className="h-[45px]"
+                    disabled={username === "" || password === "" || isLoading}
+                    onClick={async () => {
+                      await handleSubmit();
+                    }}
                   >
-                    {t("login")}
-                  </button>
+                    {!isLoading && t("login")}
+                    {isLoading && (
+                      <CgSpinner className="m-auto text-lg animate-spin" />
+                    )}
+                  </Button>
                 </TERipple>
               </motion.div>
             </motion.div>

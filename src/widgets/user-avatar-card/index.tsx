@@ -36,21 +36,20 @@ const childrenAnimation: Variants = {
   },
 };
 
-export interface UserDetail {
+interface Props {
+  className?: string;
   username: string;
   role: string;
   position: string;
   department: string;
 }
 
-interface Props {
-  className?: string;
-  user: UserDetail;
-}
-
 export const UserAvatarCard: React.FC<Props> = ({
   className,
-  user: { username, role, position, department },
+  username,
+  role,
+  position,
+  department,
 }) => {
   return (
     <motion.div

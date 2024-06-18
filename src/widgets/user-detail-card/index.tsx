@@ -40,23 +40,23 @@ const childrenAnimation: Variants = {
   },
 };
 
-export interface UserDetail {
-  name: string;
+interface Props {
+  className?: string;
+  fullName: string;
   phone: string;
   email: string;
   dateOfBirth: string;
   address: string;
-}
-
-interface Props {
-  className?: string;
-  user: UserDetail;
   actionComponent?: React.ReactNode;
 }
 
 export const UserDetailCard: React.FC<Props> = ({
   className,
-  user: { name, phone, email, dateOfBirth, address },
+  fullName,
+  phone,
+  email,
+  dateOfBirth,
+  address,
   actionComponent,
 }) => {
   return (
@@ -80,7 +80,7 @@ export const UserDetailCard: React.FC<Props> = ({
               Full name
             </div>
             <div className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {name}
+              {fullName}
             </div>
           </div>
         </motion.div>
