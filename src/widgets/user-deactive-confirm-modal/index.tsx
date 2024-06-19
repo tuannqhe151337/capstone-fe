@@ -33,7 +33,7 @@ export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="flex flex-row flex-wrap items-center justify-center size-[100px] bg-red-100 dark:bg-red-900/50 rounded-full">
             <FaExclamation className="text-[42px] text-red-500/80 dark:text-red-700/80" />
           </div>
-          <div className="font-bold dark:font-extrabold text-2xl text-neutral-400 dark:text-neutral-500/70 mt-5">
+          <div className="font-bold dark:font-extrabold text-2xl text-neutral-400 dark:text-neutral-400/60 mt-5">
             Deactivate user
           </div>
           <div className="font-semibold dark:font-bold text-neutral-400 dark:text-neutral-500 mt-5">

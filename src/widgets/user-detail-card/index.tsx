@@ -5,6 +5,8 @@ import { HiOutlineMailOpen } from "react-icons/hi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { cn } from "../../shared/utils/cn";
 import React from "react";
+import { formatISODate } from "../../shared/utils/format-iso-date";
+import { UserListItem } from "./ui/user-list-item";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,6 +44,7 @@ const childrenAnimation: Variants = {
 
 interface Props {
   className?: string;
+  isLoading?: boolean;
   fullName: string;
   phone: string;
   email: string;
@@ -52,6 +55,7 @@ interface Props {
 
 export const UserDetailCard: React.FC<Props> = ({
   className,
+  isLoading,
   fullName,
   phone,
   email,
@@ -70,75 +74,50 @@ export const UserDetailCard: React.FC<Props> = ({
       exit={AnimationStage.HIDDEN}
       variants={staggerChildrenAnimation}
     >
-      <div className="flex-1">
-        <motion.div className="flex gap-4 mt-2" variants={childrenAnimation}>
-          <div className="w-1/12 pt-3 pl-4">
-            <FaUser className="text-xl opacity-40 dark:opacity-30" />
-          </div>
-          <div className="w-11/12">
-            <div className="font-bold text-sm opacity-40 dark:opacity-30">
-              Full name
-            </div>
-            <div className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {fullName}
-            </div>
-          </div>
+      <div className="flex-1 space-y-4">
+        <motion.div className="mt-2" variants={childrenAnimation}>
+          <UserListItem
+            isLoading={isLoading}
+            icon={<FaUser />}
+            label="Full name"
+            value={fullName}
+          />
         </motion.div>
 
-        <motion.div className="flex gap-4 mt-4" variants={childrenAnimation}>
-          <div className="w-1/12 pt-3 pl-4">
-            <FaPhoneAlt className="text-xl opacity-40 dark:opacity-30" />
-          </div>
-          <div className="w-11/12">
-            <p className="font-bold text-sm opacity-40 dark:opacity-30">
-              Phone
-            </p>
-            <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {phone}
-            </p>
-          </div>
+        <motion.div variants={childrenAnimation}>
+          <UserListItem
+            isLoading={isLoading}
+            icon={<FaPhoneAlt />}
+            label="Phone"
+            value={phone}
+          />
         </motion.div>
 
-        <motion.div className="flex gap-4 mt-4" variants={childrenAnimation}>
-          <div className="w-1/12 pt-3 pl-3">
-            <HiOutlineMailOpen className="text-2xl opacity-40 dark:opacity-30" />
-          </div>
-          <div className="w-11/12">
-            <p className="font-bold text-sm opacity-40 dark:opacity-30">
-              Email
-            </p>
-            <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {email}
-            </p>
-          </div>
+        <motion.div variants={childrenAnimation}>
+          <UserListItem
+            isLoading={isLoading}
+            icon={<HiOutlineMailOpen />}
+            label="Email"
+            value={email}
+          />
         </motion.div>
 
-        <motion.div className="flex gap-4 mt-4" variants={childrenAnimation}>
-          <div className="w-1/12 pt-2 pl-2">
-            <LiaBirthdayCakeSolid className="text-3xl opacity-40 dark:opacity-30" />
-          </div>
-          <div className="w-11/12">
-            <p className="font-bold text-sm opacity-40 dark:opacity-30">
-              Date of birth
-            </p>
-            <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {dateOfBirth}
-            </p>
-          </div>
+        <motion.div variants={childrenAnimation}>
+          <UserListItem
+            isLoading={isLoading}
+            icon={<LiaBirthdayCakeSolid />}
+            label="Date of birth"
+            value={formatISODate(dateOfBirth)}
+          />
         </motion.div>
 
-        <motion.div className="flex gap-4 mt-4" variants={childrenAnimation}>
-          <div className="w-1/12 pt-2 pl-3">
-            <FaLocationDot className="text-2xl opacity-40 dark:opacity-30" />
-          </div>
-          <div className="w-11/12">
-            <p className="font-bold text-sm opacity-40 dark:opacity-30">
-              Address
-            </p>
-            <p className="text-xm font-bold opacity-80 dark:opacity-60 mt-1">
-              {address}
-            </p>
-          </div>
+        <motion.div variants={childrenAnimation}>
+          <UserListItem
+            isLoading={isLoading}
+            icon={<FaLocationDot />}
+            label="Address"
+            value={address}
+          />
         </motion.div>
       </div>
       <div>{actionComponent}</div>
