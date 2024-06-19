@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { TermDetailRootPage } from "../../pages/term-detail-root-page";
 
 const router = createBrowserRouter([
   // Auth pages
@@ -210,6 +211,56 @@ const router = createBrowserRouter([
                 element: <TermManagementListPage />,
               };
             },
+          },
+          {
+            path: "detail",
+            lazy: async () => {
+              const TermDetailRootPage = (
+                await import("../../pages/term-detail-root-page")
+              ).TermDetailRootPage;
+
+              return {
+                element: <TermDetailRootPage />,
+              };
+            },
+            children: [
+              {
+                path: "information",
+                lazy: async () => {
+                  const TermDetailInformationPage = (
+                    await import("../../pages/term-detail-information-page")
+                  ).TermDetailInformationPage;
+
+                  return {
+                    element: <TermDetailInformationPage />,
+                  };
+                },
+              },
+              {
+                path: "plan",
+                lazy: async () => {
+                  const TermDetailPlanPage = (
+                    await import("../../pages/term-detail-plan-page")
+                  ).TermDetailPlanPage;
+
+                  return {
+                    element: <TermDetailPlanPage />,
+                  };
+                },
+              },
+              {
+                path: "report",
+                lazy: async () => {
+                  const TermDetailReportPage = (
+                    await import("../../pages/term-detail-report-page")
+                  ).TermDetailReportPage;
+
+                  return {
+                    element: <TermDetailReportPage />,
+                  };
+                },
+              },
+            ],
           },
         ],
       },

@@ -1,7 +1,7 @@
 import { TERipple, TEInput } from "tw-elements-react";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
@@ -254,7 +254,7 @@ export const LoginPage: React.FC = () => {
               </motion.div>
 
               <motion.div
-                className="pl-3 text-sm text-red-500 font-semibold"
+                className="pl-3 mb-3 text-sm text-red-500 font-semibold"
                 initial={AnimationStage.HIDDEN}
                 animate={
                   password === "" && isPasswordDirty
@@ -264,13 +264,6 @@ export const LoginPage: React.FC = () => {
                 variants={errorMessageAnimation}
               >
                 Password can not be empty.
-              </motion.div>
-
-              <motion.div
-                className="text-right font-bold text-primary-500 hover:text-primary-600 underline dark:text-primary-700 dark:hover:text-primary-600 duration-200"
-                variants={childrenAnimation}
-              >
-                <Link to={`/auth/forgot-password`}>Forgot password?</Link>
               </motion.div>
 
               {/* Submit button */}

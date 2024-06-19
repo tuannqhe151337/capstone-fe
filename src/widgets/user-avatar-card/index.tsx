@@ -1,7 +1,6 @@
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { FaCircleUser } from "react-icons/fa6";
 import { cn } from "../../shared/utils/cn";
-import { useEffect, useState } from "react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -37,18 +36,8 @@ const childrenAnimation: Variants = {
   },
 };
 
-const animation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-  },
-};
-
 interface Props {
   className?: string;
-  isLoading?: boolean;
   username: string;
   role: string;
   position: string;
@@ -57,20 +46,11 @@ interface Props {
 
 export const UserAvatarCard: React.FC<Props> = ({
   className,
-  isLoading,
   username,
   role,
   position,
   department,
 }) => {
-  const [asdf, setAsdf] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAsdf(false);
-    }, 2000);
-  }, []);
-
   return (
     <motion.div
       className={cn(
@@ -87,106 +67,22 @@ export const UserAvatarCard: React.FC<Props> = ({
       </div>
 
       <motion.div
-        className="relative h-[35px] mt-4"
+        className="mt-4 text-primary-600/80 font-extrabold text-2xl text-center dark:text-primary-600"
         variants={childrenAnimation}
       >
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              className="absolute w-full"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              <div className="w-[120px] h-[35px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {!isLoading && (
-            <motion.p
-              className="absolute w-full text-primary-600/80 font-extrabold text-2xl text-center dark:text-primary-600"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              {username}
-            </motion.p>
-          )}
-        </AnimatePresence>
+        {username}
       </motion.div>
-
       <motion.div
-        className="relative h-[35px] mt-4"
+        className="mt-4 py-2 bg-primary-500 text-center text-white font-bold mx-auto w-1/2 rounded dark:bg-primary-800 dark:text-white/80"
         variants={childrenAnimation}
       >
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              className="absolute w-full"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              <div className="w-[180px] h-[35px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {!isLoading && (
-            <motion.div
-              className="absolute w-full"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              <p className="w-1/2 py-2 bg-primary-500 text-center text-white font-bold mx-auto rounded dark:bg-primary-800 dark:text-white/80">
-                {role}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {role}
       </motion.div>
-
       <motion.div
-        className="relative mt-4 h-[28px]"
+        className="mt-4 opacity-40 text-neutral-400/70 font-bold text-lg text-center dark:opacity-60"
         variants={childrenAnimation}
       >
-        <AnimatePresence>
-          {isLoading && (
-            <motion.div
-              className="absolute w-full"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              <div className="w-[300px] h-[24px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {!isLoading && (
-            <motion.div
-              className="absolute w-full"
-              variants={animation}
-              initial={AnimationStage.HIDDEN}
-              animate={AnimationStage.VISIBLE}
-              exit={AnimationStage.HIDDEN}
-            >
-              <p className="text-neutral-400/70 font-bold text-lg text-center dark:opacity-60">
-                {position} at {department}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {position} at {department}
       </motion.div>
     </motion.div>
   );

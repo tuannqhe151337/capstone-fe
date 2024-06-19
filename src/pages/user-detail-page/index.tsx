@@ -1,6 +1,10 @@
 // import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { BubbleBanner } from "../../entities/bubble-banner";
+import { FaCircleUser, FaLocationDot, FaUpload, FaUser } from "react-icons/fa6";
+import { FaPhoneAlt } from "react-icons/fa";
+import { HiOutlineMailOpen } from "react-icons/hi";
+import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { Button } from "../../shared/button";
 import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
@@ -55,7 +59,6 @@ const userDetailData = {
 };
 
 export const UserDetail: React.FC = () => {
-  // Navigate
   const navigate = useNavigate();
 
   return (
