@@ -214,6 +214,44 @@ const router = createBrowserRouter([
         ],
       },
 
+      // Financial Report pages
+      {
+        path: "report-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ReportManagementListPage = (
+                await import("../../pages/report-management-page")
+              ).ReportManagementList;
+
+              return {
+                element: <ReportManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Financial Report pages
+      {
+        path: "annual-report",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const AnnualReportListPage = (
+                await import("../../pages/annual-report-page")
+              ).AnnualReportList;
+
+              return {
+                element: <AnnualReportListPage />,
+              };
+            },
+          },
+        ],
+      },
+
       // Profile pages
       {
         path: "profile",
