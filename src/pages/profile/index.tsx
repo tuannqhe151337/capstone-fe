@@ -3,12 +3,11 @@ import { motion, Variants } from "framer-motion";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { useState } from "react";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
-import { FaCircleUser } from "react-icons/fa6";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { useMeQuery } from "../../providers/store/api/authApi";
-import { Checkbox } from "../../shared/checkbox";
 import { Switch } from "../../shared/switch";
+import { Link } from "react-router-dom";
 
 interface TermOption {
   value: string | number;
@@ -109,11 +108,11 @@ const staggerChildrenAnimation: Variants = {
 };
 
 const childrenAnimation: Variants = {
-  hidden: {
+  [AnimationStage.HIDDEN]: {
     opacity: 0,
     y: 10,
   },
-  visible: {
+  [AnimationStage.VISIBLE]: {
     opacity: 1,
     y: 0,
   },
@@ -121,7 +120,7 @@ const childrenAnimation: Variants = {
 
 export const Profile: React.FC = () => {
   // Get data
-  const { data } = useMeQuery();
+  const { data, isLoading } = useMeQuery();
 
   // Select state
   const [selectedOptionTerm, setSelectedOptionTerm] =
@@ -172,6 +171,7 @@ export const Profile: React.FC = () => {
         >
           <UserAvatarCard
             className="w-1/3"
+            isLoading={isLoading}
             username={data?.username || ""}
             role={data?.role.name || ""}
             position={data?.position.name || ""}
@@ -179,6 +179,7 @@ export const Profile: React.FC = () => {
           />
           <UserDetailCard
             className="w-2/3"
+            isLoading={isLoading}
             address={data?.address || ""}
             dateOfBirth={data?.dob || ""}
             email={data?.email || ""}
@@ -195,90 +196,80 @@ export const Profile: React.FC = () => {
             Settings
           </p>
 
-          {data && (
-            <>
-              <motion.div
-                className="flex gap-3 mt-3"
-                initial={AnimationStage.HIDDEN}
-                animate={AnimationStage.VISIBLE}
-                exit={AnimationStage.HIDDEN}
-                variants={staggerChildrenAnimation}
-              >
-                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-                  Language
-                </p>
+          <motion.div
+            initial={AnimationStage.HIDDEN}
+            animate={AnimationStage.VISIBLE}
+            exit={AnimationStage.HIDDEN}
+            variants={staggerChildrenAnimation}
+          >
+            {data && (
+              <>
                 <motion.div
+                  className="flex gap-3 mt-3"
                   variants={childrenAnimation}
-                  className="ml-10 mt-5 "
                 >
-                  <AsyncPaginate
-                    className="w-[200px] cursor-pointer"
-                    value={{
-                      value: data.settings.language,
-                      label: data.settings.language,
-                    }}
-                    onChange={(value) => setSelectedOptionTerm(value)}
-                    options={[defaultOptionTerm]}
-                    loadOptions={loadTermOptions}
-                    classNamePrefix="custom-select"
-                  />
+                  <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                    Language
+                  </p>
+                  <div className="ml-10 mt-5">
+                    <AsyncPaginate
+                      className="w-[200px] cursor-pointer"
+                      value={{
+                        value: data.settings.language,
+                        label: data.settings.language,
+                      }}
+                      onChange={(value) => setSelectedOptionTerm(value)}
+                      options={[defaultOptionTerm]}
+                      loadOptions={loadTermOptions}
+                      classNamePrefix="custom-select"
+                    />
+                  </div>
                 </motion.div>
-              </motion.div>
 
-              <motion.div
-                className="flex gap-3"
-                initial={AnimationStage.HIDDEN}
-                animate={AnimationStage.VISIBLE}
-                exit={AnimationStage.HIDDEN}
-                variants={staggerChildrenAnimation}
-              >
-                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-                  Theme
-                </p>
-                <motion.div variants={childrenAnimation} className="ml-10 mt-5">
-                  <AsyncPaginate
-                    className="w-[200px] cursor-pointer"
-                    value={{
-                      value: data.settings.theme,
-                      label: data.settings.theme,
-                    }}
-                    onChange={(value) => setSelectedOptionTerm(value)}
-                    options={[defaultOptionTerm]}
-                    loadOptions={loadTermOptions}
-                    classNamePrefix="custom-select"
-                  />
+                <motion.div className="flex gap-3" variants={childrenAnimation}>
+                  <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                    Theme
+                  </p>
+                  <div className="ml-10 mt-5">
+                    <AsyncPaginate
+                      className="w-[200px] cursor-pointer"
+                      value={{
+                        value: data.settings.theme,
+                        label: data.settings.theme,
+                      }}
+                      onChange={(value) => setSelectedOptionTerm(value)}
+                      options={[defaultOptionTerm]}
+                      loadOptions={loadTermOptions}
+                      classNamePrefix="custom-select"
+                    />
+                  </div>
                 </motion.div>
-              </motion.div>
 
-              <motion.div
-                className="flex gap-3"
-                initial={AnimationStage.HIDDEN}
-                animate={AnimationStage.VISIBLE}
-                exit={AnimationStage.HIDDEN}
-                variants={staggerChildrenAnimation}
-              >
-                <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-                  Mode
-                </p>
-                <motion.div variants={childrenAnimation} className="ml-10 mt-5">
-                  <Switch
-                    size="lg"
-                    checked={data.settings.darkMode}
-                    onChange={() => {}}
-                  />
+                <motion.div className="flex gap-3" variants={childrenAnimation}>
+                  <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                    Mode
+                  </p>
+                  <div className="ml-10 mt-5">
+                    <Switch
+                      size="lg"
+                      checked={data.settings.darkMode}
+                      onChange={() => {}}
+                    />
+                  </div>
                 </motion.div>
-              </motion.div>
 
-              <div>
-                <p className="mt-12 font-bold opacity-40 inline-block dark:opacity-30">
-                  Need to change password?{" "}
-                </p>
-                <span className="ml-2 inline-block font-bold text-primary-500 underline dark:text-primary-700">
-                  <a href="">Click here</a>
-                </span>
-              </div>
-            </>
-          )}
+                <div>
+                  <p className="mt-12 font-bold opacity-40 inline-block dark:opacity-30">
+                    Need to change password?{" "}
+                  </p>
+
+                  <span className="ml-2 inline-block font-bold text-primary-500 hover:text-primary-600 underline dark:text-primary-700 dark:hover:text-primary-600 duration-200">
+                    <Link to={`/auth/change-password`}>Click here</Link>
+                  </span>
+                </div>
+              </>
+            )}
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
