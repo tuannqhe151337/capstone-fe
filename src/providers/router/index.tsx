@@ -39,6 +39,15 @@ const router = createBrowserRouter([
           };
         },
       },
+      {
+        path: "otp",
+        lazy: async () => {
+          const OtpPage = (await import("../../pages/otp-page")).OtpPage;
+          return {
+            element: <OtpPage />,
+          };
+        },
+      },
     ],
   },
 
@@ -239,18 +248,6 @@ const router = createBrowserRouter([
             },
 
             children: [
-              // {
-              //   path: "update",
-              //   lazy: async () => {
-              //     const TermUpdatePage = (
-              //       await import("../../pages/term-update-page")
-              //     ).TermUpdate;
-
-              //     return {
-              //       element: <TermUpdatePage />,
-              //     };
-              //   },
-              // },
               {
                 path: "information",
                 lazy: async () => {
@@ -324,22 +321,6 @@ const router = createBrowserRouter([
 
               return {
                 element: <AnnualReportListPage />,
-              };
-            },
-          },
-        ],
-      },
-
-      // Profile pages
-      {
-        path: "profile",
-        children: [
-          {
-            path: "",
-            lazy: async () => {
-              const ProfilePage = (await import("../../pages/profile")).Profile;
-              return {
-                element: <ProfilePage />,
               };
             },
           },
