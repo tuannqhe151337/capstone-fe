@@ -90,7 +90,8 @@ export const TermDetailRootPage: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7">
-            Term management <span className="ml-3">{`>`}</span> <span className="ml-3 font-extrabold" >Term detail</span>
+            Term management <span className="ml-3">{`>`}</span>{" "}
+            <span className="ml-3 font-extrabold">Term detail</span>
           </p>
         </div>
       </BubbleBanner>
@@ -113,7 +114,12 @@ export const TermDetailRootPage: React.FC = () => {
         <div className="flex flex-row flex-wrap gap-3 ml-auto">
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>
-            <Button className="flex flex-row flex-wrap py-1.5 px-3 mt-1">
+            <Button
+              className="flex flex-row flex-wrap py-1.5 px-3 mt-1"
+              onClick={() => {
+                navigate(`/term-management/update`);
+              }}
+            >
               <MdEdit className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
               <div className="text-white dark:text-neutral-300 text-sm font-bold">
                 Edit
