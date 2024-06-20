@@ -4,6 +4,8 @@ import { Variants, motion } from "framer-motion";
 import { IoIosAddCircle } from "react-icons/io";
 import { TableTermManagement } from "../../widgets/table-term";
 import { ListTermFiler } from "../../widgets/list-term-filter";
+import { TermCreateModal } from "../../widgets/term-create-modal";
+import { useState } from "react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -40,6 +42,16 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
+
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleCreateTermModal = () => {
+    setStartModal(false);
+  };
   return (
     <motion.div
       className="px-6 pb-10"
@@ -54,7 +66,11 @@ export const TermManagementList: React.FC = () => {
             Term management
           </p>
           <div className="ml-auto">
-            <Button>
+            <Button
+                onClick={() => {
+                  setStartModal(true);
+                }}
+            >
               <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
                 <IoIosAddCircle className="text-2xl -mt-0.5" />
 
@@ -72,6 +88,8 @@ export const TermManagementList: React.FC = () => {
       <motion.div variants={childrenAnimation}>
         <TableTermManagement />
       </motion.div>
+
+      <TermCreateModal show={startModal} onClose={handleCreateTermModal} />
     </motion.div>
   );
 };
