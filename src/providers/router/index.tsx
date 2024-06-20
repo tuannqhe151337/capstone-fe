@@ -212,6 +212,20 @@ const router = createBrowserRouter([
               };
             },
           },
+
+          {
+            path: "update",
+            lazy: async () => {
+              const TermUpdatePage = (
+                await import("../../pages/term-update-page")
+              ).TermUpdate;
+
+              return {
+                element: <TermUpdatePage />,
+              };
+            },
+          },
+
           {
             path: "detail",
             lazy: async () => {
@@ -223,7 +237,20 @@ const router = createBrowserRouter([
                 element: <TermDetailRootPage />,
               };
             },
+
             children: [
+              // {
+              //   path: "update",
+              //   lazy: async () => {
+              //     const TermUpdatePage = (
+              //       await import("../../pages/term-update-page")
+              //     ).TermUpdate;
+
+              //     return {
+              //       element: <TermUpdatePage />,
+              //     };
+              //   },
+              // },
               {
                 path: "information",
                 lazy: async () => {
