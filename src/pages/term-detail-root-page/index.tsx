@@ -20,6 +20,7 @@ import { TERipple } from "tw-elements-react";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { Button } from "../../shared/button";
 import { MdEdit } from "react-icons/md";
+import { DeleteTermModal } from "../../widgets/delete-term-modal";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -79,6 +80,16 @@ export const TermDetailRootPage: React.FC = () => {
       setShowOptions(false);
     },
   });
+
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleDeleteTermModal = () => {
+    setStartModal(false);
+  };
 
   return (
     <motion.div
@@ -162,7 +173,10 @@ export const TermDetailRootPage: React.FC = () => {
                     <TERipple
                       rippleColor="light"
                       className="w-[160px]"
-                      onClick={() => {}}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleClick();
+                      }}
                     >
                       <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
                         {/* <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" /> */}
@@ -214,6 +228,8 @@ export const TermDetailRootPage: React.FC = () => {
           <Outlet />
         </div>
       </div>
+
+      <DeleteTermModal show={startModal} onClose={handleDeleteTermModal} />
     </motion.div>
   );
 };
