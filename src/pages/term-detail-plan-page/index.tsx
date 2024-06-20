@@ -1,84 +1,37 @@
 import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
-import { HiDotsVertical } from "react-icons/hi";
-import { TablePlanExpenses } from "../../widgets/table-plan-expense";
-import { FaFilter } from "react-icons/fa6";
-import { SearchBox } from "../../shared/search-box";
-import { IconButton } from "../../shared/icon-button";
-import { RiDeleteRow } from "react-icons/ri";
-import { Button } from "../../shared/button";
-import { FaListCheck } from "react-icons/fa6";
-import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
-import { produce } from "immer";
+import { FaChartLine } from "react-icons/fa6";
 
-const DUMMY_EXPENSES = [
-  {
-    id: 1,
-    expenseName: "Promotion event",
-    costType: "Direct cost",
-    unitPrice: 200000000,
-    amount: 3,
-    projectName: "IN22",
-    supplierName: "Internal",
-    pic: "AnhMN2",
-    notes: "N/A",
-  },
-  {
-    id: 2,
-    expenseName: "Social media",
-    costType: "Direct cost",
-    unitPrice: 15000000,
-    amount: 50,
-    projectName: "CAM1",
-    supplierName: "Internal",
-    pic: "LanNT12",
-    notes: "N/A",
-  },
-  {
-    id: 3,
-    expenseName: "Office supplies",
-    costType: "Administration cost",
-    unitPrice: 1000000,
-    amount: 100,
-    projectName: "REC1",
-    supplierName: "Hong Ha",
-    pic: "HongHD9",
-    notes: "N/A",
-  },
-  {
-    id: 4,
-    expenseName: "Internal training",
-    costType: "Operating cost",
-    unitPrice: 2000000,
-    amount: 6,
-    projectName: "RECT",
-    supplierName: "Fresher Academy",
-    pic: "LinhHM2",
-    notes: "N/A",
-  },
-  {
-    id: 5,
-    expenseName: "Team Building",
-    costType: "Administration cost",
-    unitPrice: 100000000,
-    amount: 6,
-    projectName: "TB1",
-    supplierName: "Saigon Tourist",
-    pic: "TuNM",
-    notes: "Approximate",
-  },
-  // {
-  //   id: 6,
-  //   expenseName: "Customer visit",
-  //   costType: "Indirect cost",
-  //   unitPrice: 400000000,
-  //   amount: 1,
-  //   projectName: "NSK",
-  //   supplierName: "Internal",
-  //   pic: "TrungDQ",
-  //   notes: "Deposit required",
-  // },
-];
+import { TESelect } from "tw-elements-react";
+import clsx from "clsx";
+import { Tag } from "../../shared/tag";
+
+// Định nghĩa kiểu cho status
+type StatusType = "new" | "approve" | "inProgress" | "denied";
+const renderButton = (status: StatusType) => {
+  switch (status) {
+    case "new":
+      return (
+        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
+          Approved
+        </Tag>
+      );
+    case "inProgress":
+      return (
+        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
+          Waiting for approval
+        </Tag>
+      );
+    case "denied":
+      return (
+        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
+          Deny
+        </Tag>
+      );
+    default:
+      return null;
+  }
+};
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -114,11 +67,60 @@ const childrenAnimation: Variants = {
   },
 };
 
+// Định nghĩa kiểu cho dữ liệu bảng
+type TablePlanDataType = {
+  id: number;
+  plan: string;
+  term: string;
+  department: string;
+  version: string;
+  status: StatusType;
+};
+
+const tablePlanDataList: TablePlanDataType[] = [
+  {
+    id: 1,
+    plan: "BU name_termplan",
+    term: "Financial plan December Q3 2021",
+    department: "BU 1",
+    version: "v1",
+    status: "inProgress",
+  },
+
+  {
+    id: 2,
+    plan: "BU name_termplan",
+    term: "Financial plan December Q3 2021",
+    department: "BU 1",
+    version: "v3",
+    status: "denied",
+  },
+  {
+    id: 3,
+    plan: "BU name_termplan",
+    term: "Financial plan December Q3 2021",
+    department: "BU 1",
+    version: "v4",
+    status: "new",
+  },
+];
+
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+  },
+};
+
 export const TermDetailPlanPage: React.FC = () => {
   const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
     new Set()
   );
   const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+
+  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   useEffect(() => {
     if (listSelectedIndex.size !== 0) {
@@ -129,33 +131,60 @@ export const TermDetailPlanPage: React.FC = () => {
   }, [listSelectedIndex]);
 
   return (
-    <motion.div
-      initial={AnimationStage.HIDDEN}
-      animate={AnimationStage.VISIBLE}
-      variants={staggerChildrenAnimation}
-    >
-      <ListPlanDetailFilter
-        className="pl-3 mt-7"
-        showReviewExpense={showReviewExpense}
-      />
+    <motion.div>
+      <motion.div
+        className=""
+        initial={AnimationStage.HIDDEN}
+        animate={AnimationStage.VISIBLE}
+        exit={AnimationStage.HIDDEN}
+        variants={staggerChildrenAnimation}
+      >
+        <motion.div className="flex justify-end mt-4">
+          <motion.div variants={childrenAnimation} className="mr-4 ">
+            <TESelect data={[]} label="Cost type" />
+          </motion.div>
 
-      <TablePlanExpenses
-        listSelectedIndex={listSelectedIndex}
-        expenses={DUMMY_EXPENSES}
-        onRowClick={(index) => {
-          setListSelectedIndex(
-            produce((state) => {
-              if (state.has(index)) {
-                state.delete(index);
-              } else {
-                state.add(index);
-              }
+          <motion.div variants={childrenAnimation} className="mr-4">
+            <TESelect data={[]} label="Status" />
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-              return state;
-            })
-          );
-        }}
-      />
+      <motion.div
+        initial={AnimationStage.HIDDEN}
+        animate={AnimationStage.VISIBLE}
+        exit={AnimationStage.HIDDEN}
+        variants={staggerChildrenAnimation}
+      >
+        <motion.table
+          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
+          variants={childrenAnimation}
+        >
+          <tbody>
+            {tablePlanDataList.map((row, index) => (
+              <tr
+                key={row.id}
+                className={clsx({
+                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
+                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
+                })}
+              >
+                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                  <div className="flex flex-row flex-wrap">
+                    <div className="text-neutral-300 dark:text-neutral-600">
+                      <FaChartLine className="text-xl mt-2" />
+                    </div>
+                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
+                      {row.plan}
+                    </p>
+                    <div>{renderButton(row.status)}</div>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </motion.table>
+      </motion.div>
     </motion.div>
   );
 };

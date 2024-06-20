@@ -8,6 +8,8 @@ import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
 import { RiProgress3Fill } from "react-icons/ri";
+import { AiOutlineFieldTime } from "react-icons/ai";
+import { BiSolidReport } from "react-icons/bi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -52,12 +54,12 @@ export const TermDetailInformationPage: React.FC = () => {
       variants={staggerChildrenAnimation}
     >
       <div className="flex flex-col flex-wrap flex-1 gap-9">
-        {/* Term */}
+        {/* Quarterly */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
-            icon={<RiCalendarScheduleFill className="text-3xl" />}
-            title="Term"
-            value="Financial plan December Q3 2001"
+            icon={<AiOutlineFieldTime className="text-3xl" />}
+            title="Quaterly"
+            value="1/9/2021 - 01/01/2022"
           />
         </motion.div>
 
@@ -70,49 +72,12 @@ export const TermDetailInformationPage: React.FC = () => {
           />
         </motion.div>
 
-        {/* Department */}
+        {/* Report */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
-            icon={<PiTreeStructureFill className="text-3xl" />}
-            title="Department"
-            value="BU 01"
-          />
-        </motion.div>
-      </div>
-      <div className="flex flex-col flex-wrap flex-1 gap-9">
-        {/* Status */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            icon={<RiProgress3Fill className="text-3xl" />}
-            title="Status"
-            value={<p className="text-primary-500">Waiting for approval</p>}
-          />
-        </motion.div>
-
-        {/* Version */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            icon={<BsStack className="text-2xl" />}
-            title="Version"
-            value="v3"
-          />
-        </motion.div>
-
-        {/* Created at */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            icon={<FaClock className="text-2xl" />}
-            title="Created at"
+            icon={<BiSolidReport className="text-3xl" />}
+            title="Report due date"
             value={format(new Date(), "dd MMMM yyyy")}
-          />
-        </motion.div>
-
-        {/* Created by */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            icon={<HiUser className="text-3xl -ml-1" />}
-            title="Created by"
-            value="AnhLN2"
           />
         </motion.div>
       </div>

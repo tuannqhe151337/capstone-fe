@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
+import { FaChartLine } from "react-icons/fa6";
+
+import { TESelect } from "tw-elements-react";
 import clsx from "clsx";
-import { format } from "date-fns";
-import { BsStack } from "react-icons/bs";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -13,20 +15,20 @@ const staggerChildrenAnimation: Variants = {
     transition: {
       staggerChildren: 0.05,
       staggerDirection: -1,
-      delayChildren: 0.2,
-      duration: 0.2,
+      delayChildren: 0.15,
+      duration: 0.15,
     },
   },
   [AnimationStage.VISIBLE]: {
     transition: {
       staggerChildren: 0.05,
-      delayChildren: 0.2,
-      duration: 0.2,
+      delayChildren: 0.15,
+      duration: 0.15,
     },
   },
 };
 
-const rowAnimation: Variants = {
+const childrenAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
     opacity: 0,
     y: 5,
@@ -37,92 +39,103 @@ const rowAnimation: Variants = {
   },
 };
 
-interface Version {
+// Định nghĩa kiểu cho dữ liệu bảng
+type TablePlanDataType = {
   id: number;
-  version: string;
-  createdAt: Date;
-  author: string;
-}
+  report: string;
+};
 
-const DUMMY_VERSION_DATA: Version[] = [
+const tablePlanDataList: TablePlanDataType[] = [
   {
     id: 1,
-    version: "v3",
-    createdAt: new Date(),
-    author: "AnhLN2",
+    report: "BU 01_Q1_report",
   },
+
   {
     id: 2,
-    version: "v2",
-    createdAt: new Date(),
-    author: "AnhLN2",
+    report: "BU 02_Q2_report",
   },
   {
     id: 3,
-    version: "v1",
-    createdAt: new Date(),
-    author: "AnhLN2",
+    report: "BU 03_Q3_report",
   },
 ];
 
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+  },
+};
+
 export const TermDetailReportPage: React.FC = () => {
+  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
+    new Set()
+  );
+  const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+
+  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+
+  useEffect(() => {
+    if (listSelectedIndex.size !== 0) {
+      setShowReviewExpense(true);
+    } else {
+      setShowReviewExpense(false);
+    }
+  }, [listSelectedIndex]);
+
   return (
-    <div className="flex flex-col flex-wrap py-5 px-4">
-      <div className="flex flex-row flex-wrap items-center ml-auto">
-        <BsStack className="text-xl text-primary-300 dark:text-primary-700 mr-4" />
-        <span className="text-lg font-extrabold text-primary-400 dark:text-primary-600 mr-1.5">
-          2
-        </span>
-        <span className="text-base font-bold text-primary-400/80 dark:text-primary-600/90">
-          total version
-        </span>
-      </div>
+    <motion.div>
+      <motion.div
+        className=""
+        initial={AnimationStage.HIDDEN}
+        animate={AnimationStage.VISIBLE}
+        exit={AnimationStage.HIDDEN}
+        variants={staggerChildrenAnimation}
+      >
+        <motion.div className="flex justify-end mt-4">
+          <motion.div variants={childrenAnimation} className="mr-4 ">
+            <TESelect data={[]} label="Department" />
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <table className="mt-5">
-        <thead className="border-b-2 border-neutral-100 dark:border-neutral-800">
-          <tr>
-            <th className="py-3 text-neutral-400 font-bold text-base">
-              Version
-            </th>
-            <th className="py-3 text-neutral-400 font-bold text-base">
-              Published date
-            </th>
-            <th></th>
-            <th className="py-3 text-neutral-400 font-bold text-base text-center">
-              Uploaded by
-            </th>
-          </tr>
-        </thead>
-
-        <motion.tbody
-          initial={AnimationStage.HIDDEN}
-          animate={AnimationStage.VISIBLE}
-          variants={staggerChildrenAnimation}
+      <motion.div
+        initial={AnimationStage.HIDDEN}
+        animate={AnimationStage.VISIBLE}
+        exit={AnimationStage.HIDDEN}
+        variants={staggerChildrenAnimation}
+      >
+        <motion.table
+          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
+          variants={childrenAnimation}
         >
-          {DUMMY_VERSION_DATA.map(({ id, version, author, createdAt }, i) => (
-            <motion.tr
-              key={id}
-              className={clsx({
-                "bg-neutral-50 dark:bg-neutral-800/50": i % 2 === 1,
-                "text-neutral-500/90 dark:text-neutral-400": i === 0,
-                "text-neutral-400 dark:text-neutral-400/80": i !== 0,
-              })}
-              variants={rowAnimation}
-            >
-              <td className="text-sm font-bold  text-center py-5 w-[150px]">
-                {version} {i === 0 && "(current)"}
-              </td>
-              <td className="text-sm font-bold text-center py-5 w-[200px]">
-                {format(createdAt, "dd MMMM yyyy")}
-              </td>
-              <td></td>
-              <td className="text-sm font-bold text-center py-5 w-[150px]">
-                {author}
-              </td>
-            </motion.tr>
-          ))}
-        </motion.tbody>
-      </table>
-    </div>
+          <tbody>
+            {tablePlanDataList.map((row, index) => (
+              <tr
+                key={row.id}
+                className={clsx({
+                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
+                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
+                })}
+              >
+                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                  <div className="flex flex-row flex-wrap">
+                    <div className="text-neutral-300 dark:text-neutral-600">
+                      <FaChartLine className="text-xl mt-2" />
+                    </div>
+                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
+                      {row.report}
+                    </p>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </motion.table>
+      </motion.div>
+    </motion.div>
   );
 };
