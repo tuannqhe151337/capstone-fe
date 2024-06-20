@@ -87,7 +87,7 @@ export const OtpPage: React.FC = () => {
 
       <BubbleBackground />
 
-      <div className="flex flex-row flex-wrap w-full">
+      <div className="flex flex-row flex-wrap w-full mt-16">
         <div className="flex-1">
           <motion.div className="flex justify-center items-center dark:brightness-50">
             <motion.img
