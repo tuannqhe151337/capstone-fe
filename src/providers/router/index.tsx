@@ -335,6 +335,45 @@ const router = createBrowserRouter([
               };
             },
           },
+
+          {
+            path: "detail",
+            lazy: async () => {
+              const AnnualReportDetailRootPage = (
+                await import("../../pages/annual-report-detail-root-page")
+              ).AnnualReportDetailRootPage;
+
+              return {
+                element: <AnnualReportDetailRootPage />,
+              };
+            },
+            children: [
+              {
+                path: "chart",
+                lazy: async () => {
+                  const AnnualReportDetailChartPage = (
+                    await import("../../pages/annual-report-detail-chart-page")
+                  ).AnnualReportDetailChartPage;
+
+                  return {
+                    element: <AnnualReportDetailChartPage />,
+                  };
+                },
+              },
+              {
+                path: "table",
+                lazy: async () => {
+                  const AnnualReportDetailTablePage = (
+                    await import("../../pages/annual-report-detail-table-page")
+                  ).AnnualReportDetailTablePage;
+
+                  return {
+                    element: <AnnualReportDetailTablePage />,
+                  };
+                },
+              },
+            ],
+          },
         ],
       },
     ],
