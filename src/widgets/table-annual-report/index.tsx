@@ -119,9 +119,9 @@ export const TableAnnualReport: React.FC<Props> = () => {
               onMouseLeave={() => {
                 setHoverRowIndex(undefined);
               }}
-              // onClick={() => {
-              //   navigate("detail/expenses");
-              // }}
+              onClick={() => {
+                navigate("detail/chart");
+              }}
             >
               <td className="whitespace-nowrap px-6 py-4 font-bold">
                 {row.report}
