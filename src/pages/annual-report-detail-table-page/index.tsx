@@ -4,6 +4,8 @@ import { FaChartLine } from "react-icons/fa6";
 
 import { TESelect } from "tw-elements-react";
 import clsx from "clsx";
+import { Pagination } from "../../shared/pagination";
+import { ListAnnualReportFilter } from "../../widgets/list-annual-report-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -40,24 +42,42 @@ const childrenAnimation: Variants = {
 };
 
 // Định nghĩa kiểu cho dữ liệu bảng
-type TablePlanDataType = {
+type TableAnnualReportDataType = {
   id: number;
-  report: string;
+  department: string;
+  totalExpense: string;
+  biggestExpenditure: string;
+  costType: string;
 };
 
-const tablePlanDataList: TablePlanDataType[] = [
+const tableReportDataList: TableAnnualReportDataType[] = [
   {
     id: 1,
-    report: "BU 01_Q1_report",
+    department: "BU 02",
+    totalExpense: "213.232.523.433 VNĐ",
+    biggestExpenditure: "1.523.433 VNĐ",
+    costType: "Marketing",
   },
-
   {
     id: 2,
-    report: "BU 02_Q2_report",
+    department: "BU 03",
+    totalExpense: "23.232.523 VNĐ",
+    biggestExpenditure: "23.433 VNĐ",
+    costType: "Marketing",
   },
   {
     id: 3,
-    report: "BU 03_Q3_report",
+    department: "BU 04",
+    totalExpense: "123.232.523 VNĐ",
+    biggestExpenditure: "523.433 VNĐ",
+    costType: "Marketing",
+  },
+  {
+    id: 4,
+    department: "BU 05",
+    totalExpense: "123.232.523 VNĐ",
+    biggestExpenditure: "127.533 VNĐ",
+    costType: "Marketing",
   },
 ];
 
@@ -71,70 +91,93 @@ const animation: Variants = {
 };
 
 export const AnnualReportDetailTablePage: React.FC = () => {
-  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
-    new Set()
-  );
-  const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
-
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
-
-  useEffect(() => {
-    if (listSelectedIndex.size !== 0) {
-      setShowReviewExpense(true);
-    } else {
-      setShowReviewExpense(false);
-    }
-  }, [listSelectedIndex]);
-
   return (
-    <motion.div>
-      <motion.div
-        className=""
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
-      >
-        <motion.div className="flex justify-end mt-4">
-          <motion.div variants={childrenAnimation} className="mr-4 ">
-            <TESelect data={[]} label="Department" />
-          </motion.div>
+    <motion.div
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+      exit={AnimationStage.HIDDEN}
+      variants={staggerChildrenAnimation}
+    >
+      <motion.div className="flex justify-end mt-4">
+        <motion.div variants={childrenAnimation} className="mr-4 ">
+          <TESelect data={[]} label="Cost type" />
+        </motion.div>
+
+        <motion.div variants={childrenAnimation} className="mr-4">
+          <TESelect data={[]} label="Department" />
         </motion.div>
       </motion.div>
 
+      <motion.table
+        className="text-center text-sm font-light mt-6 min-w-full overflow-hidden "
+        variants={childrenAnimation}
+      >
+        <thead className="font-medium border-b-2 border-primary-100 dark:border-neutral-600">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+            >
+              Department
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+            >
+              Total expenses
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+            >
+              Biggest expenditure
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+            >
+              Cost type
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {tableReportDataList.map((row, index) => (
+            <tr
+              key={row.id}
+              className={clsx({
+                // "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
+                //   true,
+                // "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                //   true,
+                "text-neutral-500 dark:text-neutral-400 bg-whitedark:bg-neutral-800/50 ":
+                  index % 2 === 0,
+                "text-neutral-500 dark:text-neutral-400 bg-primary-50 dark:bg-neutral-800/80":
+                  index % 2 === 1,
+              })}
+            >
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
+                {row.department}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
+                {row.totalExpense}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
+                {row.biggestExpenditure}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 font-bold">
+                {row.costType}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </motion.table>
+
       <motion.div
         initial={AnimationStage.HIDDEN}
         animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
+        variants={animation}
       >
-        <motion.table
-          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
-          variants={childrenAnimation}
-        >
-          <tbody>
-            {tablePlanDataList.map((row, index) => (
-              <tr
-                key={row.id}
-                className={clsx({
-                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
-                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
-                })}
-              >
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
-                  <div className="flex flex-row flex-wrap">
-                    <div className="text-neutral-300 dark:text-neutral-600">
-                      <FaChartLine className="text-xl mt-2" />
-                    </div>
-                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
-                      {row.report}
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </motion.table>
+        <Pagination page={1} totalPage={20} className="mt-6" />
       </motion.div>
     </motion.div>
   );
