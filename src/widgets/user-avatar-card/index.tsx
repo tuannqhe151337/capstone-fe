@@ -1,7 +1,6 @@
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { FaCircleUser } from "react-icons/fa6";
 import { cn } from "../../shared/utils/cn";
-import { useEffect, useState } from "react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -63,14 +62,6 @@ export const UserAvatarCard: React.FC<Props> = ({
   position,
   department,
 }) => {
-  const [asdf, setAsdf] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAsdf(false);
-    }, 2000);
-  }, []);
-
   return (
     <motion.div
       className={cn(

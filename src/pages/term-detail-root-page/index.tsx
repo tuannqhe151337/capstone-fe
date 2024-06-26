@@ -1,15 +1,8 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
-import { RiCalendarScheduleFill } from "react-icons/ri";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Tag } from "../../shared/tag";
 // import { OverviewCard } from "./ui/overview-card";
-import {
-  FaMoneyBillTrendUp,
-  FaCoins,
-  FaFilter,
-  FaPlay,
-  FaTrash,
-} from "react-icons/fa6";
+import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -17,7 +10,6 @@ import { useCloseOutside } from "../../shared/hooks/useClosePopup";
 import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { TERipple } from "tw-elements-react";
-import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { Button } from "../../shared/button";
 import { MdEdit } from "react-icons/md";
 import { DeleteTermModal } from "../../widgets/delete-term-modal";
@@ -69,7 +61,7 @@ export const TermDetailRootPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Filter section
-  const [showFillterBtn, setShowFillterBtn] = useState(false);
+  // const [showFillterBtn, setShowFillterBtn] = useState(false);
 
   // Show dropdown options
   const [showOptions, setShowOptions] = useState(false);

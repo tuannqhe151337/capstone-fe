@@ -1,7 +1,6 @@
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 
 // Định nghĩa kiểu cho dữ liệu bảng
@@ -62,12 +61,12 @@ interface Props {
   onCreatePlanClick?: () => any;
 }
 
-export const TableAnnualReport: React.FC<Props> = ({ onCreatePlanClick }) => {
+export const TableAnnualReport: React.FC<Props> = () => {
   // Navigation
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // UI: show delete button
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+  const [_, setHoverRowIndex] = useState<number>();
 
   return (
     <div>

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";

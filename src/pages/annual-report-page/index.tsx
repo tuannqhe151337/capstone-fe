@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import { FaDownload } from "react-icons/fa6";
 import { Variants, motion } from "framer-motion";
 import { TableAnnualReport } from "../../widgets/table-annual-report";
 import { ListAnnualReportFilter } from "../../widgets/list-annual-report-filter";

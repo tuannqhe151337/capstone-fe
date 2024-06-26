@@ -42,12 +42,11 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
-
   const [startModal, setStartModal] = useState<boolean>(false);
 
-  const handleClick = () => {
-    setStartModal(true);
-  };
+  // const handleClick = () => {
+  //   setStartModal(true);
+  // };
 
   const handleCreateTermModal = () => {
     setStartModal(false);
@@ -67,9 +66,9 @@ export const TermManagementList: React.FC = () => {
           </p>
           <div className="ml-auto">
             <Button
-                onClick={() => {
-                  setStartModal(true);
-                }}
+              onClick={() => {
+                setStartModal(true);
+              }}
             >
               <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
                 <IoIosAddCircle className="text-2xl -mt-0.5" />

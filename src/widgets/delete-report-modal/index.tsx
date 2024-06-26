@@ -1,7 +1,6 @@
 import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
-import { FaExclamation } from "react-icons/fa";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
 
@@ -34,7 +33,6 @@ export const DeleteReportModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="flex flex-row flex-wrap items-center justify-center size-[100px] bg-red-100 dark:bg-red-900/50 rounded-full">
             {/* <FaExclamation className="text-[42px] text-red-500/80 dark:text-red-700/80" /> */}
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
-
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-neutral-400 dark:text-neutral-500/70 mt-5">
             Delete report
@@ -47,7 +45,11 @@ export const DeleteReportModal: React.FC<Props> = ({ show, onClose }) => {
             .
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-neutral-400 dark:text-neutral-500">
-            This action <span className="font-extrabold text-red-500 dark:text-red-600">cannot</span> be reversed. Are you sure?
+            This action{" "}
+            <span className="font-extrabold text-red-500 dark:text-red-600">
+              cannot
+            </span>{" "}
+            be reversed. Are you sure?
           </div>
         </div>
 

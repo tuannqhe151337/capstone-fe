@@ -2,8 +2,6 @@ import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Variants, motion } from "framer-motion";
-
-import { FaCheckCircle } from "react-icons/fa";
 import { Button } from "../../shared/button";
 import { useState } from "react";
 import { DatePickerInput } from "../../shared/date-picker-input";

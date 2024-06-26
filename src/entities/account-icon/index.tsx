@@ -22,7 +22,7 @@ const animation: Variants = {
 };
 
 export const AccountIcon: React.FC = () => {
-  const { t, i18n } = useTranslation(["header"]);
+  const { t } = useTranslation(["header"]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 

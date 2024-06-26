@@ -61,22 +61,20 @@ const tablePlanDataList: TablePlanDataType[] = [
   },
 ];
 
-const animation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-  },
-};
+// const animation: Variants = {
+//   [AnimationStage.HIDDEN]: {
+//     opacity: 0,
+//   },
+//   [AnimationStage.VISIBLE]: {
+//     opacity: 1,
+//   },
+// };
 
 export const TermDetailReportPage: React.FC = () => {
-  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
-    new Set()
-  );
-  const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const [listSelectedIndex] = useState<Set<number>>(new Set());
+  const [_, setShowReviewExpense] = useState<boolean>(false);
 
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+  // const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   useEffect(() => {
     if (listSelectedIndex.size !== 0) {

@@ -4,7 +4,7 @@ import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeleteReportModal } from "../delete-report-modal";
 
@@ -108,7 +108,7 @@ export const TableReportManagement: React.FC<Props> = ({
   onCreatePlanClick,
 }) => {
   // Navigation
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();

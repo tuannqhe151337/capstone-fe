@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
-import { HiDotsVertical } from "react-icons/hi";
 import { TablePlanExpenses } from "../../widgets/table-plan-expense";
-import { FaFilter } from "react-icons/fa6";
-import { SearchBox } from "../../shared/search-box";
-import { IconButton } from "../../shared/icon-button";
-import { RiDeleteRow } from "react-icons/ri";
-import { Button } from "../../shared/button";
-import { FaListCheck } from "react-icons/fa6";
 import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
 import { produce } from "immer";
 
@@ -100,17 +93,6 @@ const staggerChildrenAnimation: Variants = {
       delayChildren: 0.15,
       duration: 0.15,
     },
-  },
-};
-
-const childrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-    y: 5,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-    y: 0,
   },
 };
 

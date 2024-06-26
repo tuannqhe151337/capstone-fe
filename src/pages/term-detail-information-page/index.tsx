@@ -1,13 +1,7 @@
 import { Variants, motion } from "framer-motion";
 import { format } from "date-fns";
-import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaChartLine } from "react-icons/fa";
-import { BsStack } from "react-icons/bs";
-import { HiUser } from "react-icons/hi2";
-import { PiTreeStructureFill } from "react-icons/pi";
-import { FaClock } from "react-icons/fa6";
-import { RiProgress3Fill } from "react-icons/ri";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { BiSolidReport } from "react-icons/bi";
 
