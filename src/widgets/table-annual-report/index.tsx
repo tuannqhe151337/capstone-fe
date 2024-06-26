@@ -2,6 +2,7 @@ import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
+import { useNavigate } from "react-router-dom";
 
 // Định nghĩa kiểu cho dữ liệu bảng
 type TableAnnualReportDataType = {
@@ -63,7 +64,7 @@ interface Props {
 
 export const TableAnnualReport: React.FC<Props> = () => {
   // Navigation
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // UI: show delete button
   const [_, setHoverRowIndex] = useState<number>();

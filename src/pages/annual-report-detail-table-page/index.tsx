@@ -1,11 +1,7 @@
-import { useEffect, useState } from "react";
-import { Variants, motion } from "framer-motion";
-import { FaChartLine } from "react-icons/fa6";
-
-import { TESelect } from "tw-elements-react";
 import clsx from "clsx";
+import { Variants, motion } from "framer-motion";
+import { TESelect } from "tw-elements-react";
 import { Pagination } from "../../shared/pagination";
-import { ListAnnualReportFilter } from "../../widgets/list-annual-report-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
