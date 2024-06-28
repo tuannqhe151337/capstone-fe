@@ -1,9 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-export enum LocalStorageItemKey {
-  TOKEN = "token",
-  REFRESH_TOKEN = "refreshToken",
-}
+import { LocalStorageItemKey } from "./type";
 
 export interface LoginBody {
   username: string;
