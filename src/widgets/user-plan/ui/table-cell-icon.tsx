@@ -3,12 +3,11 @@ import { IconButton } from "../../../shared/icon-button";
 import { FaPowerOff } from "react-icons/fa6";
 import { LuPowerOff } from "react-icons/lu";
 
-type Status = "active" | "de-active";
-
 interface Props {
+  isFetching?: boolean;
   index: number;
   hoverRowIndex?: number;
-  status: Status;
+  deactivated: boolean;
   onIconClick: () => void;
 }
 
@@ -33,34 +32,38 @@ const animation: Variants = {
 };
 
 export const TableCellIcon: React.FC<Props> = ({
+  isFetching,
   index,
   hoverRowIndex,
-  status,
+  deactivated,
   onIconClick,
 }) => (
   <td className="whitespace-nowrap px-6 py-4">
-    <motion.div
-      initial={AnimationStage.HIDDEN}
-      animate={
-        hoverRowIndex === index ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
-      }
-      exit={AnimationStage.HIDDEN}
-      variants={animation}
-    >
-      <IconButton
-        tooltip={status === "active" ? "Deactivate user" : "Activate user"}
-        onClick={(event) => {
-          event.stopPropagation();
-          onIconClick();
-        }}
+    {!isFetching ? (
+      <motion.div
+        initial={AnimationStage.HIDDEN}
+        animate={
+          hoverRowIndex === index
+            ? AnimationStage.VISIBLE
+            : AnimationStage.HIDDEN
+        }
+        exit={AnimationStage.HIDDEN}
+        variants={animation}
       >
-        {status === "active" ? (
-          // <FaTrash className="text-red-600 text-xl" />
-          <LuPowerOff className="text-red-600 text-xl" />
-        ) : (
-          <FaPowerOff className="text-primary-500 text-xl" />
-        )}
-      </IconButton>
-    </motion.div>
+        <IconButton
+          tooltip={!deactivated ? "Deactivate user" : "Activate user"}
+          onClick={(event) => {
+            event.stopPropagation();
+            onIconClick();
+          }}
+        >
+          {!deactivated ? (
+            <LuPowerOff className="text-red-600 text-xl" />
+          ) : (
+            <FaPowerOff className="text-primary-500 text-xl" />
+          )}
+        </IconButton>
+      </motion.div>
+    ) : <div className="w-[50px]"></div>}
   </td>
 );
