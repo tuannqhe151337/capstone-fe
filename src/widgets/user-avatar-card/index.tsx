@@ -63,14 +63,6 @@ export const UserAvatarCard: React.FC<Props> = ({
   position,
   department,
 }) => {
-  const [asdf, setAsdf] = useState<boolean>(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setAsdf(false);
-    }, 2000);
-  }, []);
-
   return (
     <motion.div
       className={cn(
