@@ -9,11 +9,11 @@ import { BubbleBackground } from "../../entities/bubble-background";
 import { useState } from "react";
 import { Button } from "../../shared/button";
 import {
-  LocalStorageItemKey,
   useLoginMutation,
 } from "../../providers/store/api/authApi";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { CgSpinner } from "react-icons/cg";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
