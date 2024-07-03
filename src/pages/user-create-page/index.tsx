@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z, ZodType, ZodError, ZodArray } from "zod";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { FaLocationDot, FaUser } from "react-icons/fa6";
@@ -10,6 +13,8 @@ import { RiUserSettingsFill } from "react-icons/ri";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { DatePickerInput } from "../../shared/date-picker-input";
+import { getZodMessasges } from "../../shared/utils/get-zod-messages";
+import { InputValidationMessage } from "../../shared/validation-input-message";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -71,7 +76,36 @@ const termDummyData = [
     name: "Term 3",
   },
 ];
+
+type FormData = {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+};
+
+const FullNameSchema = z
+  .string()
+  .min(5, "Full name length must be at least 5 characters");
+
+const PhoneNumberSchema = z
+  .string()
+  .min(10, "Phone number must be at least 10 numbers")
+  .max(15, "Phone number must be at least 15 numbers");
+
+const EmailSchema = z.string().email();
+
+export const CreateUserSchema: ZodType<FormData> = z.object({
+  fullName: FullNameSchema,
+  phoneNumber: PhoneNumberSchema,
+  email: EmailSchema,
+});
+
 export const UserCreate: React.FC = () => {
+  // Form
+  const { register, watch, handleSubmit } = useForm<FormData>({
+    resolver: zodResolver(CreateUserSchema), // Apply the zodResolver
+  });
+
   // Select state
   const [selectedOptionTerm, setSelectedOptionTerm] =
     useState<TermOption | null>(defaultOptionTerm);
@@ -133,7 +167,12 @@ export const UserCreate: React.FC = () => {
               label="Full name"
               className="mb-4 bg-white dark:bg-neutral-900"
               autoFocus
-            ></TEInput>
+              {...register("fullName", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              validateFn={() => FullNameSchema.parse(watch("fullName"))}
+            />
           </motion.div>
         </div>
 
@@ -165,7 +204,12 @@ export const UserCreate: React.FC = () => {
               type="text"
               label="Phone"
               className="mb-4 w-full bg-white dark:bg-neutral-900 "
-            ></TEInput>
+              {...register("phoneNumber", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
+            />
           </motion.div>
         </div>
 
@@ -181,7 +225,12 @@ export const UserCreate: React.FC = () => {
               type="email"
               label="Email"
               className="mb-4 w-full bg-white dark:bg-neutral-900"
-            ></TEInput>
+              {...register("email", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              validateFn={() => EmailSchema.parse(watch("email"))}
+            />
           </motion.div>
         </div>
 
@@ -249,7 +298,13 @@ export const UserCreate: React.FC = () => {
         </div>
 
         <div className="w-10/12 mx-auto flex justify-center mt-12">
-          <Button className="w-[1180px] py-2 dark:text-white/80">
+          <Button
+            className="w-[1180px] py-2 dark:text-white/80"
+            onClick={() => {
+              console.log("asdf");
+              handleSubmit((data) => console.log(data))();
+            }}
+          >
             Create user
           </Button>
         </div>
