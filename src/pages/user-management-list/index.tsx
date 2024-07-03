@@ -103,7 +103,7 @@ export const UserManagementList: React.FC = () => {
 
   // Fetch user on change
   useEffect(() => {
-    fetchUser({ page: 1, pageSize: 5 });
+    fetchUser({ page: 1, pageSize: 10 });
   }, []);
 
   useEffect(() => {

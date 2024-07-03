@@ -4,227 +4,9 @@ import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
-
-interface TermOption {
-  value: number;
-  label: string;
-}
-
-interface DeptOption {
-  value: number;
-  label: string;
-}
-
-interface StatusOption {
-  value: number;
-  label: string;
-}
-
-const pageSize = 10;
-
-const defaultOptionTerm = {
-  value: 0,
-  label: "Term",
-};
-
-const defaultOptionDept = {
-  value: 0,
-  label: "Department",
-};
-
-const defaultOptionStatus = {
-  value: 0,
-  label: "Status",
-};
-
-const termDummyData = [
-  {
-    id: 1,
-    name: "Term 1",
-  },
-  {
-    id: 2,
-    name: "Term 2",
-  },
-  {
-    id: 3,
-    name: "Term 3",
-  },
-  {
-    id: 4,
-    name: "Term 4",
-  },
-  {
-    id: 5,
-    name: "Term 5",
-  },
-  {
-    id: 6,
-    name: "Term 6",
-  },
-  {
-    id: 7,
-    name: "Term 7",
-  },
-  {
-    id: 8,
-    name: "Term 8",
-  },
-  {
-    id: 9,
-    name: "Term 9",
-  },
-  {
-    id: 10,
-    name: "Term 10",
-  },
-  {
-    id: 11,
-    name: "Term 11",
-  },
-  {
-    id: 12,
-    name: "Term 12",
-  },
-  {
-    id: 13,
-    name: "Term 13",
-  },
-  {
-    id: 14,
-    name: "Term 14",
-  },
-  {
-    id: 15,
-    name: "Term 15",
-  },
-];
-
-const deptDummyData = [
-  {
-    id: 1,
-    name: "Dept 1",
-  },
-  {
-    id: 2,
-    name: "Dept 2",
-  },
-  {
-    id: 3,
-    name: "Dept 3",
-  },
-  {
-    id: 4,
-    name: "Dept 4",
-  },
-  {
-    id: 5,
-    name: "Dept 5",
-  },
-  {
-    id: 6,
-    name: "Dept 6",
-  },
-  {
-    id: 7,
-    name: "Dept 7",
-  },
-  {
-    id: 8,
-    name: "Dept 8",
-  },
-  {
-    id: 9,
-    name: "Dept 9",
-  },
-  {
-    id: 10,
-    name: "Dept 10",
-  },
-  {
-    id: 11,
-    name: "Dept 11",
-  },
-  {
-    id: 12,
-    name: "Dept 12",
-  },
-  {
-    id: 13,
-    name: "Dept 13",
-  },
-  {
-    id: 14,
-    name: "Dept 14",
-  },
-  {
-    id: 15,
-    name: "Dept 15",
-  },
-];
-
-const statusDummyData = [
-  {
-    id: 1,
-    name: "Status 1",
-  },
-  {
-    id: 2,
-    name: "Status 2",
-  },
-  {
-    id: 3,
-    name: "Status 3",
-  },
-  {
-    id: 4,
-    name: "Status 4",
-  },
-  {
-    id: 5,
-    name: "Status 5",
-  },
-  {
-    id: 6,
-    name: "Status 6",
-  },
-  {
-    id: 7,
-    name: "Status 7",
-  },
-  {
-    id: 8,
-    name: "Status 8",
-  },
-  {
-    id: 9,
-    name: "Status 9",
-  },
-  {
-    id: 10,
-    name: "Status 10",
-  },
-  {
-    id: 11,
-    name: "Status 11",
-  },
-  {
-    id: 12,
-    name: "Status 12",
-  },
-  {
-    id: 13,
-    name: "Status 13",
-  },
-  {
-    id: 14,
-    name: "Status 14",
-  },
-  {
-    id: 15,
-    name: "Status 15",
-  },
-];
+import { TermFilter } from "../../entities/term-filter";
+import { DepartmentFilter } from "../../entities/department-filter";
+import { StatusFilter } from "../../entities/status-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -272,105 +54,23 @@ const heightPlaceholderAnimation: Variants = {
   },
 };
 
-export const ListPlanFiler: React.FC = () => {
+interface Props {
+  searchboxValue?: string;
+  onSearchboxChange?: (value: string) => any;
+  onTermIdChange?: (termId: number | null | undefined) => any;
+  onDepartmentIdChange?: (departmentId: number | null | undefined) => any;
+  onStatusIdChange?: (statusId: number | null | undefined) => any;
+}
+
+export const ListPlanFilter: React.FC<Props> = ({
+  searchboxValue,
+  onSearchboxChange,
+  onTermIdChange,
+  onDepartmentIdChange,
+  onStatusIdChange,
+}) => {
   // UI: show 3 select box
   const [showFillterBtn, setShowFillterBtn] = useState(false);
-
-  // Select state
-  const [selectedOptionTerm, setSelectedOptionTerm] =
-    useState<TermOption | null>(defaultOptionTerm);
-
-  const [selectedOptionDept, setSelectedOptionDept] =
-    useState<DeptOption | null>(defaultOptionDept);
-  const [selectedOptionStatus, setSelectedOptionStatus] =
-    useState<StatusOption | null>(defaultOptionStatus);
-
-  // Fetch initial data
-  const [pageTerm, setPageTerm] = useState<number>(1);
-  const [pageDept, setPageDept] = useState<number>(1);
-  const [pageStatus, setPageStatus] = useState<number>(1);
-
-  // Convert data to option for Term
-  const loadTermOptions: LoadOptions<TermOption, any, any> = async () => {
-    // Fetch data
-    // const data = termDummyData;
-
-    // Load options
-    const hasMoreTerm = pageTerm * pageSize < termDummyData.length;
-
-    const loadOptionsTerm = {
-      options: termDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreTerm,
-    };
-
-    if (pageTerm === 1) {
-      loadOptionsTerm.options.unshift(defaultOptionTerm);
-    }
-
-    // Update page
-    if (hasMoreTerm) {
-      setPageTerm((pageTerm) => pageTerm + 1);
-    }
-    return loadOptionsTerm;
-  };
-
-  // Convert data to option for Department
-  const loadDepartmentOptions: LoadOptions<DeptOption, any, any> = async () => {
-    // Fetch data
-    // const data = termDummyData;
-
-    // Load options
-    const hasMoreDept = pageDept * pageSize < deptDummyData.length;
-
-    const loadOptionsDept = {
-      options: deptDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreDept,
-    };
-
-    if (pageDept === 1) {
-      loadOptionsDept.options.unshift(defaultOptionDept);
-    }
-
-    // Update page
-    if (hasMoreDept) {
-      setPageDept((pageDept) => pageDept + 1);
-    }
-    return loadOptionsDept;
-  };
-
-  // Convert data to option for Status
-  const loadStatusOptions: LoadOptions<StatusOption, any, any> = async () => {
-    // Fetch data
-    // const data = termDummyData;
-
-    // Load options
-    const hasMoreStatus = pageStatus * pageSize < statusDummyData.length;
-
-    const loadOptionsStatus = {
-      options: statusDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreStatus,
-    };
-
-    if (pageStatus === 1) {
-      loadOptionsStatus.options.unshift(defaultOptionStatus);
-    }
-
-    // Update page
-    if (hasMoreStatus) {
-      setPageStatus((pageStatus) => pageStatus + 1);
-    }
-
-    return loadOptionsStatus;
-  };
 
   const filterBtnGroup = (
     <motion.div
@@ -382,38 +82,26 @@ export const ListPlanFiler: React.FC = () => {
     >
       <motion.div className="flex justify-end mt-4">
         <motion.div variants={childrenAnimation} className="mr-4 ">
-          <AsyncPaginate
-            classNamePrefix="custom-select"
-            className="w-[340px] cursor-pointer "
-            value={selectedOptionTerm}
-            // isLoading={isFetching}
-            onChange={(value) => setSelectedOptionTerm(value)}
-            options={[defaultOptionTerm]}
-            loadOptions={loadTermOptions}
+          <TermFilter
+            onChange={(option) => {
+              onTermIdChange && onTermIdChange(option?.value);
+            }}
           />
         </motion.div>
 
         <motion.div variants={childrenAnimation} className="mr-4">
-          <AsyncPaginate
-            classNamePrefix="custom-select"
-            className="w-[200px] cursor-pointer"
-            value={selectedOptionDept}
-            // isLoading={isFetching}
-            onChange={(value) => setSelectedOptionDept(value)}
-            options={[defaultOptionDept]}
-            loadOptions={loadDepartmentOptions}
+          <DepartmentFilter
+            onChange={(option) => {
+              onDepartmentIdChange && onDepartmentIdChange(option?.value);
+            }}
           />
         </motion.div>
 
         <motion.div variants={childrenAnimation} className="">
-          <AsyncPaginate
-            classNamePrefix="custom-select"
-            className="w-[180px] cursor-pointer"
-            value={selectedOptionStatus}
-            // isLoading={isFetching}
-            onChange={(value) => setSelectedOptionStatus(value)}
-            options={[defaultOptionStatus]}
-            loadOptions={loadStatusOptions}
+          <StatusFilter
+            onChange={(option) => {
+              onStatusIdChange && onStatusIdChange(option?.value);
+            }}
           />
         </motion.div>
       </motion.div>
