@@ -7,84 +7,40 @@ import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
+import { Plan } from "../../providers/store/api/plansApi";
+import { cn } from "../../shared/utils/cn";
 
 // Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "waiting for approval" | "denied";
-const renderButton = (status: StatusType) => {
+const renderButton = (status: string) => {
   switch (status) {
-    case "new":
+    case "NEW":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="new">
           New
         </Tag>
       );
-    case "approve":
+    case "REVIEWED":
       return (
-        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
+        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
           Reviewed
         </Tag>
       );
-    case "waiting for approval":
+    case "WAITING_FOR_REVIEWED":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
           Waiting for approval
         </Tag>
       );
-    case "denied":
+    case "APPROVED":
       return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Denied
+        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
+          Approved
         </Tag>
       );
     default:
       return null;
   }
 };
-
-// Định nghĩa kiểu cho dữ liệu bảng
-type TablePlanDataType = {
-  id: number;
-  plan: string;
-  term: string;
-  department: string;
-  version: string;
-  status: StatusType;
-};
-
-const tablePlanDataList: TablePlanDataType[] = [
-  {
-    id: 1,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v1",
-    status: "new",
-  },
-  {
-    id: 2,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v2",
-    status: "approve",
-  },
-  {
-    id: 3,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v3",
-    status: "waiting for approval",
-  },
-  {
-    id: 4,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v4",
-    status: "denied",
-  },
-];
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -100,11 +56,42 @@ const animation: Variants = {
   },
 };
 
-interface Props {
-  onCreatePlanClick?: () => any;
+const rowAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+  },
+};
+
+export interface Row extends Plan {
+  isFetching?: boolean;
 }
 
-export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
+interface Props {
+  onCreatePlanClick?: () => any;
+  isFetching?: boolean;
+  plans?: Row[];
+  page?: number | undefined | null;
+  totalPage?: number;
+  isDataEmpty?: boolean;
+  onPageChange?: (page: number | undefined | null) => any;
+  onPrevious?: () => any;
+  onNext?: () => any;
+}
+
+export const TablePlanManagement: React.FC<Props> = ({
+  onCreatePlanClick,
+  plans,
+  isFetching,
+  page,
+  totalPage,
+  isDataEmpty,
+  onPageChange,
+  onPrevious,
+  onNext,
+}) => {
   // Navigation
   const navigate = useNavigate();
 
@@ -132,7 +119,6 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
             >
               Plan
             </th>
-            {/* <th scope="col" className="px-6 py-4"></th> */}
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
@@ -165,81 +151,126 @@ export const TablePlanManagement: React.FC<Props> = ({ onCreatePlanClick }) => {
           </tr>
         </thead>
         <tbody>
-          {tablePlanDataList.map((row, index) => (
-            <tr
-              key={row.id}
-              className={clsx({
-                "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
-                  true,
-                "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
-                  true,
-                "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
-                  index % 2 === 0,
-                "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
-                  index % 2 === 1,
-              })}
-              onMouseEnter={() => {
-                setHoverRowIndex(index);
-              }}
-              onMouseLeave={() => {
-                setHoverRowIndex(undefined);
-              }}
-              onClick={() => {
-                navigate("detail/expenses");
-              }}
-            >
-              <td className="whitespace-nowrap px-6 py-4 font-medium">
-                <div className="flex flex-row flex-wrap">
-                  <p className="font-extrabold py-2 ml-14">{row.plan}</p>
-                  <div>{renderButton(row.status)}</div>
-                </div>
-              </td>
-              {/* <td></td> */}
-              <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.term}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.department}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4 font-bold">
-                {row.version}
-              </td>
-              <td className="whitespace-nowrap px-6 py-4">
-                <motion.div
-                  initial={AnimationStage.HIDDEN}
-                  animate={
-                    hoverRowIndex === index
-                      ? AnimationStage.VISIBLE
-                      : AnimationStage.HIDDEN
-                  }
-                  exit={AnimationStage.HIDDEN}
-                  variants={animation}
-                >
-                  <IconButton
-                       onClick={(event) => {
+          {plans &&
+            plans.map((row, index) => (
+              <motion.tr
+                key={index}
+                variants={rowAnimation}
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+                className={clsx({
+                  "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                    true,
+                  "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                    index % 2 === 0,
+                  "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                    index % 2 === 1,
+                })}
+                onMouseEnter={() => {
+                  setHoverRowIndex(index);
+                }}
+                onMouseLeave={() => {
+                  setHoverRowIndex(undefined);
+                }}
+                onClick={() => {
+                  navigate("detail/expenses");
+                }}
+              >
+                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <div className="flex flex-row flex-wrap">
+                      <p className="font-extrabold py-2 ml-14">{row.name}</p>
+                      <div>{renderButton(row.status.code)}</div>
+                    </div>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <div>{row.term.name}</div>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <div>{row.department.name}</div>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                  {row.version}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  <motion.div
+                    initial={AnimationStage.HIDDEN}
+                    animate={
+                      hoverRowIndex === index
+                        ? AnimationStage.VISIBLE
+                        : AnimationStage.HIDDEN
+                    }
+                    exit={AnimationStage.HIDDEN}
+                    variants={animation}
+                  >
+                    <IconButton
+                      onClick={(event) => {
                         event.stopPropagation();
                         handleClick();
                       }}
-                  >
-                    <FaTrash className="text-red-600 text-xl" />
-                  </IconButton>
-                </motion.div>
-              </td>
-            </tr>
-          ))}
+                    >
+                      <FaTrash className="text-red-600 text-xl" />
+                    </IconButton>
+                  </motion.div>
+                </td>
+              </motion.tr>
+            ))}
         </tbody>
       </table>
+      {isDataEmpty && (
+        <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
+          No data found.
+        </div>
+      )}
+      {!isDataEmpty && (
+        <motion.div
+          initial={AnimationStage.HIDDEN}
+          animate={AnimationStage.VISIBLE}
+          variants={animation}
+        >
+          <Pagination
+            className="mt-6"
+            page={page}
+            totalPage={totalPage || 1}
+            onNext={onNext}
+            onPageChange={onPageChange}
+            onPrevious={onPrevious}
+          />
+        </motion.div>
+      )}
 
-      <motion.div
+      {/* <motion.div
         initial={AnimationStage.HIDDEN}
         animate={AnimationStage.VISIBLE}
         variants={animation}
       >
         <Pagination page={1} totalPage={20} className="mt-6" />
-      </motion.div>
-
+      </motion.div> */}
       <DeletePlanModal show={startModal} onClose={handleDeletePlanModal} />
-
     </div>
   );
 };
