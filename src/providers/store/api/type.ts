@@ -11,6 +11,11 @@ export interface PaginationType {
 }
 
 export interface PaginationResponse<T> {
-    data: T,
-    pagination: PaginationType
+  data: T;
+  pagination: PaginationType;
+}
+
+export interface ErrorData {
+  field: string;
+  message: string;
 }

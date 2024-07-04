@@ -18,11 +18,13 @@ const errorMessageAnimation: Variants = {
 
 interface Props {
   validateFn?: Function;
+  show?: boolean;
   className?: string;
 }
 
 export const InputValidationMessage: React.FC<Props> = ({
   validateFn,
+  show = true,
   className,
 }) => {
   const result = validateFn && getZodMessasges(validateFn);
@@ -33,7 +35,7 @@ export const InputValidationMessage: React.FC<Props> = ({
         className
       )}
       initial={AnimationStage.HIDDEN}
-      animate={result ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
+      animate={show && result ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
       variants={errorMessageAnimation}
     >
       {validateFn && result}

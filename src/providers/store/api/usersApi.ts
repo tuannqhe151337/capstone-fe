@@ -1,6 +1,17 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
+export interface CreateUserBody {
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  departmentId: number;
+  roleId: number;
+  positionId: number;
+  dob: string;
+  address: string;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -69,8 +80,22 @@ const staggeredBaseQuery = retry(
 
 const usersApi = createApi({
   reducerPath: "users",
-  baseQuery: staggeredBaseQuery,
-  tagTypes: ["query"],
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_BACKEND_HOST,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+      if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+    fetchFn: async (...args) => {
+      // REMOVE FOR PRODUCTION
+      // await pause(1000);
+      return fetch(...args);
+    },
+  }),
+  tagTypes: ["users"],
   endpoints(builder) {
     return {
       fetchUsers: builder.query<PaginationResponse<User[]>, ListUserParameters>(
@@ -105,9 +130,21 @@ const usersApi = createApi({
           },
         }
       ),
+      createUser: builder.mutation<void, CreateUserBody>({
+        query: (createUserBody) => ({
+          url: "user",
+          method: "POST",
+          body: createUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
     };
   },
 });
 
-export const { useFetchUsersQuery, useLazyFetchUsersQuery } = usersApi;
+export const {
+  useFetchUsersQuery,
+  useLazyFetchUsersQuery,
+  useCreateUserMutation,
+} = usersApi;
 export { usersApi };
