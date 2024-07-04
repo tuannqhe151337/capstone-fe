@@ -2,14 +2,34 @@ import { configureStore } from "@reduxjs/toolkit";
 import darkModeReducer from "./slices/darkModeSlice";
 import { authAPI } from "./api/authApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { usersApi as usersAPI } from "./api/usersApi";
+import { roleAPI } from "./api/roleApi";
+import { departmentAPI } from "./api/departmentApi";
+import { positionAPI } from "./api/positionApi";
+import { termAPI } from "./api/termApi";
+import { plansApi } from "./api/plansApi";
 
 export const store = configureStore({
   reducer: {
     darkMode: darkModeReducer,
     [authAPI.reducerPath]: authAPI.reducer,
+    [usersAPI.reducerPath]: usersAPI.reducer,
+    [roleAPI.reducerPath]: roleAPI.reducer,
+    [departmentAPI.reducerPath]: departmentAPI.reducer,
+    [positionAPI.reducerPath]: positionAPI.reducer,
+    [plansApi.reducerPath]: plansApi.reducer,
+    [termAPI.reducerPath]: termAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authAPI.middleware),
+    getDefaultMiddleware().concat(
+      authAPI.middleware,
+      usersAPI.middleware,
+      roleAPI.middleware,
+      departmentAPI.middleware,
+      positionAPI.middleware,
+      plansApi.middleware,
+      termAPI.middleware
+    ),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
