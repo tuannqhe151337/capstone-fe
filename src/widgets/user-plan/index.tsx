@@ -2,7 +2,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
 import { TableCellName } from "./ui/table-cell-name";
@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import { ActiveConfirmModal } from "../user-active-confirm-modal";
 import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
 import { User } from "../../providers/store/api/usersApi";
-import { PaginationType } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",

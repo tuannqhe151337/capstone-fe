@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface CreateUserBody {
@@ -48,35 +48,6 @@ interface Position {
   id: number;
   name: string;
 }
-
-// DEV ONLY!!!
-const pause = (duration: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
-  });
-};
-
-// maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
-const staggeredBaseQuery = retry(
-  fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BACKEND_HOST,
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-    fetchFn: async (...args) => {
-      // REMOVE FOR PRODUCTION
-      // await pause(1000);
-      return fetch(...args);
-    },
-  }),
-  {
-    maxRetries: 5,
-  }
-);
 
 const usersApi = createApi({
   reducerPath: "users",

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
@@ -84,7 +84,7 @@ export const PlanManagementList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchPlan, { data, error, isFetching }] = useLazyFetchPlansQuery();
+  const [fetchPlan, { data, isFetching }] = useLazyFetchPlansQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

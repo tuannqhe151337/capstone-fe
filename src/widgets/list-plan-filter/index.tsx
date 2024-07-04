@@ -1,6 +1,5 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useState } from "react";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
@@ -63,8 +62,6 @@ interface Props {
 }
 
 export const ListPlanFilter: React.FC<Props> = ({
-  searchboxValue,
-  onSearchboxChange,
   onTermIdChange,
   onDepartmentIdChange,
   onStatusIdChange,
