@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z, ZodType } from "zod";
+import { SerializedError } from "@reduxjs/toolkit";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { FaLocationDot, FaUser } from "react-icons/fa6";
+import { FaCircleExclamation, FaLocationDot, FaUser } from "react-icons/fa6";
 import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
-import { HiOutlineMailOpen } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { DatePickerInput } from "../../shared/date-picker-input";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { DepartmentFilter } from "../../entities/department-filter";
+import { RoleFilter } from "../../entities/role-filter";
+import { PositionFilter } from "../../entities/position-filter";
+import { PiBagSimpleFill } from "react-icons/pi";
+import { MdEmail } from "react-icons/md";
+import { useCreateUserMutation } from "../../providers/store/api/usersApi";
+import { CgSpinner } from "react-icons/cg";
+import { ErrorData } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -35,77 +48,116 @@ const staggerChildrenAnimation: Variants = {
 };
 
 const childrenAnimation: Variants = {
-  hidden: {
+  [AnimationStage.HIDDEN]: {
     opacity: 0,
     y: 10,
   },
-  visible: {
+  [AnimationStage.VISIBLE]: {
     opacity: 1,
     y: 0,
   },
 };
 
-interface TermOption {
-  value: number;
-  label: string;
-}
-
-const pageSize = 10;
-
-const defaultOptionTerm = {
-  value: 0,
-  label: "Term",
+const errorAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    height: 0,
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    height: 45,
+    opacity: 1,
+  },
 };
 
-const termDummyData = [
-  {
-    id: 1,
-    name: "Term 1",
-  },
-  {
-    id: 2,
-    name: "Term 2",
-  },
-  {
-    id: 3,
-    name: "Term 3",
-  },
-];
+type Id = number;
+
+type FormData = {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  birthDate: Date;
+  departmentId: Id;
+  roleId: Id;
+  positionId: Id;
+  address?: string | null;
+};
+
+const FullNameSchema = z
+  .string()
+  .min(5, "Full name length must be at least 5 characters");
+
+const PhoneNumberSchema = z
+  .string()
+  .regex(/^[0-9]+$/)
+  .min(10, "Phone number must be at least 10 numbers")
+  .max(15, "Phone number must be at least 15 numbers");
+
+const EmailSchema = z.string().email();
+
+const PositionIdSchema = z.number();
+
+const DepartmentIdSchema = z.number();
+
+const AddressSchema = z.string().nullable();
+
+const RoleSchema = z.number();
+
+const BirthDateSchema = z.date();
+
+export const CreateUserSchema: ZodType<FormData> = z.object({
+  fullName: FullNameSchema,
+  phoneNumber: PhoneNumberSchema,
+  email: EmailSchema,
+  birthDate: BirthDateSchema,
+  roleId: RoleSchema,
+  positionId: PositionIdSchema,
+  departmentId: DepartmentIdSchema,
+  address: AddressSchema,
+});
+
 export const UserCreate: React.FC = () => {
-  // Select state
-  const [selectedOptionTerm, setSelectedOptionTerm] =
-    useState<TermOption | null>(defaultOptionTerm);
+  // Navigate
+  const navigate = useNavigate();
 
-  // Fetch initial data
-  const [pageTerm, setPageTerm] = useState<number>(1);
+  // Form
+  const {
+    register,
+    control,
+    watch,
+    formState: { dirtyFields },
+    handleSubmit,
+  } = useForm<FormData>({
+    resolver: zodResolver(CreateUserSchema), // Apply the zodResolver
+  });
 
-  // Convert data to option for Term
-  const loadTermOptions: LoadOptions<TermOption, any, any> = async () => {
-    // Load options
-    const hasMoreTerm = pageTerm * pageSize < termDummyData.length;
+  // Mutation
+  const [createUser, { isLoading, isSuccess, isError, error }] =
+    useCreateUserMutation();
 
-    const loadOptionsTerm = {
-      options: termDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreTerm,
-    };
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const birthDateString = data.birthDate.toISOString().replace("Z", "");
 
-    if (pageTerm === 1) {
-      loadOptionsTerm.options.unshift(defaultOptionTerm);
-    }
-
-    // Update page
-    if (hasMoreTerm) {
-      setPageTerm((pageTerm) => pageTerm + 1);
-    }
-    return loadOptionsTerm;
+    createUser({
+      fullName: data.fullName,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      departmentId: data.departmentId,
+      roleId: data.roleId,
+      positionId: data.positionId,
+      dob: birthDateString,
+      address: data.address || "",
+    });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/user-management");
+    }
+  }, [isSuccess]);
 
   return (
     <motion.div
-      className="px-6 pb-10"
+      className="px-6 pb-32"
       initial={AnimationStage.HIDDEN}
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
@@ -120,6 +172,7 @@ export const UserCreate: React.FC = () => {
       </BubbleBanner>
 
       <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black ">
+        {/* Fullname */}
         <div className="flex flex-row gap-6 pl-10 pt-10">
           <div>
             <FaUser className="text-2xl mt-2 opacity-30" />
@@ -133,26 +186,35 @@ export const UserCreate: React.FC = () => {
               label="Full name"
               className="mb-4 bg-white dark:bg-neutral-900"
               autoFocus
-            ></TEInput>
-          </motion.div>
-        </div>
-
-        <div className="flex flex-row gap-6 pl-10 mt-6">
-          <div>
-            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
-          </div>
-          <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+              {...register("fullName", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.fullName || false}
+              validateFn={() => FullNameSchema.parse(watch("fullName"))}
             />
           </motion.div>
         </div>
 
+        {/* Role */}
+        <div className="flex flex-row gap-6 pl-10 mt-4">
+          <div>
+            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+          </div>
+          <motion.div variants={childrenAnimation}>
+            <Controller
+              name="roleId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <RoleFilter
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
+            />
+          </motion.div>
+        </div>
+
+        {/* Phone */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
@@ -162,16 +224,23 @@ export const UserCreate: React.FC = () => {
             className="w-[500px] custom-wrapper"
           >
             <TEInput
-              type="text"
+              type="number"
               label="Phone"
               className="mb-4 w-full bg-white dark:bg-neutral-900 "
-            ></TEInput>
+              {...register("phoneNumber", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.phoneNumber || false}
+              validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
+            />
           </motion.div>
         </div>
 
+        {/* Email */}
         <div className="flex flex-row gap-6 pl-10 mt-6">
           <div>
-            <HiOutlineMailOpen className="text-2xl mt-1 opacity-30" />
+            <MdEmail className="text-2xl mt-1 opacity-30" />
           </div>
           <motion.div
             variants={childrenAnimation}
@@ -181,57 +250,77 @@ export const UserCreate: React.FC = () => {
               type="email"
               label="Email"
               className="mb-4 w-full bg-white dark:bg-neutral-900"
-            ></TEInput>
+              {...register("email", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.email || false}
+              validateFn={() => EmailSchema.parse(watch("email"))}
+            />
           </motion.div>
         </div>
 
         <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10 "></div>
 
+        {/* Department */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
-            {/* <FcDepartment className="text-2xl mt-2 opacity-30" /> */}
-            {/* <FaRegBuilding className="text-2xl mt-2 opacity-30" /> */}
             <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+            <Controller
+              name="departmentId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <DepartmentFilter
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
             />
           </motion.div>
         </div>
 
+        {/* Position */}
         <div className="flex flex-row gap-6 pl-10 mt-8">
           <div>
-            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+            <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+            <Controller
+              name="positionId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <PositionFilter
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
             />
           </motion.div>
         </div>
 
         <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-10"></div>
 
+        {/* Birthdate */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation} className="custom-wrapper">
-            <DatePickerInput value={new Date()} allowEmpty />
+            <Controller
+              name="birthDate"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <DatePickerInput
+                  value={new Date()}
+                  allowEmpty
+                  onChange={(value) => onChange(value)}
+                />
+              )}
+            />
           </motion.div>
         </div>
 
+        {/* Location */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
@@ -244,13 +333,34 @@ export const UserCreate: React.FC = () => {
               type="text"
               label="Address"
               className="mb-4 w-full bg-white dark:bg-neutral-900"
-            ></TEInput>
+              {...register("address")}
+            />
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto flex justify-center mt-12">
-          <Button className="w-[1180px] py-2 dark:text-white/80">
-            Create user
+        <motion.div
+          className="relative mx-7 mt-1"
+          initial={AnimationStage.HIDDEN}
+          animate={isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
+          variants={errorAnimation}
+        >
+          <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+            <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+            <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+              {error && "data" in error && "message" in (error.data as any)
+                ? (error.data as ErrorData).message
+                : "Something went wrong, please try again!"}
+            </p>
+          </div>
+        </motion.div>
+
+        <div className="w-10/12 mx-auto flex justify-center mt-4">
+          <Button
+            className="w-[1180px] py-2 dark:text-white/80"
+            onClick={handleSubmit(onSubmit)}
+          >
+            {!isLoading && "Create user"}
+            {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>
       </div>

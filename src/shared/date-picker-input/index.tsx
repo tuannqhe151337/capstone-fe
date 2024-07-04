@@ -10,6 +10,7 @@ import { AdornmentInput } from "../adornment-input";
 import { motion, Variants } from "framer-motion";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
+
 import { cn } from "../utils/cn";
 
 enum AnimationStage {
@@ -36,6 +37,7 @@ interface ModalPosition {
 interface Props {
   className?: string;
   calendarClassName?: string;
+  datePattern?: string;
   modalPosition?: ModalPosition;
   value?: Date;
   allowEmpty?: boolean;
@@ -48,6 +50,7 @@ interface Props {
 export const DatePickerInput: React.FC<Props> = ({
   className,
   calendarClassName,
+  datePattern = "dd/MM/yyyy",
   modalPosition,
   value,
   allowEmpty,
@@ -59,7 +62,7 @@ export const DatePickerInput: React.FC<Props> = ({
   const isDarkMode = useDetectDarkmode();
 
   const [inputValue, setInputValue] = useState<string>(
-    value ? format(value, "dd/MM/yyyy") : ""
+    value ? format(value, datePattern) : ""
   );
   const [monthSelected, setMonthSelected] = useState<Date>();
   const [isInputValueValid, setIsInputValueValid] = useState<boolean>();
@@ -75,7 +78,7 @@ export const DatePickerInput: React.FC<Props> = ({
     if (inputValue === "" && allowEmpty) {
       setIsInputValueValid(true);
     } else {
-      const date = inputValue && parse(inputValue, "dd/MM/yyyy", new Date());
+      const date = inputValue && parse(inputValue, datePattern, new Date());
 
       if (date instanceof Date && !isNaN(date.valueOf())) {
         setIsInputValueValid(true);
@@ -88,7 +91,7 @@ export const DatePickerInput: React.FC<Props> = ({
   // onChange
   useEffect(() => {
     if (isInputValueValid) {
-      const date = inputValue && parse(inputValue, "dd/MM/yyyy", new Date());
+      const date = inputValue && parse(inputValue, datePattern, new Date());
       onChange && date instanceof Date && onChange(date);
     }
   }, [isInputValueValid]);
@@ -96,7 +99,7 @@ export const DatePickerInput: React.FC<Props> = ({
   // Select month base on valid input value
   useEffect(() => {
     if (isInputValueValid) {
-      const date = inputValue && parse(inputValue, "dd/MM/yyyy", new Date());
+      const date = inputValue && parse(inputValue, datePattern, new Date());
       date instanceof Date && setMonthSelected(date);
     }
   }, [isInputValueValid]);
@@ -226,9 +229,12 @@ export const DatePickerInput: React.FC<Props> = ({
               mode="single"
               classNames={{
                 day: "w-[40px] h-[40px] rounded-full duration-500",
+                button: "dark:hover:bg-neutral-600 cursor-pointer",
+                button_reset: "cursor-pointer",
               }}
               modifiersClassNames={{
-                selected: "bg-primary-200 text-black font-bold",
+                selected:
+                  "!bg-primary-200 dark:!bg-primary-800 !text-primary-800 dark:!text-primary-200 !font-bold",
               }}
               month={monthSelected}
               onMonthChange={(date) => {
@@ -236,11 +242,11 @@ export const DatePickerInput: React.FC<Props> = ({
               }}
               selected={
                 inputValue
-                  ? parse(inputValue, "dd/MM/yyyy", new Date())
+                  ? parse(inputValue, datePattern, new Date())
                   : undefined
               }
               onSelect={(date) => {
-                date && setInputValue(format(date, "dd/MM/yyyy"));
+                date && setInputValue(format(date, datePattern));
               }}
             />
           </motion.div>,
