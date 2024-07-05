@@ -54,6 +54,8 @@ export interface UserSetting {
   darkMode: boolean;
 }
 
+const AUTH_TAG = "auth";
+
 export const authAPI = createApi({
   reducerPath: "authAPI",
   baseQuery: fetchBaseQuery({
@@ -66,6 +68,7 @@ export const authAPI = createApi({
       return headers;
     },
   }),
+  tagTypes: [AUTH_TAG],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginBody>({
       query: ({ username, password }) => ({
@@ -82,7 +85,11 @@ export const authAPI = createApi({
         url: "auth/me",
       }),
     }),
+    logout: builder.mutation<void, void>({
+      query: () => ({ url: "auth/logout", method: "POST" }),
+      invalidatesTags: [AUTH_TAG],
+    }),
   }),
 });
 
-export const { useLoginMutation, useMeQuery } = authAPI;
+export const { useLoginMutation, useMeQuery, useLogoutMutation } = authAPI;

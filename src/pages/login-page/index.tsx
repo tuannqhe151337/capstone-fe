@@ -8,7 +8,10 @@ import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
 import { useEffect, useState } from "react";
 import { Button } from "../../shared/button";
-import { useLoginMutation } from "../../providers/store/api/authApi";
+import {
+  useLoginMutation,
+  useMeQuery,
+} from "../../providers/store/api/authApi";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { CgSpinner } from "react-icons/cg";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
@@ -89,6 +92,15 @@ export const LoginPage: React.FC = () => {
 
   // Use translation
   const { t } = useTranslation(["login"]);
+
+  // Redirect if user already logged in
+  const { isSuccess: meQuerySuccess } = useMeQuery();
+
+  useEffect(() => {
+    if (meQuerySuccess) {
+      navigate(`/`);
+    }
+  }, [meQuerySuccess]);
 
   // Mutation
   const [login, { data, isLoading, isError, isSuccess }] = useLoginMutation();
