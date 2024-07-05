@@ -9,8 +9,8 @@ import { BubbleBackground } from "../../entities/bubble-background";
 import { useEffect, useState } from "react";
 import { Button } from "../../shared/button";
 import {
+  useLazyMeQuery,
   useLoginMutation,
-  useMeQuery,
 } from "../../providers/store/api/authApi";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { CgSpinner } from "react-icons/cg";
@@ -94,7 +94,11 @@ export const LoginPage: React.FC = () => {
   const { t } = useTranslation(["login"]);
 
   // Redirect if user already logged in
-  const { isSuccess: meQuerySuccess } = useMeQuery();
+  const [getMeQuery, { isSuccess: meQuerySuccess }] = useLazyMeQuery();
+
+  useEffect(() => {
+    getMeQuery();
+  }, []);
 
   useEffect(() => {
     if (meQuerySuccess) {
