@@ -79,7 +79,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<FaChartPie className="text-2xl" />}
                 text={t("Annual Report")}
-                // selected={location.pathname === "/"}
+                selected={location.pathname === "/annual-report"}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -93,7 +93,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
                 text={t("Term management")}
-                // selected={location.pathname === "/"}
+                selected={location.pathname === "/term-management"}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -101,34 +101,34 @@ export const Sidebar = () => {
         )}
 
         {/* Financial report */}
-        {data?.role.code === Role.ACCOUNTANT ||
-          (data?.role.code === Role.FINANCIAL_STAFF && (
-            <div>
-              <Link to={`/report-management`}>
-                <Tab
-                  icon={<HiDocumentReport className="text-3xl -ml-1" />}
-                  text={t("Financial report")}
-                  // selected={location.pathname === "/"}
-                  isExpanded={isExpanded}
-                />
-              </Link>
-            </div>
-          ))}
+        {(data?.role.code === Role.ACCOUNTANT ||
+          data?.role.code === Role.FINANCIAL_STAFF) && (
+          <div>
+            <Link to={`/report-management`}>
+              <Tab
+                icon={<HiDocumentReport className="text-3xl -ml-1" />}
+                text={t("Financial report")}
+                selected={location.pathname === "/report-management"}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
 
         {/* Financial plan */}
-        {data?.role.code === Role.ACCOUNTANT ||
-          (data?.role.code === Role.FINANCIAL_STAFF && (
-            <div>
-              <Link to={`/plan-management`}>
-                <Tab
-                  icon={<FaChartLine className="text-2xl" />}
-                  text={t("Financial plan")}
-                  selected={location.pathname === "/plan-management"}
-                  isExpanded={isExpanded}
-                />
-              </Link>
-            </div>
-          ))}
+        {(data?.role.code === Role.ACCOUNTANT ||
+          data?.role.code === Role.FINANCIAL_STAFF) && (
+          <div>
+            <Link to={`/plan-management`}>
+              <Tab
+                icon={<FaChartLine className="text-2xl" />}
+                text={t("Financial plan")}
+                selected={location.pathname === "/plan-management"}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
 
         {/* User management */}
         {data?.role.code === Role.ADMIN && (
