@@ -263,13 +263,6 @@ export const TablePlanManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      {/* <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        variants={animation}
-      >
-        <Pagination page={1} totalPage={20} className="mt-6" />
-      </motion.div> */}
       <DeletePlanModal show={startModal} onClose={handleDeletePlanModal} />
     </div>
   );
