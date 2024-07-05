@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Header } from "../../widgets/header";
 import { Sidebar } from "../../widgets/sidebar";
-import { useMeQuery } from "../../providers/store/api/authApi";
+import { useLazyMeQuery, useMeQuery } from "../../providers/store/api/authApi";
 import { useEffect, useState } from "react";
 import { LogoutModal } from "../../widgets/logout-modal";
 
@@ -10,7 +10,11 @@ export const ProtectedRootPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Check if user is logged in
-  const { isError } = useMeQuery();
+  const [getMeQuery, { isError, error }] = useLazyMeQuery();
+
+  useEffect(() => {
+    getMeQuery();
+  }, []);
 
   useEffect(() => {
     if (isError) {
