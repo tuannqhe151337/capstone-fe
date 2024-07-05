@@ -3,7 +3,7 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { FaUpload } from "react-icons/fa6";
-import { ListPlanFiler } from "../../widgets/list-plan-filter";
+import { ListPlanFilter } from "../../widgets/list-plan-filter";
 import { Variants, motion } from "framer-motion";
 import { TableReportManagement } from "../../widgets/table-report";
 
@@ -74,7 +74,7 @@ export const ReportManagementList: React.FC = () => {
       </BubbleBanner>
 
       <motion.div variants={childrenAnimation}>
-        <ListPlanFiler />
+        <ListPlanFilter />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
