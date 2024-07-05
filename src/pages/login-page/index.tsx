@@ -6,11 +6,9 @@ import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../../shared/button";
-import {
-  useLoginMutation,
-} from "../../providers/store/api/authApi";
+import { useLoginMutation } from "../../providers/store/api/authApi";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { CgSpinner } from "react-icons/cg";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
@@ -93,7 +91,7 @@ export const LoginPage: React.FC = () => {
   const { t } = useTranslation(["login"]);
 
   // Mutation
-  const [login, { isLoading, isError }] = useLoginMutation();
+  const [login, { data, isLoading, isError, isSuccess }] = useLoginMutation();
 
   // Username input state
   const [username, setUsername] = useState<string>("");
@@ -106,7 +104,7 @@ export const LoginPage: React.FC = () => {
   // Handling submit
   const handleSubmit = async () => {
     if (username !== "" && password !== "") {
-      const { data } = await login({ username, password });
+      login({ username, password });
 
       if (data) {
         localStorage.setItem(LocalStorageItemKey.TOKEN, data.token);
@@ -114,11 +112,23 @@ export const LoginPage: React.FC = () => {
           LocalStorageItemKey.REFRESH_TOKEN,
           data.refreshToken
         );
-
-        navigate("/");
       }
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (data) {
+        localStorage.setItem(LocalStorageItemKey.TOKEN, data.token);
+        localStorage.setItem(
+          LocalStorageItemKey.REFRESH_TOKEN,
+          data.refreshToken
+        );
+      }
+
+      navigate("/");
+    }
+  }, [isSuccess]);
 
   return (
     <div className="flex flex-row flex-wrap w-full">
