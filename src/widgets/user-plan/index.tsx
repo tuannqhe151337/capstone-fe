@@ -180,7 +180,7 @@ export const TableUserManagement: React.FC<Props> = ({
                   }}
                   onClick={(event) => {
                     event.stopPropagation();
-                    navigate("detail");
+                    navigate(`detail/${row.userId}`);
                   }}
                 >
                   <TableCell
