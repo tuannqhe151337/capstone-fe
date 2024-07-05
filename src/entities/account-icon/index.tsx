@@ -21,7 +21,11 @@ const animation: Variants = {
   },
 };
 
-export const AccountIcon: React.FC = () => {
+interface Props {
+  onLogoutClick?: Function;
+}
+
+export const AccountIcon: React.FC<Props> = ({ onLogoutClick }) => {
   const { t, i18n } = useTranslation(["header"]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -53,14 +57,20 @@ export const AccountIcon: React.FC = () => {
             exit={AnimationStage.HIDDEN}
             variants={animation}
           >
-            <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
+            <TERipple rippleColor="light" className="w-full">
               <Link to={`/profile`}>
                 <div className="w-full min-w-max px-7 py-2.5 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
                   {t("profile")}
                 </div>
               </Link>
             </TERipple>
-            <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
+            <TERipple
+              rippleColor="light"
+              className="w-full"
+              onClick={() => {
+                onLogoutClick && onLogoutClick();
+              }}
+            >
               <div className="w-full min-w-max px-7 py-2.5 text-red-500 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
                 {t("logout")}
               </div>
