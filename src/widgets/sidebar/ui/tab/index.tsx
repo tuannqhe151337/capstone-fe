@@ -20,14 +20,14 @@ export const Tab: React.FC<Props> = ({
     <TERipple
       ref={ref}
       rippleColor="primary"
-      className={`pl-5 pr-2 py-4 cursor-pointer w-full ${
+      className={`cursor-pointer w-full ${
         selected
           ? "bg-primary-100 dark:bg-primary-950"
           : "hover:bg-primary-50 hover:dark:bg-primary-950/50"
       } rounded-lg duration-300 overflow-hidden`}
     >
       <TETooltip
-        className={`flex flex-row items-center gap-5 text-primary-500 w-full`}
+        className={`flex flex-row items-center pl-5 pr-2 py-4 gap-5 text-primary-500 w-full`}
         title={text}
         placement="right"
         enabled={!isExpanded}

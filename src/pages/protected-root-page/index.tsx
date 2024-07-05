@@ -2,7 +2,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { Header } from "../../widgets/header";
 import { Sidebar } from "../../widgets/sidebar";
 import { useMeQuery } from "../../providers/store/api/authApi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { LogoutModal } from "../../widgets/logout-modal";
 
 export const ProtectedRootPage: React.FC = () => {
   // Naviate
@@ -17,15 +18,20 @@ export const ProtectedRootPage: React.FC = () => {
     }
   }, [isError]);
 
+  // Logout modal
+  const [isShowLogout, setIsShowLogout] = useState<boolean>(false);
+
   return (
     <div>
-      <Header />
+      <Header onLogoutClick={() => setIsShowLogout(true)} />
       <div className="flex flex-row">
         <Sidebar />
         <div className="w-full">
           <Outlet />
         </div>
       </div>
+
+      <LogoutModal show={isShowLogout} onClose={() => setIsShowLogout(false)} />
     </div>
   );
 };
