@@ -162,7 +162,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "detail",
+            path: "detail/:userId",
             lazy: async () => {
               const UserDetailPage = (
                 await import("../../pages/user-detail-page")

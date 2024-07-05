@@ -24,9 +24,13 @@ export interface ListUserParameters {
 export interface User {
   userId: number | string;
   username: string;
+  fullName: string;
+  phoneNumber: string;
   email: string;
   role: Role;
   department: Department;
+  address: string;
+  dob: string;
   position: Position;
   deactivate: boolean;
   createdAt: string;
@@ -138,6 +142,9 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+      fetchUserDetail: builder.query<User, number>({
+        query: (userId) => `user/detail/${userId}`,
+      }),
     };
   },
 });
@@ -146,5 +153,6 @@ export const {
   useFetchUsersQuery,
   useLazyFetchUsersQuery,
   useCreateUserMutation,
+  useFetchUserDetailQuery,
 } = usersApi;
 export { usersApi };

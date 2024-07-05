@@ -5,7 +5,8 @@ import { Button } from "../../shared/button";
 import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { UserDetailCard } from "../../widgets/user-detail-card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useFetchUserDetailQuery } from "../../providers/store/api/usersApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -41,22 +42,20 @@ const childrenAnimation: Variants = {
   },
 };
 
-// User detail data object
-const userDetailData = {
-  fullName: "Nguyễn Lan Anh",
-  username: "AnhNL2",
-  role: "Accountant",
-  position: "Techlead",
-  department: "Department 1",
-  phone: "0983231234",
-  email: "user@email.com",
-  dateOfBirth: "29 December 2002",
-  address: "22 Avenue Street",
-};
-
 export const UserDetail: React.FC = () => {
   // Navigate
   const navigate = useNavigate();
+
+  const { userId } = useParams<{ userId: string }>();
+
+  const numericUserId = userId ? parseInt(userId, 10) : undefined;
+
+  const { data: user, isLoading } = useFetchUserDetailQuery(
+    numericUserId as number
+  );
+
+  // if (isLoading) return <p>Loading...</p>;
+  if (!user) return <p>No user found</p>;
 
   return (
     <div className="relative px-6">
@@ -76,19 +75,19 @@ export const UserDetail: React.FC = () => {
         >
           <UserAvatarCard
             className="w-1/3"
-            username={userDetailData.username || ""}
-            role={userDetailData.role || ""}
-            position={userDetailData.position || ""}
-            department={userDetailData.department || ""}
+            username={user.username || ""}
+            role={user.role.name || ""}
+            position={user.position.name || ""}
+            department={user.department.name || ""}
           />
 
           <UserDetailCard
             className="w-2/3"
-            address={userDetailData.address}
-            dateOfBirth={userDetailData.dateOfBirth}
-            email={userDetailData.email}
-            fullName={userDetailData.fullName}
-            phone={userDetailData.phone}
+            address={user.address}
+            dateOfBirth={user.dob}
+            email={user.email}
+            fullName={user.fullName}
+            phone={user.phoneNumber}
             actionComponent={
               <Button
                 className="flex flex-row flex-wrap gap-2 items-center"

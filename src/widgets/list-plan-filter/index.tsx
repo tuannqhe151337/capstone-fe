@@ -30,7 +30,7 @@ const staggerChildrenAnimation: Variants = {
     },
   },
 };
-
+``;
 const childrenAnimation: Variants = {
   hidden: {
     opacity: 0,
