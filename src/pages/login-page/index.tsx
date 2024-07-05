@@ -94,17 +94,24 @@ export const LoginPage: React.FC = () => {
   const { t } = useTranslation(["login"]);
 
   // Redirect if user already logged in
-  const [getMeQuery, { isSuccess: meQuerySuccess }] = useLazyMeQuery();
+  const [
+    getMeQuery,
+    {
+      isSuccess: meQuerySuccess,
+      isFetching: meQueryFetching,
+      isError: meQueryError,
+    },
+  ] = useLazyMeQuery();
 
   useEffect(() => {
     getMeQuery();
   }, []);
 
   useEffect(() => {
-    if (meQuerySuccess) {
-      navigate(`/`);
+    if (!meQueryFetching && meQuerySuccess && !meQueryError) {
+      navigate("/");
     }
-  }, [meQuerySuccess]);
+  }, [meQueryFetching, meQuerySuccess, meQueryError]);
 
   // Mutation
   const [login, { data, isLoading, isError, isSuccess }] = useLoginMutation();

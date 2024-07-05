@@ -10,7 +10,7 @@ export const ProtectedRootPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Check if user is logged in
-  const [getMeQuery, { isError, error }] = useLazyMeQuery();
+  const [getMeQuery, { isError }] = useLazyMeQuery();
 
   useEffect(() => {
     getMeQuery();
@@ -18,7 +18,7 @@ export const ProtectedRootPage: React.FC = () => {
 
   useEffect(() => {
     if (isError) {
-      navigate(`/auth/login`);
+      navigate("/auth/login");
     }
   }, [isError]);
 
