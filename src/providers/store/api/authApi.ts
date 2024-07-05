@@ -77,6 +77,7 @@ export const authAPI = createApi({
           password,
         },
       }),
+      invalidatesTags: ["auth"],
     }),
     me: builder.query<UserResponse, void>({
       query: () => ({
@@ -91,4 +92,9 @@ export const authAPI = createApi({
   }),
 });
 
-export const { useLoginMutation, useMeQuery, useLogoutMutation } = authAPI;
+export const {
+  useLoginMutation,
+  useMeQuery,
+  useLazyMeQuery,
+  useLogoutMutation,
+} = authAPI;
