@@ -17,7 +17,7 @@ const renderButton = (status: string) => {
     case "NEW":
       return (
         <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          NEW
+          New
         </Tag>
       );
     case "IN_PROGRESS":
@@ -161,7 +161,6 @@ export const TableTermManagement: React.FC<Props> = ({
                   <div className="flex flex-row flex-wrap">
                     <p className="font-extrabold py-2 ml-14">{row.name}</p>
                     <div>{renderButton(row.status.code)}</div>
-                    <div>{row.status.code}</div>
                   </div>
                 </td>
 
