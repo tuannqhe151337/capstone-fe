@@ -7,7 +7,7 @@ import { AccountIcon } from "../../entities/account-icon";
 export const Header: React.FC = () => {
   return (
     <div className="flex items-center h-[100px]">
-      <div className="ml-6">
+      <div className="ml-10">
         <Link to={`/`}>
           <p className="text-primary">
             <span className="text-4xl font-black">F</span>
