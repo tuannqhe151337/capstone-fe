@@ -132,6 +132,7 @@ const usersApi = createApi({
 
             return endpoint;
           },
+          providesTags: ["users"],
         }
       ),
       createUser: builder.mutation<void, CreateUserBody>({
