@@ -19,3 +19,9 @@ export interface ErrorData {
   field: string;
   message: string;
 }
+
+export enum Role {
+  ADMIN = "admin",
+  ACCOUNTANT = "accountant",
+  FINANCIAL_STAFF = "financial-staff",
+}
