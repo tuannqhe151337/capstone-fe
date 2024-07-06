@@ -51,7 +51,7 @@ export const Sidebar = () => {
     >
       <div>
         {/* Toggle open close */}
-        <div className="pl-3 mb-5">
+        <div className="pl-3 mb-3">
           <IconButton
             tooltip="Toggle sidebar (Ctrl + B)"
             onClick={() => setIsExpanded((prevState) => !prevState)}
@@ -59,6 +59,8 @@ export const Sidebar = () => {
             <FaBars className="text-xl text-primary-500" />
           </IconButton>
         </div>
+
+        <div className="w-full border-t-2 dark:border-t-neutral-800 mb-5"></div>
 
         {/* Home */}
         <div>
