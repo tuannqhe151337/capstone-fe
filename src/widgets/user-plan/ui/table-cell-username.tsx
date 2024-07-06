@@ -8,7 +8,7 @@ interface Props {
   deactivated: boolean;
 }
 
-export const TableCellName: React.FC<Props> = ({
+export const TableCellUsername: React.FC<Props> = ({
   children,
   deactivated,
   isFetching,
@@ -24,7 +24,7 @@ export const TableCellName: React.FC<Props> = ({
       ></span>
     ) : (
       <>
-        <p className="inline-block mr-3">{children}</p>
+        <p className="inline-block mr-3 group-hover:underline">{children}</p>
 
         {deactivated && (
           <Tag

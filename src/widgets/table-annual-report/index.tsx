@@ -66,9 +66,6 @@ export const TableAnnualReport: React.FC<Props> = ({ onCreatePlanClick }) => {
   // Navigation
   const navigate = useNavigate();
 
-  // UI: show delete button
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
-
   return (
     <div>
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
@@ -114,17 +111,11 @@ export const TableAnnualReport: React.FC<Props> = ({ onCreatePlanClick }) => {
                 "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
                   index % 2 === 1,
               })}
-              onMouseEnter={() => {
-                setHoverRowIndex(index);
-              }}
-              onMouseLeave={() => {
-                setHoverRowIndex(undefined);
-              }}
               onClick={() => {
                 navigate("detail/chart");
               }}
             >
-              <td className="whitespace-nowrap px-6 py-4 font-bold">
+              <td className="whitespace-nowrap px-6 py-5 font-bold group-hover:underline">
                 {row.report}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold">
