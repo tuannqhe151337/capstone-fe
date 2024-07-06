@@ -1,15 +1,32 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { FaLocationDot, FaUser } from "react-icons/fa6";
-import { Variants, motion } from "framer-motion";
+import { FaCircleExclamation, FaLocationDot, FaUser } from "react-icons/fa6";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
-import { HiOutlineMailOpen } from "react-icons/hi";
 import { RiUserSettingsFill } from "react-icons/ri";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
-import { PiTreeStructureFill } from "react-icons/pi";
+import { PiBagSimpleFill, PiTreeStructureFill } from "react-icons/pi";
 import { DatePickerInput } from "../../shared/date-picker-input";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { z, ZodType } from "zod";
+import {
+  useCreateUserMutation,
+  useLazyFetchUserDetailQuery,
+} from "../../providers/store/api/usersApi";
+import { parseISO } from "date-fns";
+import { DepartmentFilter } from "../../entities/department-filter";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { MdEmail } from "react-icons/md";
+import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
+import { RoleFilter } from "../../entities/role-filter";
+import { PositionFilter } from "../../entities/position-filter";
+import { CgSpinner } from "react-icons/cg";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { toast } from "react-toastify";
+import { ErrorData } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -45,96 +62,186 @@ const childrenAnimation: Variants = {
   },
 };
 
-interface TermOption {
-  value: number;
-  label: string;
-}
-
-const pageSize = 10;
-
-const defaultOptionTerm = {
-  value: 0,
-  label: "Term",
+const errorAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    height: 0,
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    height: 45,
+    opacity: 1,
+  },
 };
 
-const termDummyData = [
-  {
-    id: 1,
-    name: "Term 1",
-  },
-  {
-    id: 2,
-    name: "Term 2",
-  },
-  {
-    id: 3,
-    name: "Term 3",
-  },
-];
+type Id = number;
 
-const userDummyData = {
-  fullName: "Le Ngoc Anh",
-  term: defaultOptionTerm,
-  phone: "0983239811",
-  email: "anhln7@deptrai.com",
-  birthday: new Date(),
-  address: "Hola Hanoi",
+type FormData = {
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  birthDate: Date;
+  departmentId: Id;
+  roleId: Id;
+  positionId: Id;
+  address?: string | null;
 };
+
+const FullNameSchema = z
+  .string()
+  .min(5, "Full name length must be at least 5 characters");
+
+const PhoneNumberSchema = z
+  .string()
+  .regex(/^[0-9]+$/)
+  .min(10, "Phone number must be at least 10 numbers")
+  .max(15, "Phone number must be at least 15 numbers");
+
+const EmailSchema = z.string().email();
+
+const PositionIdSchema = z.number().gt(0, "Please choose a position");
+
+const DepartmentIdSchema = z.number().gt(0, "Please choose a department");
+
+const AddressSchema = z.string().nullable();
+
+const RoleIdSchema = z.number().gt(0, "Please choose a role");
+
+const BirthDateSchema = z.date();
+
+export const CreateUserSchema: ZodType<FormData> = z.object({
+  fullName: FullNameSchema,
+  phoneNumber: PhoneNumberSchema,
+  email: EmailSchema,
+  birthDate: BirthDateSchema,
+  roleId: RoleIdSchema,
+  positionId: PositionIdSchema,
+  departmentId: DepartmentIdSchema,
+  address: AddressSchema,
+});
 
 export const UserEdit: React.FC = () => {
-  // Select state
-  const [selectedOptionTerm, setSelectedOptionTerm] =
-    useState<TermOption | null>(defaultOptionTerm);
+  // Navigate
+  const navigate = useNavigate();
 
-  // Fetch initial data
-  const [pageTerm, setPageTerm] = useState<number>(1);
+  // Get user detail
+  const { userId } = useParams<{ userId: string }>();
 
-  // Convert data to option for Term
-  const loadTermOptions: LoadOptions<TermOption, any, any> = async () => {
-    // Load options
-    const hasMoreTerm = pageTerm * pageSize < termDummyData.length;
+  const [
+    fetchUserDetail,
+    { data: user, isFetching, isSuccess: isFetchUserDetailSuccess },
+  ] = useLazyFetchUserDetailQuery();
 
-    const loadOptionsTerm = {
-      options: termDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreTerm,
-    };
-
-    if (pageTerm === 1) {
-      loadOptionsTerm.options.unshift(defaultOptionTerm);
+  useEffect(() => {
+    if (userId) {
+      fetchUserDetail(parseInt(userId, 10), true);
     }
+  }, [userId]);
 
-    // Update page
-    if (hasMoreTerm) {
-      setPageTerm((pageTerm) => pageTerm + 1);
+  // Form
+  const {
+    register,
+    control,
+    watch,
+    formState: { dirtyFields },
+    handleSubmit,
+    setValue,
+  } = useForm<FormData>({
+    resolver: zodResolver(CreateUserSchema), // Apply the zodResolver
+  });
+
+  useEffect(() => {
+    if (!isFetching && isFetchUserDetailSuccess && user) {
+      setValue("fullName", user.fullName);
+      setValue("phoneNumber", user.phoneNumber);
+      setValue("email", user.email);
+      setValue("birthDate", parseISO(user.dob, { additionalDigits: 2 }));
+      setValue("departmentId", user.department.id);
+      setValue("roleId", user.role.id);
+      setValue("positionId", user.position.id);
+      setValue("address", user.address);
     }
-    return loadOptionsTerm;
+  }, [isFetching, isFetchUserDetailSuccess, user]);
+
+  // Mutation update user
+  const [createUser, { isLoading, isSuccess, isError, error }] =
+    useCreateUserMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const birthDateString = data.birthDate.toISOString().replace("Z", "");
+
+    createUser({
+      fullName: data.fullName,
+      email: data.email,
+      phoneNumber: data.phoneNumber,
+      departmentId: data.departmentId,
+      roleId: data.roleId,
+      positionId: data.positionId,
+      dob: birthDateString,
+      address: data.address || "",
+    });
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate("/user-management");
+    }
+  }, [isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isError) {
+      toast("Update user successfully!", { type: "success" });
+      toast(errorMessage, { type: "error" });
+    }
+  }, [isError, errorMessage]);
 
   return (
     <motion.div
-      className="px-6 pb-10"
+      className="px-6 pb-32"
       initial={AnimationStage.HIDDEN}
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
       {/* Banner */}
       <BubbleBanner>
-        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            User management {`>`} AnhLN7
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto z-10">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/user-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              User management
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <Link
+              to={`/user-management/detail/${userId}`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              {user?.username}
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <span>Update</span>
           </p>
         </div>
       </BubbleBanner>
 
       <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black ">
-        <div className="text-primary-500 dark:text-primary-700 text-2xl font-extrabold pl-10 pt-7">
-          AnhLN7
-        </div>
-
-        <div className="flex flex-row gap-6 pl-10 pt-12">
+        {/* Fullname */}
+        <div className="flex flex-row gap-6 pl-10 pt-10">
           <div>
             <FaUser className="text-2xl mt-2 opacity-30" />
           </div>
@@ -146,28 +253,43 @@ export const UserEdit: React.FC = () => {
               type="text"
               label="Full name"
               className="mb-4 bg-white dark:bg-neutral-900"
-              value={userDummyData.fullName}
-            ></TEInput>
-          </motion.div>
-        </div>
-
-        <div className="flex flex-row gap-6 pl-10 mt-6">
-          <div>
-            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
-          </div>
-          <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+              autoFocus
+              {...register("fullName", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.fullName || false}
+              validateFn={() => FullNameSchema.parse(watch("fullName"))}
             />
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-10">
+        {/* Role */}
+        <div className="flex flex-row gap-6 pl-10 mt-4">
+          <div>
+            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+          </div>
+          <motion.div variants={childrenAnimation}>
+            <Controller
+              name="roleId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <RoleFilter
+                  defaultOption={{ value: 0, label: "Select term" }}
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
+            />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.roleId || false}
+              validateFn={() => RoleIdSchema.parse(watch("roleId"))}
+            />
+          </motion.div>
+        </div>
+
+        {/* Phone */}
+        <div className="flex flex-row gap-6 pl-10 mt-5">
           <div>
             <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
           </div>
@@ -175,18 +297,32 @@ export const UserEdit: React.FC = () => {
             variants={childrenAnimation}
             className="w-[500px] custom-wrapper"
           >
-            <TEInput
-              type="text"
-              label="Phone"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
-              value={userDummyData.phone}
-            ></TEInput>
+            <Controller
+              name="phoneNumber"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TEInput
+                  label="Phone"
+                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(allowOnlyNumber(e.currentTarget.value));
+                  }}
+                />
+              )}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.phoneNumber || false}
+              validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
+            />
           </motion.div>
         </div>
 
+        {/* Email */}
         <div className="flex flex-row gap-6 pl-10 mt-6">
           <div>
-            <HiOutlineMailOpen className="text-2xl mt-1 opacity-30" />
+            <MdEmail className="text-2xl mt-1 opacity-30" />
           </div>
           <motion.div
             variants={childrenAnimation}
@@ -195,57 +331,89 @@ export const UserEdit: React.FC = () => {
             <TEInput
               type="email"
               label="Email"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
-              value={userDummyData.email}
-            ></TEInput>
+              className="mb-4 w-full bg-white dark:bg-neutral-900"
+              {...register("email", { required: true })}
+            />
+            <InputValidationMessage
+              className="-mt-3"
+              show={dirtyFields.email || false}
+              validateFn={() => EmailSchema.parse(watch("email"))}
+            />
           </motion.div>
         </div>
 
-        <div className="mx-10 border-t-[2px] mt-6 dark:opacity-10 "></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10 "></div>
 
+        {/* Department */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+            <Controller
+              name="departmentId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <DepartmentFilter
+                  defaultOption={{ value: 0, label: "Select department" }}
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
+            />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.departmentId || false}
+              validateFn={() => DepartmentIdSchema.parse(watch("departmentId"))}
             />
           </motion.div>
         </div>
 
-        <div className="flex flex-row gap-6 pl-10 mt-8">
+        {/* Position */}
+        <div className="flex flex-row gap-6 pl-10 mt-6">
           <div>
-            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+            <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation}>
-            <AsyncPaginate
-              className="w-[200px] cursor-pointer "
-              value={selectedOptionTerm}
-              onChange={(value) => setSelectedOptionTerm(value)}
-              options={[defaultOptionTerm]}
-              loadOptions={loadTermOptions}
-              classNamePrefix="custom-select"
+            <Controller
+              name="positionId"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <PositionFilter
+                  defaultOption={{ value: 0, label: "Select position" }}
+                  onChange={(option) => option && onChange(option.value)}
+                />
+              )}
+            />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.positionId || false}
+              validateFn={() => PositionIdSchema.parse(watch("positionId"))}
             />
           </motion.div>
         </div>
 
-        <div className="mx-10 border-t-[2px] mt-10 dark:opacity-10"></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10"></div>
 
+        {/* Birthdate */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
           <motion.div variants={childrenAnimation} className="custom-wrapper">
-            <DatePickerInput value={new Date()} allowEmpty />
+            <Controller
+              name="birthDate"
+              control={control}
+              render={({ field: { onChange } }) => (
+                <DatePickerInput
+                  value={new Date()}
+                  onChange={(value) => onChange(value)}
+                />
+              )}
+            />
           </motion.div>
         </div>
 
+        {/* Location */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
@@ -258,14 +426,33 @@ export const UserEdit: React.FC = () => {
               type="text"
               label="Address"
               className="mb-4 w-full bg-white dark:bg-neutral-900"
-              value={userDummyData.address}
-            ></TEInput>
+              {...register("address")}
+            />
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto flex justify-center mt-12">
-          <Button className="w-[1180px] py-2 dark:text-white/80">
-            Update user
+        <motion.div
+          className="relative mx-7 mt-1"
+          initial={AnimationStage.HIDDEN}
+          animate={isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
+          variants={errorAnimation}
+        >
+          <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+            <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+            <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+              {errorMessage}
+            </p>
+          </div>
+        </motion.div>
+
+        <div className="mx-7 flex justify-center mt-4">
+          <Button
+            containerClassName="w-full"
+            className="py-2 dark:text-white/80"
+            onClick={handleSubmit(onSubmit)}
+          >
+            {!isLoading && "Update user"}
+            {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>
       </div>
