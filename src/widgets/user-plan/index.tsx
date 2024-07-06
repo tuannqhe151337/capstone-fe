@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
-import { TableCellUsername } from "./ui/table-cell-name";
+import { TableCellUsername } from "./ui/table-cell-username";
 import { TableCellIcon } from "./ui/table-cell-icon";
 import { useNavigate } from "react-router-dom";
 import { ActiveConfirmModal } from "../user-active-confirm-modal";
