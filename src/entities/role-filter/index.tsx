@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Role, useGetListRoleQuery } from "../../providers/store/api/roleApi";
 import Select from "react-select";
 
@@ -7,7 +7,7 @@ interface Option {
   label: string;
 }
 
-const defaultOption: Option = {
+const DefaultOption: Option = {
   value: 0,
   label: "All role",
 };
@@ -17,21 +17,19 @@ const convertRoleToOptions = (roles: Role[]) => {
 };
 
 interface Props {
+  defaultOption?: Option;
   onChange?: (option: Option | null | undefined) => any;
 }
 
-export const RoleFilter: React.FC<Props> = ({ onChange }) => {
+export const RoleFilter: React.FC<Props> = ({
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const { data } = useGetListRoleQuery();
 
   // Select state
-  const [selectedOption, setSelectedOption] = useState<Option | null>(
-    defaultOption
-  );
-
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
+  const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
 
   return (
     <div>
@@ -40,7 +38,12 @@ export const RoleFilter: React.FC<Props> = ({ onChange }) => {
         className="w-[200px] cursor-pointer"
         isSearchable
         value={selectedOption}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption, ...convertRoleToOptions(data?.data || [])]}
       />
     </div>
