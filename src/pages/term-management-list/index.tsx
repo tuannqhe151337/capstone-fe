@@ -2,10 +2,36 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { Variants, motion } from "framer-motion";
 import { IoIosAddCircle } from "react-icons/io";
-import { TableTermManagement } from "../../widgets/table-term";
+import { Row, TableTermManagement } from "../../widgets/table-term";
 import { ListTermFiler } from "../../widgets/list-term-filter";
 import { TermCreateModal } from "../../widgets/term-create-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+  ListTermParameters,
+  useLazyFetchTermsQuery,
+} from "../../providers/store/api/termsApi";
+import _ from "lodash";
+
+const generateEmptyTerms = (total: number): Row[] => {
+  const terms: Row[] = [];
+
+  for (let i = 0; i < total; i++) {
+    terms.push({
+      termId: 0,
+      name: "",
+      status: {
+        id: 0,
+        name: "",
+        code: "",
+      },
+      startDate: "",
+      endDate: "",
+      isFetching: true,
+    });
+  }
+
+  return terms;
+};
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,7 +68,6 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
-
   const [startModal, setStartModal] = useState<boolean>(false);
 
   const handleClick = () => {
@@ -52,6 +77,45 @@ export const TermManagementList: React.FC = () => {
   const handleCreateTermModal = () => {
     setStartModal(false);
   };
+
+  // Query
+  const [fetchTerm, { data, error, isFetching }] = useLazyFetchTermsQuery();
+
+  // Searchbox state
+  const [searchboxValue, setSearchboxValue] = useState<string>("");
+  const [statusId, setStatusId] = useState<number | null>();
+
+  const [page, setPage] = useState<number>(1);
+
+  // Is fetched data emptied (derived from data)
+  const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
+
+  useEffect(() => {
+    setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
+  }, [data]);
+
+  // Fetch plan on change
+  useEffect(() => {
+    fetchTerm({ page: 1, pageSize: 10 });
+  }, []);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const paramters: ListTermParameters = {
+        query: searchboxValue,
+        page,
+        pageSize: 10,
+      };
+      if (statusId) {
+        paramters.statusId = statusId;
+      }
+
+      fetchTerm(paramters, true);
+    }, 200);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchboxValue, page, statusId]);
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -67,9 +131,9 @@ export const TermManagementList: React.FC = () => {
           </p>
           <div className="ml-auto">
             <Button
-                onClick={() => {
-                  setStartModal(true);
-                }}
+              onClick={() => {
+                setStartModal(true);
+              }}
             >
               <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
                 <IoIosAddCircle className="text-2xl -mt-0.5" />
@@ -86,7 +150,45 @@ export const TermManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TableTermManagement />
+        <TableTermManagement
+          // onCreatePlanClick={() => {
+          //   setShowUploadPlanModal(true);
+          // }}
+          terms={isFetching ? generateEmptyTerms(10) : data?.data}
+          isDataEmpty={isDataEmpty}
+          page={page}
+          totalPage={data?.pagination.numPages}
+          onNext={() =>
+            setPage((prevPage) => {
+              if (data?.pagination.numPages) {
+                if (prevPage + 1 > data?.pagination.numPages) {
+                  return data?.pagination.numPages;
+                } else {
+                  return prevPage + 1;
+                }
+              } else {
+                return 1;
+              }
+            })
+          }
+          onPageChange={(page) => {
+            setPage(page || 1);
+          }}
+          onPrevious={() =>
+            setPage((prevPage) => {
+              if (data?.pagination.numPages) {
+                if (prevPage === 1) {
+                  return 1;
+                } else {
+                  return prevPage - 1;
+                }
+              } else {
+                return 1;
+              }
+            })
+          }
+          isFetching={isFetching}
+        />
       </motion.div>
 
       <TermCreateModal show={startModal} onClose={handleCreateTermModal} />

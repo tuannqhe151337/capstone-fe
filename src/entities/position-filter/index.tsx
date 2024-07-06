@@ -1,6 +1,6 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useLazyGetListPositionQuery } from "../../providers/store/api/positionApi";
 
 interface PositionOption {
@@ -10,16 +10,20 @@ interface PositionOption {
 
 const pageSize = 10;
 
-const defaultOption: PositionOption = {
+const DefaultOption: PositionOption = {
   value: 0,
   label: "All position",
 };
 
 interface Props {
   onChange?: (option: PositionOption | null) => any;
+  defaultOption?: PositionOption;
 }
 
-export const PositionFilter: React.FC<Props> = ({ onChange }) => {
+export const PositionFilter: React.FC<Props> = ({
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const [page, setPage] = useState<number>(1);
   const [getListPositionQuery, { isFetching }] = useLazyGetListPositionQuery();
@@ -61,10 +65,6 @@ export const PositionFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <AsyncPaginate
@@ -72,7 +72,12 @@ export const PositionFilter: React.FC<Props> = ({ onChange }) => {
         className="w-[200px] cursor-pointer"
         value={selectedOption}
         isLoading={isFetching}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption]}
         loadOptions={loadOptions}
       />

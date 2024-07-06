@@ -1,6 +1,6 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useLazyGetListDepartmentQuery } from "../../providers/store/api/departmentApi";
 
 interface DepartmentOption {
@@ -10,16 +10,20 @@ interface DepartmentOption {
 
 const pageSize = 10;
 
-const defaultOption: DepartmentOption = {
+const DefaultOption: DepartmentOption = {
   value: 0,
   label: "All department",
 };
 
 interface Props {
   onChange?: (option: DepartmentOption | null) => any;
+  defaultOption?: DepartmentOption;
 }
 
-export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
+export const DepartmentFilter: React.FC<Props> = ({
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const [page, setPage] = useState<number>(1);
   const [getListDepartmentQuery, { isFetching }] =
@@ -64,10 +68,6 @@ export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <AsyncPaginate
@@ -75,7 +75,12 @@ export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
         className="w-[200px] cursor-pointer"
         value={selectedOption}
         isLoading={isFetching}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption]}
         loadOptions={loadOptions}
       />
