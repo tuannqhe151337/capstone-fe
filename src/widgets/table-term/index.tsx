@@ -159,7 +159,9 @@ export const TableTermManagement: React.FC<Props> = ({
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
                   <div className="flex flex-row flex-wrap">
-                    <p className="font-extrabold py-2 ml-14">{row.name}</p>
+                    <p className="font-extrabold py-2 ml-14 group-hover:underline">
+                      {row.name}
+                    </p>
                     <div>{renderButton(row.status.code)}</div>
                   </div>
                 </td>

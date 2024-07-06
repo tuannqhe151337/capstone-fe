@@ -2,16 +2,15 @@ import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
-import { TableCellName } from "./ui/table-cell-name";
+import { TableCellUsername } from "./ui/table-cell-name";
 import { TableCellIcon } from "./ui/table-cell-icon";
 import { useNavigate } from "react-router-dom";
 import { ActiveConfirmModal } from "../user-active-confirm-modal";
 import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
-import { User } from "../../providers/store/api/usersApi";
-import { PaginationType } from "../../providers/store/api/type";
+import { UserPreview } from "../../providers/store/api/usersApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -44,7 +43,7 @@ const rowAnimation: Variants = {
   },
 };
 
-export interface Row extends User {
+export interface Row extends UserPreview {
   isFetching?: boolean;
 }
 
@@ -189,13 +188,13 @@ export const TableUserManagement: React.FC<Props> = ({
                   >
                     {row.userId}
                   </TableCell>
-                  <TableCellName
+                  <TableCellUsername
                     isFetching={isFetching}
                     skeletonClassName="w-[200px]"
                     deactivated={row.deactivate}
                   >
                     {row.username}
-                  </TableCellName>
+                  </TableCellUsername>
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[100px]"
