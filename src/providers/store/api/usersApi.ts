@@ -168,5 +168,6 @@ export const {
   useLazyFetchUsersQuery,
   useCreateUserMutation,
   useFetchUserDetailQuery,
+  useLazyFetchUserDetailQuery,
 } = usersApi;
 export { usersApi };

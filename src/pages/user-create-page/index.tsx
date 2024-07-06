@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
@@ -152,6 +152,7 @@ export const UserCreate: React.FC = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      toast("Create user successfully!", { type: "success" });
       navigate("/user-management");
     }
   }, [isSuccess]);
@@ -186,9 +187,16 @@ export const UserCreate: React.FC = () => {
     >
       {/* Banner */}
       <BubbleBanner>
-        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            User management {`>`} Create User
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto z-10">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/user-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              User management
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <span>Create new user</span>
           </p>
         </div>
       </BubbleBanner>
