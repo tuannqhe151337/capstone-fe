@@ -130,14 +130,6 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = async () => {
     if (username !== "" && password !== "") {
       login({ username, password });
-
-      if (data) {
-        localStorage.setItem(LocalStorageItemKey.TOKEN, data.token);
-        localStorage.setItem(
-          LocalStorageItemKey.REFRESH_TOKEN,
-          data.refreshToken
-        );
-      }
     }
   };
 

@@ -12,8 +12,10 @@ const DefaultOption: Option = {
   label: "All role",
 };
 
-const convertRoleToOptions = (roles: Role[]) => {
-  return roles.map(({ id, name }) => ({ label: name, value: id }));
+const convertRoleToOptions = (roles: Role[], excludeRoleId?: number) => {
+  return roles
+    .map(({ id, name }) => ({ label: name, value: id }))
+    .filter(({ value }) => value !== excludeRoleId);
 };
 
 interface Props {
@@ -44,7 +46,10 @@ export const RoleFilter: React.FC<Props> = ({
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption, ...convertRoleToOptions(data?.data || [])]}
+        options={[
+          defaultOption,
+          ...convertRoleToOptions(data?.data || [], defaultOption.value),
+        ]}
       />
     </div>
   );

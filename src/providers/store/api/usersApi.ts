@@ -12,6 +12,18 @@ export interface CreateUserBody {
   address: string;
 }
 
+export interface UpdateUserBody {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  departmentId: number;
+  roleId: number;
+  positionId: number;
+  dob: string;
+  address: string;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -107,7 +119,7 @@ const usersApi = createApi({
     },
     fetchFn: async (...args) => {
       // REMOVE FOR PRODUCTION
-      // await pause(1000);
+      await pause(1000);
       return fetch(...args);
     },
   }),
@@ -156,6 +168,13 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+      updateUser: builder.mutation<void, UpdateUserBody>({
+        query: (updateUserBody) => ({
+          url: "user",
+          method: "PUT",
+          body: updateUserBody,
+        }),
+      }),
       fetchUserDetail: builder.query<UserDetail, number>({
         query: (userId) => `user/detail/${userId}`,
       }),
@@ -169,5 +188,6 @@ export const {
   useCreateUserMutation,
   useFetchUserDetailQuery,
   useLazyFetchUserDetailQuery,
+  useUpdateUserMutation,
 } = usersApi;
 export { usersApi };
