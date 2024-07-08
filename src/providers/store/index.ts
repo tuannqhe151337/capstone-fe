@@ -8,6 +8,7 @@ import { departmentAPI } from "./api/departmentApi";
 import { positionAPI } from "./api/positionApi";
 import { termAPI } from "./api/termApi";
 import { plansApi } from "./api/plansApi";
+import { annualAPI } from "./api/annualsAPI";
 import { termsApi } from "./api/termsApi";
 import { statusAPI } from "./api/statusApi";
 
@@ -21,6 +22,7 @@ export const store = configureStore({
     [positionAPI.reducerPath]: positionAPI.reducer,
     [plansApi.reducerPath]: plansApi.reducer,
     [termAPI.reducerPath]: termAPI.reducer,
+    [annualAPI.reducerPath]: annualAPI.reducer,
     [termsApi.reducerPath]: termsApi.reducer,
     [statusAPI.reducerPath]: statusAPI.reducer,
   },
@@ -33,6 +35,7 @@ export const store = configureStore({
       positionAPI.middleware,
       plansApi.middleware,
       termAPI.middleware,
+      annualAPI.middleware,
       termsApi.middleware,
       statusAPI.middleware
     ),
