@@ -8,6 +8,7 @@ import { departmentAPI } from "./api/departmentApi";
 import { positionAPI } from "./api/positionApi";
 import { termAPI } from "./api/termApi";
 import { plansApi } from "./api/plansApi";
+import { annualAPI } from "./api/annualsAPI";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     [positionAPI.reducerPath]: positionAPI.reducer,
     [plansApi.reducerPath]: plansApi.reducer,
     [termAPI.reducerPath]: termAPI.reducer,
+    [annualAPI.reducerPath]: annualAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -28,7 +30,8 @@ export const store = configureStore({
       departmentAPI.middleware,
       positionAPI.middleware,
       plansApi.middleware,
-      termAPI.middleware
+      termAPI.middleware,
+      annualAPI.middleware
     ),
 });
 
