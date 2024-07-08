@@ -8,7 +8,7 @@ import { TableCell } from "./ui/table-cell";
 import { TableCellUsername } from "./ui/table-cell-username";
 import { TableCellIcon } from "./ui/table-cell-icon";
 import { useNavigate } from "react-router-dom";
-import { ActiveConfirmModal } from "../user-active-confirm-modal";
+import { UserActiveConfirmModal } from "../user-active-confirm-modal";
 import { UserDeactiveConfirmModal } from "../user-deactive-confirm-modal";
 import { UserPreview } from "../../providers/store/api/usersApi";
 
@@ -53,19 +53,21 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
-  onDeactivate?: (user: UserPreview) => any;
+  onDeactivateSuccessfully?: (user: UserPreview) => any;
+  onActivateSuccessfully?: (user: UserPreview) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
 }
 
-export const TableUserManagement: React.FC<Props> = ({
+export const UserPlanTable: React.FC<Props> = ({
   users,
   isFetching,
   page,
   totalPage,
   isDataEmpty,
-  onDeactivate,
+  onDeactivateSuccessfully,
+  onActivateSuccessfully,
   onPageChange,
   onPrevious,
   onNext,
@@ -260,12 +262,17 @@ export const TableUserManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <ActiveConfirmModal show={activeModal} onClose={handleCloseActiveModal} />
+      <UserActiveConfirmModal
+        user={chosenUser}
+        show={activeModal}
+        onClose={handleCloseActiveModal}
+        onActivateSuccessfully={onActivateSuccessfully}
+      />
       <UserDeactiveConfirmModal
         user={chosenUser}
         show={deactiveModal}
         onClose={handleCloseDeactiveModal}
-        onDeactivate={onDeactivate}
+        onDeactivateSuccessfully={onDeactivateSuccessfully}
       />
     </div>
   );

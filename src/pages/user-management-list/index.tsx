@@ -3,7 +3,7 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { ListUserFiler } from "../../widgets/list-user-filter";
 import { HiUserAdd } from "react-icons/hi";
-import { Row, TableUserManagement } from "../../widgets/user-plan";
+import { Row, UserPlanTable } from "../../widgets/user-plan-table";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -96,6 +96,7 @@ export const UserManagementList: React.FC = () => {
 
   // Last activate, deactivate user (for re-rendering)
   const [deactivateUserId, setDeactivateUserId] = useState<string | number>();
+  const [activateUserId, setActivateUserId] = useState<string | number>();
 
   // Is fetched data emptied (derived from data)
   const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
@@ -189,11 +190,14 @@ export const UserManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TableUserManagement
+        <UserPlanTable
           users={isFetching ? generateEmptyUsers(10) : data?.data}
           isDataEmpty={isDataEmpty}
-          onDeactivate={(user) => {
+          onDeactivateSuccessfully={(user) => {
             user?.userId && setDeactivateUserId(user.userId);
+          }}
+          onActivateSuccessfully={(user) => {
+            user?.userId && setActivateUserId(user.userId);
           }}
           page={page}
           totalPage={data?.pagination.numPages}
