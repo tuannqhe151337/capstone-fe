@@ -146,7 +146,15 @@ export const TermManagementList: React.FC = () => {
       </BubbleBanner>
 
       <motion.div variants={childrenAnimation}>
-        <ListTermFiler />
+        <ListTermFiler
+          searchboxValue={searchboxValue}
+          onSearchboxChange={(value) => {
+            setSearchboxValue(value);
+          }}
+          onStatusIdChange={(statusId) => {
+            setStatusId(statusId);
+          }}
+        />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>

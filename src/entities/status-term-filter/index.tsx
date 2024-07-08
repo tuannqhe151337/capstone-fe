@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import {
-  Status,
+  TermStatus,
   useGetListStatusTermQuery,
 } from "../../providers/store/api/statusApi";
 
@@ -10,20 +10,29 @@ interface Option {
   label: string;
 }
 
-const defaultOption: Option = {
+const DefaultOption: Option = {
   value: 0,
   label: "All Status",
 };
 
-const convertStatusToOptions = (roles: Status[]) => {
-  return roles.map(({ statusId: id, name }) => ({ label: name, value: id }));
+const convertStatusToOptions = (
+  roles: TermStatus[],
+  excludeRoleId?: number
+) => {
+  return roles
+    .map(({ id, name }) => ({ label: name, value: id }))
+    .filter(({ value }) => value !== excludeRoleId);
 };
 
 interface Props {
+  defaultOption?: Option;
   onChange?: (option: Option | null | undefined) => any;
 }
 
-export const StatusTermFilter: React.FC<Props> = ({ onChange }) => {
+export const StatusTermFilter: React.FC<Props> = ({
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const { data } = useGetListStatusTermQuery();
 
@@ -32,10 +41,6 @@ export const StatusTermFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <Select
@@ -43,8 +48,16 @@ export const StatusTermFilter: React.FC<Props> = ({ onChange }) => {
         className="w-[200px] cursor-pointer"
         isSearchable
         value={selectedOption}
-        onChange={(value) => setSelectedOption(value)}
-        options={[defaultOption, ...convertStatusToOptions(data?.data || [])]}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
+        options={[
+          defaultOption,
+          ...convertStatusToOptions(data?.data || [], defaultOption.value),
+        ]}
       />
     </div>
   );
