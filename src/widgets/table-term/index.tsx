@@ -11,6 +11,7 @@ import { StartTermModal } from "../start-term-modal";
 import clsx from "clsx";
 import { Term } from "../../providers/store/api/termsApi";
 import { formatISODate } from "../../shared/utils/format-iso-date";
+import { cn } from "../../shared/utils/cn";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -159,18 +160,45 @@ export const TableTermManagement: React.FC<Props> = ({
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
                   <div className="flex flex-row flex-wrap">
-                    <p className="font-extrabold py-2 ml-14 group-hover:underline">
-                      {row.name}
-                    </p>
-                    <div>{renderButton(row.status.code)}</div>
+                    {isFetching ? (
+                      <span
+                        className={cn(
+                          "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        )}
+                      ></span>
+                    ) : (
+                      <>
+                        {" "}
+                        <p className="font-extrabold py-2 ml-14 group-hover:underline">
+                          {row.name}
+                        </p>
+                        <div>{renderButton(row.status.code)}</div>
+                      </>
+                    )}
                   </div>
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
-                  {formatISODate(row.startDate)}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {formatISODate(row.startDate)}</>
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
-                  {formatISODate(row.endDate)}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {formatISODate(row.endDate)}</>
+                  )}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4">
