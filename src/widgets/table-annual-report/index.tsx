@@ -5,46 +5,8 @@ import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { AnnualReport } from "../../providers/store/api/annualsAPI";
 import { cn } from "../../shared/utils/cn";
-
-// Định nghĩa kiểu cho dữ liệu bảng
-type TableAnnualReportDataType = {
-  id: number;
-  report: string;
-  totalExpense: string;
-  totalDepartment: string;
-  createdDate: string;
-};
-
-const tableReportDataList: TableAnnualReportDataType[] = [
-  {
-    id: 1,
-    report: "Report 2022",
-    totalExpense: "213.232.523 VNĐ",
-    totalDepartment: "10",
-    createdDate: "5 January 2023",
-  },
-  {
-    id: 2,
-    report: "Report 2021",
-    totalExpense: "213.232.523 VNĐ",
-    totalDepartment: "15",
-    createdDate: "5 January 2022",
-  },
-  {
-    id: 3,
-    report: "Report 2020",
-    totalExpense: "213.232.523 VNĐ",
-    totalDepartment: "12",
-    createdDate: "5 January 2021",
-  },
-  {
-    id: 4,
-    report: "Report 2019",
-    totalExpense: "213.232.523 VNĐ",
-    totalDepartment: "11",
-    createdDate: "5 January 2020",
-  },
-];
+import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -164,7 +126,7 @@ export const TableAnnualReport: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div> {row.totalExpense}</div>
+                    <div> {formatViMoney(row.totalExpense)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -186,7 +148,7 @@ export const TableAnnualReport: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div> {row.createdDate}</div>
+                    <div> {formatISODate(row.createDate)}</div>
                   )}
                 </td>
               </tr>

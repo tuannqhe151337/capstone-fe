@@ -3,7 +3,7 @@ import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListAnnualReportParameters {
   query?: string | null;
-  year: number;
+  year?: number;
   page: number;
   pageSize: number;
 }
@@ -14,7 +14,7 @@ export interface AnnualReport {
   totalTerm: number;
   totalExpense: number;
   totalDepartment: number;
-  createdDate: string;
+  createDate: string;
 }
 
 // DEV ONLY!!!
@@ -57,7 +57,7 @@ const annualAPI = createApi({
         ListAnnualReportParameters
       >({
         query: ({ query, year, page, pageSize }) => {
-          let endpoint = `plan/list?page=${page}&size=${pageSize}`;
+          let endpoint = `/annual-report/list?page=${page}&size=${pageSize}`;
           if (query && query !== "") {
             endpoint += `&query=${query}`;
           }
