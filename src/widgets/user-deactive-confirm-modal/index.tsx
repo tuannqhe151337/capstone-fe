@@ -14,14 +14,14 @@ interface Props {
   user?: UserPreview;
   show: boolean;
   onClose: () => any;
-  onDeactivate?: (user: UserPreview) => any;
+  onDeactivateSuccessfully?: (user: UserPreview) => any;
 }
 
 export const UserDeactiveConfirmModal: React.FC<Props> = ({
   user,
   show,
   onClose,
-  onDeactivate,
+  onDeactivateSuccessfully,
 }) => {
   // Mutation
   const [deleteUser, { isLoading, isError, isSuccess }] =
@@ -30,7 +30,7 @@ export const UserDeactiveConfirmModal: React.FC<Props> = ({
   useEffect(() => {
     if (!isLoading && isSuccess && !isError && user) {
       toast("Deactivate user successfully!", { type: "success" });
-      onDeactivate && onDeactivate(user);
+      onDeactivateSuccessfully && onDeactivateSuccessfully(user);
       onClose && onClose();
     }
   }, [isLoading, isError, isSuccess]);

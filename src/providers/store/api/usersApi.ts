@@ -28,6 +28,10 @@ export interface DeleteUserBody {
   id: string | number;
 }
 
+export interface ActivateUserBody {
+  id: string | number;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -188,6 +192,14 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+      activateUser: builder.mutation<any, ActivateUserBody>({
+        query: (activateUserBody) => ({
+          url: "user/activate",
+          method: "POST",
+          body: activateUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
       fetchUserDetail: builder.query<UserDetail, number>({
         query: (userId) => `user/detail/${userId}`,
         providesTags: ["users"],
@@ -204,5 +216,6 @@ export const {
   useLazyFetchUserDetailQuery,
   useUpdateUserMutation,
   useDeleteUserMutation,
+  useActivateUserMutation,
 } = usersApi;
 export { usersApi };

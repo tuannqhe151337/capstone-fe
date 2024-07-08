@@ -4,13 +4,38 @@ import { IoClose } from "react-icons/io5";
 
 import { FaCheckCircle } from "react-icons/fa";
 import { Button } from "../../shared/button";
+import {
+  useActivateUserMutation,
+  UserPreview,
+} from "../../providers/store/api/usersApi";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 interface Props {
+  user?: UserPreview;
   show: boolean;
   onClose: () => any;
+  onActivateSuccessfully?: (user: UserPreview) => any;
 }
 
-export const ActiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
+export const UserActiveConfirmModal: React.FC<Props> = ({
+  user,
+  show,
+  onClose,
+  onActivateSuccessfully,
+}) => {
+  const [activateUser, { isError, error, isLoading, isSuccess }] =
+    useActivateUserMutation();
+
+  useEffect(() => {
+    console.log(error);
+    if (!isLoading && isSuccess && !isError && user) {
+      toast("Activate user successfully!", { type: "success" });
+      onActivateSuccessfully && onActivateSuccessfully(user);
+      onClose && onClose();
+    }
+  }, [isError, isLoading, isSuccess]);
+
   return (
     <Modal
       className="w-[70vw] xl:w-[50vw] h-max flex flex-col justify-center items-center"
@@ -38,7 +63,7 @@ export const ActiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="font-semibold dark:font-bold text-primary-500 dark:text-neutral-500 mt-5">
             You're going to activate user{" "}
             <span className="font-extrabold dark:text-neutral-400/70">
-              "AnhLN7"
+              "{user?.username}"
             </span>
             .
           </div>
@@ -58,7 +83,15 @@ export const ActiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
             No, cancel
           </Button>
 
-          <Button containerClassName="flex-1" className="font-bold p-3">
+          <Button
+            containerClassName="flex-1"
+            className="font-bold p-3"
+            onClick={() => {
+              if (user?.userId) {
+                activateUser({ id: user.userId });
+              }
+            }}
+          >
             Yes, active user
           </Button>
         </div>
