@@ -174,9 +174,11 @@ const usersApi = createApi({
           method: "PUT",
           body: updateUserBody,
         }),
+        invalidatesTags: ["users"],
       }),
       fetchUserDetail: builder.query<UserDetail, number>({
         query: (userId) => `user/detail/${userId}`,
+        providesTags: ["users"],
       }),
     };
   },
