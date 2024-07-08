@@ -39,7 +39,7 @@ export const Sidebar = () => {
 
   return (
     <ResizableBox
-      className="pl-5"
+      className="pl-5 z-20"
       height={window.innerHeight - 100}
       width={width}
       minConstraints={[80, Infinity]}
@@ -51,7 +51,7 @@ export const Sidebar = () => {
     >
       <div>
         {/* Toggle open close */}
-        <div className="pl-3 mb-5">
+        <div className="pl-3 mb-3">
           <IconButton
             tooltip="Toggle sidebar (Ctrl + B)"
             onClick={() => setIsExpanded((prevState) => !prevState)}
@@ -59,6 +59,8 @@ export const Sidebar = () => {
             <FaBars className="text-xl text-primary-500" />
           </IconButton>
         </div>
+
+        <div className="w-full border-t-2 dark:border-t-neutral-800 mb-5"></div>
 
         {/* Home */}
         <div>
@@ -79,7 +81,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<FaChartPie className="text-2xl" />}
                 text={t("Annual Report")}
-                selected={location.pathname === "/annual-report"}
+                selected={location.pathname.startsWith("/annual-report")}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -93,7 +95,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
                 text={t("Term management")}
-                selected={location.pathname === "/term-management"}
+                selected={location.pathname.startsWith("/term-management")}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -108,7 +110,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<HiDocumentReport className="text-3xl -ml-1" />}
                 text={t("Financial report")}
-                selected={location.pathname === "/report-management"}
+                selected={location.pathname.startsWith("/report-management")}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -123,7 +125,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<FaChartLine className="text-2xl" />}
                 text={t("Financial plan")}
-                selected={location.pathname === "/plan-management"}
+                selected={location.pathname.startsWith("/plan-management")}
                 isExpanded={isExpanded}
               />
             </Link>
@@ -137,7 +139,7 @@ export const Sidebar = () => {
               <Tab
                 icon={<FaUserGroup className="text-2xl -ml-0.5" />}
                 text={t("User management")}
-                selected={location.pathname === "/user-management"}
+                selected={location.pathname.startsWith("/user-management")}
                 isExpanded={isExpanded}
               />
             </Link>

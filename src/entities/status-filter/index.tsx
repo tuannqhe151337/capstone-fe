@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
-import { Role, useGetListRoleQuery } from "../../providers/store/api/roleApi";
 import Select from "react-select";
+import {
+  Status,
+  useGetListStatusQuery,
+} from "../../providers/store/api/statusApi";
 
 interface Option {
   value: number;
@@ -12,7 +15,7 @@ const defaultOption: Option = {
   label: "All Status",
 };
 
-const convertRoleToOptions = (roles: Role[]) => {
+const convertStatusToOptions = (roles: Status[]) => {
   return roles.map(({ id, name }) => ({ label: name, value: id }));
 };
 
@@ -22,7 +25,7 @@ interface Props {
 
 export const StatusFilter: React.FC<Props> = ({ onChange }) => {
   // Fetch initial data
-  const { data } = useGetListRoleQuery();
+  const { data } = useGetListStatusQuery();
 
   // Select state
   const [selectedOption, setSelectedOption] = useState<Option | null>(
@@ -41,7 +44,7 @@ export const StatusFilter: React.FC<Props> = ({ onChange }) => {
         isSearchable
         value={selectedOption}
         onChange={(value) => setSelectedOption(value)}
-        options={[defaultOption, ...convertRoleToOptions(data?.data || [])]}
+        options={[defaultOption, ...convertStatusToOptions(data?.data || [])]}
       />
     </div>
   );

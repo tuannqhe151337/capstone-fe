@@ -160,7 +160,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                 animate={AnimationStage.VISIBLE}
                 exit={AnimationStage.HIDDEN}
                 className={clsx({
-                  "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                  "group text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400 cursor-pointer duration-200":
                     true,
                   "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
                     index % 2 === 0,
@@ -186,7 +186,9 @@ export const TablePlanManagement: React.FC<Props> = ({
                     ></span>
                   ) : (
                     <div className="flex flex-row flex-wrap">
-                      <p className="font-extrabold py-2 ml-14">{row.name}</p>
+                      <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
+                        {row.name}
+                      </p>
                       <div>{renderButton(row.status.code)}</div>
                     </div>
                   )}
@@ -263,13 +265,6 @@ export const TablePlanManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      {/* <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        variants={animation}
-      >
-        <Pagination page={1} totalPage={20} className="mt-6" />
-      </motion.div> */}
       <DeletePlanModal show={startModal} onClose={handleDeletePlanModal} />
     </div>
   );

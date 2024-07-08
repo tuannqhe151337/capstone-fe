@@ -17,18 +17,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "change-password",
-        lazy: async () => {
-          const ChangePasswordPage = (
-            await import("../../pages/change-password-page")
-          ).ChangePasswordPage;
-          return {
-            element: <ChangePasswordPage />,
-          };
-        },
-      },
-
-      {
         path: "forgot-password",
         lazy: async () => {
           const ForgotPasswordPage = (
@@ -187,7 +175,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "edit",
+            path: "edit/:userId",
             lazy: async () => {
               const UserEdit = (await import("../../pages/user-edit-page"))
                 .UserEdit;
@@ -210,6 +198,17 @@ const router = createBrowserRouter([
               const ProfilePage = (await import("../../pages/profile")).Profile;
               return {
                 element: <ProfilePage />,
+              };
+            },
+          },
+          {
+            path: "change-password",
+            lazy: async () => {
+              const ChangePasswordPage = (
+                await import("../../pages/change-password-page")
+              ).ChangePasswordPage;
+              return {
+                element: <ChangePasswordPage />,
               };
             },
           },

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { TERipple, TEInput } from "tw-elements-react";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -6,13 +7,13 @@ import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
-import { useEffect, useState } from "react";
 import { Button } from "../../shared/button";
 import {
   useLazyMeQuery,
   useLoginMutation,
 } from "../../providers/store/api/authApi";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CgSpinner } from "react-icons/cg";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 
@@ -94,17 +95,24 @@ export const LoginPage: React.FC = () => {
   const { t } = useTranslation(["login"]);
 
   // Redirect if user already logged in
-  const [getMeQuery, { isSuccess: meQuerySuccess }] = useLazyMeQuery();
+  const [
+    getMeQuery,
+    {
+      isSuccess: meQuerySuccess,
+      isFetching: meQueryFetching,
+      isError: meQueryError,
+    },
+  ] = useLazyMeQuery();
 
   useEffect(() => {
     getMeQuery();
   }, []);
 
   useEffect(() => {
-    if (meQuerySuccess) {
-      navigate(`/`);
+    if (!meQueryFetching && meQuerySuccess && !meQueryError) {
+      navigate("/");
     }
-  }, [meQuerySuccess]);
+  }, [meQueryFetching, meQuerySuccess, meQueryError]);
 
   // Mutation
   const [login, { data, isLoading, isError, isSuccess }] = useLoginMutation();
@@ -116,6 +124,7 @@ export const LoginPage: React.FC = () => {
   // Password input state
   const [password, setPassword] = useState<string>("");
   const [isPasswordDirty, setIsPasswordDirty] = useState<boolean>(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
   // Handling submit
   const handleSubmit = async () => {
@@ -257,9 +266,9 @@ export const LoginPage: React.FC = () => {
               </motion.div>
 
               {/* Password input */}
-              <motion.div variants={childrenAnimation}>
+              <motion.div className="relative" variants={childrenAnimation}>
                 <TEInput
-                  type="password"
+                  type={isPasswordVisible ? "text" : "password"}
                   label="Password"
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
@@ -277,6 +286,19 @@ export const LoginPage: React.FC = () => {
                     }
                   }}
                 />
+                <div className="absolute top-0 right-0 h-full">
+                  <div
+                    className="flex flex-row flex-wrap items-center justify-center h-full rounded-full cursor-pointer px-4 group duration-200"
+                    onClick={() => {
+                      setIsPasswordVisible((prevState) => !prevState);
+                    }}
+                  >
+                    <div className="text-lg text-primary-500 group-hover:text-primary-400 group-active:text-primary-600 dark:text-primary-600 dark:group-hover:text-primary-500 dark:group-active:text-primary-500 duration-200">
+                      {isPasswordVisible && <FaEyeSlash />}
+                      {!isPasswordVisible && <FaEye />}
+                    </div>
+                  </div>
+                </div>
               </motion.div>
 
               <motion.div

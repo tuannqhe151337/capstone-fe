@@ -6,7 +6,11 @@ import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { useNavigate, useParams } from "react-router-dom";
-import { useFetchUserDetailQuery } from "../../providers/store/api/usersApi";
+import {
+  useFetchUserDetailQuery,
+  useLazyFetchUserDetailQuery,
+} from "../../providers/store/api/usersApi";
+import { useEffect } from "react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -46,16 +50,19 @@ export const UserDetail: React.FC = () => {
   // Navigate
   const navigate = useNavigate();
 
+  // Get user detail
   const { userId } = useParams<{ userId: string }>();
 
-  const numericUserId = userId ? parseInt(userId, 10) : undefined;
+  const [fetchUserDetail, { data: user, isFetching, isSuccess }] =
+    useLazyFetchUserDetailQuery();
 
-  const { data: user, isLoading } = useFetchUserDetailQuery(
-    numericUserId as number
-  );
+  useEffect(() => {
+    if (userId) {
+      fetchUserDetail(parseInt(userId, 10), true);
+    }
+  }, [userId]);
 
-  // if (isLoading) return <p>Loading...</p>;
-  if (!user) return <p>No user found</p>;
+  if (!isFetching && isSuccess && !user) return <p>No user found</p>;
 
   return (
     <div className="relative px-6">
@@ -75,24 +82,26 @@ export const UserDetail: React.FC = () => {
         >
           <UserAvatarCard
             className="w-1/3"
-            username={user.username || ""}
-            role={user.role.name || ""}
-            position={user.position.name || ""}
-            department={user.department.name || ""}
+            isLoading={isFetching}
+            username={user?.username || ""}
+            role={user?.role.name || ""}
+            position={user?.position.name || ""}
+            department={user?.department.name || ""}
           />
 
           <UserDetailCard
             className="w-2/3"
-            address={user.address}
-            dateOfBirth={user.dob}
-            email={user.email}
-            fullName={user.fullName}
-            phone={user.phoneNumber}
+            isLoading={isFetching}
+            address={user?.address || ""}
+            dateOfBirth={user?.dob || ""}
+            email={user?.email || ""}
+            fullName={user?.fullName || ""}
+            phone={user?.phoneNumber || ""}
             actionComponent={
               <Button
                 className="flex flex-row flex-wrap gap-2 items-center"
                 onClick={() => {
-                  navigate("/user-management/edit");
+                  navigate(`/user-management/edit/${userId}`);
                 }}
               >
                 <RiPencilFill className="text-xl mb-0.5" />

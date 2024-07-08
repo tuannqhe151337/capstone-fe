@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { SearchBox } from "../../shared/search-box";
 import { TermFilterStatus } from "./term-filter-status";
+import { StatusFilter } from "../../entities/status-filter";
 
 interface TermOption {
   value: number;
@@ -53,6 +54,18 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
+const heightPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.5,
+    },
+  },
+  visible: {
+    height: 60,
+  },
+};
+
 const childrenAnimation: Variants = {
   hidden: {
     opacity: 0,
@@ -64,7 +77,17 @@ const childrenAnimation: Variants = {
   },
 };
 
-export const ListTermFiler: React.FC = () => {
+interface Props {
+  searchboxValue?: string;
+  onSearchboxChange?: (value: string) => any;
+  onStatusIdChange?: (statusId: number | null | undefined) => any;
+}
+
+export const ListTermFiler: React.FC<Props> = ({
+  searchboxValue,
+  onSearchboxChange,
+  onStatusIdChange,
+}) => {
   // Select state
   const [selectedOptionTerm, setSelectedOptionTerm] =
     useState<TermOption | null>(defaultOptionTerm);
@@ -106,26 +129,11 @@ export const ListTermFiler: React.FC = () => {
           <SearchBox></SearchBox>
         </div>
         <div className="pl-3 w-2/12">
-          {/* <motion.div
-            initial={AnimationStage.HIDDEN}
-            animate={AnimationStage.VISIBLE}
-            exit={AnimationStage.HIDDEN}
-            variants={staggerChildrenAnimation}
-          >
-            <motion.div className="">
-              <motion.div variants={childrenAnimation} className="">
-                <AsyncPaginate
-                  classNamePrefix="custom-select"
-                  className="cursor-pointer "
-                  value={selectedOptionTerm}
-                  onChange={(value) => setSelectedOptionTerm(value)}
-                  options={[defaultOptionTerm]}
-                  loadOptions={loadTermOptions}
-                />
-              </motion.div>
-            </motion.div>
-          </motion.div> */}
-          <TermFilterStatus />
+          <StatusFilter
+            onChange={(option) => {
+              onStatusIdChange && onStatusIdChange(option?.value);
+            }}
+          />
         </div>
       </div>
     </>

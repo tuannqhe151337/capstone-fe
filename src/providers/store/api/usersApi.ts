@@ -21,7 +21,19 @@ export interface ListUserParameters {
   pageSize: number;
 }
 
-export interface User {
+export interface UserPreview {
+  userId: string | number;
+  username: string;
+  department: Department;
+  email: string;
+  position: Position;
+  role: Role;
+  deactivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserDetail {
   userId: number | string;
   username: string;
   fullName: string;
@@ -102,39 +114,40 @@ const usersApi = createApi({
   tagTypes: ["users"],
   endpoints(builder) {
     return {
-      fetchUsers: builder.query<PaginationResponse<User[]>, ListUserParameters>(
-        {
-          query: ({
-            query,
-            departmentId,
-            roleId,
-            positionId,
-            page,
-            pageSize,
-          }) => {
-            let endpoint = `user?page=${page}&size=${pageSize}`;
+      fetchUsers: builder.query<
+        PaginationResponse<UserPreview[]>,
+        ListUserParameters
+      >({
+        query: ({
+          query,
+          departmentId,
+          roleId,
+          positionId,
+          page,
+          pageSize,
+        }) => {
+          let endpoint = `user?page=${page}&size=${pageSize}`;
 
-            if (query && query !== "") {
-              endpoint += `&query=${query}`;
-            }
+          if (query && query !== "") {
+            endpoint += `&query=${query}`;
+          }
 
-            if (departmentId) {
-              endpoint += `&departmentId=${departmentId}`;
-            }
+          if (departmentId) {
+            endpoint += `&departmentId=${departmentId}`;
+          }
 
-            if (roleId) {
-              endpoint += `&roleId=${roleId}`;
-            }
+          if (roleId) {
+            endpoint += `&roleId=${roleId}`;
+          }
 
-            if (positionId) {
-              endpoint += `&positionId=${positionId}`;
-            }
+          if (positionId) {
+            endpoint += `&positionId=${positionId}`;
+          }
 
-            return endpoint;
-          },
-          providesTags: ["users"],
-        }
-      ),
+          return endpoint;
+        },
+        providesTags: ["users"],
+      }),
       createUser: builder.mutation<void, CreateUserBody>({
         query: (createUserBody) => ({
           url: "user",
@@ -143,7 +156,7 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
-      fetchUserDetail: builder.query<User, number>({
+      fetchUserDetail: builder.query<UserDetail, number>({
         query: (userId) => `user/detail/${userId}`,
       }),
     };
@@ -155,5 +168,6 @@ export const {
   useLazyFetchUsersQuery,
   useCreateUserMutation,
   useFetchUserDetailQuery,
+  useLazyFetchUserDetailQuery,
 } = usersApi;
 export { usersApi };
