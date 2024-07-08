@@ -94,6 +94,9 @@ export const UserManagementList: React.FC = () => {
 
   const [page, setPage] = useState<number>(1);
 
+  // Last activate, deactivate user (for re-rendering)
+  const [deactivateUserId, setDeactivateUserId] = useState<string | number>();
+
   // Is fetched data emptied (derived from data)
   const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
 
@@ -130,7 +133,14 @@ export const UserManagementList: React.FC = () => {
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, roleId, departmentId, positionId]);
+  }, [
+    searchboxValue,
+    page,
+    deactivateUserId,
+    roleId,
+    departmentId,
+    positionId,
+  ]);
 
   return (
     <motion.div
@@ -182,6 +192,9 @@ export const UserManagementList: React.FC = () => {
         <TableUserManagement
           users={isFetching ? generateEmptyUsers(10) : data?.data}
           isDataEmpty={isDataEmpty}
+          onDeactivate={(user) => {
+            user?.userId && setDeactivateUserId(user.userId);
+          }}
           page={page}
           totalPage={data?.pagination.numPages}
           onNext={() =>

@@ -3,13 +3,38 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { FaExclamation } from "react-icons/fa";
 import { Button } from "../../shared/button";
+import {
+  useDeleteUserMutation,
+  UserPreview,
+} from "../../providers/store/api/usersApi";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 interface Props {
+  user?: UserPreview;
   show: boolean;
   onClose: () => any;
+  onDeactivate?: (user: UserPreview) => any;
 }
 
-export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
+export const UserDeactiveConfirmModal: React.FC<Props> = ({
+  user,
+  show,
+  onClose,
+  onDeactivate,
+}) => {
+  // Mutation
+  const [deleteUser, { isLoading, isError, isSuccess }] =
+    useDeleteUserMutation();
+
+  useEffect(() => {
+    if (!isLoading && isSuccess && !isError && user) {
+      toast("Deactivate user successfully!", { type: "success" });
+      onDeactivate && onDeactivate(user);
+      onClose && onClose();
+    }
+  }, [isLoading, isError, isSuccess]);
+
   return (
     <Modal
       className="w-[70vw] xl:w-[50vw] h-max flex flex-col justify-center items-center"
@@ -39,7 +64,7 @@ export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="font-semibold dark:font-bold text-neutral-400 dark:text-neutral-500 mt-5">
             You're going to deactivate user{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "AnhLN7"
+              "{user?.username}"
             </span>
             .
           </div>
@@ -62,6 +87,11 @@ export const DeactiveConfirmModal: React.FC<Props> = ({ show, onClose }) => {
             className="p-3"
             variant="error"
             buttonType="outlined"
+            onClick={() => {
+              if (user?.userId) {
+                deleteUser({ id: user.userId });
+              }
+            }}
           >
             Yes, deactive
           </Button>
