@@ -103,7 +103,7 @@ const plansApi = createApi({
             }
 
             if (statusId) {
-              endpoint += `&pstatusId=${statusId}`;
+              endpoint += `&statusId=${statusId}`;
             }
 
             return endpoint;

@@ -1,12 +1,11 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useState } from "react";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
 import { TermFilter } from "../../entities/term-filter";
 import { DepartmentFilter } from "../../entities/department-filter";
-import { StatusFilter } from "../../entities/status-filter";
+import { StatusPlanFilter } from "../../entities/status-plan-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -98,7 +97,7 @@ export const ListPlanFilter: React.FC<Props> = ({
         </motion.div>
 
         <motion.div variants={childrenAnimation} className="">
-          <StatusFilter
+          <StatusPlanFilter
             onChange={(option) => {
               onStatusIdChange && onStatusIdChange(option?.value);
             }}

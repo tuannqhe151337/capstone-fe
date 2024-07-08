@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface Status {
-  id: number;
+  statusId: number;
   code: string;
   name: string;
 }
@@ -28,12 +28,17 @@ export const statusAPI = createApi({
   reducerPath: "statusAPI",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getListStatus: builder.query<PaginationResponse<Status[]>, void>({
+    getListStatusTerm: builder.query<PaginationResponse<Status[]>, void>({
       query: () => {
         return `/term-status/term-status-list`;
+      },
+    }),
+    getListStatusPlan: builder.query<PaginationResponse<Status[]>, void>({
+      query: () => {
+        return `/plan/plan-status`;
       },
     }),
   }),
 });
 
-export const { useGetListStatusQuery } = statusAPI;
+export const { useGetListStatusTermQuery, useGetListStatusPlanQuery } = statusAPI;
