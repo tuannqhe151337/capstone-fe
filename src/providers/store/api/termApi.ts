@@ -33,10 +33,7 @@ export const termAPI = createApi({
   reducerPath: "termAPI",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getListTerm: builder.query<
-      PaginationResponse<[Term]>,
-      ListTermParameters
-    >({
+    getListTerm: builder.query<PaginationResponse<[Term]>, ListTermParameters>({
       query: ({ page, pageSize, query }) => {
         return `/term/plan-paging-term?page=${page}&size=${pageSize}&query=${query}`;
       },

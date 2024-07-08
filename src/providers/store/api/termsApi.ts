@@ -66,7 +66,7 @@ const termsApi = createApi({
               endpoint += `&query=${query}`;
             }
             if (statusId) {
-              endpoint += `&pstatusId=${statusId}`;
+              endpoint += `&statusId=${statusId}`;
             }
             return endpoint;
           },

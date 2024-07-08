@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
 import {
-  Status,
+  PlanStatus,
   useGetListStatusPlanQuery,
 } from "../../providers/store/api/statusApi";
 
@@ -15,9 +15,12 @@ const DefaultOption: Option = {
   label: "All Status",
 };
 
-const convertStatusToOptions = (roles: Status[], excludeRoleId?: number) => {
+const convertStatusToOptions = (
+  roles: PlanStatus[],
+  excludeRoleId?: number
+) => {
   return roles
-    .map(({ statusId: id, name }) => ({ label: name, value: id }))
+    .map(({ statusId, name }) => ({ label: name, value: statusId }))
     .filter(({ value }) => value !== excludeRoleId);
 };
 
