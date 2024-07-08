@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { FaCircleExclamation, FaLocationDot, FaUser } from "react-icons/fa6";
-import { AnimatePresence, Variants, motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { RiUserSettingsFill } from "react-icons/ri";
@@ -13,8 +13,8 @@ import { DatePickerInput } from "../../shared/date-picker-input";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { z, ZodType } from "zod";
 import {
-  useCreateUserMutation,
   useLazyFetchUserDetailQuery,
+  useUpdateUserMutation,
 } from "../../providers/store/api/usersApi";
 import { parseISO } from "date-fns";
 import { DepartmentFilter } from "../../entities/department-filter";
@@ -27,6 +27,7 @@ import { CgSpinner } from "react-icons/cg";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
 import { ErrorData } from "../../providers/store/api/type";
+import { InputSkeleton } from "./ui/input-skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -163,29 +164,36 @@ export const UserEdit: React.FC = () => {
   }, [isFetching, isFetchUserDetailSuccess, user]);
 
   // Mutation update user
-  const [createUser, { isLoading, isSuccess, isError, error }] =
-    useCreateUserMutation();
+  const [updateUser, { isLoading, isSuccess, isError, error }] =
+    useUpdateUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
     const birthDateString = data.birthDate.toISOString().replace("Z", "");
 
-    createUser({
-      fullName: data.fullName,
-      email: data.email,
-      phoneNumber: data.phoneNumber,
-      departmentId: data.departmentId,
-      roleId: data.roleId,
-      positionId: data.positionId,
-      dob: birthDateString,
-      address: data.address || "",
-    });
+    if (userId) {
+      const numericUserId = parseInt(userId, 10);
+
+      updateUser({
+        id: numericUserId,
+        fullName: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        departmentId: data.departmentId,
+        roleId: data.roleId,
+        positionId: data.positionId,
+        dob: birthDateString,
+        address: data.address || "",
+      });
+    }
   };
 
   useEffect(() => {
-    if (isSuccess) {
+    if (!isLoading && isSuccess) {
+      toast("Update user successfully!", { type: "success" });
+
       navigate("/user-management");
     }
-  }, [isSuccess]);
+  }, [isLoading, isSuccess]);
 
   // Error message
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -204,7 +212,6 @@ export const UserEdit: React.FC = () => {
 
   useEffect(() => {
     if (isError) {
-      toast("Update user successfully!", { type: "success" });
       toast(errorMessage, { type: "error" });
     }
   }, [isError, errorMessage]);
@@ -247,20 +254,25 @@ export const UserEdit: React.FC = () => {
           </div>
           <motion.div
             variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
+            className="relative h-[64px]"
           >
-            <TEInput
-              type="text"
-              label="Full name"
-              className="mb-4 bg-white dark:bg-neutral-900"
-              autoFocus
-              {...register("fullName", { required: true })}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.fullName || false}
-              validateFn={() => FullNameSchema.parse(watch("fullName"))}
-            />
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <TEInput
+                type="text"
+                label="Full name"
+                className="bg-white dark:bg-neutral-900 mb-4"
+                autoFocus
+                {...register("fullName", { required: true })}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.fullName || false}
+                validateFn={() => FullNameSchema.parse(watch("fullName"))}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -269,22 +281,33 @@ export const UserEdit: React.FC = () => {
           <div>
             <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="roleId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <RoleFilter
-                  defaultOption={{ value: 0, label: "Select term" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.roleId || false}
-              validateFn={() => RoleIdSchema.parse(watch("roleId"))}
-            />
+          <motion.div
+            className="relative h-[64px]"
+            variants={childrenAnimation}
+          >
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <Controller
+                name="roleId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <RoleFilter
+                    defaultOption={{
+                      value: user!.role.id,
+                      label: user!.role.name,
+                    }}
+                    onChange={(option) => option && onChange(option.value)}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.roleId || false}
+                validateFn={() => RoleIdSchema.parse(watch("roleId"))}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -295,27 +318,33 @@ export const UserEdit: React.FC = () => {
           </div>
           <motion.div
             variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
+            className="relative h-[64px]"
           >
-            <Controller
-              name="phoneNumber"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <TEInput
-                  label="Phone"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
-                  value={value}
-                  onChange={(e) => {
-                    onChange(allowOnlyNumber(e.currentTarget.value));
-                  }}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.phoneNumber || false}
-              validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
-            />
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <Controller
+                name="phoneNumber"
+                control={control}
+                defaultValue=""
+                render={({ field: { onChange, ...props } }) => (
+                  <TEInput
+                    label="Phone"
+                    className="mb-4 w-full bg-white dark:bg-neutral-900"
+                    onChange={(e) => {
+                      onChange(allowOnlyNumber(e.currentTarget.value));
+                    }}
+                    {...props}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.phoneNumber || false}
+                validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -326,19 +355,24 @@ export const UserEdit: React.FC = () => {
           </div>
           <motion.div
             variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
+            className="relative h-[64px]"
           >
-            <TEInput
-              type="email"
-              label="Email"
-              className="mb-4 w-full bg-white dark:bg-neutral-900"
-              {...register("email", { required: true })}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.email || false}
-              validateFn={() => EmailSchema.parse(watch("email"))}
-            />
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <TEInput
+                type="email"
+                label="Email"
+                className="mb-4 w-full bg-white dark:bg-neutral-900"
+                {...register("email", { required: true })}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.email || false}
+                validateFn={() => EmailSchema.parse(watch("email"))}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -349,22 +383,35 @@ export const UserEdit: React.FC = () => {
           <div>
             <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="departmentId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DepartmentFilter
-                  defaultOption={{ value: 0, label: "Select department" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.departmentId || false}
-              validateFn={() => DepartmentIdSchema.parse(watch("departmentId"))}
-            />
+          <motion.div
+            variants={childrenAnimation}
+            className="relative h-[64px]"
+          >
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <Controller
+                name="departmentId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DepartmentFilter
+                    defaultOption={{
+                      value: user!.department.id,
+                      label: user!.department.name,
+                    }}
+                    onChange={(option) => option && onChange(option.value)}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.departmentId || false}
+                validateFn={() =>
+                  DepartmentIdSchema.parse(watch("departmentId"))
+                }
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -373,22 +420,33 @@ export const UserEdit: React.FC = () => {
           <div>
             <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="positionId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <PositionFilter
-                  defaultOption={{ value: 0, label: "Select position" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.positionId || false}
-              validateFn={() => PositionIdSchema.parse(watch("positionId"))}
-            />
+          <motion.div
+            variants={childrenAnimation}
+            className="relative h-[64px]"
+          >
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <Controller
+                name="positionId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <PositionFilter
+                    defaultOption={{
+                      value: user!.position.id,
+                      label: user!.position.name,
+                    }}
+                    onChange={(option) => option && onChange(option.value)}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.positionId || false}
+                validateFn={() => PositionIdSchema.parse(watch("positionId"))}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -399,17 +457,26 @@ export const UserEdit: React.FC = () => {
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div variants={childrenAnimation} className="custom-wrapper">
-            <Controller
-              name="birthDate"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DatePickerInput
-                  value={new Date()}
-                  onChange={(value) => onChange(value)}
-                />
-              )}
-            />
+          <motion.div
+            variants={childrenAnimation}
+            className="relative h-[64px]"
+          >
+            <InputSkeleton
+              className="w-[200px]"
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <Controller
+                name="birthDate"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DatePickerInput
+                    value={new Date()}
+                    onChange={(value) => onChange(value)}
+                  />
+                )}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 
@@ -420,14 +487,19 @@ export const UserEdit: React.FC = () => {
           </div>
           <motion.div
             variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
+            className="relative h-[64px]"
           >
-            <TEInput
-              type="text"
-              label="Address"
-              className="mb-4 w-full bg-white dark:bg-neutral-900"
-              {...register("address")}
-            />
+            <InputSkeleton
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchUserDetailSuccess}
+            >
+              <TEInput
+                type="text"
+                label="Address"
+                className="mb-4 w-full bg-white dark:bg-neutral-900"
+                {...register("address")}
+              />
+            </InputSkeleton>
           </motion.div>
         </div>
 

@@ -44,10 +44,12 @@ export const DepartmentFilter: React.FC<Props> = ({
     const hasMore = page < data.pagination.numPages;
 
     const loadOptions = {
-      options: data?.data.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
+      options: data?.data
+        .map(({ id, name }) => ({
+          value: id,
+          label: name,
+        }))
+        .filter(({ value }) => value !== defaultOption.value),
       hasMore,
     };
 
