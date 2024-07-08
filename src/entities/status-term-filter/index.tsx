@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Select from "react-select";
 import {
   Status,
-  useGetListStatusQuery,
+  useGetListStatusTermQuery,
 } from "../../providers/store/api/statusApi";
 
 interface Option {
@@ -16,16 +16,16 @@ const defaultOption: Option = {
 };
 
 const convertStatusToOptions = (roles: Status[]) => {
-  return roles.map(({ id, name }) => ({ label: name, value: id }));
+  return roles.map(({ statusId: id, name }) => ({ label: name, value: id }));
 };
 
 interface Props {
   onChange?: (option: Option | null | undefined) => any;
 }
 
-export const StatusFilter: React.FC<Props> = ({ onChange }) => {
+export const StatusTermFilter: React.FC<Props> = ({ onChange }) => {
   // Fetch initial data
-  const { data } = useGetListStatusQuery();
+  const { data } = useGetListStatusTermQuery();
 
   // Select state
   const [selectedOption, setSelectedOption] = useState<Option | null>(

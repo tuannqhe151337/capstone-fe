@@ -1,9 +1,8 @@
 import { Variants, motion } from "framer-motion";
 import { useState } from "react";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
+import { LoadOptions } from "react-select-async-paginate";
 import { SearchBox } from "../../shared/search-box";
-import { TermFilterStatus } from "./term-filter-status";
-import { StatusFilter } from "../../entities/status-filter";
+import { StatusTermFilter } from "../../entities/status-term-filter";
 
 interface TermOption {
   value: number;
@@ -129,7 +128,7 @@ export const ListTermFiler: React.FC<Props> = ({
           <SearchBox></SearchBox>
         </div>
         <div className="pl-3 w-2/12">
-          <StatusFilter
+          <StatusTermFilter
             onChange={(option) => {
               onStatusIdChange && onStatusIdChange(option?.value);
             }}
