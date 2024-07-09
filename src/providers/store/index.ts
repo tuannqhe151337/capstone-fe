@@ -11,6 +11,7 @@ import { plansApi } from "./api/plansApi";
 import { annualAPI } from "./api/annualsAPI";
 import { statusAPI } from "./api/statusApi";
 import { costTypeAPI } from "./api/costTypeAPI";
+import { reportsAPI } from "./api/reportsAPI";
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     [annualAPI.reducerPath]: annualAPI.reducer,
     [statusAPI.reducerPath]: statusAPI.reducer,
     [costTypeAPI.reducerPath]: costTypeAPI.reducer,
+    [reportsAPI.reducerPath]: reportsAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -38,6 +40,7 @@ export const store = configureStore({
       annualAPI.middleware,
       statusAPI.middleware,
       costTypeAPI.middleware,
+      reportsAPI.middleware
     ),
 });
 

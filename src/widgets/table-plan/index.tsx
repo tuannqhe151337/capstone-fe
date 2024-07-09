@@ -7,7 +7,7 @@ import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
-import { Plan } from "../../providers/store/api/plansApi";
+import { PlanPreview } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
 
 // Định nghĩa kiểu cho status
@@ -65,7 +65,7 @@ const rowAnimation: Variants = {
   },
 };
 
-export interface Row extends Plan {
+export interface Row extends PlanPreview {
   isFetching?: boolean;
 }
 
@@ -152,7 +152,7 @@ export const TablePlanManagement: React.FC<Props> = ({
         </thead>
         <tbody>
           {plans &&
-            plans.map((row, index) => (
+            plans.map((plan, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -174,7 +174,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate("detail/expenses");
+                  navigate(`detail/expenses/${plan.planId}`);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -187,9 +187,9 @@ export const TablePlanManagement: React.FC<Props> = ({
                   ) : (
                     <div className="flex flex-row flex-wrap">
                       <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
-                        {row.name}
+                        {plan.name}
                       </p>
-                      <div>{renderButton(row.status.code)}</div>
+                      <div>{renderButton(plan.status.code)}</div>
                     </div>
                   )}
                 </td>
@@ -201,7 +201,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div>{row.term.name}</div>
+                    <div>{plan.term.name}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -212,11 +212,11 @@ export const TablePlanManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div>{row.department.name}</div>
+                    <div>{plan.department.name}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
-                  {row.version}
+                  {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <motion.div
