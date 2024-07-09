@@ -8,6 +8,14 @@ export interface ListAnnualReportParameters {
   pageSize: number;
 }
 
+export interface ListAnnualReportExpenseParameters {
+  annualReportId: number;
+  costTypeId?: number | null;
+  departmentId?: number | null;
+  page: number;
+  pageSize: number;
+}
+
 export interface AnnualReport {
   annualReportId: number | string;
   year: string;
@@ -17,6 +25,24 @@ export interface AnnualReport {
   createDate: string;
 }
 
+export interface AnnualReportExpense {
+  expenseId: number | string;
+  department: Department;
+  totalExpenses: number;
+  biggestExpenditure: number;
+  costType: CostType;
+}
+
+interface Department {
+  id: number;
+  name: string;
+}
+
+interface CostType {
+  costTypeId: number;
+  name: string;
+  code: string;
+}
 // DEV ONLY!!!
 const pause = (duration: number) => {
   return new Promise((resolve) => {
@@ -49,7 +75,7 @@ const staggeredBaseQuery = retry(
 const annualAPI = createApi({
   reducerPath: "annual",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["query"],
+  tagTypes: ["annual"],
   endpoints(builder) {
     return {
       fetchAnnual: builder.query<
@@ -67,9 +93,45 @@ const annualAPI = createApi({
           return endpoint;
         },
       }),
+      fetchAnnualReportExpense: builder.query<
+        PaginationResponse<AnnualReportExpense[]>,
+        ListAnnualReportExpenseParameters
+      >({
+        query: ({
+          annualReportId,
+          costTypeId,
+          departmentId,
+          page,
+          pageSize,
+        }) => {
+          let endpoint = `annual-report/expenses?annualReportId=${annualReportId}&page=${page}&size=${pageSize}`;
+          if (costTypeId) {
+            endpoint += `&costTypeId=${costTypeId}`;
+          }
+          if (departmentId) {
+            endpoint += `&departmentId=${departmentId}`;
+          }
+          return endpoint;
+        },
+
+        providesTags: ["annual"],
+      }),
+
+      fetchAnnualReportDetail: builder.query<AnnualReport, number>({
+        query: (annualReportId) =>
+          `annual-report/detail?annualReportId=${annualReportId}`,
+        providesTags: ["annual"],
+      }),
     };
   },
 });
 
-export const { useFetchAnnualQuery, useLazyFetchAnnualQuery } = annualAPI;
+export const {
+  useFetchAnnualQuery,
+  useLazyFetchAnnualQuery,
+  useFetchAnnualReportExpenseQuery,
+  useLazyFetchAnnualReportExpenseQuery,
+  useFetchAnnualReportDetailQuery,
+  useLazyFetchAnnualReportDetailQuery,
+} = annualAPI;
 export { annualAPI };

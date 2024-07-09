@@ -348,7 +348,7 @@ const router = createBrowserRouter([
             },
             children: [
               {
-                path: "chart",
+                path: "chart/:annualReportId",
                 lazy: async () => {
                   const AnnualReportDetailChartPage = (
                     await import("../../pages/annual-report-detail-chart-page")
@@ -360,7 +360,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "table",
+                path: "table/:annualReportId",
                 lazy: async () => {
                   const AnnualReportDetailTablePage = (
                     await import("../../pages/annual-report-detail-table-page")
