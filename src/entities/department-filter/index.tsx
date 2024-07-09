@@ -1,6 +1,6 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useLazyGetListDepartmentQuery } from "../../providers/store/api/departmentApi";
 import { cn } from "../../shared/utils/cn";
 

@@ -12,7 +12,6 @@ import { TbPigMoney } from "react-icons/tb";
 import { Button } from "../../shared/button";
 import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
 import { useEffect } from "react";
-import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 enum AnimationStage {
   HIDDEN = "hidden",

@@ -75,7 +75,7 @@ export const ReportManagementList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchReport, { data, error, isFetching }] = useLazyFetchReportsQuery();
+  const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

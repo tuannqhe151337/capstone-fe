@@ -3,45 +3,11 @@ import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { Tag } from "../../shared/tag";
-// import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeleteReportModal } from "../delete-report-modal";
 import { Report } from "../../providers/store/api/reportsAPI";
 import { cn } from "../../shared/utils/cn";
-
-// Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "waiting for approval" | "denied";
-const renderButton = (status: StatusType) => {
-  switch (status) {
-    case "new":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "approve":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
-          Approved
-        </Tag>
-      );
-    case "waiting for approval":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
-          Waiting for approval
-        </Tag>
-      );
-    case "denied":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Denied
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { useNavigate } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,7 +60,7 @@ export const TableReportManagement: React.FC<Props> = ({
   onNext,
 }) => {
   // Navigation
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();

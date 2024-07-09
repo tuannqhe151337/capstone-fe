@@ -79,7 +79,7 @@ export const TermManagementList: React.FC = () => {
   };
 
   // Query
-  const [getListTerm, { data, error, isFetching }] = useLazyGetListTermQuery();
+  const [getListTerm, { data, isFetching }] = useLazyGetListTermQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

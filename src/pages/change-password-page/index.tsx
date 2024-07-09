@@ -2,9 +2,6 @@ import { TERipple, TEInput } from "tw-elements-react";
 import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
-import { LanguageChanger } from "../../features/language-changer";
-import { ThemeChanger } from "../../features/theme-changer";
-import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
 
 enum AnimationStage {

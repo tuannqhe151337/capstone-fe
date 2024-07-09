@@ -68,7 +68,7 @@ export const AnnualReportList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchAnnual, { data, error, isFetching }] = useLazyFetchAnnualQuery();
+  const [fetchAnnual, { data, isFetching }] = useLazyFetchAnnualQuery();
 
   const [page, setPage] = useState<number>(1);
 

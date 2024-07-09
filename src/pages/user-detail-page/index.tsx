@@ -6,10 +6,7 @@ import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  useFetchUserDetailQuery,
-  useLazyFetchUserDetailQuery,
-} from "../../providers/store/api/usersApi";
+import { useLazyFetchUserDetailQuery } from "../../providers/store/api/usersApi";
 import { useEffect } from "react";
 
 enum AnimationStage {

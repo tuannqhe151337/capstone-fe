@@ -57,7 +57,7 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
   const [searchboxValue, setSearchboxValue] = useState<string>("");
 
   // Mutation
-  const [getListTermWhenCreatePlan, { data, error, isFetching }] =
+  const [getListTermWhenCreatePlan, { data }] =
     useLazyGetListTermWhenCreatePlanQuery();
 
   // Fetch list term on change

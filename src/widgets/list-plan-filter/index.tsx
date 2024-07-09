@@ -62,6 +62,8 @@ interface Props {
 }
 
 export const ListPlanFilter: React.FC<Props> = ({
+  searchboxValue,
+  onSearchboxChange,
   onTermIdChange,
   onDepartmentIdChange,
   onStatusIdChange,

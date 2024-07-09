@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import {
-  AnnualReportExpense,
   ListAnnualReportExpenseParameters,
   useLazyFetchAnnualReportExpenseQuery,
 } from "../../providers/store/api/annualsAPI";
@@ -12,34 +11,6 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { DepartmentFilter } from "../../entities/department-filter";
 import { cn } from "../../shared/utils/cn";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
-
-interface Row extends AnnualReportExpense {
-  isFetching?: boolean;
-}
-
-const generateEmptyAnnualExpenses = (total: number): Row[] => {
-  const annualExpenses: Row[] = [];
-
-  for (let i = 0; i < total; i++) {
-    annualExpenses.push({
-      expenseId: 0,
-      biggestExpenditure: 0,
-      costType: {
-        costTypeId: 0,
-        name: "",
-        code: "",
-      },
-      totalExpenses: 0,
-      department: {
-        id: 0,
-        name: "",
-      },
-      isFetching: true,
-    });
-  }
-
-  return annualExpenses;
-};
 
 enum AnimationStage {
   HIDDEN = "hidden",

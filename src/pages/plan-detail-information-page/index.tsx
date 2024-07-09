@@ -1,5 +1,4 @@
 import { Variants, motion } from "framer-motion";
-import { format } from "date-fns";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaChartLine } from "react-icons/fa";

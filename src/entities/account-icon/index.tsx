@@ -26,7 +26,7 @@ interface Props {
 }
 
 export const AccountIcon: React.FC<Props> = ({ onLogoutClick }) => {
-  const { t, i18n } = useTranslation(["header"]);
+  const { t } = useTranslation(["header"]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
