@@ -2,6 +2,7 @@ import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
 import { useRef, useState } from "react";
 import { useLazyGetListDepartmentQuery } from "../../providers/store/api/departmentApi";
+import { cn } from "../../shared/utils/cn";
 
 interface DepartmentOption {
   value: number;
@@ -16,11 +17,13 @@ const DefaultOption: DepartmentOption = {
 };
 
 interface Props {
+  className?: string;
   onChange?: (option: DepartmentOption | null) => any;
   defaultOption?: DepartmentOption;
 }
 
 export const DepartmentFilter: React.FC<Props> = ({
+  className,
   onChange,
   defaultOption = DefaultOption,
 }) => {
@@ -74,7 +77,7 @@ export const DepartmentFilter: React.FC<Props> = ({
     <div>
       <AsyncPaginate
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
+        className={cn("w-[200px] cursor-pointer", className)}
         value={selectedOption}
         isLoading={isFetching}
         onChange={(value) => {
