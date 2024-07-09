@@ -107,10 +107,6 @@ export const UserManagementList: React.FC = () => {
 
   // Fetch user on change
   useEffect(() => {
-    fetchUser({ page: 1, pageSize: 10 });
-  }, []);
-
-  useEffect(() => {
     const timeoutId = setTimeout(() => {
       const paramters: ListUserParameters = {
         query: searchboxValue,
