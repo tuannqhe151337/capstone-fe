@@ -1,47 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
-import { SearchBox } from "../../../shared/search-box";
-import { Term, TermList } from ".././component/term-list";
-import { Pagination } from "../../../shared/pagination";
 import { produce } from "immer";
-
-const DUMMY_TERM_LIST = [
-  {
-    id: 1,
-    termName: "Financial plan December Q3 2021",
-    type: "Quarterly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 2,
-    termName: "Financial plan December Q3 2021",
-    type: "Half year",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 3,
-    termName: "Financial plan December Q3 2021",
-    type: "Quarterly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 4,
-    termName: "Financial plan December 2021",
-    type: "Monthly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-  {
-    id: 5,
-    termName: "Financial plan December Q3 2021",
-    type: "Monthly",
-    startDate: new Date(),
-    endDate: new Date(),
-  },
-];
+import { SearchBox } from "../../shared/search-box";
+import { Pagination } from "../../shared/pagination";
+import { TermList } from "./component/term-list";
+import {
+  ListTermWhenCreatePlanParameters,
+  TermCreatePlan,
+  useLazyGetListTermWhenCreatePlanQuery,
+} from "../../providers/store/api/termApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -77,15 +44,36 @@ const childrenAnimation: Variants = {
   },
 };
 
-const totalPage = 20;
-
 interface Props {
   hide?: boolean;
-  onTermSelected: (term: Term) => any;
+  onTermSelected: (term: TermCreatePlan) => any;
 }
 
 export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
-  const [page, setPage] = useState<number | undefined | null>(1);
+  // Pagination
+  const [page, setPage] = useState<number>(1);
+
+  // Searchbox
+  const [searchboxValue, setSearchboxValue] = useState<string>("");
+
+  // Mutation
+  const [getListTermWhenCreatePlan, { data, error, isFetching }] =
+    useLazyGetListTermWhenCreatePlanQuery();
+
+  // Fetch list term on change
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const paramters: ListTermWhenCreatePlanParameters = {
+        query: searchboxValue,
+        page,
+        pageSize: 10,
+      };
+
+      getListTermWhenCreatePlan(paramters, true);
+    }, 200);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchboxValue, page]);
 
   return (
     <motion.div
@@ -95,13 +83,19 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
       variants={staggerChildrenAnimation}
     >
       <motion.div variants={childrenAnimation}>
-        <SearchBox autoFocus />
+        <SearchBox
+          autoFocus
+          value={searchboxValue}
+          onChange={(e) => {
+            setSearchboxValue(e.currentTarget.value);
+          }}
+        />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
         <TermList
           hide={hide}
-          terms={DUMMY_TERM_LIST}
+          terms={data?.data || []}
           onClick={(term) => {
             onTermSelected && onTermSelected(term);
           }}
@@ -111,15 +105,15 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
       <motion.div variants={childrenAnimation}>
         <Pagination
           page={page}
-          totalPage={20}
+          totalPage={data?.pagination.numPages || 1}
           onPageChange={(page) => {
-            setPage(page);
+            page ? setPage(page) : setPage(1);
           }}
           onPrevious={() => {
             setPage(
               produce((page) => {
                 if (page === null || page === undefined) {
-                  return totalPage;
+                  return data?.pagination.numPages;
                 } else if (page > 1) {
                   return page - 1;
                 }
@@ -129,9 +123,13 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
           onNext={() => {
             setPage(
               produce((page) => {
-                if (page === null || page === undefined) {
+                if (
+                  page === null ||
+                  page === undefined ||
+                  !data?.pagination.numPages
+                ) {
                   return 1;
-                } else if (page < totalPage) {
+                } else if (page < data?.pagination.numPages) {
                   return page + 1;
                 }
               })

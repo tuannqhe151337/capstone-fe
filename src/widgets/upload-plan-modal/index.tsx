@@ -4,10 +4,10 @@ import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { StepProgress } from "./component/step-progress";
-import { ChooseTermStage } from "./component/choose-term-stage";
 import { UploadFileStage } from "./component/upload-file-stage";
 import { ConfirmExpensesStage } from "./component/confirm-expenses-stage";
 import clsx from "clsx";
+import { ChooseTermStage } from "../../features/choose-term-stage";
 
 enum AnimationStage {
   LEFT = "left",

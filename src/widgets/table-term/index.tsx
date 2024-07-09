@@ -9,9 +9,9 @@ import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
 import { StartTermModal } from "../start-term-modal";
 import clsx from "clsx";
-import { Term } from "../../providers/store/api/termsApi";
 import { formatISODate } from "../../shared/utils/format-iso-date";
 import { cn } from "../../shared/utils/cn";
+import { Term } from "../../providers/store/api/termApi";
 
 const renderButton = (status: string) => {
   switch (status) {

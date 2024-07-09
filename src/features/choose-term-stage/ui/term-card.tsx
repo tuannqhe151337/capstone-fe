@@ -8,8 +8,8 @@ interface Props {
   onClick?: () => any;
   termName: string;
   type: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
 }
 
 export const TermCard: React.FC<Props> = ({
