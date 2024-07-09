@@ -4,7 +4,7 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { OverviewCard } from "./ui/overview-card";
 import { FaDownload } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { PiTreeStructureFill } from "react-icons/pi";
@@ -74,9 +74,15 @@ export const AnnualReportDetailRootPage: React.FC = () => {
     >
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7">
-            Annual report <span className="ml-3">{`>`}</span>{" "}
-            <span className="ml-3 font-extrabold">Report 2022</span>
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/annual-report`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Annual Report
+            </Link>
+            <span className="ml-3 text-base opacity-40">&gt;</span>
+            <span>Report {annual?.year}</span>
           </p>
           <div className="ml-auto">
             <Button>
@@ -95,7 +101,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         variants={childrenAnimation}
       >
         <p className="text-2xl font-extrabold text-primary mr-5">
-          Annual report of 2022
+          Annual report of {annual?.year}
         </p>
 
         <div className="flex flex-row flex-wrap gap-3 ml-auto">
