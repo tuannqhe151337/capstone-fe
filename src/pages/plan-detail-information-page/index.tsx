@@ -8,6 +8,9 @@ import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
 import { RiProgress3Fill } from "react-icons/ri";
+import { useParams } from "react-router-dom";
+import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
+import { formatISODate } from "../../shared/utils/format-iso-date";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -44,6 +47,14 @@ const childrenAnimation: Variants = {
 };
 
 export const PlanDetailInformationPage: React.FC = () => {
+  // Parameters
+  const { planId } = useParams<{ planId: string }>();
+
+  // Query
+  const { data } = useGetPlanDetailQuery({
+    planId: planId ? parseInt(planId, 10) : 0,
+  });
+
   return (
     <motion.div
       className="flex flex-row flex-wrap w-full px-4 py-10"
@@ -57,7 +68,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<RiCalendarScheduleFill className="text-3xl" />}
             title="Term"
-            value="Financial plan December Q3 2001"
+            value={data?.term.name}
           />
         </motion.div>
 
@@ -66,7 +77,9 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<FaChartLine className="text-2xl" />}
             title="Plan due date"
-            value={format(new Date(), "dd MMMM yyyy")}
+            value={
+              (data?.planDueDate && formatISODate(data?.planDueDate)) || ""
+            }
           />
         </motion.div>
 
@@ -75,7 +88,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<PiTreeStructureFill className="text-3xl" />}
             title="Department"
-            value="BU 01"
+            value={data?.department.name}
           />
         </motion.div>
       </div>
@@ -85,7 +98,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<RiProgress3Fill className="text-3xl" />}
             title="Status"
-            value={<p className="text-primary-500">Waiting for approval</p>}
+            value={<p className="text-primary-500">{data?.status.name}</p>}
           />
         </motion.div>
 
@@ -94,7 +107,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<BsStack className="text-2xl" />}
             title="Version"
-            value="v3"
+            value={`v${data?.version}`}
           />
         </motion.div>
 
@@ -103,7 +116,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<FaClock className="text-2xl" />}
             title="Created at"
-            value={format(new Date(), "dd MMMM yyyy")}
+            value={(data?.createdAt && formatISODate(data?.createdAt)) || ""}
           />
         </motion.div>
 
@@ -112,7 +125,7 @@ export const PlanDetailInformationPage: React.FC = () => {
           <DetailPropertyItem
             icon={<HiUser className="text-3xl -ml-1" />}
             title="Created by"
-            value="AnhLN2"
+            value={data?.user.username}
           />
         </motion.div>
       </div>

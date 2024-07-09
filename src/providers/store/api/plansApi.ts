@@ -10,7 +10,7 @@ export interface ListPlanParameters {
   pageSize: number;
 }
 
-export interface Plan {
+export interface PlanPreview {
   planId: number | string;
   name: string;
   term: Term;
@@ -21,10 +21,45 @@ export interface Plan {
   status: Status;
 }
 
+export interface PlanDetailParameters {
+  planId: string | number;
+}
+
+export interface PlanDetail {
+  id: string | number;
+  name: string;
+  biggestExpenditure: number;
+  totalPlan: number;
+  term: Term;
+  status: Status;
+  planDueDate: string;
+  createdAt: string;
+  department: Department;
+  user: User;
+  version: number;
+}
+
+interface User {
+  userId: string | number;
+  username: string;
+  email: string;
+  department: Department;
+  role: Role;
+  position: Position;
+  deactivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface Status {
   id: number;
   name: string;
   code: string;
+}
+
+interface Position {
+  id: string | number;
+  name: string;
 }
 
 interface Term {
@@ -78,41 +113,42 @@ const plansApi = createApi({
   tagTypes: ["query"],
   endpoints(builder) {
     return {
-      fetchPlans: builder.query<PaginationResponse<Plan[]>, ListPlanParameters>(
-        {
-          query: ({
-            query,
-            termId,
-            departmentId,
-            statusId,
-            page,
-            pageSize,
-          }) => {
-            let endpoint = `plan/list?page=${page}&size=${pageSize}`;
+      fetchPlans: builder.query<
+        PaginationResponse<PlanPreview[]>,
+        ListPlanParameters
+      >({
+        query: ({ query, termId, departmentId, statusId, page, pageSize }) => {
+          let endpoint = `plan/list?page=${page}&size=${pageSize}`;
 
-            if (query && query !== "") {
-              endpoint += `&query=${query}`;
-            }
+          if (query && query !== "") {
+            endpoint += `&query=${query}`;
+          }
 
-            if (departmentId) {
-              endpoint += `&departmentId=${departmentId}`;
-            }
+          if (departmentId) {
+            endpoint += `&departmentId=${departmentId}`;
+          }
 
-            if (termId) {
-              endpoint += `&termId=${termId}`;
-            }
+          if (termId) {
+            endpoint += `&termId=${termId}`;
+          }
 
-            if (statusId) {
-              endpoint += `&statusId=${statusId}`;
-            }
+          if (statusId) {
+            endpoint += `&statusId=${statusId}`;
+          }
 
-            return endpoint;
-          },
-        }
-      ),
+          return endpoint;
+        },
+      }),
+      getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
+        query: ({ planId }) => `/plan/detail?planId=${planId}`,
+      }),
     };
   },
 });
 
-export const { useFetchPlansQuery, useLazyFetchPlansQuery } = plansApi;
+export const {
+  useFetchPlansQuery,
+  useLazyFetchPlansQuery,
+  useGetPlanDetailQuery,
+} = plansApi;
 export { plansApi };
