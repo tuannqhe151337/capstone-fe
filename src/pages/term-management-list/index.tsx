@@ -96,10 +96,6 @@ export const TermManagementList: React.FC = () => {
 
   // Fetch plan on change
   useEffect(() => {
-    getListTerm({ page: 1, pageSize: 10 });
-  }, []);
-
-  useEffect(() => {
     const timeoutId = setTimeout(() => {
       const paramters: ListTermParameters = {
         query: searchboxValue,

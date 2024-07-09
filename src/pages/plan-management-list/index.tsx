@@ -104,10 +104,6 @@ export const PlanManagementList: React.FC = () => {
 
   // Fetch plan on change
   useEffect(() => {
-    fetchPlan({ page: 1, pageSize: 10 });
-  }, []);
-
-  useEffect(() => {
     const timeoutId = setTimeout(() => {
       const paramters: ListPlanParameters = {
         query: searchboxValue,
