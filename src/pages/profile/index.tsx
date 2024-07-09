@@ -265,7 +265,7 @@ export const Profile: React.FC = () => {
                   </p>
 
                   <span className="ml-2 inline-block font-bold text-primary-500 hover:text-primary-600 underline dark:text-primary-700 dark:hover:text-primary-600 duration-200">
-                    <Link to={`/auth/change-password`}>Click here</Link>
+                    <Link to={`/profile/change-password`}>Click here</Link>
                   </span>
                 </div>
               </>

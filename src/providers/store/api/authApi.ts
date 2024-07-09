@@ -66,6 +66,7 @@ export const authAPI = createApi({
       return headers;
     },
   }),
+  tagTypes: ["auth"],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginBody>({
       query: ({ username, password }) => ({
@@ -76,13 +77,24 @@ export const authAPI = createApi({
           password,
         },
       }),
+      invalidatesTags: ["auth"],
     }),
     me: builder.query<UserResponse, void>({
       query: () => ({
         url: "auth/me",
       }),
+      providesTags: ["auth"],
+    }),
+    logout: builder.mutation<void, void>({
+      query: () => ({ url: "auth/logout", method: "POST" }),
+      invalidatesTags: ["auth"],
     }),
   }),
 });
 
-export const { useLoginMutation, useMeQuery } = authAPI;
+export const {
+  useLoginMutation,
+  useMeQuery,
+  useLazyMeQuery,
+  useLogoutMutation,
+} = authAPI;

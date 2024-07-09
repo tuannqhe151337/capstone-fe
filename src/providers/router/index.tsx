@@ -16,18 +16,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "change-password",
-        lazy: async () => {
-          const ChangePasswordPage = (
-            await import("../../pages/change-password-page")
-          ).ChangePasswordPage;
-          return {
-            element: <ChangePasswordPage />,
-          };
-        },
-      },
-
-      {
         path: "forgot-password",
         lazy: async () => {
           const ForgotPasswordPage = (
@@ -103,7 +91,7 @@ const router = createBrowserRouter([
             },
             children: [
               {
-                path: "expenses",
+                path: "expenses/:planId",
                 lazy: async () => {
                   const PlanDetailExpensePage = (
                     await import("../../pages/plan-detail-expense-page")
@@ -115,7 +103,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "information",
+                path: "information/:planId",
                 lazy: async () => {
                   const PlanDetailInformationPage = (
                     await import("../../pages/plan-detail-information-page")
@@ -127,7 +115,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "version",
+                path: "version/:planId",
                 lazy: async () => {
                   const PlanDetailVersionPage = (
                     await import("../../pages/plan-detail-version-page")
@@ -161,7 +149,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "detail",
+            path: "detail/:userId",
             lazy: async () => {
               const UserDetailPage = (
                 await import("../../pages/user-detail-page")
@@ -186,7 +174,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "edit",
+            path: "edit/:userId",
             lazy: async () => {
               const UserEdit = (await import("../../pages/user-edit-page"))
                 .UserEdit;
@@ -209,6 +197,17 @@ const router = createBrowserRouter([
               const ProfilePage = (await import("../../pages/profile")).Profile;
               return {
                 element: <ProfilePage />,
+              };
+            },
+          },
+          {
+            path: "change-password",
+            lazy: async () => {
+              const ChangePasswordPage = (
+                await import("../../pages/change-password-page")
+              ).ChangePasswordPage;
+              return {
+                element: <ChangePasswordPage />,
               };
             },
           },
@@ -348,7 +347,7 @@ const router = createBrowserRouter([
             },
             children: [
               {
-                path: "chart",
+                path: "chart/:annualReportId",
                 lazy: async () => {
                   const AnnualReportDetailChartPage = (
                     await import("../../pages/annual-report-detail-chart-page")
@@ -360,7 +359,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "table",
+                path: "table/:annualReportId",
                 lazy: async () => {
                   const AnnualReportDetailTablePage = (
                     await import("../../pages/annual-report-detail-table-page")

@@ -5,7 +5,7 @@ import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
 import { TermFilter } from "../../entities/term-filter";
 import { DepartmentFilter } from "../../entities/department-filter";
-import { StatusFilter } from "../../entities/status-filter";
+import { StatusPlanFilter } from "../../entities/status-plan-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -29,7 +29,7 @@ const staggerChildrenAnimation: Variants = {
     },
   },
 };
-
+``;
 const childrenAnimation: Variants = {
   hidden: {
     opacity: 0,
@@ -95,7 +95,7 @@ export const ListPlanFilter: React.FC<Props> = ({
         </motion.div>
 
         <motion.div variants={childrenAnimation} className="">
-          <StatusFilter
+          <StatusPlanFilter
             onChange={(option) => {
               onStatusIdChange && onStatusIdChange(option?.value);
             }}
@@ -109,7 +109,12 @@ export const ListPlanFilter: React.FC<Props> = ({
     <>
       <div className="flex flex-row flex-wrap w-full items-center mt-14 ">
         <div className="flex-1">
-          <SearchBox></SearchBox>
+          <SearchBox
+            value={searchboxValue}
+            onChange={(e) =>
+              onSearchboxChange && onSearchboxChange(e.currentTarget.value)
+            }
+          />
         </div>
         <div className="pl-3">
           <div className="relative z-10 mr-3">

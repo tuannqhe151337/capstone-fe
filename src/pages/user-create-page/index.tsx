@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
@@ -21,6 +21,9 @@ import { MdEmail } from "react-icons/md";
 import { useCreateUserMutation } from "../../providers/store/api/usersApi";
 import { CgSpinner } from "react-icons/cg";
 import { ErrorData } from "../../providers/store/api/type";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { toast } from "react-toastify";
+import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -92,13 +95,13 @@ const PhoneNumberSchema = z
 
 const EmailSchema = z.string().email();
 
-const PositionIdSchema = z.number();
+const PositionIdSchema = z.number().gt(0, "Please choose a position");
 
-const DepartmentIdSchema = z.number();
+const DepartmentIdSchema = z.number().gt(0, "Please choose a department");
 
 const AddressSchema = z.string().nullable();
 
-const RoleSchema = z.number();
+const RoleIdSchema = z.number().gt(0, "Please choose a role");
 
 const BirthDateSchema = z.date();
 
@@ -107,7 +110,7 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
   phoneNumber: PhoneNumberSchema,
   email: EmailSchema,
   birthDate: BirthDateSchema,
-  roleId: RoleSchema,
+  roleId: RoleIdSchema,
   positionId: PositionIdSchema,
   departmentId: DepartmentIdSchema,
   address: AddressSchema,
@@ -149,9 +152,31 @@ export const UserCreate: React.FC = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      toast("Create user successfully!", { type: "success" });
       navigate("/user-management");
     }
   }, [isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isError) {
+      toast(errorMessage, { type: "error" });
+    }
+  }, [isError, errorMessage]);
 
   return (
     <motion.div
@@ -162,9 +187,16 @@ export const UserCreate: React.FC = () => {
     >
       {/* Banner */}
       <BubbleBanner>
-        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            User management {`>`} Create User
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto z-10">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/user-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              User management
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <span>Create new user</span>
           </p>
         </div>
       </BubbleBanner>
@@ -205,15 +237,21 @@ export const UserCreate: React.FC = () => {
               control={control}
               render={({ field: { onChange } }) => (
                 <RoleFilter
+                  defaultOption={{ value: 0, label: "Select role" }}
                   onChange={(option) => option && onChange(option.value)}
                 />
               )}
+            />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.roleId || false}
+              validateFn={() => RoleIdSchema.parse(watch("roleId"))}
             />
           </motion.div>
         </div>
 
         {/* Phone */}
-        <div className="flex flex-row gap-6 pl-10 mt-10">
+        <div className="flex flex-row gap-6 pl-10 mt-5">
           <div>
             <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
           </div>
@@ -221,11 +259,19 @@ export const UserCreate: React.FC = () => {
             variants={childrenAnimation}
             className="w-[500px] custom-wrapper"
           >
-            <TEInput
-              type="number"
-              label="Phone"
-              className="mb-4 w-full bg-white dark:bg-neutral-900 "
-              {...register("phoneNumber", { required: true })}
+            <Controller
+              name="phoneNumber"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TEInput
+                  label="Phone"
+                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  value={value}
+                  onChange={(e) => {
+                    onChange(allowOnlyNumber(e.currentTarget.value));
+                  }}
+                />
+              )}
             />
             <InputValidationMessage
               className="-mt-3"
@@ -271,15 +317,22 @@ export const UserCreate: React.FC = () => {
               control={control}
               render={({ field: { onChange } }) => (
                 <DepartmentFilter
+                  className="z-30 dark:z-30"
+                  defaultOption={{ value: 0, label: "Select department" }}
                   onChange={(option) => option && onChange(option.value)}
                 />
               )}
+            />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.departmentId || false}
+              validateFn={() => DepartmentIdSchema.parse(watch("departmentId"))}
             />
           </motion.div>
         </div>
 
         {/* Position */}
-        <div className="flex flex-row gap-6 pl-10 mt-8">
+        <div className="flex flex-row gap-6 pl-10 mt-6">
           <div>
             <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
           </div>
@@ -289,14 +342,21 @@ export const UserCreate: React.FC = () => {
               control={control}
               render={({ field: { onChange } }) => (
                 <PositionFilter
+                  className="z-20 dark:z-20"
+                  defaultOption={{ value: 0, label: "Select position" }}
                   onChange={(option) => option && onChange(option.value)}
                 />
               )}
             />
+            <InputValidationMessage
+              className="mt-1"
+              show={dirtyFields.positionId || false}
+              validateFn={() => PositionIdSchema.parse(watch("positionId"))}
+            />
           </motion.div>
         </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-10 dark:opacity-10"></div>
+        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10"></div>
 
         {/* Birthdate */}
         <div className="flex flex-row gap-6 pl-10 mt-10">
@@ -310,7 +370,6 @@ export const UserCreate: React.FC = () => {
               render={({ field: { onChange } }) => (
                 <DatePickerInput
                   value={new Date()}
-                  allowEmpty
                   onChange={(value) => onChange(value)}
                 />
               )}
@@ -345,16 +404,15 @@ export const UserCreate: React.FC = () => {
           <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
             <FaCircleExclamation className="text-red-500 dark:text-red-600" />
             <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
-              {error && "data" in error && "message" in (error.data as any)
-                ? (error.data as ErrorData).message
-                : "Something went wrong, please try again!"}
+              {errorMessage}
             </p>
           </div>
         </motion.div>
 
-        <div className="w-10/12 mx-auto flex justify-center mt-4">
+        <div className="mx-7 flex justify-center mt-4">
           <Button
-            className="w-[1180px] py-2 dark:text-white/80"
+            containerClassName="w-full"
+            className="py-2 dark:text-white/80"
             onClick={handleSubmit(onSubmit)}
           >
             {!isLoading && "Create user"}

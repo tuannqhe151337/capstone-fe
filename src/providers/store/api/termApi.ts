@@ -2,12 +2,36 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface Term {
+  termId: number | string;
+  name: string;
+  status: Status;
+  startDate: string;
+  endDate: string;
+}
+
+interface Status {
   id: number;
   name: string;
+  code: string;
 }
 
 export interface ListTermParameters {
-  query: string;
+  query?: string;
+  statusId?: number | null;
+  page: number;
+  pageSize: number;
+}
+
+export interface TermCreatePlan {
+  termId: string | number;
+  name: string;
+  duration: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface ListTermWhenCreatePlanParameters {
+  query?: string;
   page: number;
   pageSize: number;
 }
@@ -33,15 +57,39 @@ export const termAPI = createApi({
   reducerPath: "termAPI",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getListTerm: builder.query<
-      PaginationResponse<[Term]>,
-      ListTermParameters
+    getListTerm: builder.query<PaginationResponse<Term[]>, ListTermParameters>({
+      query: ({ query, statusId, page, pageSize }) => {
+        let endpoint = `term/plan-paging-term?page=${page}&size=${pageSize}`;
+
+        if (query && query !== "") {
+          endpoint += `&query=${query}`;
+        }
+
+        if (statusId) {
+          endpoint += `&statusId=${statusId}`;
+        }
+
+        return endpoint;
+      },
+    }),
+    getListTermWhenCreatePlan: builder.query<
+      PaginationResponse<TermCreatePlan[]>,
+      ListTermWhenCreatePlanParameters
     >({
-      query: ({ page, pageSize, query }) => {
-        return `/term/plan-paging-term?page=${page}&size=${pageSize}&query=${query}`;
+      query: ({ query, page, pageSize }) => {
+        let endpoint = `term/plan-create-select-term?page=${page}&size=${pageSize}`;
+
+        if (query && query !== "") {
+          endpoint += `&query=${query}`;
+        }
+
+        return endpoint;
       },
     }),
   }),
 });
 
-export const { useLazyGetListTermQuery } = termAPI;
+export const {
+  useLazyGetListTermQuery,
+  useLazyGetListTermWhenCreatePlanQuery,
+} = termAPI;

@@ -95,7 +95,7 @@ export const PlanManagementList: React.FC = () => {
 
   const [page, setPage] = useState<number>(1);
 
-  // Is fetched data emptied (derived from data)
+  // Is data empty (derived from data)
   const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
 
   useEffect(() => {
@@ -103,10 +103,6 @@ export const PlanManagementList: React.FC = () => {
   }, [data]);
 
   // Fetch plan on change
-  useEffect(() => {
-    fetchPlan({ page: 1, pageSize: 10 });
-  }, []);
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const paramters: ListPlanParameters = {

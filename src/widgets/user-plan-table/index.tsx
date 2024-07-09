@@ -5,12 +5,12 @@ import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
-import { TableCellName } from "./ui/table-cell-name";
+import { TableCellUsername } from "./ui/table-cell-username";
 import { TableCellIcon } from "./ui/table-cell-icon";
 import { useNavigate } from "react-router-dom";
-import { ActiveConfirmModal } from "../user-active-confirm-modal";
-import { DeactiveConfirmModal } from "../user-deactive-confirm-modal";
-import { User } from "../../providers/store/api/usersApi";
+import { UserActiveConfirmModal } from "../user-active-confirm-modal";
+import { UserDeactiveConfirmModal } from "../user-deactive-confirm-modal";
+import { UserPreview } from "../../providers/store/api/usersApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -43,7 +43,7 @@ const rowAnimation: Variants = {
   },
 };
 
-export interface Row extends User {
+export interface Row extends UserPreview {
   isFetching?: boolean;
 }
 
@@ -53,17 +53,21 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
+  onDeactivateSuccessfully?: (user: UserPreview) => any;
+  onActivateSuccessfully?: (user: UserPreview) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
 }
 
-export const TableUserManagement: React.FC<Props> = ({
+export const UserPlanTable: React.FC<Props> = ({
   users,
   isFetching,
   page,
   totalPage,
   isDataEmpty,
+  onDeactivateSuccessfully,
+  onActivateSuccessfully,
   onPageChange,
   onPrevious,
   onNext,
@@ -72,16 +76,12 @@ export const TableUserManagement: React.FC<Props> = ({
   const navigate = useNavigate();
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
+  // Deactivate and activate user's id state
+  const [chosenUser, setChosenUser] = useState<UserPreview>();
+
+  // UI
   const [activeModal, setActiveModal] = useState<boolean>(false);
   const [deactiveModal, setDeactiveModal] = useState<boolean>(false);
-
-  const handleIconClick = (deactivate: boolean) => {
-    if (deactivate) {
-      setActiveModal(true);
-    } else {
-      setDeactiveModal(true);
-    }
-  };
 
   const handleCloseActiveModal = () => {
     setActiveModal(false);
@@ -148,7 +148,7 @@ export const TableUserManagement: React.FC<Props> = ({
           </thead>
           <tbody className="min-h-[250px]">
             {users &&
-              users.map((row, index) => (
+              users.map((user, index) => (
                 <motion.tr
                   key={index}
                   variants={rowAnimation}
@@ -160,9 +160,9 @@ export const TableUserManagement: React.FC<Props> = ({
                       true,
                     "cursor-pointer": !isFetching,
                     "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
-                      !row.deactivate,
+                      !user.deactivate,
                     "text-primary-500/70 hover:text-primary-500 dark:text-primary-800 dark:hover:text-primary-600":
-                      row.deactivate,
+                      user.deactivate,
                     "bg-white dark:bg-neutral-800/50": index % 2 === 0,
                     "hover:bg-primary-50/50 dark:hover:bg-neutral-800/70":
                       index % 2 === 0 && !isFetching,
@@ -179,52 +179,59 @@ export const TableUserManagement: React.FC<Props> = ({
                   }}
                   onClick={(event) => {
                     event.stopPropagation();
-                    navigate("detail");
+                    navigate(`detail/${user.userId}`);
                   }}
                 >
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[30px]"
                   >
-                    {row.userId}
+                    {user.userId}
                   </TableCell>
-                  <TableCellName
+                  <TableCellUsername
                     isFetching={isFetching}
                     skeletonClassName="w-[200px]"
-                    deactivated={row.deactivate}
+                    deactivated={user.deactivate}
                   >
-                    {row.username}
-                  </TableCellName>
+                    {user.username}
+                  </TableCellUsername>
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[100px]"
                   >
-                    {row.role.name}
+                    {user.role.name}
                   </TableCell>
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[150px]"
                   >
-                    {row.email}
+                    {user.email}
                   </TableCell>
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[150px]"
                   >
-                    {row.department.name}
+                    {user.department.name}
                   </TableCell>
                   <TableCell
                     isFetching={isFetching}
                     skeletonClassName="w-[150px]"
                   >
-                    {row.position.name}
+                    {user.position.name}
                   </TableCell>
                   <TableCellIcon
                     isFetching={isFetching}
                     index={index}
                     hoverRowIndex={hoverRowIndex}
-                    deactivated={row.deactivate}
-                    onIconClick={() => handleIconClick(row.deactivate)}
+                    deactivated={user.deactivate}
+                    onIconClick={() => {
+                      if (user.deactivate) {
+                        setActiveModal(true);
+                      } else {
+                        setDeactiveModal(true);
+                      }
+                      setChosenUser(user);
+                    }}
                   ></TableCellIcon>
                 </motion.tr>
               ))}
@@ -255,10 +262,17 @@ export const TableUserManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <ActiveConfirmModal show={activeModal} onClose={handleCloseActiveModal} />
-      <DeactiveConfirmModal
+      <UserActiveConfirmModal
+        user={chosenUser}
+        show={activeModal}
+        onClose={handleCloseActiveModal}
+        onActivateSuccessfully={onActivateSuccessfully}
+      />
+      <UserDeactiveConfirmModal
+        user={chosenUser}
         show={deactiveModal}
         onClose={handleCloseDeactiveModal}
+        onDeactivateSuccessfully={onDeactivateSuccessfully}
       />
     </div>
   );

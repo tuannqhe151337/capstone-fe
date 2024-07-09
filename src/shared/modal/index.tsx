@@ -35,7 +35,7 @@ export const Modal: React.FC<Props> = ({
   onClose,
   children,
 }) => {
-  // Close calendar when click outside
+  // Close modal when click outside
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [showModal, setShowModal] = useState<boolean>(show);

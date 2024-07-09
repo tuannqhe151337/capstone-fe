@@ -28,6 +28,7 @@ export const Pagination: React.FC<Props> = ({
       )}
     >
       <Button
+        disabled={page === 1}
         variant="quaternary"
         className="flex flex-row flex-wrap items-center text-sm font-bold "
         onClick={() => {
@@ -35,7 +36,7 @@ export const Pagination: React.FC<Props> = ({
         }}
       >
         <FaAngleLeft className="opacity-70" />
-        <span className="ml-2 mr-1">Previous</span>
+        <span className="ml-2 mr-1">Previous page</span>
       </Button>
 
       <div className="flex flex-row flex-wrap items-center text-sm font-semibold text-neutral-400">
@@ -92,13 +93,14 @@ export const Pagination: React.FC<Props> = ({
       </div>
 
       <Button
+        disabled={page === totalPage}
         variant="quaternary"
         className="flex flex-row flex-wrap items-center"
         onClick={() => {
           onNext && onNext();
         }}
       >
-        <span className="mr-3 ml-2 text-sm font-bold">Next</span>
+        <span className="mr-3 ml-2 text-sm font-bold">Next page</span>
         <FaAngleRight className="opacity-50" />
       </Button>
     </div>

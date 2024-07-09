@@ -1,6 +1,6 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLazyGetListTermQuery } from "../../providers/store/api/termApi";
 
 interface TermOption {
@@ -37,10 +37,12 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
     const hasMore = page < data.pagination.numPages;
 
     const loadOptions = {
-      options: data?.data.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
+      options: data?.data
+        .map(({ termId: id, name }) => ({
+          value: id,
+          label: name,
+        }))
+        .filter(({ value }) => value !== defaultOption.value),
       hasMore,
     };
 
@@ -61,10 +63,6 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <AsyncPaginate
@@ -72,7 +70,13 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
         className="w-[200px] cursor-pointer"
         value={selectedOption}
         isLoading={isFetching}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          console.log("asdfasdf: ", value);
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption]}
         loadOptions={loadOptions}
       />

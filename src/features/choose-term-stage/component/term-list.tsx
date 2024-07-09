@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { TermCard } from "../ui/term-card";
 import { useHotkeys } from "react-hotkeys-hook";
 import { produce, nothing } from "immer";
+import { TermCreatePlan } from "../../../providers/store/api/termApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -36,18 +37,10 @@ const childrenAnimation: Variants = {
   },
 };
 
-export interface Term {
-  id: string | number;
-  termName: string;
-  type: string;
-  startDate: Date;
-  endDate: Date;
-}
-
 interface Props {
   hide?: boolean;
-  terms: Term[];
-  onClick?: (term: Term) => any;
+  terms: TermCreatePlan[];
+  onClick?: (term: TermCreatePlan) => any;
 }
 
 export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
@@ -128,7 +121,7 @@ export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
     >
       {terms.map((term, index) => (
         <motion.div
-          key={term.id}
+          key={term.termId}
           className="w-full"
           variants={childrenAnimation}
         >
@@ -137,8 +130,8 @@ export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
               onClick && onClick(term);
             }}
             selected={selectedTermIndex === index}
-            termName={term.termName}
-            type={term.type}
+            termName={term.name}
+            type={term.duration}
             startDate={term.startDate}
             endDate={term.endDate}
           />

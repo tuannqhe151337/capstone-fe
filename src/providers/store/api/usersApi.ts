@@ -12,6 +12,26 @@ export interface CreateUserBody {
   address: string;
 }
 
+export interface UpdateUserBody {
+  id: number;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  departmentId: number;
+  roleId: number;
+  positionId: number;
+  dob: string;
+  address: string;
+}
+
+export interface DeleteUserBody {
+  id: string | number;
+}
+
+export interface ActivateUserBody {
+  id: string | number;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -21,12 +41,28 @@ export interface ListUserParameters {
   pageSize: number;
 }
 
-export interface User {
+export interface UserPreview {
+  userId: string | number;
+  username: string;
+  department: Department;
+  email: string;
+  position: Position;
+  role: Role;
+  deactivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UserDetail {
   userId: number | string;
   username: string;
+  fullName: string;
+  phoneNumber: string;
   email: string;
   role: Role;
   department: Department;
+  address: string;
+  dob: string;
   position: Position;
   deactivate: boolean;
   createdAt: string;
@@ -69,45 +105,75 @@ const usersApi = createApi({
   tagTypes: ["users"],
   endpoints(builder) {
     return {
-      fetchUsers: builder.query<PaginationResponse<User[]>, ListUserParameters>(
-        {
-          query: ({
-            query,
-            departmentId,
-            roleId,
-            positionId,
-            page,
-            pageSize,
-          }) => {
-            let endpoint = `user?page=${page}&size=${pageSize}`;
+      fetchUsers: builder.query<
+        PaginationResponse<UserPreview[]>,
+        ListUserParameters
+      >({
+        query: ({
+          query,
+          departmentId,
+          roleId,
+          positionId,
+          page,
+          pageSize,
+        }) => {
+          let endpoint = `user?page=${page}&size=${pageSize}`;
 
-            if (query && query !== "") {
-              endpoint += `&query=${query}`;
-            }
+          if (query && query !== "") {
+            endpoint += `&query=${query}`;
+          }
 
-            if (departmentId) {
-              endpoint += `&departmentId=${departmentId}`;
-            }
+          if (departmentId) {
+            endpoint += `&departmentId=${departmentId}`;
+          }
 
-            if (roleId) {
-              endpoint += `&roleId=${roleId}`;
-            }
+          if (roleId) {
+            endpoint += `&roleId=${roleId}`;
+          }
 
-            if (positionId) {
-              endpoint += `&positionId=${positionId}`;
-            }
+          if (positionId) {
+            endpoint += `&positionId=${positionId}`;
+          }
 
-            return endpoint;
-          },
-        }
-      ),
-      createUser: builder.mutation<void, CreateUserBody>({
+          return endpoint;
+        },
+        providesTags: ["users"],
+      }),
+      createUser: builder.mutation<any, CreateUserBody>({
         query: (createUserBody) => ({
           url: "user",
           method: "POST",
           body: createUserBody,
         }),
         invalidatesTags: ["users"],
+      }),
+      updateUser: builder.mutation<any, UpdateUserBody>({
+        query: (updateUserBody) => ({
+          url: "user",
+          method: "PUT",
+          body: updateUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
+      deleteUser: builder.mutation<any, DeleteUserBody>({
+        query: (deleteUserBody) => ({
+          url: "user",
+          method: "DELETE",
+          body: deleteUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
+      activateUser: builder.mutation<any, ActivateUserBody>({
+        query: (activateUserBody) => ({
+          url: "user/activate",
+          method: "POST",
+          body: activateUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
+      fetchUserDetail: builder.query<UserDetail, number>({
+        query: (userId) => `user/detail/${userId}`,
+        providesTags: ["users"],
       }),
     };
   },
@@ -117,5 +183,10 @@ export const {
   useFetchUsersQuery,
   useLazyFetchUsersQuery,
   useCreateUserMutation,
+  useFetchUserDetailQuery,
+  useLazyFetchUserDetailQuery,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+  useActivateUserMutation,
 } = usersApi;
 export { usersApi };

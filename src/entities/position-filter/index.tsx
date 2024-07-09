@@ -1,7 +1,8 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useLazyGetListPositionQuery } from "../../providers/store/api/positionApi";
+import { cn } from "../../shared/utils/cn";
 
 interface PositionOption {
   value: number;
@@ -10,16 +11,22 @@ interface PositionOption {
 
 const pageSize = 10;
 
-const defaultOption: PositionOption = {
+const DefaultOption: PositionOption = {
   value: 0,
   label: "All position",
 };
 
 interface Props {
+  className?: string;
   onChange?: (option: PositionOption | null) => any;
+  defaultOption?: PositionOption;
 }
 
-export const PositionFilter: React.FC<Props> = ({ onChange }) => {
+export const PositionFilter: React.FC<Props> = ({
+  className,
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const [page, setPage] = useState<number>(1);
   const [getListPositionQuery, { isFetching }] = useLazyGetListPositionQuery();
@@ -37,10 +44,12 @@ export const PositionFilter: React.FC<Props> = ({ onChange }) => {
     const hasMore = page < data.pagination.numPages;
 
     const loadOptions = {
-      options: data?.data.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
+      options: data?.data
+        .map(({ id, name }) => ({
+          value: id,
+          label: name,
+        }))
+        .filter(({ value }) => value !== defaultOption.value),
       hasMore,
     };
 
@@ -61,18 +70,19 @@ export const PositionFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <AsyncPaginate
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
+        className={cn("w-[200px] cursor-pointer", className)}
         value={selectedOption}
         isLoading={isFetching}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption]}
         loadOptions={loadOptions}
       />

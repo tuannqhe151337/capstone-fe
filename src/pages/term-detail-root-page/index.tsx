@@ -4,7 +4,7 @@ import { Tag } from "../../shared/tag";
 // import { OverviewCard } from "./ui/overview-card";
 import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useCloseOutside } from "../../shared/hooks/useClosePopup";
 import { IconButton } from "../../shared/icon-button";
@@ -92,9 +92,15 @@ export const TermDetailRootPage: React.FC = () => {
     >
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7">
-            Term management <span className="ml-3">{`>`}</span>{" "}
-            <span className="ml-3 font-extrabold">Term detail</span>
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/term-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Term management
+            </Link>
+            <span className="ml-3 text-base opacity-40">&gt;</span>
+            <span>Term detail</span>
           </p>
         </div>
       </BubbleBanner>

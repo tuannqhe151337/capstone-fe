@@ -7,7 +7,7 @@ import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
-import { Plan } from "../../providers/store/api/plansApi";
+import { PlanPreview } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
 
 // Định nghĩa kiểu cho status
@@ -65,7 +65,7 @@ const rowAnimation: Variants = {
   },
 };
 
-export interface Row extends Plan {
+export interface Row extends PlanPreview {
   isFetching?: boolean;
 }
 
@@ -152,7 +152,7 @@ export const TablePlanManagement: React.FC<Props> = ({
         </thead>
         <tbody>
           {plans &&
-            plans.map((row, index) => (
+            plans.map((plan, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -160,7 +160,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                 animate={AnimationStage.VISIBLE}
                 exit={AnimationStage.HIDDEN}
                 className={clsx({
-                  "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
+                  "group text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400 cursor-pointer duration-200":
                     true,
                   "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
                     index % 2 === 0,
@@ -174,7 +174,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate("detail/expenses");
+                  navigate(`detail/expenses/${plan.planId}`);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium">
@@ -186,8 +186,10 @@ export const TablePlanManagement: React.FC<Props> = ({
                     ></span>
                   ) : (
                     <div className="flex flex-row flex-wrap">
-                      <p className="font-extrabold py-2 ml-14">{row.name}</p>
-                      <div>{renderButton(row.status.code)}</div>
+                      <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
+                        {plan.name}
+                      </p>
+                      <div>{renderButton(plan.status.code)}</div>
                     </div>
                   )}
                 </td>
@@ -199,7 +201,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div>{row.term.name}</div>
+                    <div>{plan.term.name}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -210,11 +212,11 @@ export const TablePlanManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div>{row.department.name}</div>
+                    <div>{plan.department.name}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
-                  {row.version}
+                  {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   <motion.div
@@ -263,13 +265,6 @@ export const TablePlanManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      {/* <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        variants={animation}
-      >
-        <Pagination page={1} totalPage={20} className="mt-6" />
-      </motion.div> */}
       <DeletePlanModal show={startModal} onClose={handleDeletePlanModal} />
     </div>
   );

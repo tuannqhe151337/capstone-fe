@@ -1,7 +1,8 @@
 import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useLazyGetListDepartmentQuery } from "../../providers/store/api/departmentApi";
+import { cn } from "../../shared/utils/cn";
 
 interface DepartmentOption {
   value: number;
@@ -10,16 +11,22 @@ interface DepartmentOption {
 
 const pageSize = 10;
 
-const defaultOption: DepartmentOption = {
+const DefaultOption: DepartmentOption = {
   value: 0,
   label: "All department",
 };
 
 interface Props {
+  className?: string;
   onChange?: (option: DepartmentOption | null) => any;
+  defaultOption?: DepartmentOption;
 }
 
-export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
+export const DepartmentFilter: React.FC<Props> = ({
+  className,
+  onChange,
+  defaultOption = DefaultOption,
+}) => {
   // Fetch initial data
   const [page, setPage] = useState<number>(1);
   const [getListDepartmentQuery, { isFetching }] =
@@ -40,10 +47,12 @@ export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
     const hasMore = page < data.pagination.numPages;
 
     const loadOptions = {
-      options: data?.data.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
+      options: data?.data
+        .map(({ id, name }) => ({
+          value: id,
+          label: name,
+        }))
+        .filter(({ value }) => value !== defaultOption.value),
       hasMore,
     };
 
@@ -64,18 +73,19 @@ export const DepartmentFilter: React.FC<Props> = ({ onChange }) => {
     defaultOption
   );
 
-  useEffect(() => {
-    onChange && onChange(selectedOption);
-  }, [selectedOption]);
-
   return (
     <div>
       <AsyncPaginate
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
+        className={cn("w-[200px] cursor-pointer", className)}
         value={selectedOption}
         isLoading={isFetching}
-        onChange={(value) => setSelectedOption(value)}
+        onChange={(value) => {
+          if (value) {
+            setSelectedOption(value);
+            onChange && onChange(value);
+          }
+        }}
         options={[defaultOption]}
         loadOptions={loadOptions}
       />

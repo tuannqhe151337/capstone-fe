@@ -1,11 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { FaUpload } from "react-icons/fa6";
-import { ListPlanFilter } from "../../widgets/list-plan-filter";
 import { Variants, motion } from "framer-motion";
-import { TableReportManagement } from "../../widgets/table-report";
+import { Row, TableReportManagement } from "../../widgets/table-report";
+import {
+  ListReportParameters,
+  useLazyFetchReportsQuery,
+} from "../../providers/store/api/reportsAPI";
+import _ from "lodash";
+import { ListReportFilter } from "../../widgets/list-report-filter";
+
+const generateEmptyReports = (total: number): Row[] => {
+  const reports: Row[] = [];
+
+  for (let i = 0; i < total; i++) {
+    reports.push({
+      reportId: 0,
+      name: "",
+      version: "",
+      month: "",
+      term: {
+        id: 0,
+        name: "",
+      },
+      department: {
+        id: 0,
+        name: "",
+      },
+      isFetching: true,
+    });
+  }
+
+  return reports;
+};
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -45,6 +74,46 @@ export const ReportManagementList: React.FC = () => {
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
+  // Query
+  const [fetchReport, { data, error, isFetching }] = useLazyFetchReportsQuery();
+
+  // Searchbox state
+  const [searchboxValue, setSearchboxValue] = useState<string>("");
+
+  const [termId, setTermId] = useState<number | null>();
+  const [departmentId, setDepartmentId] = useState<number | null>();
+
+  const [page, setPage] = useState<number>(1);
+
+  // Is data empty (derived from data)
+  const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
+
+  useEffect(() => {
+    setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
+  }, [data]);
+
+  // Fetch plan on change
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const paramters: ListReportParameters = {
+        query: searchboxValue,
+        page,
+        pageSize: 10,
+      };
+
+      if (termId) {
+        paramters.termId = termId;
+      }
+
+      if (departmentId) {
+        paramters.departmentId = departmentId;
+      }
+      fetchReport(paramters, true);
+    }, 200);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchboxValue, page, termId, departmentId]);
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -74,7 +143,18 @@ export const ReportManagementList: React.FC = () => {
       </BubbleBanner>
 
       <motion.div variants={childrenAnimation}>
-        <ListPlanFilter />
+        <ListReportFilter
+          searchboxValue={searchboxValue}
+          onSearchboxChange={(value) => {
+            setSearchboxValue(value);
+          }}
+          onTermIdChange={(termId) => {
+            setTermId(termId);
+          }}
+          onDepartmentIdChange={(departmentId) => {
+            setDepartmentId(departmentId);
+          }}
+        />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
@@ -82,6 +162,40 @@ export const ReportManagementList: React.FC = () => {
           onCreatePlanClick={() => {
             setShowUploadPlanModal(true);
           }}
+          reports={isFetching ? generateEmptyReports(10) : data?.data}
+          isDataEmpty={isDataEmpty}
+          page={page}
+          totalPage={data?.pagination.numPages}
+          onNext={() =>
+            setPage((prevPage) => {
+              if (data?.pagination.numPages) {
+                if (prevPage + 1 > data?.pagination.numPages) {
+                  return data?.pagination.numPages;
+                } else {
+                  return prevPage + 1;
+                }
+              } else {
+                return 1;
+              }
+            })
+          }
+          onPageChange={(page) => {
+            setPage(page || 1);
+          }}
+          onPrevious={() =>
+            setPage((prevPage) => {
+              if (data?.pagination.numPages) {
+                if (prevPage === 1) {
+                  return 1;
+                } else {
+                  return prevPage - 1;
+                }
+              } else {
+                return 1;
+              }
+            })
+          }
+          isFetching={isFetching}
         />
       </motion.div>
 

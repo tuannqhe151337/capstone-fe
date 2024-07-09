@@ -146,7 +146,7 @@ export const UserAvatarCard: React.FC<Props> = ({
       </motion.div>
 
       <motion.div
-        className="relative mt-4 h-[28px]"
+        className="relative mt-4 h-[35px]"
         variants={childrenAnimation}
       >
         <AnimatePresence>
@@ -166,13 +166,13 @@ export const UserAvatarCard: React.FC<Props> = ({
         <AnimatePresence>
           {!isLoading && (
             <motion.div
-              className="absolute w-full"
+              className="absolute w-full mt-2"
               variants={animation}
               initial={AnimationStage.HIDDEN}
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
             >
-              <p className="text-neutral-400/70 font-bold text-lg text-center dark:opacity-60">
+              <p className="text-neutral-400/70 font-bold text-base text-center dark:opacity-60">
                 {position} at {department}
               </p>
             </motion.div>
