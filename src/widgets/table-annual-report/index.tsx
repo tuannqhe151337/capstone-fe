@@ -73,6 +73,12 @@ export const TableAnnualReport: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
+              Total term
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+            >
               Total department
             </th>
             <th
@@ -104,7 +110,7 @@ export const TableAnnualReport: React.FC<Props> = ({
                 //   setHoverRowIndex(undefined);
                 // }}
                 onClick={() => {
-                  navigate("detail/chart");
+                  navigate(`detail/chart/${row.annualReportId}`);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -127,6 +133,17 @@ export const TableAnnualReport: React.FC<Props> = ({
                     ></span>
                   ) : (
                     <div> {formatViMoney(row.totalExpense)}</div>
+                  )}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <div> {row.totalTerm}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">

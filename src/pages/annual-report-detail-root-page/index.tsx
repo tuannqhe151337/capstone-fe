@@ -4,12 +4,15 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { OverviewCard } from "./ui/overview-card";
 import { FaDownload } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { TbPigMoney } from "react-icons/tb";
 import { Button } from "../../shared/button";
+import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
+import { useEffect } from "react";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -47,6 +50,20 @@ const childrenAnimation: Variants = {
 
 export const AnnualReportDetailRootPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // Get annual report detail
+  const { annualReportId } = useParams<{ annualReportId: string }>();
+
+  const [fetchAnnualReportDetail, { data: annual, isFetching, isSuccess }] =
+    useLazyFetchAnnualReportDetailQuery();
+
+  useEffect(() => {
+    if (annualReportId) {
+      fetchAnnualReportDetail(parseInt(annualReportId, 10), true);
+    }
+  }, [annualReportId]);
+
+  if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
 
   return (
     <motion.div
@@ -93,7 +110,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
           <OverviewCard
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={"Total terms"}
-            value={"12"}
+            value={annual?.totalTerm}
           />
         </motion.div>
 
@@ -101,7 +118,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
           <OverviewCard
             icon={<PiTreeStructureFill className="text-4xl" />}
             label={"Total departments"}
-            value={"18"}
+            value={annual?.totalDepartment}
           />
         </motion.div>
 
@@ -110,7 +127,8 @@ export const AnnualReportDetailRootPage: React.FC = () => {
             className="flex-1"
             icon={<TbPigMoney className="text-4xl" />}
             label={"Total expenses"}
-            value={"213.425.384 VNĐ"}
+            value={annual?.totalExpense}
+            // {formatViMoney(annual?.totalExpense)}
           />
         </motion.div>
       </div>
@@ -127,11 +145,11 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               onItemChangeHandler={({ id }) => {
                 switch (id) {
                   case "chart":
-                    navigate("./chart");
+                    navigate(`./chart/${annualReportId}`);
                     break;
 
                   case "table":
-                    navigate("./table");
+                    navigate(`./table/${annualReportId}`);
                     break;
 
                   default:
