@@ -2,6 +2,7 @@ import { AsyncPaginate } from "react-select-async-paginate";
 import type { LoadOptions } from "react-select-async-paginate";
 import { useRef, useState } from "react";
 import { useLazyGetListPositionQuery } from "../../providers/store/api/positionApi";
+import { cn } from "../../shared/utils/cn";
 
 interface PositionOption {
   value: number;
@@ -16,11 +17,13 @@ const DefaultOption: PositionOption = {
 };
 
 interface Props {
+  className?: string;
   onChange?: (option: PositionOption | null) => any;
   defaultOption?: PositionOption;
 }
 
 export const PositionFilter: React.FC<Props> = ({
+  className,
   onChange,
   defaultOption = DefaultOption,
 }) => {
@@ -71,7 +74,7 @@ export const PositionFilter: React.FC<Props> = ({
     <div>
       <AsyncPaginate
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
+        className={cn("w-[200px] cursor-pointer", className)}
         value={selectedOption}
         isLoading={isFetching}
         onChange={(value) => {

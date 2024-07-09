@@ -317,6 +317,7 @@ export const UserCreate: React.FC = () => {
               control={control}
               render={({ field: { onChange } }) => (
                 <DepartmentFilter
+                  className="z-30 dark:z-30"
                   defaultOption={{ value: 0, label: "Select department" }}
                   onChange={(option) => option && onChange(option.value)}
                 />
@@ -341,6 +342,7 @@ export const UserCreate: React.FC = () => {
               control={control}
               render={({ field: { onChange } }) => (
                 <PositionFilter
+                  className="z-20 dark:z-20"
                   defaultOption={{ value: 0, label: "Select position" }}
                   onChange={(option) => option && onChange(option.value)}
                 />

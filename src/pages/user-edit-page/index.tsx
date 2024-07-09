@@ -396,6 +396,7 @@ export const UserEdit: React.FC = () => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <DepartmentFilter
+                    className="z-30 dark:z-30"
                     defaultOption={{
                       value: user!.department.id,
                       label: user!.department.name,
@@ -433,6 +434,7 @@ export const UserEdit: React.FC = () => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <PositionFilter
+                    className="z-20 dark:z-20"
                     defaultOption={{
                       value: user!.position.id,
                       label: user!.position.name,
