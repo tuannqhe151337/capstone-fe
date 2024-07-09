@@ -8,8 +8,8 @@ import { TermCreateModal } from "../../widgets/term-create-modal";
 import { useEffect, useState } from "react";
 import {
   ListTermParameters,
-  useLazyFetchTermsQuery,
-} from "../../providers/store/api/termsApi";
+  useLazyGetListTermQuery,
+} from "../../providers/store/api/termApi";
 import _ from "lodash";
 
 const generateEmptyTerms = (total: number): Row[] => {
@@ -79,7 +79,7 @@ export const TermManagementList: React.FC = () => {
   };
 
   // Query
-  const [fetchTerm, { data, error, isFetching }] = useLazyFetchTermsQuery();
+  const [getListTerm, { data, error, isFetching }] = useLazyGetListTermQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -96,7 +96,7 @@ export const TermManagementList: React.FC = () => {
 
   // Fetch plan on change
   useEffect(() => {
-    fetchTerm({ page: 1, pageSize: 10 });
+    getListTerm({ page: 1, pageSize: 10 });
   }, []);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export const TermManagementList: React.FC = () => {
         paramters.statusId = statusId;
       }
 
-      fetchTerm(paramters, true);
+      getListTerm(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);

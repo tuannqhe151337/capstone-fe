@@ -138,6 +138,7 @@ export const UserManagementList: React.FC = () => {
     searchboxValue,
     page,
     deactivateUserId,
+    activateUserId,
     roleId,
     departmentId,
     positionId,

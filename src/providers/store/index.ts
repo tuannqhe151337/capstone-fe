@@ -9,7 +9,6 @@ import { positionAPI } from "./api/positionApi";
 import { termAPI } from "./api/termApi";
 import { plansApi } from "./api/plansApi";
 import { annualAPI } from "./api/annualsAPI";
-import { termsApi } from "./api/termsApi";
 import { statusAPI } from "./api/statusApi";
 
 export const store = configureStore({
@@ -23,7 +22,6 @@ export const store = configureStore({
     [plansApi.reducerPath]: plansApi.reducer,
     [termAPI.reducerPath]: termAPI.reducer,
     [annualAPI.reducerPath]: annualAPI.reducer,
-    [termsApi.reducerPath]: termsApi.reducer,
     [statusAPI.reducerPath]: statusAPI.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -36,7 +34,6 @@ export const store = configureStore({
       plansApi.middleware,
       termAPI.middleware,
       annualAPI.middleware,
-      termsApi.middleware,
       statusAPI.middleware
     ),
 });
