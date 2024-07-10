@@ -1,6 +1,19 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
+export enum Duration {
+  "MONTHLY" = "MONTHLY",
+  "QUARTERLY" = "QUARTERLY",
+  "HALF_YEARLY" = "HALF_YEARLY",
+}
+
+export interface CreateTermBody {
+  name: string;
+  duration: Duration;
+  startDate: string;
+  planDueDate: string;
+}
+
 export interface Term {
   termId: number | string;
   name: string;
@@ -56,6 +69,7 @@ const staggeredBaseQuery = retry(
 export const termAPI = createApi({
   reducerPath: "termAPI",
   baseQuery: staggeredBaseQuery,
+  tagTypes: ["terms"],
   endpoints: (builder) => ({
     getListTerm: builder.query<PaginationResponse<Term[]>, ListTermParameters>({
       query: ({ query, statusId, page, pageSize }) => {
@@ -71,6 +85,7 @@ export const termAPI = createApi({
 
         return endpoint;
       },
+      providesTags: ["terms"],
     }),
     getListTermWhenCreatePlan: builder.query<
       PaginationResponse<TermCreatePlan[]>,
@@ -86,10 +101,19 @@ export const termAPI = createApi({
         return endpoint;
       },
     }),
+    createTerm: builder.mutation<any, CreateTermBody>({
+      query: (createTermBody) => ({
+        url: "term",
+        method: "POST",
+        body: createTermBody,
+      }),
+      invalidatesTags: ["terms"],
+    }),
   }),
 });
 
 export const {
   useLazyGetListTermQuery,
   useLazyGetListTermWhenCreatePlanQuery,
+  useCreateTermMutation,
 } = termAPI;

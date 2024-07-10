@@ -24,6 +24,7 @@ import { ErrorData } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
 import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
+import { parseISODateForBody } from "../../shared/utils/parse-iso-date-for-body";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -136,7 +137,7 @@ export const UserCreate: React.FC = () => {
     useCreateUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    const birthDateString = data.birthDate.toISOString().replace("Z", "");
+    const birthDateString = parseISODateForBody(data.birthDate);
 
     createUser({
       fullName: data.fullName,

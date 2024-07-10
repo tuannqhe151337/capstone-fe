@@ -2,7 +2,7 @@ import { Variants, motion } from "framer-motion";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { OverviewCard } from "./ui/overview-card";
-import { FaDownload } from "react-icons/fa6";
+import { FaDownload, FaPiggyBank } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { IconButton } from "../../shared/icon-button";
@@ -131,7 +131,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             className="flex-1"
-            icon={<TbPigMoney className="text-4xl" />}
+            icon={<FaPiggyBank className="text-4xl" />}
             label={"Total expenses"}
             value={annual?.totalExpense}
             // {formatViMoney(annual?.totalExpense)}

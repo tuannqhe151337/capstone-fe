@@ -31,6 +31,8 @@ const duration = 200; // In miliseconds
 interface ModalPosition {
   top?: number;
   left?: number;
+  bottom?: number;
+  right?: number;
 }
 
 interface Props {
@@ -96,7 +98,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
         const date = inputValue && parse(inputValue, datePattern, new Date());
         onChange && date instanceof Date && onChange(date);
       }
-    }, [isInputValueValid]);
+    }, [isInputValueValid, inputValue]);
 
     // Select month base on valid input value
     useEffect(() => {
@@ -104,7 +106,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
         const date = inputValue && parse(inputValue, datePattern, new Date());
         date instanceof Date && setMonthSelected(date);
       }
-    }, [isInputValueValid]);
+    }, [isInputValueValid, inputValue]);
 
     // Close calendar when click outside
     useHotkeys(
@@ -211,6 +213,8 @@ export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
               style={{
                 top: modalPosition?.top || 50,
                 left: modalPosition?.left,
+                right: modalPosition?.right,
+                bottom: modalPosition?.bottom,
               }}
               initial={AnimationStage.HIDDEN}
               animate={

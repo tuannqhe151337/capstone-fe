@@ -68,7 +68,7 @@ interface Props {
   onNext?: () => any;
 }
 export const TableTermManagement: React.FC<Props> = ({
-  onCreateTermClick: onCreatePlanClick,
+  onCreateTermClick,
   terms,
   isFetching,
   page,
@@ -104,7 +104,6 @@ export const TableTermManagement: React.FC<Props> = ({
             >
               Term
             </th>
-            {/* <th></th> */}
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
@@ -123,7 +122,7 @@ export const TableTermManagement: React.FC<Props> = ({
                 className="px-3"
                 tooltip="Add new term"
                 onClick={() => {
-                  onCreatePlanClick && onCreatePlanClick();
+                  onCreateTermClick && onCreateTermClick();
                 }}
               >
                 <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
@@ -158,7 +157,7 @@ export const TableTermManagement: React.FC<Props> = ({
                   navigate("detail/information");
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-medium w-[438px]">
+                <td className="whitespace-nowrap px-6 py-4 font-medium w-[360px]">
                   <div className="flex flex-row flex-wrap">
                     {isFetching ? (
                       <span
@@ -168,7 +167,6 @@ export const TableTermManagement: React.FC<Props> = ({
                       ></span>
                     ) : (
                       <>
-                        {" "}
                         <p className="font-extrabold py-2 ml-14 group-hover:underline">
                           {row.name}
                         </p>

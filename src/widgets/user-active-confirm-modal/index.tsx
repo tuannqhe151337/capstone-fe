@@ -28,7 +28,6 @@ export const UserActiveConfirmModal: React.FC<Props> = ({
     useActivateUserMutation();
 
   useEffect(() => {
-    console.log(error);
     if (!isLoading && isSuccess && !isError && user) {
       toast("Activate user successfully!", { type: "success" });
       onActivateSuccessfully && onActivateSuccessfully(user);
