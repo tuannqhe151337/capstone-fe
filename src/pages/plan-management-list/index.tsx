@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
@@ -80,6 +80,7 @@ const childrenAnimation: Variants = {
 };
 
 export const PlanManagementList: React.FC = () => {
+  // UI: show modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
@@ -101,6 +102,9 @@ export const PlanManagementList: React.FC = () => {
   useEffect(() => {
     setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
   }, [data]);
+
+  // On delete plan successfully (for re-rendering)
+  const [deletedPlanId, setDeletedPlanId] = useState<string | number>();
 
   // Fetch plan on change
   useEffect(() => {
@@ -127,7 +131,7 @@ export const PlanManagementList: React.FC = () => {
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId, departmentId, statusId]);
+  }, [searchboxValue, page, termId, departmentId, statusId, deletedPlanId]);
 
   return (
     <motion.div
@@ -179,6 +183,9 @@ export const PlanManagementList: React.FC = () => {
         <TablePlanManagement
           onCreatePlanClick={() => {
             setShowUploadPlanModal(true);
+          }}
+          onDeleteSuccessfully={(plan) => {
+            setDeletedPlanId(plan.planId);
           }}
           plans={isFetching ? generateEmptyPlans(10) : data?.data}
           isDataEmpty={isDataEmpty}

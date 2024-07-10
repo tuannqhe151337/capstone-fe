@@ -76,6 +76,7 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
+  onDeleteSuccessfully?: (plan: PlanPreview) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
@@ -88,12 +89,16 @@ export const TablePlanManagement: React.FC<Props> = ({
   page,
   totalPage,
   isDataEmpty,
+  onDeleteSuccessfully,
   onPageChange,
   onPrevious,
   onNext,
 }) => {
   // Navigation
   const navigate = useNavigate();
+
+  // Chosen plan's id
+  const [chosenPlan, setChosenPlan] = useState<PlanPreview>();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
@@ -232,6 +237,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <IconButton
                       onClick={(event) => {
                         event.stopPropagation();
+                        setChosenPlan(plan);
                         handleClick();
                       }}
                     >
@@ -265,7 +271,14 @@ export const TablePlanManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <DeletePlanModal show={startModal} onClose={handleDeletePlanModal} />
+      {chosenPlan && (
+        <DeletePlanModal
+          plan={chosenPlan}
+          show={startModal}
+          onClose={handleDeletePlanModal}
+          onDeleteSuccessfully={onDeleteSuccessfully}
+        />
+      )}
     </div>
   );
 };

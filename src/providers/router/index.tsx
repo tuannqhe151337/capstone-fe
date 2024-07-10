@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { TermDetailRootPage } from "../../pages/term-detail-root-page";
 
 const router = createBrowserRouter([
   // Auth pages

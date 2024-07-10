@@ -3,13 +3,38 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
+import {
+  PlanPreview,
+  useDeletePlanMutation,
+} from "../../providers/store/api/plansApi";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 interface Props {
+  plan: PlanPreview;
   show: boolean;
   onClose: () => any;
+  onDeleteSuccessfully?: (plan: PlanPreview) => any;
 }
 
-export const DeletePlanModal: React.FC<Props> = ({ show, onClose }) => {
+export const DeletePlanModal: React.FC<Props> = ({
+  plan,
+  show,
+  onClose,
+  onDeleteSuccessfully,
+}) => {
+  // Mutation
+  const [deletePlan, { isError, isLoading, isSuccess }] =
+    useDeletePlanMutation();
+
+  useEffect(() => {
+    if (!isLoading && !isError && isSuccess) {
+      toast("Delete plan successfully!", { type: "success" });
+      onClose && onClose();
+      onDeleteSuccessfully && onDeleteSuccessfully(plan);
+    }
+  }, [isError, isLoading, isSuccess]);
+
   return (
     <Modal
       className="w-[70vw] xl:w-[50vw] h-max flex flex-col justify-center items-center"
@@ -39,7 +64,7 @@ export const DeletePlanModal: React.FC<Props> = ({ show, onClose }) => {
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
             You're going to delete the plan{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "Burname_templan"
+              "{plan.name}"
             </span>
             .
           </div>
@@ -66,6 +91,9 @@ export const DeletePlanModal: React.FC<Props> = ({ show, onClose }) => {
             className="p-3"
             variant="error"
             buttonType="outlined"
+            onClick={() => {
+              deletePlan({ planId: plan.planId });
+            }}
           >
             Yes, delete
           </Button>
