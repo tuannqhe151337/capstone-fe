@@ -71,7 +71,6 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
         value={selectedOption}
         isLoading={isFetching}
         onChange={(value) => {
-          console.log("asdfasdf: ", value);
           if (value) {
             setSelectedOption(value);
             onChange && onChange(value);

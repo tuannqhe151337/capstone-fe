@@ -68,14 +68,14 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
-  const [startModal, setStartModal] = useState<boolean>(false);
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   const handleClick = () => {
-    setStartModal(true);
+    setShowCreateModal(true);
   };
 
   const handleCreateTermModal = () => {
-    setStartModal(false);
+    setShowCreateModal(false);
   };
 
   // Query
@@ -128,7 +128,7 @@ export const TermManagementList: React.FC = () => {
           <div className="ml-auto">
             <Button
               onClick={() => {
-                setStartModal(true);
+                setShowCreateModal(true);
               }}
             >
               <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
@@ -155,9 +155,9 @@ export const TermManagementList: React.FC = () => {
 
       <motion.div variants={childrenAnimation}>
         <TableTermManagement
-          // onCreatePlanClick={() => {
-          //   setShowUploadPlanModal(true);
-          // }}
+          onCreateTermClick={() => {
+            setShowCreateModal(true);
+          }}
           terms={isFetching ? generateEmptyTerms(10) : data?.data}
           isDataEmpty={isDataEmpty}
           page={page}
@@ -195,7 +195,7 @@ export const TermManagementList: React.FC = () => {
         />
       </motion.div>
 
-      <TermCreateModal show={startModal} onClose={handleCreateTermModal} />
+      <TermCreateModal show={showCreateModal} onClose={handleCreateTermModal} />
     </motion.div>
   );
 };

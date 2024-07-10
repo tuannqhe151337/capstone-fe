@@ -1,12 +1,13 @@
 import { motion, Variants } from "framer-motion";
 import { FaLocationDot, FaUser } from "react-icons/fa6";
-import { FaPhoneAlt } from "react-icons/fa";
+import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { HiOutlineMailOpen } from "react-icons/hi";
 import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { cn } from "../../shared/utils/cn";
 import React from "react";
 import { formatISODate } from "../../shared/utils/format-iso-date";
 import { UserListItem } from "./ui/user-list-item";
+import { MdEmail } from "react-icons/md";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -96,7 +97,7 @@ export const UserDetailCard: React.FC<Props> = ({
         <motion.div variants={childrenAnimation}>
           <UserListItem
             isLoading={isLoading}
-            icon={<HiOutlineMailOpen />}
+            icon={<MdEmail className="text-2xl -ml-0.5" />}
             label="Email"
             value={email}
           />
@@ -105,7 +106,7 @@ export const UserDetailCard: React.FC<Props> = ({
         <motion.div variants={childrenAnimation}>
           <UserListItem
             isLoading={isLoading}
-            icon={<LiaBirthdayCakeSolid />}
+            icon={<FaBirthdayCake />}
             label="Date of birth"
             value={formatISODate(dateOfBirth)}
           />
