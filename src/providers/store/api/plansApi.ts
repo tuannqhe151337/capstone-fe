@@ -39,6 +39,10 @@ export interface PlanDetail {
   version: number;
 }
 
+export interface PlanDeleteParameters {
+  planId: string | number;
+}
+
 interface User {
   userId: string | number;
   username: string;
@@ -110,7 +114,7 @@ const staggeredBaseQuery = retry(
 const plansApi = createApi({
   reducerPath: "plans",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["query"],
+  tagTypes: ["plans"],
   endpoints(builder) {
     return {
       fetchPlans: builder.query<
@@ -138,9 +142,18 @@ const plansApi = createApi({
 
           return endpoint;
         },
+        providesTags: ["plans"],
       }),
       getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
         query: ({ planId }) => `/plan/detail?planId=${planId}`,
+      }),
+      deletePlan: builder.mutation<any, PlanDeleteParameters>({
+        query: ({ planId }) => ({
+          url: `/plan/delete`,
+          method: "DELETE",
+          body: { planId },
+        }),
+        invalidatesTags: ["plans"],
       }),
     };
   },
@@ -150,5 +163,6 @@ export const {
   useFetchPlansQuery,
   useLazyFetchPlansQuery,
   useGetPlanDetailQuery,
+  useDeletePlanMutation,
 } = plansApi;
 export { plansApi };

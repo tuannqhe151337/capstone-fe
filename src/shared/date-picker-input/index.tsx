@@ -153,7 +153,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div
-        ref={mergeRefs([containerRef])}
+        ref={mergeRefs([ref, containerRef])}
         className={cn(`relative w-full h-full`, className)}
       >
         <PatternFormat
