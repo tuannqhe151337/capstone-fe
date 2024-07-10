@@ -40,7 +40,7 @@ export const UserListItem: React.FC<Props> = ({
           <AnimatePresence>
             {isLoading && (
               <motion.div
-                className="absolute w-[200px] h-[24px] mt-1 bg-neutral-300 animate-pulse"
+                className="absolute w-[200px] h-[24px] mt-1 bg-neutral-300 dark:bg-neutral-700 animate-pulse"
                 variants={animation}
                 initial={AnimationStage.HIDDEN}
                 animate={AnimationStage.VISIBLE}

@@ -33,23 +33,23 @@ const buttonAnimation: Variants = {
 type InnerShadow = "left" | "right";
 
 interface Item {
-  id: string;
+  id: string | number;
   name: string;
 }
 
 interface Props {
   items: Item[];
+  selectedItemId: string | number;
   className?: string;
   onItemChangeHandler?: (item: Item, index: number) => void;
 }
 
 export const TabList: React.FC<Props> = ({
   onItemChangeHandler,
+  selectedItemId,
   items,
   className,
 }) => {
-  const [selectedItemId, setSelectedItemId] = useState<string>(items[0].id);
-
   const [layoutId] = useState<string>(uuidv4());
   const [innerShadows, setInnerShadows] = useState<InnerShadow[]>([]);
 
@@ -147,7 +147,6 @@ export const TabList: React.FC<Props> = ({
               return;
             }
 
-            setSelectedItemId(item.id);
             onItemChangeHandler && onItemChangeHandler(item, index);
           }}
         >

@@ -1,5 +1,4 @@
 import { Variants, motion } from "framer-motion";
-import { format } from "date-fns";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaChartLine } from "react-icons/fa";
@@ -51,7 +50,7 @@ export const PlanDetailInformationPage: React.FC = () => {
   const { planId } = useParams<{ planId: string }>();
 
   // Query
-  const { data } = useGetPlanDetailQuery({
+  const { data, isFetching } = useGetPlanDetailQuery({
     planId: planId ? parseInt(planId, 10) : 0,
   });
 
@@ -66,6 +65,7 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Term */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<RiCalendarScheduleFill className="text-3xl" />}
             title="Term"
             value={data?.term.name}
@@ -75,7 +75,8 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Plan due date */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
-            icon={<FaChartLine className="text-2xl" />}
+            isFetching={isFetching}
+            icon={<FaChartLine className="text-2xl mr-1.5" />}
             title="Plan due date"
             value={
               (data?.planDueDate && formatISODate(data?.planDueDate)) || ""
@@ -86,6 +87,7 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Department */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<PiTreeStructureFill className="text-3xl" />}
             title="Department"
             value={data?.department.name}
@@ -96,7 +98,8 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Status */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
-            icon={<RiProgress3Fill className="text-3xl" />}
+            isFetching={isFetching}
+            icon={<RiProgress3Fill className="text-3xl -mr-1" />}
             title="Status"
             value={<p className="text-primary-500">{data?.status.name}</p>}
           />
@@ -105,6 +108,7 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Version */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<BsStack className="text-2xl" />}
             title="Version"
             value={`v${data?.version}`}
@@ -114,6 +118,7 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Created at */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<FaClock className="text-2xl" />}
             title="Created at"
             value={(data?.createdAt && formatISODate(data?.createdAt)) || ""}
@@ -123,6 +128,7 @@ export const PlanDetailInformationPage: React.FC = () => {
         {/* Created by */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<HiUser className="text-3xl -ml-1" />}
             title="Created by"
             value={data?.user.username}

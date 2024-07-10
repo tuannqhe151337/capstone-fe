@@ -127,7 +127,7 @@ const usersApi = createApi({
     },
     fetchFn: async (...args) => {
       // REMOVE FOR PRODUCTION
-      // await pause(1000);
+      await pause(2000);
       return fetch(...args);
     },
   }),
