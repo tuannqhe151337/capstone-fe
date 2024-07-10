@@ -1,6 +1,23 @@
 import { useRef, useState } from "react";
-import { cn } from "../../../shared/utils/cn";
-import { Meteors } from "../../../shared/meteors";
+import { motion, Variants } from "framer-motion";
+import { Meteors } from "../../shared/meteors";
+import { cn } from "../../shared/utils/cn";
+
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+    y: 5,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
 
 interface Props {
   icon?: React.ReactNode;
@@ -42,20 +59,24 @@ export const OverviewCard: React.FC<Props> = ({
   };
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "relative w-full h-[100px] transition-all duration-200 ease-linear overflow-hidden",
+        "w-full h-[100px] transition-all duration-200 ease-linear border dark:border-neutral-800 rounded-xl shadow dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] overflow-hidden",
         className
       )}
       style={{
         transformStyle: "preserve-3d",
       }}
+      variants={animation}
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+      exit={AnimationStage.HIDDEN}
     >
-      <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6 border dark:border-neutral-800 rounded-xl">
+      <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6">
         <div className="mr-6 text-primary-300 dark:text-primary-800">
           {icon}
         </div>
@@ -68,6 +89,6 @@ export const OverviewCard: React.FC<Props> = ({
       </div>
 
       {meteors && <Meteors number={5} />}
-    </div>
+    </motion.div>
   );
 };

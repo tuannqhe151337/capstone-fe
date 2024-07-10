@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { FaCircleUser } from "react-icons/fa6";
 import { cn } from "../../shared/utils/cn";
-import { useEffect, useState } from "react";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -91,7 +91,7 @@ export const UserAvatarCard: React.FC<Props> = ({
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
             >
-              <div className="w-[120px] h-[35px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
+              <Skeleton className="w-[120px] mx-auto mt-1" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -124,7 +124,7 @@ export const UserAvatarCard: React.FC<Props> = ({
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
             >
-              <div className="w-[180px] h-[35px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
+              <Skeleton className="w-[180px] mx-auto mt-1" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -159,7 +159,7 @@ export const UserAvatarCard: React.FC<Props> = ({
               animate={AnimationStage.VISIBLE}
               exit={AnimationStage.HIDDEN}
             >
-              <div className="w-[300px] h-[24px] mt-1 mx-auto bg-neutral-300 animate-pulse"></div>
+              <Skeleton className="w-[300px] h-[24px] mx-auto mt-1" />
             </motion.div>
           )}
         </AnimatePresence>
