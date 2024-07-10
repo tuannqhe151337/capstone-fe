@@ -126,7 +126,7 @@ export const UserCreate: React.FC = () => {
     register,
     control,
     watch,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isValid },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(CreateUserSchema), // Apply the zodResolver
@@ -412,6 +412,7 @@ export const UserCreate: React.FC = () => {
 
         <div className="mx-7 flex justify-center mt-4">
           <Button
+            disabled={!isValid}
             containerClassName="w-full"
             className="py-2 dark:text-white/80"
             onClick={handleSubmit(onSubmit)}

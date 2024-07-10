@@ -143,7 +143,7 @@ export const UserEdit: React.FC = () => {
     register,
     control,
     watch,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isValid, errors },
     handleSubmit,
     setValue,
   } = useForm<FormData>({
@@ -521,6 +521,7 @@ export const UserEdit: React.FC = () => {
 
         <div className="mx-7 flex justify-center mt-4">
           <Button
+            disabled={!isValid}
             containerClassName="w-full"
             className="py-2 dark:text-white/80"
             onClick={handleSubmit(onSubmit)}
