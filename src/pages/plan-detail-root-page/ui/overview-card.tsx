@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import { cn } from "../../../shared/utils/cn";
+import { Meteors } from "../../../shared/meteors";
 
 interface Props {
   icon?: React.ReactNode;
   label?: React.ReactNode;
   value?: React.ReactNode;
   className?: string;
+  meteors?: boolean;
 }
 
 // Copy from https://ui.aceternity.com/components/3d-card-effect
@@ -14,6 +16,7 @@ export const OverviewCard: React.FC<Props> = ({
   label,
   value,
   className,
+  meteors,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMouseEntered, setIsMouseEntered] = useState(false);
@@ -45,14 +48,14 @@ export const OverviewCard: React.FC<Props> = ({
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={cn(
-        "w-full h-full transition-all duration-200 ease-linear",
+        "relative w-full h-[100px] transition-all duration-200 ease-linear overflow-hidden",
         className
       )}
       style={{
         transformStyle: "preserve-3d",
       }}
     >
-      <div className="flex-1 flex flex-row flex-wrap items-center px-8 py-6 border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl">
+      <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6 border dark:border-neutral-800 rounded-xl">
         <div className="mr-6 text-primary-300 dark:text-primary-800">
           {icon}
         </div>
@@ -63,6 +66,8 @@ export const OverviewCard: React.FC<Props> = ({
           </p>
         </div>
       </div>
+
+      {meteors && <Meteors number={5} />}
     </div>
   );
 };

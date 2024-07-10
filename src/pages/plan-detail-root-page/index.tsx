@@ -8,6 +8,7 @@ import TabList from "../../shared/tab-list";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
+import { Meteors } from "../../shared/meteors";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -89,6 +90,7 @@ export const PlanDetailRootPage: React.FC = () => {
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={"Term"}
             value={data?.term.name}
+            meteors
           />
         </motion.div>
 
@@ -111,7 +113,7 @@ export const PlanDetailRootPage: React.FC = () => {
       </div>
 
       <div className="mt-7 px-5">
-        <div className="w-full h-full border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl py-7 px-8">
+        <div className="relative w-full h-full border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl py-7 px-8">
           <div className="border-b-2 border-b-neutral-200 dark:border-b-neutral-700">
             <TabList
               className="-mb-0.5"
