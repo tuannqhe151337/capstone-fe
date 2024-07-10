@@ -13,9 +13,23 @@ export default {
       fontFamily: {
         nunito: ["Nunito", "sans-serif"],
       },
+      animation: {
+        "meteor-effect": "meteor 5s linear infinite",
+      },
       keyframes: {
+        meteor: {
+          "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
+          "70%": { opacity: "1" },
+          "100%": {
+            transform: "rotate(215deg) translateX(-600px)",
+            opacity: "0",
+          },
+        },
         fatter: {
-          "0%, 100%": { transform: "scale(0.95  ) translateY(0)", opacity: 0.4, },
+          "0%, 100%": {
+            transform: "scale(0.95  ) translateY(0)",
+            opacity: 0.4,
+          },
           "50%": { transform: "scale(1) translateY(10px)", opacity: 0.2 },
         },
       },

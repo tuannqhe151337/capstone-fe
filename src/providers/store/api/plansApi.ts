@@ -102,7 +102,7 @@ const staggeredBaseQuery = retry(
     },
     fetchFn: async (...args) => {
       // REMOVE FOR PRODUCTION
-      // await pause(1000);
+      await pause(1000);
       return fetch(...args);
     },
   }),

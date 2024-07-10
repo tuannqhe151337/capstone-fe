@@ -11,12 +11,12 @@ export const DetailPropertyItem: React.FC<Props> = ({ icon, title, value }) => {
         {icon}
       </div>
       <div className="flex flex-col flex-wrap gap-0.5">
-        <p className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500">
+        <div className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500">
           {title}
-        </p>
-        <p className="text-base font-bold text-neutral-500 dark:text-neutral-400">
+        </div>
+        <div className="text-base font-bold text-neutral-500 dark:text-neutral-400">
           {value}
-        </p>
+        </div>
       </div>
     </div>
   );
