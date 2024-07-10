@@ -2,12 +2,27 @@ import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Variants, motion } from "framer-motion";
-
-import { FaCheckCircle } from "react-icons/fa";
 import { Button } from "../../shared/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePickerInput } from "../../shared/date-picker-input";
 import { TEInput } from "tw-elements-react";
+import { z, ZodType } from "zod";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Duration,
+  useCreateTermMutation,
+} from "../../providers/store/api/termApi";
+import { toast } from "react-toastify";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { ErrorData } from "../../providers/store/api/type";
+import { useNavigate } from "react-router-dom";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { add, format } from "date-fns";
+import { CgSpinner } from "react-icons/cg";
+import { parseISODateForBody } from "../../shared/utils/parse-iso-date-for-body";
+import DurationRadioOption from "../../entities/duration-radio-option";
+import { RadioInput } from "../../shared/radio-input";
 
 interface Props {
   show: boolean;
@@ -25,31 +40,118 @@ const childrenAnimation: Variants = {
   },
 };
 
+type FormData = {
+  name: string;
+  duration: string;
+  startDate: Date;
+  planDueDate: Date;
+};
+
+const NameSchema = z.string().min(1, "Name cannot be empty");
+
+const DurationSchema = z.nativeEnum(Duration);
+
+const StartDateSchema = z.date({
+  required_error: "Start date cannot be null",
+});
+
+const PlanDueDateSchema = z
+  .date({
+    required_error: "Plan due date cannot be null",
+  })
+  .refine((date) => new Date(date) > new Date(), {
+    message: "Plan due date must be in the future",
+  });
+
+export const CreateTermSchema: ZodType<FormData> = z
+  .object({
+    name: NameSchema,
+    duration: DurationSchema,
+    startDate: StartDateSchema,
+    planDueDate: PlanDueDateSchema,
+  })
+  .superRefine((data, ctx) => {
+    if (new Date(data.planDueDate) <= new Date(data.startDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Plan due date must be after the start date",
+        path: ["planDueDate"],
+      });
+    }
+  });
+
 export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
-  const [selectedOption, setSelectedOption] = useState("monthly");
+  // Navigate
+  const navigate = useNavigate();
+  const [selectedOption, setSelectedOption] = useState<Duration>(
+    Duration.MONTHLY
+  );
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    ``;
-    setSelectedOption(event.target.id);
+  // Form
+  const {
+    register,
+    control,
+    watch,
+    formState: { dirtyFields },
+    handleSubmit,
+  } = useForm<FormData>({
+    resolver: zodResolver(CreateTermSchema),
+  });
+
+  // Mutation
+  const [createTerm, { isLoading, isSuccess, isError, error }] =
+    useCreateTermMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const duration = Duration[data.duration as keyof typeof Duration];
+
+    createTerm({
+      name: data.name,
+      duration: duration,
+      startDate: parseISODateForBody(data.startDate),
+      planDueDate: parseISODateForBody(data.planDueDate),
+    });
   };
 
-  const getClassNames = (id: string) => {
-    return selectedOption === id
-      ? "bg-blue-100 text-primary w-4/12 h-[66px] dark:bg-neutral-800/70 dark:border-neutral-500"
-      : "bg-white text-neutral-600 w-4/12 h-[66px] dark:bg-neutral-800/50 dark:border-neutral-600";
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      toast("Create term successfully!", { type: "success" });
+      navigate("/term-management");
+    }
+  }, [isSuccess]);
 
-  const getTextColorClassNames = (id: string) => {
-    return selectedOption === id
-      ? "text-primary-600 font-extrabold opacity-70 dark:text-primary-500"
-      : "text-neutral-700 font-extrabold opacity-70 dark:text-primary-700";
-  };
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
 
-  const getSubTextColorClassNames = (id: string) => {
-    return selectedOption === id
-      ? "text-primary-500 text-sm font-bold opacity-70 dark:text-primary-500"
-      : "text-neutral-500 text-sm font-bold opacity-70 dark:text-primary-600";
-  };
+  useEffect(() => {
+    if (isError) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "data" in error &&
+        error.data &&
+        typeof error.data === "object" &&
+        "message" in (error.data as any)
+      ) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isError) {
+      toast(errorMessage, { type: "error" });
+    }
+  }, [isError, errorMessage]);
+
+  function handleOnClickRadio(duration: Duration) {
+    setSelectedOption(duration);
+  }
+
   return (
     <Modal
       className="w-[70vw] xl:w-[66vw] h-max flex flex-col justify-center items-center"
@@ -57,9 +159,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
       onClose={onClose}
     >
       <div className="relative w-full h-full flex flex-col items-center justify-center px-10 py-8">
-        <div className="font-extrabold text-3xl text-primary-500">
-          Create term
-        </div>
+        <div className="font-bold text-3xl text-primary-500">Create term</div>
 
         <div className="absolute top-3 right-5">
           <IconButton
@@ -79,10 +179,15 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             label="Term name"
             className="bg-white dark:bg-neutral-900 custom-wrapper mt-8 border rounded font-bold opacity-70 "
             autoFocus
+            {...register("name", { required: true })}
+          />
+          <InputValidationMessage
+            show={true}
+            validateFn={() => NameSchema.parse(watch("name"))}
           />
         </motion.div>
         <div className="w-11/12 mx-auto">
-          <div className="flex flex-col flex-wrap gap-0.5 mt-8">
+          <div className="flex flex-col flex-wrap gap-0.5 mt-6">
             <motion.div
               className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
               variants={childrenAnimation}
@@ -93,101 +198,108 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               variants={childrenAnimation}
               className="custom-wrapper w-[200px]"
             >
-              <DatePickerInput value={new Date()} allowEmpty />
+              <Controller
+                name="startDate"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DatePickerInput
+                    value={new Date()}
+                    onChange={(value) => {
+                      onChange(value);
+                    }}
+                  />
+                )}
+              />
+
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.startDate || false}
+                validateFn={() => StartDateSchema.parse(watch("startDate"))}
+              />
             </motion.div>
           </div>
 
           <motion.div
-            className="flex flex-row gap-6 pt-10 w-full"
+            className="flex flex-row gap-6 pt-6 w-full"
             variants={childrenAnimation}
           >
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "monthly"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="monthly"
-                  value="monthly"
-                  checked={selectedOption === "monthly"}
-                  onChange={handleRadioChange}
+            <DurationRadioOption
+              radioInput={
+                <RadioInput
+                  value={Duration.MONTHLY}
+                  checked={selectedOption === Duration.MONTHLY}
+                  {...register("duration")}
                 />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="monthly"
-                >
-                  <p className={getTextColorClassNames("monthly")}>Monthly</p>
-                  <p className={getSubTextColorClassNames("monthly")}>
-                    01/01/2022 - 01/02/2022
-                  </p>
-                </label>
-              </div>
-            </div>
+              }
+              onClick={() => handleOnClickRadio(Duration.MONTHLY)}
+              isSelected={selectedOption === Duration.MONTHLY}
+              label={"Monthly"}
+              fromToDate={
+                <>
+                  {watch("startDate") &&
+                    format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                  -{" "}
+                  {watch("startDate") &&
+                    format(
+                      add(watch("startDate"), { months: 1 }),
+                      "dd/MM/yyyy"
+                    )}
+                </>
+              }
+            />
 
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "quarterly"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="quarterly"
-                  value="quarterly"
-                  checked={selectedOption === "quarterly"}
-                  onChange={handleRadioChange}
+            <DurationRadioOption
+              radioInput={
+                <RadioInput
+                  value={Duration.QUARTERLY}
+                  checked={selectedOption === Duration.QUARTERLY}
+                  {...register("duration")}
                 />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="quarterly"
-                >
-                  <p className={getTextColorClassNames("quarterly")}>
-                    Quarterly
-                  </p>
-                  <p className={getSubTextColorClassNames("quarterly")}>
-                    01/01/2022 - 01/04/2022
-                  </p>
-                </label>
-              </div>
-            </div>
+              }
+              onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
+              isSelected={selectedOption === Duration.QUARTERLY}
+              label={"Quarterly"}
+              fromToDate={
+                <>
+                  {watch("startDate") &&
+                    format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                  -{" "}
+                  {watch("startDate") &&
+                    format(
+                      add(watch("startDate"), { months: 3 }),
+                      "dd/MM/yyyy"
+                    )}
+                </>
+              }
+            />
 
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "halfyear"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="halfyear"
-                  value="halfyear"
-                  checked={selectedOption === "halfyear"}
-                  onChange={handleRadioChange}
+            <DurationRadioOption
+              radioInput={
+                <RadioInput
+                  value={Duration.HALF_YEARLY}
+                  checked={selectedOption === Duration.HALF_YEARLY}
+                  {...register("duration")}
                 />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="halfyear"
-                >
-                  <p className={getTextColorClassNames("halfyear")}>
-                    Half year
-                  </p>
-                  <p className={getSubTextColorClassNames("halfyear")}>
-                    01/01/2022 - 01/06/2022
-                  </p>
-                </label>
-              </div>
-            </div>
+              }
+              onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
+              isSelected={selectedOption === Duration.HALF_YEARLY}
+              label={"Half year"}
+              fromToDate={
+                <>
+                  {watch("startDate") &&
+                    format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                  -{" "}
+                  {watch("startDate") &&
+                    format(
+                      add(watch("startDate"), { months: 6 }),
+                      "dd/MM/yyyy"
+                    )}
+                </>
+              }
+            />
           </motion.div>
 
-          <div className="flex flex-col flex-wrap gap-0.5 mt-8">
+          <div className="flex flex-col flex-wrap gap-0.5 mt-10">
             <motion.div
               className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
               variants={childrenAnimation}
@@ -198,14 +310,48 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               variants={childrenAnimation}
               className="custom-wrapper w-[200px]"
             >
-              <DatePickerInput value={new Date()} allowEmpty />
+              <Controller
+                name="planDueDate"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DatePickerInput
+                    value={new Date()}
+                    onChange={(value) => onChange(value)}
+                    modalPosition={{ top: -120, right: -340 }}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.planDueDate || false}
+                validateFn={() => {
+                  PlanDueDateSchema.parse(watch("planDueDate"));
+
+                  if (
+                    watch("planDueDate").getTime() <=
+                    watch("startDate").getTime()
+                  ) {
+                    throw new Error(
+                      "Plan due date must be greater that start date"
+                    );
+                  }
+                }}
+              />
             </motion.div>
           </div>
         </div>
 
         <div className="flex flex-row flex-wrap w-11/12 mt-10 gap-6">
-          <Button containerClassName="flex-1" className="font-bold p-3">
-            Create new term
+          <Button
+            containerClassName="flex-1"
+            className="font-bold p-3"
+            onClick={() => {
+              handleSubmit(onSubmit)();
+              onClose && onClose();
+            }}
+          >
+            {!isLoading && "Create new term"}
+            {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>
       </div>
