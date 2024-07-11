@@ -3,44 +3,12 @@ import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
 import { PlanPreview } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
-
-// Định nghĩa kiểu cho status
-const renderButton = (status: string) => {
-  switch (status) {
-    case "NEW":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "REVIEWED":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
-          Reviewed
-        </Tag>
-      );
-    case "WAITING_FOR_REVIEWED":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="waiting">
-          Waiting for approval
-        </Tag>
-      );
-    case "APPROVED":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="reviewed">
-          Approved
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { PlanTag } from "../../entities/plan-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -194,7 +162,13 @@ export const TablePlanManagement: React.FC<Props> = ({
                       <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
                         {plan.name}
                       </p>
-                      <div>{renderButton(plan.status.code)}</div>
+                      <div>
+                        <PlanTag
+                          className="ml-4 mt-1"
+                          statusCode={plan.status.code}
+                          statusName={plan.status.name}
+                        />
+                      </div>
                     </div>
                   )}
                 </td>
