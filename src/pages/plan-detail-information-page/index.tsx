@@ -10,6 +10,8 @@ import { RiProgress3Fill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatISODate } from "../../shared/utils/format-iso-date";
+import clsx from "clsx";
+import { FaCheck } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -99,9 +101,42 @@ export const PlanDetailInformationPage: React.FC = () => {
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
-            icon={<RiProgress3Fill className="text-3xl -mr-1" />}
+            icon={
+              <RiProgress3Fill
+                className={clsx({
+                  "text-3xl -mr-1": true,
+                  "text-green-600": data?.status.code === "APPROVED",
+                  "text-primary-400 dark:text-primary-600":
+                    data?.status.code === "REVIEWED",
+                })}
+              />
+            }
             title="Status"
-            value={<p className="text-primary-500">{data?.status.name}</p>}
+            value={
+              <div
+                className={clsx({
+                  "flex flex-row flex-wrap items-center gap-2": true,
+                  "text-green-600":
+                    data?.status.code === "NEW" ||
+                    data?.status.code === "APPROVED",
+                  "text-primary-500":
+                    data?.status.code === "REVIEWED" ||
+                    data?.status.code === "WAITING_FOR_REVIEWED",
+                })}
+              >
+                <p
+                  className={clsx({
+                    "font-extrabold": true,
+                  })}
+                >
+                  {data?.status.name}
+                </p>
+                {data?.status.code === "REVIEWED" ||
+                data?.status.code === "APPROVED" ? (
+                  <FaCheck className="mb-0.5" />
+                ) : null}
+              </div>
+            }
           />
         </motion.div>
 

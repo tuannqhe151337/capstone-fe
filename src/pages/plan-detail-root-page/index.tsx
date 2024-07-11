@@ -11,6 +11,7 @@ import { Skeleton } from "../../shared/skeleton";
 import { useEffect, useState } from "react";
 import { OverviewCardSkeleton } from "../../entities/overview-card-skeleton";
 import { OverviewCard } from "../../entities/overview-card";
+import { PlanTag } from "../../entities/plan-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -123,13 +124,14 @@ export const PlanDetailRootPage: React.FC = () => {
                   {data?.name}
                 </p>
 
-                <div className="flex flex-row flex-wrap gap-3">
+                <div className="flex flex-row flex-wrap items-center justify-center gap-3">
                   <Tag background="unfilled" variant="waiting">
                     v{data?.version}
                   </Tag>
-                  <Tag background="unfilled" variant="waiting">
-                    {data?.status.name}
-                  </Tag>
+                  <PlanTag
+                    statusCode={data.status.code}
+                    statusName={data.status.name}
+                  />
                 </div>
               </motion.div>
             )}
