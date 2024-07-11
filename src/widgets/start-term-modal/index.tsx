@@ -3,13 +3,34 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { FaExclamation } from "react-icons/fa";
+import { Term, useStartTermMutation } from "../../providers/store/api/termApi";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 interface Props {
+  term?: Term;
   show: boolean;
   onClose: () => any;
+  onStartTermSuccessfully?: (term: Term) => any;
 }
 
-export const StartTermModal: React.FC<Props> = ({ show, onClose }) => {
+export const StartTermModal: React.FC<Props> = ({
+  term,
+  show,
+  onClose,
+  onStartTermSuccessfully,
+}) => {
+  const [startTerm, { isError, error, isLoading, isSuccess }] =
+    useStartTermMutation();
+
+  useEffect(() => {
+    if (!isLoading && isSuccess && !isError && term) {
+      toast("Activate term successfully!", { type: "success" });
+      onStartTermSuccessfully && onStartTermSuccessfully(term);
+      onClose && onClose();
+    }
+  }, [isError, isLoading, isSuccess]);
+
   return (
     <Modal
       className="w-[70vw] xl:w-[50vw] h-max flex flex-col justify-center items-center"
@@ -64,7 +85,15 @@ export const StartTermModal: React.FC<Props> = ({ show, onClose }) => {
             No, cancel
           </Button>
 
-          <Button containerClassName="flex-1" className="font-bold p-3">
+          <Button
+            containerClassName="flex-1"
+            className="font-bold p-3"
+            onClick={() => {
+              if (term?.termId) {
+                startTerm({ termId: term.termId });
+              }
+            }}
+          >
             Yes, start term
           </Button>
         </div>
