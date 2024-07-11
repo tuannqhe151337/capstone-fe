@@ -26,6 +26,10 @@ export interface StartTermBody {
   termId: string | number;
 }
 
+export interface DeleteTermBody {
+  id: string | number;
+}
+
 export interface Term {
   termId: number | string;
   name: string;
@@ -172,6 +176,15 @@ export const termAPI = createApi({
       }),
       invalidatesTags: ["terms"],
     }),
+
+    deleteTerm: builder.mutation<any, DeleteTermBody>({
+      query: (deleteTermBody) => ({
+        url: "term",
+        method: "DELETE",
+        body: deleteTermBody,
+      }),
+      invalidatesTags: ["terms"],
+    }),
   }),
 });
 
@@ -183,4 +196,5 @@ export const {
   useLazyFetchTermDetailQuery,
   useUpdateTermMutation,
   useStartTermMutation,
+  useDeleteTermMutation,
 } = termAPI;

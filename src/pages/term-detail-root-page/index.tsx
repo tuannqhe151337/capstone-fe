@@ -13,8 +13,12 @@ import { TERipple } from "tw-elements-react";
 import { Button } from "../../shared/button";
 import { MdEdit } from "react-icons/md";
 import { DeleteTermModal } from "../../widgets/delete-term-modal";
-import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
+import {
+  TermDetail,
+  useLazyFetchTermDetailQuery,
+} from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
+import { StartTermModal } from "../../widgets/start-term-modal";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -84,7 +88,13 @@ const animation: Variants = {
   },
 };
 
-export const TermDetailRootPage: React.FC = () => {
+interface Props {
+  onDeleteSuccessFully?: (term: TermDetail) => any;
+}
+
+export const TermDetailRootPage: React.FC<Props> = ({
+  onDeleteSuccessFully,
+}) => {
   const navigate = useNavigate();
 
   // Get term detail
@@ -113,14 +123,14 @@ export const TermDetailRootPage: React.FC = () => {
     },
   });
 
-  const [startModal, setStartModal] = useState<boolean>(false);
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
 
-  const handleClick = () => {
-    setStartModal(true);
+  const handleClickDeleteModal = () => {
+    setDeleteModal(true);
   };
 
   const handleDeleteTermModal = () => {
-    setStartModal(false);
+    setDeleteModal(false);
   };
 
   // Handling tag
@@ -216,7 +226,7 @@ export const TermDetailRootPage: React.FC = () => {
                           className="w-[160px]"
                           onClick={(event) => {
                             event.stopPropagation();
-                            handleClick();
+                            handleClickDeleteModal();
                           }}
                         >
                           <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
@@ -272,7 +282,16 @@ export const TermDetailRootPage: React.FC = () => {
         </div>
       </div>
 
-      <DeleteTermModal show={startModal} onClose={handleDeleteTermModal} />
+      {term && (
+        <DeleteTermModal
+          show={deleteModal}
+          term={term}
+          onClose={handleDeleteTermModal}
+          onDeleteSuccessFully={onDeleteSuccessFully}
+        />
+      )}
+
+      {/* <StartTermModal /> */}
     </motion.div>
   );
 };
