@@ -3,13 +3,43 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
+import {
+  Term,
+  TermDetail,
+  useDeleteTermMutation,
+} from "../../providers/store/api/termApi";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
+  term: TermDetail;
   show: boolean;
   onClose: () => any;
+  onDeleteSuccessFully?: (user: TermDetail) => any;
 }
 
-export const DeleteTermModal: React.FC<Props> = ({ show, onClose }) => {
+export const DeleteTermModal: React.FC<Props> = ({
+  term,
+  show,
+  onClose,
+  onDeleteSuccessFully,
+}) => {
+  // Navigate
+  const navigate = useNavigate();
+
+  const [deleteTerm, { isError, error, isLoading, isSuccess }] =
+    useDeleteTermMutation();
+
+  useEffect(() => {
+    if (!isLoading && isSuccess && !isError && term) {
+      toast("Delete term successfully!", { type: "success" });
+      onDeleteSuccessFully && onDeleteSuccessFully(term);
+      onClose && onClose();
+      navigate("/term-management");
+    }
+  }, [isError, isLoading, isSuccess]);
+
   return (
     <Modal
       className="w-[70vw] xl:w-[50vw] h-max flex flex-col justify-center items-center"
@@ -66,6 +96,11 @@ export const DeleteTermModal: React.FC<Props> = ({ show, onClose }) => {
             className="p-3"
             variant="error"
             buttonType="outlined"
+            onClick={() => {
+              if (term?.id) {
+                deleteTerm({ id: term.id });
+              }
+            }}
           >
             Yes, delete
           </Button>
