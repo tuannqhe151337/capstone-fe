@@ -63,6 +63,7 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
+  onStartTermSuccessfully?: (term: Term) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
@@ -74,6 +75,7 @@ export const TableTermManagement: React.FC<Props> = ({
   page,
   totalPage,
   isDataEmpty,
+  onStartTermSuccessfully,
   onPageChange,
   onPrevious,
   onNext,
@@ -84,6 +86,9 @@ export const TableTermManagement: React.FC<Props> = ({
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
   const [startModal, setStartModal] = useState<boolean>(false);
+
+  // Start term's id state
+  const [chosenTerm, setChosenTerm] = useState<Term>();
 
   const handleClick = () => {
     setStartModal(true);
@@ -216,6 +221,7 @@ export const TableTermManagement: React.FC<Props> = ({
                         onClick={(event) => {
                           event.stopPropagation();
                           handleClick();
+                          setChosenTerm(row);
                         }}
                       >
                         <FaPlay className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
@@ -253,7 +259,12 @@ export const TableTermManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <StartTermModal show={startModal} onClose={handleCloseStartTermModal} />
+      <StartTermModal
+        term={chosenTerm}
+        show={startModal}
+        onClose={handleCloseStartTermModal}
+        onStartTermSuccessfully={onStartTermSuccessfully}
+      />
     </div>
   );
 };

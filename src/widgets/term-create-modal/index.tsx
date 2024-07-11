@@ -92,7 +92,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
     register,
     control,
     watch,
-    formState: { dirtyFields },
+    formState: { dirtyFields, isValid },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(CreateTermSchema),
@@ -343,6 +343,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
 
         <div className="flex flex-row flex-wrap w-11/12 mt-10 gap-6">
           <Button
+            disabled={!isValid}
             containerClassName="flex-1"
             className="font-bold p-3"
             onClick={() => {

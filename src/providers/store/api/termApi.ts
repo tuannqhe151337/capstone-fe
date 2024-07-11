@@ -14,6 +14,18 @@ export interface CreateTermBody {
   planDueDate: string;
 }
 
+export interface UpdateTermBody {
+  id: number;
+  name: string;
+  duration: Duration;
+  startDate: string;
+  planDueDate: string;
+}
+
+export interface StartTermBody {
+  termId: string | number;
+}
+
 export interface Term {
   termId: number | string;
   name: string;
@@ -86,7 +98,7 @@ const staggeredBaseQuery = retry(
     },
     fetchFn: async (...args) => {
       // REMOVE FOR PRODUCTION
-      // await pause(1000);
+      await pause(1000);
       return fetch(...args);
     },
   }),
@@ -142,6 +154,24 @@ export const termAPI = createApi({
       query: (id) => `term/${id}`,
       providesTags: ["terms"],
     }),
+
+    updateTerm: builder.mutation<any, UpdateTermBody>({
+      query: (updateTermBody) => ({
+        url: "term",
+        method: "PUT",
+        body: updateTermBody,
+      }),
+      invalidatesTags: ["terms"],
+    }),
+
+    startTerm: builder.mutation<any, StartTermBody>({
+      query: (startTermBody) => ({
+        url: "term/start",
+        method: "POST",
+        body: startTermBody,
+      }),
+      invalidatesTags: ["terms"],
+    }),
   }),
 });
 
@@ -151,4 +181,6 @@ export const {
   useCreateTermMutation,
   useFetchTermDetailQuery,
   useLazyFetchTermDetailQuery,
+  useUpdateTermMutation,
+  useStartTermMutation,
 } = termAPI;

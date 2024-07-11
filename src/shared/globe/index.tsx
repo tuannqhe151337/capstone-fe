@@ -4,6 +4,7 @@ import ThreeGlobe from "three-globe";
 import { useThree, Object3DNode, extend, Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "./data/globe.json";
+import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
 
 declare module "@react-three/fiber" {
   interface ThreeElements {
@@ -250,10 +251,15 @@ export function World(props: WorldProps) {
     return camera;
   }, []);
 
+  const isDarkmode = useDetectDarkmode();
+
   return (
     <Canvas scene={scene} camera={perspectiveCamera}>
       <WebGLRendererConfig />
-      <ambientLight color={globeConfig.ambientLight} intensity={0.6} />
+      <ambientLight
+        color={globeConfig.ambientLight}
+        intensity={isDarkmode ? 1.5 : 5}
+      />
       <directionalLight
         color={globeConfig.directionalLeftLight}
         position={new Vector3(-400, 100, 400)}
