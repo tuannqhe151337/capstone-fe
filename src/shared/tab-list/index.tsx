@@ -39,7 +39,7 @@ interface Item {
 
 interface Props {
   items: Item[];
-  selectedItemId: string | number;
+  selectedItemId?: string | number;
   className?: string;
   onItemChangeHandler?: (item: Item, index: number) => void;
 }

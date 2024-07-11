@@ -10,6 +10,12 @@ import { FaClock } from "react-icons/fa6";
 import { RiProgress3Fill } from "react-icons/ri";
 import { AiOutlineFieldTime } from "react-icons/ai";
 import { BiSolidReport } from "react-icons/bi";
+import { useParams } from "react-router-dom";
+import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
+import { useEffect } from "react";
+import { formatISODate } from "../../shared/utils/format-iso-date";
+import { Skeleton } from "../../shared/skeleton";
+import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -46,6 +52,18 @@ const childrenAnimation: Variants = {
 };
 
 export const TermDetailInformationPage: React.FC = () => {
+  // Get annual report expense
+  const { termId } = useParams<{ termId: string }>();
+
+  const [fetchTermReportDetail, { data: term, isFetching, isSuccess }] =
+    useLazyFetchTermDetailQuery();
+
+  useEffect(() => {
+    if (termId) {
+      fetchTermReportDetail(parseInt(termId, 10), true);
+    }
+  }, [termId]);
+
   return (
     <motion.div
       className="flex flex-row flex-wrap w-full px-4 py-10"
@@ -57,27 +75,26 @@ export const TermDetailInformationPage: React.FC = () => {
         {/* Quarterly */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
+            isFetching={isFetching}
             icon={<AiOutlineFieldTime className="text-3xl" />}
-            title="Quaterly"
-            value="1/9/2021 - 01/01/2022"
+            title={term ? capitalizeFirstLetter(term.duration) : ""}
+            value={
+              term
+                ? formatISODate(term.startDate) +
+                  " - " +
+                  formatISODate(term.endDate)
+                : ""
+            }
           />
         </motion.div>
 
         {/* Plan due date */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
-            icon={<FaChartLine className="text-2xl" />}
+            isFetching={isFetching}
+            icon={<FaChartLine className="text-2xl mr-1" />}
             title="Plan due date"
-            value={format(new Date(), "dd MMMM yyyy")}
-          />
-        </motion.div>
-
-        {/* Report */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            icon={<BiSolidReport className="text-3xl" />}
-            title="Report due date"
-            value={format(new Date(), "dd MMMM yyyy")}
+            value={term ? formatISODate(term.planDueDate) : ""}
           />
         </motion.div>
       </div>
