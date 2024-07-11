@@ -62,6 +62,17 @@ const router = createBrowserRouter([
       };
     },
     children: [
+      // Home page
+      {
+        path: "",
+        lazy: async () => {
+          const HomePage = (await import("../../pages/home-page")).HomePage;
+
+          return {
+            element: <HomePage />,
+          };
+        },
+      },
       // Plan management pages
       {
         path: "plan-management",
