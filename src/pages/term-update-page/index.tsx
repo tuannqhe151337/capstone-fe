@@ -1,8 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { Variants, motion } from "framer-motion";
 import { DatePickerInput } from "../../shared/date-picker-input";
+import { z, ZodType } from "zod";
+import {
+  Duration,
+  useLazyFetchTermDetailQuery,
+  useUpdateTermMutation,
+} from "../../providers/store/api/termApi";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { add, format, parseISO } from "date-fns";
+import { toast } from "react-toastify";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { ErrorData } from "../../providers/store/api/type";
+import { TEInput } from "tw-elements-react";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import DurationRadioOption from "../../entities/duration-radio-option";
+import { RadioInput } from "../../shared/radio-input";
+import { CgSpinner } from "react-icons/cg";
+import { InputSkeleton } from "../user-edit-page/ui/input-skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -38,30 +57,144 @@ const childrenAnimation: Variants = {
   },
 };
 
+type FormData = {
+  name: string;
+  duration: string;
+  startDate: Date;
+  planDueDate: Date;
+};
+
+const NameSchema = z.string().min(1, "Name cannot be empty");
+
+const DurationSchema = z.nativeEnum(Duration);
+
+const StartDateSchema = z.date({
+  required_error: "Start date cannot be null",
+});
+
+const PlanDueDateSchema = z
+  .date({
+    required_error: "Plan due date cannot be null",
+  })
+  .refine((date) => new Date(date) > new Date(), {
+    message: "Plan due date must be in the future",
+  });
+
+export const UpdateTermSchema: ZodType<FormData> = z
+  .object({
+    name: NameSchema,
+    duration: DurationSchema,
+    startDate: StartDateSchema,
+    planDueDate: PlanDueDateSchema,
+  })
+  .superRefine((data, ctx) => {
+    if (new Date(data.planDueDate) <= new Date(data.startDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Plan due date must be after the start date",
+        path: ["planDueDate"],
+      });
+    }
+  });
+
 export const TermUpdate: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState("monthly");
+  // Navigate
+  const navigate = useNavigate();
 
-  const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {``
-    setSelectedOption(event.target.id);
+  const [selectedOption, setSelectedOption] = useState<Duration>();
+
+  // Get term detail
+  const { termId } = useParams<{ termId: string }>();
+
+  const [
+    fetchTermDetail,
+    { data: term, isFetching, isSuccess: isFetchTermDetailSuccess },
+  ] = useLazyFetchTermDetailQuery();
+
+  useEffect(() => {
+    if (termId) {
+      fetchTermDetail(parseInt(termId, 10), true);
+    }
+  }, [termId]);
+  // Form
+  const {
+    register,
+    control,
+    watch,
+    formState: { dirtyFields, isValid, errors },
+    handleSubmit,
+    setValue,
+  } = useForm<FormData>({
+    resolver: zodResolver(UpdateTermSchema), // Apply the zodResolver
+  });
+
+  useEffect(() => {
+    if (!isFetching && isFetchTermDetailSuccess && term) {
+      setValue("name", term.name);
+      setValue("duration", term.duration);
+      setValue("startDate", parseISO(term.startDate, { additionalDigits: 2 }));
+      setValue(
+        "planDueDate",
+        parseISO(term.planDueDate, { additionalDigits: 2 })
+      );
+
+      setSelectedOption(term.duration as Duration);
+    }
+  }, [isFetching, isFetchTermDetailSuccess, term]);
+
+  // Mutation update term
+  const [updateTerm, { isLoading, isSuccess, isError, error }] =
+    useUpdateTermMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    const startDateString = data.startDate.toISOString().replace("Z", "");
+    const planDueDateString = data.planDueDate.toISOString().replace("Z", "");
+
+    if (termId) {
+      const numericTermId = parseInt(termId, 10);
+
+      updateTerm({
+        id: numericTermId,
+        name: data.name,
+        duration: data.duration as Duration,
+        startDate: startDateString,
+        planDueDate: planDueDateString,
+      });
+    }
   };
 
-  const getClassNames = (id: string) => {
-    return selectedOption === id
-      ? "bg-blue-100 text-primary w-4/12 h-[66px] dark:bg-neutral-800/70 dark:border-neutral-500"
-      : "bg-white text-neutral-600 w-4/12 h-[66px] dark:bg-neutral-800/50 dark:border-neutral-600";
-  };
+  useEffect(() => {
+    if (!isLoading && isSuccess) {
+      toast("Update term successfully!", { type: "success" });
 
-  const getTextColorClassNames = (id: string) => {
-    return selectedOption === id
-      ? "text-primary-600 font-extrabold opacity-70 dark:text-primary-500"
-      : "text-neutral-700 font-extrabold opacity-70 dark:text-primary-700";
-  };
+      navigate("/term-management");
+    }
+  }, [isLoading, isSuccess]);
 
-  const getSubTextColorClassNames = (id: string) => {
-    return selectedOption === id
-      ? "text-primary-500 text-sm font-bold opacity-70 dark:text-primary-500"
-      : "text-neutral-500 text-sm font-bold opacity-70 dark:text-primary-600";
-  };
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isError) {
+      toast(errorMessage, { type: "error" });
+    }
+  }, [isError, errorMessage]);
+
+  function handleOnClickRadio(duration: Duration) {
+    setSelectedOption(duration);
+  }
 
   return (
     <motion.div
@@ -72,25 +205,44 @@ export const TermUpdate: React.FC = () => {
     >
       {/* Banner */}
       <BubbleBanner>
-        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7">
-            Term management <span className="ml-3">{`>`}</span>{" "}
-            <span className="ml-3 font-bold">Term detail</span>
-            <span className="ml-3">{`>`}</span>{" "}
-            <span className="ml-3 font-extrabold">Update</span>
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto  z-10">
+          <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7 space-x-2">
+            <Link
+              to={`../../term-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Term management
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <Link
+              to={`/term-management/detail/information/${termId}`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Term detail
+            </Link>
+            <span className="text-base opacity-40">&gt;</span>
+            <span>Update {term?.name}</span>
           </p>
         </div>
       </BubbleBanner>
 
-      <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black flex flex-col">
-        <motion.div
-          variants={childrenAnimation}
-          className=" custom-wrapper w-10/12 mx-auto mt-8 border py-2 px-6 rounded font-bold text-xl text-neutral-600/70 dark:border-neutral-600 dark:text-neutral-500"
-        >
-          Financial plan December Q3 2021
+      <div className="border p-12 pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black flex flex-col">
+        <motion.div variants={childrenAnimation} className="">
+          <TEInput
+            type="text"
+            label="Term name"
+            className="bg-white dark:bg-neutral-900 custom-wrapper mt-8 border rounded font-bold opacity-70 "
+            autoFocus
+            {...register("name", { required: true })}
+          />
+          <InputValidationMessage
+            show={true}
+            validateFn={() => NameSchema.parse(watch("name"))}
+          />
         </motion.div>
-        <div className="w-10/12 mx-auto">
-          <div className="flex flex-col flex-wrap gap-0.5 mt-8">
+
+        <div className="">
+          <div className="flex flex-col flex-wrap gap-0.5 mt-6">
             <motion.div
               className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
               variants={childrenAnimation}
@@ -101,101 +253,117 @@ export const TermUpdate: React.FC = () => {
               variants={childrenAnimation}
               className="custom-wrapper w-[200px]"
             >
-              <DatePickerInput value={new Date()} allowEmpty />
+              {!isFetching && isFetchTermDetailSuccess && term && (
+                <>
+                  <Controller
+                    name="startDate"
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                      <DatePickerInput
+                        value={parseISO(term.startDate, {
+                          additionalDigits: 2,
+                        })}
+                        onChange={(value) => onChange(value)}
+                      />
+                    )}
+                  />
+
+                  <InputValidationMessage
+                    className="mt-1"
+                    show={dirtyFields.startDate || false}
+                    validateFn={() => StartDateSchema.parse(watch("startDate"))}
+                  />
+                </>
+              )}
             </motion.div>
           </div>
 
           <motion.div
-            className="flex flex-row gap-6 pt-10 w-full"
+            className="flex flex-row gap-6 pt-6 w-full"
             variants={childrenAnimation}
           >
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "monthly"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="monthly"
-                  value="monthly"
-                  checked={selectedOption === "monthly"}
-                  onChange={handleRadioChange}
-                />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="monthly"
-                >
-                  <p className={getTextColorClassNames("monthly")}>Monthly</p>
-                  <p className={getSubTextColorClassNames("monthly")}>
-                    01/01/2022 - 01/02/2022
-                  </p>
-                </label>
-              </div>
-            </div>
+            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
+              <DurationRadioOption
+                radioInput={
+                  <RadioInput
+                    value={Duration.MONTHLY}
+                    checked={selectedOption === Duration.MONTHLY}
+                    {...register("duration")}
+                  />
+                }
+                onClick={() => handleOnClickRadio(Duration.MONTHLY)}
+                isSelected={selectedOption === Duration.MONTHLY}
+                label={"Monthly"}
+                fromToDate={
+                  <>
+                    {watch("startDate") &&
+                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                    -{" "}
+                    {watch("startDate") &&
+                      format(
+                        add(watch("startDate"), { months: 1 }),
+                        "dd/MM/yyyy"
+                      )}
+                  </>
+                }
+              />
+            )}
+            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
+              <DurationRadioOption
+                radioInput={
+                  <RadioInput
+                    value={Duration.QUARTERLY}
+                    checked={selectedOption === Duration.QUARTERLY}
+                    {...register("duration")}
+                  />
+                }
+                onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
+                isSelected={selectedOption === Duration.QUARTERLY}
+                label={"Quarterly"}
+                fromToDate={
+                  <>
+                    {watch("startDate") &&
+                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                    -{" "}
+                    {watch("startDate") &&
+                      format(
+                        add(watch("startDate"), { months: 3 }),
+                        "dd/MM/yyyy"
+                      )}
+                  </>
+                }
+              />
+            )}
 
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "quarterly"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="quarterly"
-                  value="quarterly"
-                  checked={selectedOption === "quarterly"}
-                  onChange={handleRadioChange}
-                />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="quarterly"
-                >
-                  <p className={getTextColorClassNames("quarterly")}>
-                    Quarterly
-                  </p>
-                  <p className={getSubTextColorClassNames("quarterly")}>
-                    01/01/2022 - 01/04/2022
-                  </p>
-                </label>
-              </div>
-            </div>
-
-            <div
-              className={`flex flex-row items-center border rounded p-4 ${getClassNames(
-                "halfyear"
-              )}`}
-            >
-              <div className="flex items-center mb-[0.125rem] mr-4 min-h-[1.5rem]">
-                <input
-                  className="relative float-left mr-2 h-5 w-5 appearance-none rounded-full border-2 border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4 before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent] before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-primary checked:before:opacity-[0.16] checked:after:absolute checked:after:left-1/2 checked:after:top-1/2 checked:after:h-[0.625rem] checked:after:w-[0.625rem] checked:after:rounded-full checked:after:border-primary checked:after:bg-primary checked:after:content-[''] checked:after:[transform:translate(-50%,-50%)] hover:cursor-pointer hover:before:opacity-[0.04] hover:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:shadow-none focus:outline-none focus:ring-0 focus:before:scale-100 focus:before:opacity-[0.12] focus:before:shadow-[0px_0px_0px_13px_rgba(0,0,0,0.6)] focus:before:transition-[box-shadow_0.2s,transform_0.2s] checked:focus:border-primary checked:focus:before:scale-100 checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:border-neutral-600 dark:checked:border-primary dark:checked:after:border-primary dark:checked:after:bg-primary dark:focus:before:shadow-[0px_0px_0px_13px_rgba(255,255,255,0.4)] dark:checked:focus:border-primary dark:checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca]"
-                  type="radio"
-                  name="inlineRadioOptions"
-                  id="halfyear"
-                  value="halfyear"
-                  checked={selectedOption === "halfyear"}
-                  onChange={handleRadioChange}
-                />
-                <label
-                  className="flex flex-col pl-[0.15rem] hover:cursor-pointer"
-                  htmlFor="halfyear"
-                >
-                  <p className={getTextColorClassNames("halfyear")}>
-                    Half year
-                  </p>
-                  <p className={getSubTextColorClassNames("halfyear")}>
-                    01/01/2022 - 01/06/2022
-                  </p>
-                </label>
-              </div>
-            </div>
+            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
+              <DurationRadioOption
+                radioInput={
+                  <RadioInput
+                    value={Duration.HALF_YEARLY}
+                    checked={selectedOption === Duration.HALF_YEARLY}
+                    {...register("duration")}
+                  />
+                }
+                onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
+                isSelected={selectedOption === Duration.HALF_YEARLY}
+                label={"Half year"}
+                fromToDate={
+                  <>
+                    {watch("startDate") &&
+                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
+                    -{" "}
+                    {watch("startDate") &&
+                      format(
+                        add(watch("startDate"), { months: 6 }),
+                        "dd/MM/yyyy"
+                      )}
+                  </>
+                }
+              />
+            )}
           </motion.div>
 
-          <div className="flex flex-col flex-wrap gap-0.5 mt-8">
+          <div className="flex flex-col flex-wrap gap-0.5 mt-10">
             <motion.div
               className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
               variants={childrenAnimation}
@@ -206,20 +374,62 @@ export const TermUpdate: React.FC = () => {
               variants={childrenAnimation}
               className="custom-wrapper w-[200px]"
             >
-              <DatePickerInput value={new Date()} allowEmpty />
+              {!isFetching && isFetchTermDetailSuccess && term && (
+                <>
+                  <Controller
+                    name="planDueDate"
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                      <DatePickerInput
+                        value={parseISO(term.planDueDate, {
+                          additionalDigits: 2,
+                        })}
+                        onChange={(value) => onChange(value)}
+                        modalPosition={{ top: -120, right: -340 }}
+                      />
+                    )}
+                  />
+                  <InputValidationMessage
+                    className="mt-1"
+                    show={dirtyFields.planDueDate || false}
+                    validateFn={() => {
+                      PlanDueDateSchema.parse(watch("planDueDate"));
+
+                      if (
+                        watch("planDueDate").getTime() <=
+                        watch("startDate").getTime()
+                      ) {
+                        throw new Error(
+                          "Plan due date must be greater that start date"
+                        );
+                      }
+                    }}
+                  />
+                </>
+              )}
             </motion.div>
           </div>
         </div>
 
         {/* Buttons */}
         <motion.div
-          className="flex flex-row flex-wrap items-center gap-5 mt-12 w-10/12 mx-auto"
+          className="flex flex-row flex-wrap items-center gap-5 mt-12 "
           variants={childrenAnimation}
         >
-          <Button variant="tertiary" className="w-[300px]">
+          <Button variant="tertiary" className="w-[300px] p-3">
             Back
           </Button>
-          <Button containerClassName="flex-1">Create new plan</Button>
+          <Button
+            disabled={!isValid}
+            containerClassName="flex-1"
+            className="font-bold p-3 h-[51px]"
+            onClick={() => {
+              handleSubmit(onSubmit)();
+            }}
+          >
+            {!isLoading && "Update term"}
+            {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
+          </Button>
         </motion.div>
       </div>
     </motion.div>
