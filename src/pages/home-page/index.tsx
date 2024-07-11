@@ -403,7 +403,7 @@ export const HomePage: React.FC = () => {
             Wherever you are
           </h2>
           <p className="text-center text-lg font-bold text-neutral-500 dark:text-neutral-400 max-w-md mt-2 mx-auto">
-            we manage the expenses for you
+            we'll manage the expenses for you
           </p>
         </motion.div>
       </div>
