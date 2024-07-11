@@ -258,7 +258,7 @@ const router = createBrowserRouter([
 
             children: [
               {
-                path: "information",
+                path: "information/:termId",
                 lazy: async () => {
                   const TermDetailInformationPage = (
                     await import("../../pages/term-detail-information-page")
@@ -270,7 +270,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "plan",
+                path: "plan/:termId",
                 lazy: async () => {
                   const TermDetailPlanPage = (
                     await import("../../pages/term-detail-plan-page")
@@ -282,7 +282,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "report",
+                path: "report/:termId",
                 lazy: async () => {
                   const TermDetailReportPage = (
                     await import("../../pages/term-detail-report-page")

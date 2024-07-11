@@ -43,11 +43,35 @@ export interface TermCreatePlan {
   endDate: string;
 }
 
+export interface TermDetail {
+  id: number | string;
+  name: string;
+  duration: Duration;
+  startDate: string;
+  endDate: string;
+  planDueDate: string;
+  status: StatusTermDetail;
+}
+
+interface StatusTermDetail {
+  // id: number;
+  name: string;
+  code: string;
+  isDelete: Boolean;
+}
+
 export interface ListTermWhenCreatePlanParameters {
   query?: string;
   page: number;
   pageSize: number;
 }
+
+// DEV ONLY!!!
+const pause = (duration: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
+};
 
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
 const staggeredBaseQuery = retry(
@@ -59,6 +83,11 @@ const staggeredBaseQuery = retry(
         headers.set("Authorization", `Bearer ${token}`);
       }
       return headers;
+    },
+    fetchFn: async (...args) => {
+      // REMOVE FOR PRODUCTION
+      await pause(1000);
+      return fetch(...args);
     },
   }),
   {
@@ -109,6 +138,10 @@ export const termAPI = createApi({
       }),
       invalidatesTags: ["terms"],
     }),
+    fetchTermDetail: builder.query<TermDetail, number>({
+      query: (id) => `term/${id}`,
+      providesTags: ["terms"],
+    }),
   }),
 });
 
@@ -116,4 +149,6 @@ export const {
   useLazyGetListTermQuery,
   useLazyGetListTermWhenCreatePlanQuery,
   useCreateTermMutation,
+  useFetchTermDetailQuery,
+  useLazyFetchTermDetailQuery,
 } = termAPI;
