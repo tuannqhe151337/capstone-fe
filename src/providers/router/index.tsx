@@ -243,7 +243,7 @@ const router = createBrowserRouter([
           },
 
           {
-            path: "update",
+            path: "update/:termId",
             lazy: async () => {
               const TermUpdatePage = (
                 await import("../../pages/term-update-page")

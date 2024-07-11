@@ -169,7 +169,7 @@ export const TermDetailRootPage: React.FC = () => {
                 <Button
                   className="flex flex-row flex-wrap py-1.5 px-3 mt-1"
                   onClick={() => {
-                    navigate(`/term-management/update`);
+                    navigate(`/term-management/update/${termId}`);
                   }}
                 >
                   <MdEdit className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
