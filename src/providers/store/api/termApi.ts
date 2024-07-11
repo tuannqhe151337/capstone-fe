@@ -22,6 +22,10 @@ export interface UpdateTermBody {
   planDueDate: string;
 }
 
+export interface StartTermBody {
+  termId: string | number;
+}
+
 export interface Term {
   termId: number | string;
   name: string;
@@ -159,6 +163,15 @@ export const termAPI = createApi({
       }),
       invalidatesTags: ["terms"],
     }),
+
+    startTerm: builder.mutation<any, StartTermBody>({
+      query: (startTermBody) => ({
+        url: "term/start",
+        method: "POST",
+        body: startTermBody,
+      }),
+      invalidatesTags: ["terms"],
+    }),
   }),
 });
 
@@ -169,4 +182,5 @@ export const {
   useFetchTermDetailQuery,
   useLazyFetchTermDetailQuery,
   useUpdateTermMutation,
+  useStartTermMutation,
 } = termAPI;
