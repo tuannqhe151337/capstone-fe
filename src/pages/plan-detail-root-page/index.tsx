@@ -9,7 +9,6 @@ import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { useEffect, useState } from "react";
-import { OverviewCardSkeleton } from "../../entities/overview-card-skeleton";
 import { OverviewCard } from "../../entities/overview-card";
 import { PlanTag } from "../../entities/plan-tag";
 
@@ -79,11 +78,11 @@ export const PlanDetailRootPage: React.FC = () => {
   const [selectedTabId, setSelectedTabId] = useState<TabId>("expenses");
 
   useEffect(() => {
-    const currentUrl = location.pathname
+    const currentTabUrl = location.pathname
       .replace("/plan-management/detail/", "")
       .split("/")[0];
 
-    switch (currentUrl) {
+    switch (currentTabUrl) {
       case "expenses":
         setSelectedTabId("expenses");
         break;
@@ -141,52 +140,31 @@ export const PlanDetailRootPage: React.FC = () => {
 
       <div className="flex flex-row flex-wrap justify-between gap-5 mt-10 px-5 w-full">
         <motion.div className="flex-1" variants={childrenAnimation}>
-          <div className="relative h-[100px]">
-            <AnimatePresence>
-              {isFetching && <OverviewCardSkeleton className="absolute" />}
-              {!isFetching && !isError && isSuccess && (
-                <OverviewCard
-                  className="absolute"
-                  icon={<RiCalendarScheduleFill className="text-4xl" />}
-                  label={"Term"}
-                  value={data?.term.name}
-                  meteors
-                />
-              )}
-            </AnimatePresence>
-          </div>
+          <OverviewCard
+            icon={<RiCalendarScheduleFill className="text-4xl" />}
+            label={"Term"}
+            isFetching={isFetching}
+            value={data?.term.name}
+            meteors
+          />
         </motion.div>
 
         <motion.div className="flex-1" variants={childrenAnimation}>
-          <div className="relative h-[100px]">
-            <AnimatePresence>
-              {isFetching && <OverviewCardSkeleton className="absolute" />}
-              {!isFetching && !isError && isSuccess && (
-                <OverviewCard
-                  className="absolute"
-                  icon={<FaMoneyBillTrendUp className="text-4xl" />}
-                  label={"Biggest expenditure"}
-                  value={formatViMoney(data?.biggestExpenditure || 0)}
-                />
-              )}
-            </AnimatePresence>
-          </div>
+          <OverviewCard
+            icon={<FaMoneyBillTrendUp className="text-4xl" />}
+            label={"Biggest expenditure"}
+            isFetching={isFetching}
+            value={formatViMoney(data?.biggestExpenditure || 0)}
+          />
         </motion.div>
 
         <motion.div className="flex-1" variants={childrenAnimation}>
-          <div className="relative h-[100px]">
-            <AnimatePresence>
-              {isFetching && <OverviewCardSkeleton className="absolute" />}
-              {!isFetching && !isError && isSuccess && (
-                <OverviewCard
-                  className="absolute"
-                  icon={<FaCoins className="text-4xl" />}
-                  label={"Total plan"}
-                  value={formatViMoney(data?.totalPlan || 0)}
-                />
-              )}
-            </AnimatePresence>
-          </div>
+          <OverviewCard
+            icon={<FaCoins className="text-4xl" />}
+            label={"Total plan"}
+            isFetching={isFetching}
+            value={formatViMoney(data?.totalPlan || 0)}
+          />
         </motion.div>
       </div>
 

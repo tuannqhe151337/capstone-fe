@@ -4,7 +4,13 @@ import { Tag } from "../../shared/tag";
 // import { OverviewCard } from "./ui/overview-card";
 import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { IconButton } from "../../shared/icon-button";
@@ -18,7 +24,6 @@ import {
   useLazyFetchTermDetailQuery,
 } from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
-import { StartTermModal } from "../../widgets/start-term-modal";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -88,6 +93,8 @@ const animation: Variants = {
   },
 };
 
+type TabId = "detail" | "plan" | "report";
+
 interface Props {
   onDeleteSuccessFully?: (term: TermDetail) => any;
 }
@@ -95,6 +102,10 @@ interface Props {
 export const TermDetailRootPage: React.FC<Props> = ({
   onDeleteSuccessFully,
 }) => {
+  // Location
+  const location = useLocation();
+
+  // Navigation
   const navigate = useNavigate();
 
   // Get term detail
@@ -133,7 +144,28 @@ export const TermDetailRootPage: React.FC<Props> = ({
     setDeleteModal(false);
   };
 
-  // Handling tag
+  // Tablist state
+  const [selectedTabId, setSelectedTabId] = useState<TabId>("detail");
+
+  useEffect(() => {
+    const currentTabUrl = location.pathname
+      .replace("/term-management/detail/", "")
+      .split("/")[0];
+
+    switch (currentTabUrl) {
+      case "information":
+        setSelectedTabId("detail");
+        break;
+
+      case "plan":
+        setSelectedTabId("plan");
+        break;
+
+      case "report":
+        setSelectedTabId("report");
+        break;
+    }
+  }, [location]);
 
   return (
     <motion.div
@@ -253,14 +285,15 @@ export const TermDetailRootPage: React.FC<Props> = ({
           <div className="border-b-2 border-b-neutral-200 dark:border-b-neutral-700">
             <TabList
               className="-mb-0.5"
+              selectedItemId={selectedTabId}
               items={[
-                { id: "information", name: "Detail" },
+                { id: "detail", name: "Detail" },
                 { id: "plan", name: "Plan" },
                 { id: "report", name: "Report" },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {
-                  case "information":
+                  case "detail":
                     navigate(`./information/${termId}`);
                     break;
 

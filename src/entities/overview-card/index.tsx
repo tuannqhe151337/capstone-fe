@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { motion, Variants } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import { Meteors } from "../../shared/meteors";
 import { cn } from "../../shared/utils/cn";
+import { OverviewCardSkeleton } from "./ui/overview-card-skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -24,6 +25,7 @@ interface Props {
   label?: React.ReactNode;
   value?: React.ReactNode;
   className?: string;
+  isFetching?: boolean;
   meteors?: boolean;
 }
 
@@ -33,6 +35,7 @@ export const OverviewCard: React.FC<Props> = ({
   label,
   value,
   className,
+  isFetching = false,
   meteors,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,36 +62,43 @@ export const OverviewCard: React.FC<Props> = ({
   };
 
   return (
-    <motion.div
-      ref={containerRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={cn(
-        "w-full h-[100px] transition-all duration-200 ease-linear border dark:border-neutral-800 rounded-xl shadow dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] overflow-hidden",
-        className
-      )}
-      style={{
-        transformStyle: "preserve-3d",
-      }}
-      variants={animation}
-      initial={AnimationStage.HIDDEN}
-      animate={AnimationStage.VISIBLE}
-      exit={AnimationStage.HIDDEN}
-    >
-      <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6">
-        <div className="mr-6 text-primary-300 dark:text-primary-800">
-          {icon}
-        </div>
-        <div className="flex-1 flex flex-col flex-wrap gap-1">
-          <p className="text-sm font-bold text-primary-400/80">{label}</p>
-          <p className="text-base font-extrabold text-primary-500/80">
-            {value}
-          </p>
-        </div>
-      </div>
+    <div className="relative h-[100px]">
+      <AnimatePresence>
+        {isFetching && <OverviewCardSkeleton className="absolute" />}
+        {!isFetching && (
+          <motion.div
+            ref={containerRef}
+            onMouseEnter={handleMouseEnter}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={cn(
+              "w-full h-[100px] transition-all duration-200 ease-linear border dark:border-neutral-800 rounded-xl shadow dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] overflow-hidden",
+              className
+            )}
+            style={{
+              transformStyle: "preserve-3d",
+            }}
+            variants={animation}
+            initial={AnimationStage.HIDDEN}
+            animate={AnimationStage.VISIBLE}
+            exit={AnimationStage.HIDDEN}
+          >
+            <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6">
+              <div className="mr-6 text-primary-300 dark:text-primary-800">
+                {icon}
+              </div>
+              <div className="flex-1 flex flex-col flex-wrap gap-1">
+                <p className="text-sm font-bold text-primary-400/80">{label}</p>
+                <p className="text-base font-extrabold text-primary-500/80">
+                  {value}
+                </p>
+              </div>
+            </div>
 
-      {meteors && <Meteors number={5} />}
-    </motion.div>
+            {meteors && <Meteors number={5} />}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
