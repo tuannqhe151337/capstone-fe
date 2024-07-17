@@ -102,7 +102,7 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
         />
       </motion.div>
 
-      <motion.div variants={childrenAnimation}>
+      <motion.div className="mt-auto" variants={childrenAnimation}>
         <Pagination
           page={page}
           totalPage={data?.pagination.numPages || 1}

@@ -56,7 +56,7 @@ export interface PlanVersionParameters {
   pageSize: number;
 }
 
-interface User {
+export interface User {
   userId: string | number;
   username: string;
   email: string;
@@ -68,28 +68,28 @@ interface User {
   updatedAt: string;
 }
 
-interface Status {
+export interface Status {
   id: number;
   name: string;
   code: string;
 }
 
-interface Position {
+export interface Position {
   id: string | number;
   name: string;
 }
 
-interface Term {
+export interface Term {
   id: number;
   name: string;
 }
 
-interface Department {
+export interface Department {
   id: number;
   name: string;
 }
 
-interface Role {
+export interface Role {
   id: number;
   code: string;
   name: string;

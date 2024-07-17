@@ -1,85 +1,17 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
-import { cn } from "../../../shared/utils/cn";
-import { useFileUpload } from "../../../shared/hooks/use-file-upload";
-import { useEffect, useRef, useState } from "react";
-import { Button } from "../../../shared/button";
-import { DisabledSelect } from "../ui/disabled-select";
-import { TEInput } from "tw-elements-react";
-import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
-import { EmptyFileUploadUI } from "../ui/empty-file-upload-ui";
-import { ProcessingFileUI } from "../ui/processing-file-ui";
-import { FileUploadStage } from "../type";
-import { ExpensesTable } from "./expenses-table";
 import clsx from "clsx";
-
-const DUMMY_EXPENSES = [
-  {
-    id: 1,
-    expenseName: "Promotion event",
-    costType: "Direct cost",
-    unitPrice: 200000000,
-    amount: 3,
-    projectName: "IN22",
-    supplierName: "Internal",
-    pic: "AnhMN2",
-    notes: "N/A",
-  },
-  {
-    id: 2,
-    expenseName: "Social media",
-    costType: "Direct cost",
-    unitPrice: 15000000,
-    amount: 50,
-    projectName: "CAM1",
-    supplierName: "Internal",
-    pic: "LanNT12",
-    notes: "N/A",
-  },
-  {
-    id: 3,
-    expenseName: "Office supplies",
-    costType: "Administration cost",
-    unitPrice: 1000000,
-    amount: 100,
-    projectName: "REC1",
-    supplierName: "Hong Ha",
-    pic: "HongHD9",
-    notes: "N/A",
-  },
-  {
-    id: 4,
-    expenseName: "Internal training",
-    costType: "Operating cost",
-    unitPrice: 2000000,
-    amount: 6,
-    projectName: "RECT",
-    supplierName: "Fresher Academy",
-    pic: "LinhHM2",
-    notes: "N/A",
-  },
-  {
-    id: 5,
-    expenseName: "Team Building",
-    costType: "Administration cost",
-    unitPrice: 100000000,
-    amount: 6,
-    projectName: "TB1",
-    supplierName: "Saigon Tourist",
-    pic: "TuNM",
-    notes: "Approximate",
-  },
-  // {
-  //   id: 6,
-  //   expenseName: "Customer visit",
-  //   costType: "Indirect cost",
-  //   unitPrice: 400000000,
-  //   amount: 1,
-  //   projectName: "NSK",
-  //   supplierName: "Internal",
-  //   pic: "TrungDQ",
-  //   notes: "Deposit required",
-  // },
-];
+import { useEffect, useRef, useState } from "react";
+import { useFileUpload } from "../../shared/hooks/use-file-upload";
+import { TEInput } from "tw-elements-react";
+import { Button } from "../../shared/button";
+import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
+import { cn } from "../../shared/utils/cn";
+import { ProcessingFileUI } from "./ui/processing-file-ui";
+import { EmptyFileUploadUI } from "./ui/empty-file-upload-ui";
+import { Expense, FileUploadStage } from "./type";
+import { ExpensesTable } from "../../entities/expenses-table";
+import { DisabledSelect } from "../../shared/disabled-select";
+import { processFile } from "./model/process-file";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -138,7 +70,7 @@ const animation: Variants = {
 interface Props {
   hide?: boolean;
   onPreviousState?: () => any;
-  onNextStage?: () => any;
+  onNextStage?: (expenses: Expense[]) => any;
 }
 
 export const UploadFileStage: React.FC<Props> = ({
@@ -159,11 +91,14 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileName, setFileName] = useState<string>();
   const [fileSize, setFileSize] = useState<number>();
 
+  // Expenses read from file
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+
   // Auto move to next stage
   useEffect(() => {
     if (fileUploadStage === FileUploadStage.SUCCESS) {
       const timeoutId = setTimeout(() => {
-        onNextStage && onNextStage();
+        onNextStage && onNextStage(expenses);
       }, 1250);
 
       return () => {
@@ -184,7 +119,7 @@ export const UploadFileStage: React.FC<Props> = ({
       fileOverHandler() {
         setIsFileOver(true);
       },
-      fileUploadHandler(files) {
+      fileUploadHandler: async (files) => {
         if (files.length > 0) {
           const file = files[0];
 
@@ -193,10 +128,16 @@ export const UploadFileStage: React.FC<Props> = ({
           setFileSize(file.size);
 
           // TODO: Handle file upload logic here
+          const { errors, expenses, isError } = await processFile(file);
 
-          setTimeout(() => {
+          console.log(errors, expenses);
+          setExpenses(expenses);
+
+          if (isError) {
             setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
-          }, 2000);
+          } else {
+            setFileUploadStage(FileUploadStage.SUCCESS);
+          }
         }
       },
     });
@@ -293,6 +234,7 @@ export const UploadFileStage: React.FC<Props> = ({
                   ref={inputFile}
                   hidden
                   type="file"
+                  accept=".xls,.xlsx,.csv"
                   onChange={inputFileHandler}
                   disabled={fileUploadStage !== FileUploadStage.EMPTY}
                 />
@@ -346,7 +288,7 @@ export const UploadFileStage: React.FC<Props> = ({
               variants={animation}
             >
               <div className="pt-3">
-                <ExpensesTable expenses={DUMMY_EXPENSES} />
+                <ExpensesTable expenses={expenses} />
               </div>
             </motion.div>
           )}
@@ -382,7 +324,7 @@ export const UploadFileStage: React.FC<Props> = ({
             disabled={fileUploadStage !== FileUploadStage.SUCCESS}
             containerClassName="flex-1"
             onClick={() => {
-              onNextStage && onNextStage();
+              onNextStage && onNextStage(expenses);
             }}
           >
             Continue to confirm expenses

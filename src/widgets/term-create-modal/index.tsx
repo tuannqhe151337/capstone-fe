@@ -236,6 +236,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               label={"Monthly"}
               fromToDate={
                 <>
+                  {/* TODO: Fix this: add try catch and extract to another utils */}
                   {watch("startDate") &&
                     format(watch("startDate"), "dd/MM/yyyy")}{" "}
                   -{" "}

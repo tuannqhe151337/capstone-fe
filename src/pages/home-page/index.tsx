@@ -391,8 +391,10 @@ export const HomePage: React.FC = () => {
     },
   ];
 
+  // Ref
   const ref = useRef<HTMLDivElement>(null);
 
+  // https://stackoverflow.com/questions/68175873/detect-element-reference-height-change
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>();
 
@@ -429,7 +431,7 @@ export const HomePage: React.FC = () => {
 
       <Meteors className="before:dark:from-neutral-500 z-10" />
 
-      <Stars number={200} width={width} height={height} />
+      {width && height && <Stars number={200} width={width} height={height} />}
     </div>
   );
 };

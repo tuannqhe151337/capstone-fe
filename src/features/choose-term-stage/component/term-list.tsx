@@ -114,7 +114,7 @@ export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
   return (
     <motion.div
       ref={ref}
-      className="flex flex-col flex-wrap py-6 gap-3 w-full"
+      className="flex flex-col flex-wrap py-6 gap-3 w-full min-h-[368px]"
       initial={AnimationStage.HIDDEN}
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}

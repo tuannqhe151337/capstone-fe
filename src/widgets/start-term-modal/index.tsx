@@ -61,6 +61,7 @@ export const StartTermModal: React.FC<Props> = ({
           <div className="font-semibold dark:font-bold text-primary-400 dark:text-primary-600 mt-5">
             You're going to start term{" "}
             <span className="font-extrabold dark:text-primary-500">
+              {/* TODO: Fix term name */}
               "Finalcial plan December Q3 2021"
             </span>
           </div>

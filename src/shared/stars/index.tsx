@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo } from "react";
 import { cn } from "../utils/cn";
 
 interface Props {
@@ -8,6 +8,8 @@ interface Props {
   height?: number;
 }
 
+// https://stackoverflow.com/questions/68175873/detect-element-reference-height-change
+// https://asaqeni.com/projects/create-a-starry-sky
 export const Stars: React.FC<Props> = memo<Props>(
   ({ number = 100, className, width = 100, height = 100 }) => {
     return (
