@@ -1,18 +1,23 @@
 import { Variants, motion } from "framer-motion";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { OverviewCard } from "./ui/overview-card";
 import { FaDownload, FaPiggyBank } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { PiTreeStructureFill } from "react-icons/pi";
-import { TbPigMoney } from "react-icons/tb";
 import { Button } from "../../shared/button";
 import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
+import { OverviewCard } from "../../entities/overview-card";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -48,7 +53,13 @@ const childrenAnimation: Variants = {
   },
 };
 
+type TabId = "overview" | "detail";
+
 export const AnnualReportDetailRootPage: React.FC = () => {
+  // Location
+  const location = useLocation();
+
+  // Navigation
   const navigate = useNavigate();
 
   // Get annual report detail
@@ -62,6 +73,25 @@ export const AnnualReportDetailRootPage: React.FC = () => {
       fetchAnnualReportDetail(parseInt(annualReportId, 10), true);
     }
   }, [annualReportId]);
+
+  // Tablist state
+  const [selectedTabId, setSelectedTabId] = useState<TabId>("detail");
+
+  useEffect(() => {
+    const currentTabUrl = location.pathname
+      .replace("/annual-report/detail/", "")
+      .split("/")[0];
+
+    switch (currentTabUrl) {
+      case "chart":
+        setSelectedTabId("overview");
+        break;
+
+      case "table":
+        setSelectedTabId("detail");
+        break;
+    }
+  }, [location]);
 
   if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
 
@@ -116,7 +146,9 @@ export const AnnualReportDetailRootPage: React.FC = () => {
           <OverviewCard
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={"Total terms"}
+            isFetching={isFetching}
             value={annual?.totalTerm}
+            meteors
           />
         </motion.div>
 
@@ -124,17 +156,17 @@ export const AnnualReportDetailRootPage: React.FC = () => {
           <OverviewCard
             icon={<PiTreeStructureFill className="text-4xl" />}
             label={"Total departments"}
+            isFetching={isFetching}
             value={annual?.totalDepartment}
           />
         </motion.div>
 
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
-            className="flex-1"
             icon={<FaPiggyBank className="text-4xl" />}
             label={"Total expenses"}
-            value={annual?.totalExpense}
-            // {formatViMoney(annual?.totalExpense)}
+            isFetching={isFetching}
+            value={formatViMoney(annual?.totalExpense || 0)}
           />
         </motion.div>
       </div>
@@ -144,27 +176,28 @@ export const AnnualReportDetailRootPage: React.FC = () => {
           <div className="border-b-2 border-b-neutral-200 dark:border-b-neutral-700">
             <TabList
               className="-mb-0.5"
+              selectedItemId={selectedTabId}
               items={[
-                { id: "chart", name: "Overview" },
-                { id: "table", name: "Detail" },
+                { id: "overview", name: "Overview" },
+                { id: "detail", name: "Detail" },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {
-                  case "chart":
+                  case "overview":
                     navigate(`./chart/${annualReportId}`);
                     break;
 
-                  case "table":
+                  case "detail":
                     navigate(`./table/${annualReportId}`);
-                    break;
-
-                  default:
                     break;
                 }
               }}
             />
           </div>
-          <Outlet />
+
+          <motion.div layout>
+            <Outlet />
+          </motion.div>
         </div>
       </div>
     </motion.div>
