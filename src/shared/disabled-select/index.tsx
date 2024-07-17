@@ -1,5 +1,5 @@
 import { FaAngleDown } from "react-icons/fa6";
-import { cn } from "../../../shared/utils/cn";
+import { cn } from "../utils/cn";
 
 interface Props {
   className?: string;

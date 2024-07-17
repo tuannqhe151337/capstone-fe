@@ -4,10 +4,11 @@ import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { StepProgress } from "./component/step-progress";
-import { UploadFileStage } from "./component/upload-file-stage";
-import { ConfirmExpensesStage } from "./component/confirm-expenses-stage";
 import clsx from "clsx";
 import { ChooseTermStage } from "../../features/choose-term-stage";
+import { UploadFileStage } from "../../features/upload-file-stage";
+import { ConfirmExpensesStage } from "../../features/confirm-expenses-stage";
+import { Expense } from "../../features/upload-file-stage/type";
 
 enum AnimationStage {
   LEFT = "left",
@@ -47,6 +48,7 @@ interface Props {
 }
 
 export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
+  // Stages
   const [stage, setStage] = useState<number>(0);
 
   useEffect(() => {
@@ -62,6 +64,9 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
       setStage(0);
     }
   }, [show]);
+
+  // Expenses read from file
+  const [expenses, setExpenses] = useState<Expense[]>([]);
 
   return (
     <Modal
@@ -134,14 +139,15 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                     onPreviousState={() => {
                       setStage(1);
                     }}
-                    onNextStage={() => {
+                    onNextStage={(expenses) => {
+                      setExpenses(expenses);
                       setStage(3);
                     }}
                   />
                 </motion.div>
               </div>
 
-              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
+              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0 h-full">
                 <motion.div
                   className={clsx({
                     block: stage === 3,
@@ -156,6 +162,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <ConfirmExpensesStage
+                    expenses={expenses}
                     hide={stage !== 3}
                     onPreviousState={() => {
                       setStage(2);

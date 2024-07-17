@@ -1,77 +1,9 @@
 import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
-import { Button } from "../../../shared/button";
-import { DisabledSelect } from "../ui/disabled-select";
-import { ExpensesTable } from "./expenses-table";
-
-const DUMMY_EXPENSES = [
-  {
-    id: 1,
-    expenseName: "Promotion event",
-    costType: "Direct cost",
-    unitPrice: 200000000,
-    amount: 3,
-    projectName: "IN22",
-    supplierName: "Internal",
-    pic: "AnhMN2",
-    notes: "N/A",
-  },
-  {
-    id: 2,
-    expenseName: "Social media",
-    costType: "Direct cost",
-    unitPrice: 15000000,
-    amount: 50,
-    projectName: "CAM1",
-    supplierName: "Internal",
-    pic: "LanNT12",
-    notes: "N/A",
-  },
-  {
-    id: 3,
-    expenseName: "Office supplies",
-    costType: "Administration cost",
-    unitPrice: 1000000,
-    amount: 100,
-    projectName: "REC1",
-    supplierName: "Hong Ha",
-    pic: "HongHD9",
-    notes: "N/A",
-  },
-  {
-    id: 4,
-    expenseName: "Internal training",
-    costType: "Operating cost",
-    unitPrice: 2000000,
-    amount: 6,
-    projectName: "RECT",
-    supplierName: "Fresher Academy",
-    pic: "LinhHM2",
-    notes: "N/A",
-  },
-  {
-    id: 5,
-    expenseName: "Team Building",
-    costType: "Administration cost",
-    unitPrice: 100000000,
-    amount: 6,
-    projectName: "TB1",
-    supplierName: "Saigon Tourist",
-    pic: "TuNM",
-    notes: "Approximate",
-  },
-  // {
-  //   id: 6,
-  //   expenseName: "Customer visit",
-  //   costType: "Indirect cost",
-  //   unitPrice: 400000000,
-  //   amount: 1,
-  //   projectName: "NSK",
-  //   supplierName: "Internal",
-  //   pic: "TrungDQ",
-  //   notes: "Deposit required",
-  // },
-];
+import { DisabledSelect } from "../../shared/disabled-select";
+import { Button } from "../../shared/button";
+import { ExpensesTable } from "../../entities/expenses-table";
+import { Expense } from "./type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -108,12 +40,14 @@ const childrenAnimation: Variants = {
 };
 
 interface Props {
+  expenses?: Expense[];
   hide?: boolean;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
 
 export const ConfirmExpensesStage: React.FC<Props> = ({
+  expenses,
   hide,
   onPreviousState,
   onNextStage,
@@ -127,7 +61,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
     >
       {/* Disabled term and department select box */}
       <motion.div
-        className="flex flex-row flex-wrap items-center justify-center gap-3 mt-5"
+        className="flex flex-row flex-wrap items-center justify-center gap-3 mt-3"
         variants={childrenAnimation}
       >
         <div className="flex-1 pt-5">
@@ -146,10 +80,10 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
       </motion.div>
 
       {/* Table */}
-      <ExpensesTable expenses={DUMMY_EXPENSES} hide={hide} />
+      <ExpensesTable expenses={expenses} hide={hide} />
 
       {/* Buttons */}
-      <div className="flex flex-row flex-wrap items-center gap-5 mt-5 w-full">
+      <div className="flex flex-row flex-wrap items-center gap-5 mt-4 w-full">
         <Button
           variant="tertiary"
           className="w-[300px]"
