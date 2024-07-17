@@ -3,7 +3,7 @@ import { IconButton } from "../../shared/icon-button";
 import { Variants, motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { TERipple } from "tw-elements-react";
 import { Link } from "react-router-dom";
 

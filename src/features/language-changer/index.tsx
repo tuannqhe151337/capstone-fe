@@ -2,7 +2,7 @@ import { FaChevronDown } from "react-icons/fa6";
 import { TERipple } from "tw-elements-react";
 import { useState } from "react";
 import { AnimatePresence, Variants, motion } from "framer-motion";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { useTranslation } from "react-i18next";
 
 enum AnimationStage {

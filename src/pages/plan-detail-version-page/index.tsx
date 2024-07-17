@@ -1,7 +1,12 @@
-import { Variants, motion } from "framer-motion";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import clsx from "clsx";
 import { format } from "date-fns";
 import { BsStack } from "react-icons/bs";
+import { useParams } from "react-router-dom";
+import { useLazyGetPlanVersionQuery } from "../../providers/store/api/plansApi";
+import { useEffect, useState } from "react";
+import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -26,6 +31,17 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
+const childrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+    y: 5,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
+
 const rowAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
     opacity: 0,
@@ -37,48 +53,89 @@ const rowAnimation: Variants = {
   },
 };
 
-interface Version {
-  id: number;
-  version: string;
-  createdAt: Date;
-  author: string;
-}
-
-const DUMMY_VERSION_DATA: Version[] = [
-  {
-    id: 1,
-    version: "v3",
-    createdAt: new Date(),
-    author: "AnhLN2",
-  },
-  {
-    id: 2,
-    version: "v2",
-    createdAt: new Date(),
-    author: "AnhLN2",
-  },
-  {
-    id: 3,
-    version: "v1",
-    createdAt: new Date(),
-    author: "AnhLN2",
-  },
-];
+const pageSize = 10;
 
 export const PlanDetailVersionPage: React.FC = () => {
-  return (
-    <div className="flex flex-col flex-wrap py-5 px-4">
-      <div className="flex flex-row flex-wrap items-center ml-auto">
-        <BsStack className="text-xl text-primary-300 dark:text-primary-700 mr-4" />
-        <span className="text-lg font-extrabold text-primary-400 dark:text-primary-600 mr-1.5">
-          2
-        </span>
-        <span className="text-base font-bold text-primary-400/80 dark:text-primary-600/90">
-          total version
-        </span>
-      </div>
+  // Get planId from param
+  const { planId } = useParams<{ planId: string }>();
 
-      <table className="mt-5">
+  // Current load page
+  const [currentLoadPage, setCurrentLoadPage] = useState<number>(1);
+
+  // Fetch data
+  const [getListProductQuery, { data, isFetching }] =
+    useLazyGetPlanVersionQuery();
+
+  useEffect(() => {
+    if (planId) {
+      getListProductQuery({
+        planId,
+        page: 1,
+        pageSize,
+      });
+
+      setCurrentLoadPage(1);
+    }
+  }, []);
+
+  // Infinite scroll
+  useInfiteLoaderWholePage(() => {
+    if (planId) {
+      if (data && data.data.length < data.pagination.totalRecords) {
+        getListProductQuery({
+          planId,
+          page: data.pagination.page + 1,
+          pageSize,
+        });
+
+        setCurrentLoadPage(data.pagination.page + 1);
+      }
+    }
+  });
+
+  return (
+    <motion.div
+      className="flex flex-col flex-wrap py-5 px-4"
+      variants={staggerChildrenAnimation}
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+    >
+      <motion.div
+        className="flex flex-row flex-wrap items-center ml-auto"
+        variants={childrenAnimation}
+      >
+        <BsStack className="text-xl text-primary-300 dark:text-primary-700 mr-4" />
+        <div>
+          <AnimatePresence>
+            {!data ||
+              (!data.pagination && (
+                <motion.div
+                  initial={AnimationStage.HIDDEN}
+                  animate={AnimationStage.VISIBLE}
+                  exit={AnimationStage.HIDDEN}
+                >
+                  <Skeleton className="h-[28px] w-[150px]" />
+                </motion.div>
+              ))}
+            {data?.pagination && data.pagination.totalRecords && (
+              <motion.div
+                initial={AnimationStage.HIDDEN}
+                animate={AnimationStage.VISIBLE}
+                exit={AnimationStage.HIDDEN}
+              >
+                <span className="text-lg font-extrabold text-primary-400 dark:text-primary-600 mr-1.5">
+                  {data?.pagination.totalRecords}
+                </span>
+                <span className="text-base font-bold text-primary-400/80 dark:text-primary-600/90">
+                  total version
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      <motion.table className="mt-5" variants={childrenAnimation}>
         <thead className="border-b-2 border-neutral-100 dark:border-neutral-800">
           <tr>
             <th className="py-3 text-neutral-400 font-bold text-base">
@@ -99,30 +156,51 @@ export const PlanDetailVersionPage: React.FC = () => {
           animate={AnimationStage.VISIBLE}
           variants={staggerChildrenAnimation}
         >
-          {DUMMY_VERSION_DATA.map(({ id, version, author, createdAt }, i) => (
-            <motion.tr
-              key={id}
-              className={clsx({
-                "bg-neutral-50 dark:bg-neutral-800/50": i % 2 === 1,
-                "text-neutral-500/90 dark:text-neutral-400": i === 0,
-                "text-neutral-400 dark:text-neutral-400/80": i !== 0,
-              })}
-              variants={rowAnimation}
-            >
-              <td className="text-sm font-bold  text-center py-5 w-[150px]">
-                {version} {i === 0 && "(current)"}
-              </td>
-              <td className="text-sm font-bold text-center py-5 w-[200px]">
-                {format(createdAt, "dd MMMM yyyy")}
-              </td>
-              <td></td>
-              <td className="text-sm font-bold text-center py-5 w-[150px]">
-                {author}
-              </td>
-            </motion.tr>
-          ))}
+          {(!isFetching || currentLoadPage !== 1) &&
+            data?.data.map(({ version, publishedDate, uploadedBy }, i) => (
+              <motion.tr
+                key={version}
+                className={clsx({
+                  "h-[61px] bg-neutral-50 dark:bg-neutral-800/50": i % 2 === 1,
+                  "text-neutral-500/90 dark:text-neutral-400": i === 0,
+                  "text-neutral-400 dark:text-neutral-400/80": i !== 0,
+                })}
+                variants={rowAnimation}
+              >
+                <td className="text-sm font-bold  text-center py-5 w-[150px]">
+                  {version} {i === 0 && "(current)"}
+                </td>
+                <td className="text-sm font-bold text-center py-5 w-[200px]">
+                  {format(publishedDate, "dd MMMM yyyy")}
+                </td>
+                <td></td>
+                <td className="text-sm font-bold text-center py-5 w-[150px]">
+                  {uploadedBy.username}
+                </td>
+              </motion.tr>
+            ))}
+
+          {isFetching &&
+            new Array(2).fill(true).map((_, index) => (
+              <motion.tr
+                key={-index}
+                className="border-b-2 border-neutral-100"
+                variants={rowAnimation}
+              >
+                <td className="py-2">
+                  <Skeleton className="w-[150px]" />
+                </td>
+                <td className="py-2">
+                  <Skeleton className="w-[170px] mx-[15px]" />
+                </td>
+                <td className="w-full"></td>
+                <td className="py-2">
+                  <Skeleton className="w-[150px]" />
+                </td>
+              </motion.tr>
+            ))}
         </motion.tbody>
-      </table>
-    </div>
+      </motion.table>
+    </motion.div>
   );
 };

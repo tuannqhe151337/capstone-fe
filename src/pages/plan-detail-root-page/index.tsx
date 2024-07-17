@@ -222,7 +222,9 @@ export const PlanDetailRootPage: React.FC = () => {
             />
           </div>
 
-          <Outlet />
+          <motion.div layout>
+            <Outlet />
+          </motion.div>
         </div>
       </div>
     </motion.div>

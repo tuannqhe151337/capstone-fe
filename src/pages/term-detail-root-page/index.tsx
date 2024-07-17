@@ -6,7 +6,7 @@ import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
 import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { TERipple } from "tw-elements-react";

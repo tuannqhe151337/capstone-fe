@@ -43,6 +43,19 @@ export interface PlanDeleteParameters {
   planId: string | number;
 }
 
+export interface PlanVersion {
+  planFileId: string | number;
+  version: number;
+  publishedDate: string;
+  uploadedBy: User;
+}
+
+export interface PlanVersionParameters {
+  planId: string | number;
+  page: number;
+  pageSize: number;
+}
+
 interface User {
   userId: string | number;
   username: string;
@@ -102,7 +115,7 @@ const staggeredBaseQuery = retry(
     },
     fetchFn: async (...args) => {
       // REMOVE FOR PRODUCTION
-      // await pause(10000);
+      // await pause(2000);
       return fetch(...args);
     },
   }),
@@ -155,6 +168,34 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plans"],
       }),
+      getPlanVersion: builder.query<
+        PaginationResponse<PlanVersion[]>,
+        PlanVersionParameters
+      >({
+        query: ({ page, pageSize, planId }) =>
+          `/plan/versions?planId=${planId}&page=${page}&size=${pageSize}`,
+        // Only have one cache entry because the arg always maps to one string
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Merge to exists cache, if page === 0 then invalidate all cache
+        // https://stackoverflow.com/questions/72530121/rtk-query-infinite-scrolling-retaining-existing-data
+        // https://github.com/reduxjs/redux-toolkit/issues/2874
+        merge(currentCacheData, responseData, { arg: { page } }) {
+          if (page > 1) {
+            currentCacheData.data.push(...responseData.data);
+            currentCacheData.pagination = responseData.pagination;
+          } else if (page <= 1) {
+            currentCacheData = responseData;
+          }
+
+          return currentCacheData;
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return currentArg !== previousArg;
+        },
+      }),
     };
   },
 });
@@ -164,5 +205,6 @@ export const {
   useLazyFetchPlansQuery,
   useGetPlanDetailQuery,
   useDeletePlanMutation,
+  useLazyGetPlanVersionQuery,
 } = plansApi;
 export { plansApi };
