@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { GlobeConfig, World } from "../../shared/globe";
 import { Meteors } from "../../shared/meteors";
+import { Stars } from "../../shared/stars";
 
 export const HomePage: React.FC = () => {
   const globeConfig: GlobeConfig = {
@@ -389,8 +391,25 @@ export const HomePage: React.FC = () => {
     },
   ];
 
+  const ref = useRef<HTMLDivElement>(null);
+
+  const [width, setWidth] = useState<number>();
+  const [height, setHeight] = useState<number>();
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const resizeObserver = new ResizeObserver(() => {
+      if (ref.current) {
+        setWidth(ref.current.offsetWidth);
+        setHeight(ref.current.offsetHeight);
+      }
+    });
+    resizeObserver.observe(ref.current);
+    return () => resizeObserver.disconnect(); // clean up
+  }, []);
+
   return (
-    <div className="relative">
+    <div ref={ref} className="relative overflow-hidden">
       <div className="flex flex-row items-center justify-left relative">
         <div className="pl-12 w-[40rem] h-[40rem] -mt-[130px] relative overflow-hidden">
           <div className="absolute w-full -bottom-20 md:h-full z-20 overflow-hidden">
@@ -409,6 +428,8 @@ export const HomePage: React.FC = () => {
       </div>
 
       <Meteors className="before:dark:from-neutral-500 z-10" />
+
+      <Stars number={200} width={width} height={height} />
     </div>
   );
 };

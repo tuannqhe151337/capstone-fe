@@ -15,8 +15,13 @@ export default {
       },
       animation: {
         "meteor-effect": "meteor 5s linear infinite",
+        "twinkle-effect": "twinkle 5s infinite ease-in-out",
       },
       keyframes: {
+        twinkle: {
+          "0%, 100%": { opacity: 0.3 },
+          "50%": { opacity: 1 },
+        },
         meteor: {
           "0%": { transform: "rotate(215deg) translateX(0)", opacity: "1" },
           "70%": { opacity: "1" },
