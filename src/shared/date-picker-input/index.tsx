@@ -8,7 +8,7 @@ import { TERipple } from "tw-elements-react";
 import { AdornmentInput } from "../adornment-input";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
+import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 import { mergeRefs } from "react-merge-refs";
 import { cn } from "../utils/cn";
 

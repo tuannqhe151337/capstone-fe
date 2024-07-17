@@ -8,7 +8,7 @@ import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
 import { TERipple, TESelect } from "tw-elements-react";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 
 enum AnimationStage {

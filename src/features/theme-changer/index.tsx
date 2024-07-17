@@ -3,7 +3,7 @@ import { FaPalette } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { useEffect, useState } from "react";
 import { Variants, motion, AnimatePresence } from "framer-motion";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 
 interface Theme {
   themeClasses: string;

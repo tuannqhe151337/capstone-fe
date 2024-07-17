@@ -1,7 +1,7 @@
 import { TERipple } from "tw-elements-react";
 import { TETooltip } from "tw-elements-react";
 import { cn } from "../utils/cn";
-import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
+import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 
 interface Props {
   onClick?: React.MouseEventHandler<HTMLElement>;

@@ -4,7 +4,7 @@ import ThreeGlobe from "three-globe";
 import { useThree, Object3DNode, extend, Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import countries from "./data/globe.json";
-import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
+import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 
 declare module "@react-three/fiber" {
   interface ThreeElements {

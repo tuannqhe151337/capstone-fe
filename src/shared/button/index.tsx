@@ -1,7 +1,7 @@
 import { TERipple } from "tw-elements-react";
 import { cn } from "../utils/cn";
 import clsx from "clsx";
-import { useDetectDarkmode } from "../hooks/useDetectDarkmode";
+import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 
 type Variant = "primary" | "secondary" | "tertiary" | "quaternary" | "error";
 type ButtonType = "filled" | "outlined";
