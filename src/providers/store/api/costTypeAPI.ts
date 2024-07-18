@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey } from "./type";
 
 export interface CostType {
   costTypeId: number;
@@ -28,7 +28,7 @@ export const costTypeAPI = createApi({
   reducerPath: "costTypeAPI",
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
-    getListCostType: builder.query<PaginationResponse<CostType[]>, void>({
+    getListCostType: builder.query<ListResponse<CostType[]>, void>({
       query: () => {
         return `/cost-type/list`;
       },

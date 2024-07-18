@@ -1,3 +1,5 @@
+import { CostType } from "../../providers/store/api/costTypeAPI";
+
 export enum FileUploadStage {
   EMPTY = "empty",
   PROCESSING = "processing",
@@ -7,7 +9,8 @@ export enum FileUploadStage {
 }
 
 export interface Expense {
-  date: Date;
+  // date: Date;
+  costType: CostType;
   name: string;
   unitPrice: number;
   amount: number;
@@ -15,4 +18,21 @@ export interface Expense {
   supplierName: string;
   pic: string;
   notes?: string;
+}
+
+export interface ExpenseFieldError {
+  value: string | number | undefined;
+  errorMessage?: string | undefined;
+}
+
+export interface ExpenseError {
+  // date: ExpenseFieldError;
+  costType: ExpenseFieldError;
+  name: ExpenseFieldError;
+  unitPrice: ExpenseFieldError;
+  amount: ExpenseFieldError;
+  projectName: ExpenseFieldError;
+  supplierName: ExpenseFieldError;
+  pic: ExpenseFieldError;
+  notes?: string | number | undefined;
 }

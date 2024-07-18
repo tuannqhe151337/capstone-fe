@@ -15,6 +15,10 @@ export interface PaginationResponse<T> {
   pagination: PaginationType;
 }
 
+export interface ListResponse<T> {
+  data: T;
+}
+
 export interface ErrorData {
   field: string;
   message: string;

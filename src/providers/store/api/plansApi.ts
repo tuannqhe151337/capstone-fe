@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListPlanParameters {
@@ -95,16 +95,34 @@ export interface Role {
   name: string;
 }
 
-// DEV ONLY!!!
-const pause = (duration: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
-  });
-};
+export interface CreatePlanBody {
+  termId: string | number;
+  planName: string;
+  fileName: string;
+  expenses: ExpenseBody[];
+}
 
-// maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
-const staggeredBaseQuery = retry(
-  fetchBaseQuery({
+export interface ExpenseBody {
+  name: string;
+  costTypeId: number;
+  unitPrice: number;
+  amount: number;
+  projectName: string;
+  supplierName: string;
+  pic: string;
+  notes?: string | number;
+}
+
+// DEV ONLY!!!
+// const pause = (duration: number) => {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, duration);
+//   });
+// };
+
+const plansApi = createApi({
+  reducerPath: "plans",
+  baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BACKEND_HOST,
     prepareHeaders: (headers) => {
       const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
@@ -119,14 +137,6 @@ const staggeredBaseQuery = retry(
       return fetch(...args);
     },
   }),
-  {
-    maxRetries: 5,
-  }
-);
-
-const plansApi = createApi({
-  reducerPath: "plans",
-  baseQuery: staggeredBaseQuery,
   tagTypes: ["plans"],
   endpoints(builder) {
     return {
@@ -196,6 +206,14 @@ const plansApi = createApi({
           return currentArg !== previousArg;
         },
       }),
+      createPlan: builder.mutation<any, CreatePlanBody>({
+        query: (createPlanBody) => ({
+          url: `plan/create`,
+          method: "POST",
+          body: createPlanBody,
+        }),
+        invalidatesTags: ["plans"],
+      }),
     };
   },
 });
@@ -206,5 +224,6 @@ export const {
   useGetPlanDetailQuery,
   useDeletePlanMutation,
   useLazyGetPlanVersionQuery,
+  useCreatePlanMutation,
 } = plansApi;
 export { plansApi };

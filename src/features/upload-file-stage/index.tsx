@@ -8,10 +8,13 @@ import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { cn } from "../../shared/utils/cn";
 import { ProcessingFileUI } from "./ui/processing-file-ui";
 import { EmptyFileUploadUI } from "./ui/empty-file-upload-ui";
-import { Expense, FileUploadStage } from "./type";
-import { ExpensesTable } from "../../entities/expenses-table";
+import { Expense, ExpenseError, FileUploadStage } from "./type";
 import { DisabledSelect } from "../../shared/disabled-select";
 import { processFile } from "./model/process-file";
+import { useGetListCostTypeQuery } from "../../providers/store/api/costTypeAPI";
+import { ErrorExpensesTable } from "./components/error-expenses-table";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { InputValidationMessage } from "../../shared/validation-input-message";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,15 +72,23 @@ const animation: Variants = {
 
 interface Props {
   hide?: boolean;
+  termName?: string;
   onPreviousState?: () => any;
-  onNextStage?: (expenses: Expense[]) => any;
+  onNextStage?: (expenses: Expense[], planName: string) => any;
 }
 
 export const UploadFileStage: React.FC<Props> = ({
   hide,
+  termName,
   onPreviousState,
   onNextStage,
 }) => {
+  // Cost type
+  const { data } = useGetListCostTypeQuery();
+
+  // Department from user's detail
+  const { data: me } = useMeQuery();
+
   // UI: file over
   const [isFileOver, setIsFileOver] = useState<boolean>(false);
 
@@ -91,21 +102,25 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileName, setFileName] = useState<string>();
   const [fileSize, setFileSize] = useState<number>();
 
+  // Plan name
+  const [planName, setPlanName] = useState<string>("");
+
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [expenseErrors, setExpenseErrors] = useState<ExpenseError[]>([]);
 
   // Auto move to next stage
   useEffect(() => {
-    if (fileUploadStage === FileUploadStage.SUCCESS) {
+    if (fileUploadStage === FileUploadStage.SUCCESS && planName) {
       const timeoutId = setTimeout(() => {
-        onNextStage && onNextStage(expenses);
+        onNextStage && onNextStage(expenses, planName);
       }, 1250);
 
       return () => {
         clearTimeout(timeoutId);
       };
     }
-  }, [fileUploadStage]);
+  }, [fileUploadStage, planName]);
 
   // Handling upload file
   const { dragLeaveHandler, dragOverHandler, dropHandler, inputFileHandler } =
@@ -128,15 +143,20 @@ export const UploadFileStage: React.FC<Props> = ({
           setFileSize(file.size);
 
           // TODO: Handle file upload logic here
-          const { errors, expenses, isError } = await processFile(file);
+          if (data?.data) {
+            const { errors, expenses, isError } = await processFile(
+              file,
+              data.data
+            );
 
-          console.log(errors, expenses);
-          setExpenses(expenses);
+            setExpenses(expenses);
+            setExpenseErrors(errors);
 
-          if (isError) {
-            setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
-          } else {
-            setFileUploadStage(FileUploadStage.SUCCESS);
+            if (isError) {
+              setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
+            } else {
+              setFileUploadStage(FileUploadStage.SUCCESS);
+            }
           }
         }
       },
@@ -145,7 +165,7 @@ export const UploadFileStage: React.FC<Props> = ({
   return (
     <motion.div
       className={clsx({
-        "pt-5": true,
+        "pt-2": true,
         "md:w-full lg:w-[900px] xl:w-[1000px]":
           fileUploadStage !== FileUploadStage.VALIDATION_ERROR,
         "lg:w-[950px] xl:w-[1100px]":
@@ -160,23 +180,37 @@ export const UploadFileStage: React.FC<Props> = ({
         className="flex flex-row flex-wrap items-center justify-center gap-3"
         variants={childrenAnimation}
       >
-        <div className="flex-1 pt-5">
-          <TEInput className="w-full" label="Plan name" />
+        <div className="flex-1 -mb-[45px]">
+          <TEInput
+            className="w-full"
+            label="Plan name"
+            value={planName}
+            onChange={(e) => setPlanName(e.currentTarget.value)}
+            autoFocus
+          />
+          <InputValidationMessage
+            className="mt-1"
+            validateFn={() => {
+              if (!planName) {
+                throw new Error("Plan name can not be empty.");
+              }
+            }}
+          />
         </div>
         <DisabledSelect
           className="w-[300px]"
           label="Term"
-          value="Financial plan December Q3 2021"
+          value={termName || ""}
         />
         <DisabledSelect
           className="w-[200px]"
           label="Department"
-          value="BU 01"
+          value={me?.department.name || ""}
         />
       </motion.div>
 
-      {/* File dropzone */}
-      <div className="relative h-[380px]">
+      {/* File dropzone section */}
+      <div className="relative h-[390px]">
         <AnimatePresence>
           {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
             <motion.div
@@ -287,9 +321,7 @@ export const UploadFileStage: React.FC<Props> = ({
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <div className="pt-3">
-                <ExpensesTable expenses={expenses} />
-              </div>
+              <ErrorExpensesTable expenses={expenseErrors} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -321,10 +353,12 @@ export const UploadFileStage: React.FC<Props> = ({
           </Button>
         ) : (
           <Button
-            disabled={fileUploadStage !== FileUploadStage.SUCCESS}
+            disabled={fileUploadStage !== FileUploadStage.SUCCESS || !planName}
             containerClassName="flex-1"
             onClick={() => {
-              onNextStage && onNextStage(expenses);
+              if (fileUploadStage === FileUploadStage.SUCCESS && planName) {
+                onNextStage && onNextStage(expenses, planName);
+              }
             }}
           >
             Continue to confirm expenses

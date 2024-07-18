@@ -2,8 +2,10 @@ import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { DisabledSelect } from "../../shared/disabled-select";
 import { Button } from "../../shared/button";
-import { ExpensesTable } from "../../entities/expenses-table";
+import { ConfirmExpensesTable } from "./components/confirm-expenses-table";
 import { Expense } from "./type";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { CgSpinner } from "react-icons/cg";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -40,6 +42,9 @@ const childrenAnimation: Variants = {
 };
 
 interface Props {
+  isCreatePlanLoading?: boolean;
+  termName?: string;
+  planName?: string;
   expenses?: Expense[];
   hide?: boolean;
   onPreviousState?: () => any;
@@ -47,11 +52,17 @@ interface Props {
 }
 
 export const ConfirmExpensesStage: React.FC<Props> = ({
+  isCreatePlanLoading,
+  termName,
+  planName,
   expenses,
   hide,
   onPreviousState,
   onNextStage,
 }) => {
+  // Department from user's detail
+  const { data: me } = useMeQuery();
+
   return (
     <motion.div
       className="w-max"
@@ -65,26 +76,32 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
         variants={childrenAnimation}
       >
         <div className="flex-1 pt-5">
-          <TEInput className="w-full" label="Plan name" />
+          <TEInput
+            disabled
+            className="w-full"
+            label="Plan name"
+            value={planName || ""}
+          />
         </div>
         <DisabledSelect
           className="w-[300px]"
           label="Term"
-          value="Financial plan December Q3 2021"
+          value={termName || ""}
         />
         <DisabledSelect
           className="w-[200px]"
           label="Department"
-          value="BU 01"
+          value={me?.department.name || ""}
         />
       </motion.div>
 
       {/* Table */}
-      <ExpensesTable expenses={expenses} hide={hide} />
+      <ConfirmExpensesTable expenses={expenses} hide={hide} />
 
       {/* Buttons */}
       <div className="flex flex-row flex-wrap items-center gap-5 mt-4 w-full">
         <Button
+          disabled={isCreatePlanLoading}
           variant="tertiary"
           className="w-[300px]"
           onClick={() => {
@@ -94,12 +111,16 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
           Back
         </Button>
         <Button
+          disabled={isCreatePlanLoading}
           containerClassName="flex-1"
           onClick={() => {
             onNextStage && onNextStage();
           }}
         >
-          Create new plan
+          {!isCreatePlanLoading && "Create new plan"}
+          {isCreatePlanLoading && (
+            <CgSpinner className="m-auto text-lg animate-spin" />
+          )}
         </Button>
       </div>
     </motion.div>

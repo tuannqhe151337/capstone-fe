@@ -57,7 +57,7 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
   const [searchboxValue, setSearchboxValue] = useState<string>("");
 
   // Mutation
-  const [getListTermWhenCreatePlan, { data, error, isFetching }] =
+  const [getListTermWhenCreatePlan, { data, isFetching }] =
     useLazyGetListTermWhenCreatePlanQuery();
 
   // Fetch list term on change
@@ -66,14 +66,14 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
       const paramters: ListTermWhenCreatePlanParameters = {
         query: searchboxValue,
         page,
-        pageSize: 10,
+        pageSize: 5,
       };
 
       getListTermWhenCreatePlan(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page]);
+  }, [searchboxValue, page, hide]);
 
   return (
     <motion.div
@@ -95,6 +95,7 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
       <motion.div variants={childrenAnimation}>
         <TermList
           hide={hide}
+          isFetching={isFetching}
           terms={data?.data || []}
           onClick={(term) => {
             onTermSelected && onTermSelected(term);

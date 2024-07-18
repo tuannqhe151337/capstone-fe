@@ -47,7 +47,7 @@ export const Button: React.FC<Props> = ({
               variant === "secondary",
             "bg-white border-2 border-primary-300/70 text-primary-500 hover:bg-primary-50 active:bg-primary-100 dark:bg-neutral-800 dark:border-primary-800 dark:hover:bg-neutral-700/30":
               variant === "tertiary",
-            "bg-white border-2 dark:bg-transparent text-neutral-400 disabled:text-neutral-300 border-neutral-100 disabled:hover:border-neutral-100 hover:border-neutral-200 dark:border-neutral-700 dark:hover:border-neutral-600 dark:disabled:hover:border-neutral-700 dark:text-neutral-500":
+            "bg-white border-2 dark:bg-transparent text-neutral-400 disabled:text-neutral-300 border-neutral-200 disabled:hover:border-neutral-200 hover:border-neutral-300 dark:border-neutral-600 dark:disabled:hover:border-neutral-600 dark:hover:border-neutral-500 dark:text-neutral-400 dark:disabled:text-neutral-500":
               variant === "quaternary",
             "text-white dark:text-neutral-200 border-2 bg-red-600 border-red-600 hover:bg-red-500 hover:border-red-500 active:bg-red-500 active:border-red-500 focus:bg-red-500 focus:border-red-500 dark:bg-red-800 dark:border-red-800 dark:hover:bg-red-700 dark:hover:border-red-700 dark:active:bg-red-700 dark:active:border-red-700 dark:focus:bg-red-700 dark:focus:border-red-700":
               variant === "error" && buttonType === "filled",
