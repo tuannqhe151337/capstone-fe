@@ -3,10 +3,21 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { FaExclamation } from "react-icons/fa";
 import { Button } from "../../shared/button";
-import { useLogoutMutation } from "../../providers/store/api/authApi";
+import { authAPI, useLogoutMutation } from "../../providers/store/api/authApi";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CgSpinner } from "react-icons/cg";
+import { useDispatch } from "react-redux";
+import { usersApi } from "../../providers/store/api/usersApi";
+import { roleAPI } from "../../providers/store/api/roleApi";
+import { departmentAPI } from "../../providers/store/api/departmentApi";
+import { positionAPI } from "../../providers/store/api/positionApi";
+import { plansApi } from "../../providers/store/api/plansApi";
+import { termAPI } from "../../providers/store/api/termApi";
+import { annualAPI } from "../../providers/store/api/annualsAPI";
+import { statusAPI } from "../../providers/store/api/statusApi";
+import { costTypeAPI } from "../../providers/store/api/costTypeAPI";
+import { reportsAPI } from "../../providers/store/api/reportsAPI";
 
 interface Props {
   show: boolean;
@@ -17,12 +28,27 @@ export const LogoutModal: React.FC<Props> = ({ show, onClose }) => {
   // Navigate
   const navigate = useNavigate();
 
+  // Dispatch
+  const dispatch = useDispatch();
+
   // Logout
   const [logout, { isLoading, isSuccess }] = useLogoutMutation();
 
   useEffect(() => {
     if (isSuccess) {
       localStorage.clear();
+
+      dispatch(authAPI.util.resetApiState());
+      dispatch(usersApi.util.resetApiState());
+      dispatch(roleAPI.util.resetApiState());
+      dispatch(departmentAPI.util.resetApiState());
+      dispatch(positionAPI.util.resetApiState());
+      dispatch(plansApi.util.resetApiState());
+      dispatch(termAPI.util.resetApiState());
+      dispatch(annualAPI.util.resetApiState());
+      dispatch(statusAPI.util.resetApiState());
+      dispatch(costTypeAPI.util.resetApiState());
+      dispatch(reportsAPI.util.resetApiState());
 
       navigate(`/auth/login`);
     }
