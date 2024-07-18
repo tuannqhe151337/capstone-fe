@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Select from "react-select";
 import {
   CostType,
@@ -34,7 +34,7 @@ export const CostTypeFilter: React.FC<Props> = ({
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const { data } = useGetListCostTypeQuery();
+  const { data, isFetching } = useGetListCostTypeQuery();
 
   // Select state
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
@@ -45,6 +45,7 @@ export const CostTypeFilter: React.FC<Props> = ({
         classNamePrefix="custom-select"
         className="w-[200px] cursor-pointer"
         isSearchable
+        isLoading={isFetching}
         value={selectedOption}
         onChange={(value) => {
           if (value) {

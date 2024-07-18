@@ -1,8 +1,9 @@
 import { read, utils } from "xlsx";
 import { z } from "zod";
 import { getZodMessasges } from "../../../shared/utils/get-zod-messages";
-import { Expense } from "../type";
-import { format, parse } from "date-fns";
+import { Expense, ExpenseError } from "../type";
+import { format } from "date-fns";
+import { CostType } from "../../../providers/store/api/costTypeAPI";
 
 // Beggining line to start to read expense
 const BeginLine = 3;
@@ -45,7 +46,6 @@ const ColumnNameIndexMappingConfig: Record<ColumnName, number> = {
 const datePattern = "dd/MM/yyyy";
 
 // Validation schema
-const DateSchema = z.date();
 const ExpenseNameSchema = z.string();
 const CostTypeSchema = z.string();
 const UnitPriceSchema = z.number().gt(0);
@@ -54,16 +54,19 @@ const ProjectNameSchema = z.string();
 const SupplierNameSchema = z.string();
 const PicSchema = z.string();
 
-export const processFile = async (file: File) => {
+export const processFile = async (file: File, costTypeList: CostType[]) => {
   // Results and errors
   let expenses: Expense[] = [];
-  let errors: string[][] = [];
+  let errors: ExpenseError[] = [];
   let isError = false;
 
   // If file is null or undefined, return empty array
   if (!file) {
     return { expenses, errors, isError } as const;
   }
+
+  // Convert list of cost type to map by name
+  const costTypeMap = mapCostTypeListByLowercaseName(costTypeList);
 
   // Convert to array buffer for xlsx to read
   const buffer = await file?.arrayBuffer();
@@ -86,7 +89,7 @@ export const processFile = async (file: File) => {
         utils.sheet_to_json(sheet, {
           header: 1,
           blankrows: false,
-          dateNF: datePattern, // This dateNF definitely not parse date from string from XLSX file as expected
+          dateNF: datePattern, // This dateNF definitely not parse date from string from XLSX file as expected, it was due to by default Excel always use the standard MM/dd/yyyy
         });
 
       // Loop through each row to read expenses
@@ -94,15 +97,10 @@ export const processFile = async (file: File) => {
         // Get row
         const row = rows[index];
 
-        console.log(row);
-
-        // Calculate row index
-        const rowIndex = index + 1 - BeginLine;
-
         // Any row that have index >= 3 will be mapped to expense
         if (index + 1 >= BeginLine) {
           // Get data from cell
-          const rawDate = row[ColumnNameIndexMappingConfig.date];
+          // const rawDate = row[ColumnNameIndexMappingConfig.date];
           const rawExpenseName = row[ColumnNameIndexMappingConfig.expenseName];
           const rawCostType = row[ColumnNameIndexMappingConfig.costType];
           const rawUnitPrice = row[ColumnNameIndexMappingConfig.unitPrice];
@@ -114,36 +112,48 @@ export const processFile = async (file: File) => {
           const note = row[ColumnNameIndexMappingConfig.note];
 
           // Validation
-          errors[rowIndex] = [];
+          let isLineError = false;
+          const expenseError: ExpenseError = {
+            // date: { value: "" },
+            costType: { value: "" },
+            name: { value: "" },
+            unitPrice: { value: "" },
+            amount: { value: "" },
+            projectName: { value: "" },
+            supplierName: { value: "" },
+            pic: { value: "" },
+            notes:
+              note instanceof Date ? format(note, datePattern) : note || "",
+          };
 
           // -- Date
-          let date: Date = new Date();
-          let dateErrorMessage: string | null | undefined = "";
+          // let date: Date = new Date();
+          // let dateErrorMessage: string | null | undefined = "";
 
-          if (typeof rawDate === "string") {
-            // This means the xlsx library does not parse successfully (eg: 23/12/2002)
-            try {
-              date = parse(rawDate, datePattern, new Date());
-            } catch {
-              dateErrorMessage = "Invalid date";
-            }
-          } else if (rawDate instanceof Date) {
-            // This means the xlsx library parse successfully but wrong format (eg: from 05/12/2022 to 12/05/2022)
-            const dateStr = format(date, datePattern);
-            try {
-              date = parse(dateStr, datePattern, new Date());
-            } catch {
-              dateErrorMessage = "Invalid date";
-            }
-          } else {
-            dateErrorMessage = "Invalid date";
-          }
-
-          if (dateErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.date] =
-              dateErrorMessage;
-          }
+          // if (typeof rawDate === "string") {
+          //   // This means the xlsx library does not parse successfully, by default Excel always use the standard MM/dd/yyyy (eg: 23/12/2002)
+          //   try {
+          //     date = parse(rawDate, datePattern, new Date());
+          //   } catch {
+          //     isLineError = true;
+          //     expenseError.date.value = rawDate;
+          //     expenseError.date.errorMessage = dateErrorMessage;
+          //   }
+          // } else if (rawDate instanceof Date) {
+          //   // This means the xlsx library parse successfully but wrong format (eg: from 05/12/2022 to 12/05/2022)
+          //   const dateStr = format(date, datePattern);
+          //   try {
+          //     date = parse(dateStr, datePattern, new Date());
+          //   } catch {
+          //     isLineError = true;
+          //     expenseError.date.value = dateStr;
+          //     expenseError.date.errorMessage = dateErrorMessage;
+          //   }
+          // } else {
+          //   isLineError = true;
+          //   expenseError.date.value = rawDate;
+          //   expenseError.date.errorMessage = dateErrorMessage;
+          // }
 
           // -- Expense name
           let expenseName = "";
@@ -152,21 +162,28 @@ export const processFile = async (file: File) => {
           );
 
           if (expenseNameErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.expenseName] =
-              expenseNameErrorMessage;
+            isLineError = true;
+            expenseError.name.errorMessage = expenseNameErrorMessage;
           }
 
           // -- Cost type
-          let costType = "";
+          let costTypeName = "";
           const costTypeErrorMessage = getZodMessasges(
-            () => (costType = CostTypeSchema.parse(rawCostType))
+            () => (costTypeName = CostTypeSchema.parse(rawCostType))
           );
 
           if (costTypeErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.costType] =
-              costTypeErrorMessage;
+            isLineError = true;
+            expenseError.costType.errorMessage = costTypeErrorMessage;
+          }
+
+          let costType: CostType | null | undefined = undefined;
+          if (costTypeName) {
+            if (costTypeMap[costTypeName.toLowerCase()]) {
+              costType = costTypeMap[costTypeName.toLowerCase()];
+            } else {
+              expenseError.costType.errorMessage = "Invalid cost type";
+            }
           }
 
           // -- Unit price
@@ -176,9 +193,8 @@ export const processFile = async (file: File) => {
           );
 
           if (unitPriceErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.unitPrice] =
-              unitPriceErrorMessage;
+            isLineError = true;
+            expenseError.unitPrice.errorMessage = unitPriceErrorMessage;
           }
 
           // -- Amount
@@ -188,9 +204,8 @@ export const processFile = async (file: File) => {
           );
 
           if (amountErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.amount] =
-              amountErrorMessage;
+            isLineError = true;
+            expenseError.amount.errorMessage = amountErrorMessage;
           }
 
           // -- Project name
@@ -200,9 +215,9 @@ export const processFile = async (file: File) => {
           );
 
           if (projectNameErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.projectName] =
-              projectNameErrorMessage;
+            isLineError = true;
+
+            expenseError.projectName.errorMessage = projectNameErrorMessage;
           }
 
           // -- Supplier name
@@ -212,9 +227,9 @@ export const processFile = async (file: File) => {
           );
 
           if (supplierNameErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.supplierName] =
-              supplierNameErrorMessage;
+            isLineError = true;
+
+            expenseError.supplierName.errorMessage = supplierNameErrorMessage;
           }
 
           // -- Pic
@@ -224,27 +239,62 @@ export const processFile = async (file: File) => {
           );
 
           if (picErrorMessage) {
-            isError = true;
-            errors[rowIndex][ColumnNameIndexMappingConfig.pic] =
-              picErrorMessage;
+            isLineError = true;
+
+            expenseError.pic.errorMessage = picErrorMessage;
           }
 
           // Add to result
-          if (
-            errors[rowIndex] === undefined ||
-            errors[rowIndex] === null ||
-            errors[rowIndex].length === 0
-          ) {
-            expenses.push({
-              name: expenseName,
-              date,
-              unitPrice,
-              amount,
-              projectName,
-              supplierName,
-              pic,
-              notes: note ? note.toString() : "",
-            });
+          if (isLineError) {
+            isError = isLineError;
+
+            expenseError.name.value =
+              rawExpenseName instanceof Date
+                ? format(rawExpenseName, datePattern)
+                : rawExpenseName;
+
+            expenseError.costType.value =
+              rawCostType instanceof Date
+                ? format(rawCostType, datePattern)
+                : rawCostType;
+
+            expenseError.unitPrice.value =
+              rawUnitPrice instanceof Date
+                ? format(rawUnitPrice, datePattern)
+                : rawUnitPrice;
+
+            expenseError.amount.value =
+              rawAmount instanceof Date
+                ? format(rawAmount, datePattern)
+                : rawAmount;
+
+            expenseError.projectName.value =
+              rawProjectName instanceof Date
+                ? format(rawProjectName, datePattern)
+                : rawProjectName;
+
+            expenseError.supplierName.value =
+              rawSupplierName instanceof Date
+                ? format(rawSupplierName, datePattern)
+                : rawSupplierName;
+
+            expenseError.pic.value =
+              rawPic instanceof Date ? format(rawPic, datePattern) : rawPic;
+            errors.push(expenseError);
+          } else {
+            if (costType) {
+              expenses.push({
+                name: expenseName,
+                costType,
+                // date,
+                unitPrice,
+                amount,
+                projectName,
+                supplierName,
+                pic,
+                notes: note ? note.toString() : "",
+              });
+            }
           }
         }
       }
@@ -252,4 +302,16 @@ export const processFile = async (file: File) => {
   }
 
   return { expenses, errors, isError } as const;
+};
+
+const mapCostTypeListByLowercaseName = (
+  costTypeList: CostType[]
+): Record<string, CostType> => {
+  const costTypeMap: Record<string, CostType> = {};
+
+  for (const costType of costTypeList) {
+    costTypeMap[costType.name.toLowerCase()] = costType;
+  }
+
+  return costTypeMap;
 };

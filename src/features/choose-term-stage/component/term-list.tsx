@@ -4,6 +4,7 @@ import { TermCard } from "../ui/term-card";
 import { useHotkeys } from "react-hotkeys-hook";
 import { produce, nothing } from "immer";
 import { TermCreatePlan } from "../../../providers/store/api/termApi";
+import { Skeleton } from "../../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -39,11 +40,17 @@ const childrenAnimation: Variants = {
 
 interface Props {
   hide?: boolean;
+  isFetching?: boolean;
   terms: TermCreatePlan[];
   onClick?: (term: TermCreatePlan) => any;
 }
 
-export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
+export const TermList: React.FC<Props> = ({
+  hide,
+  isFetching,
+  terms,
+  onClick,
+}) => {
   // State
   const [selectedTermIndex, setSelectedTermIndex] = useState<number>();
 
@@ -119,24 +126,32 @@ export const TermList: React.FC<Props> = ({ hide, terms, onClick }) => {
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
-      {terms.map((term, index) => (
-        <motion.div
-          key={term.termId}
-          className="w-full"
-          variants={childrenAnimation}
-        >
-          <TermCard
-            onClick={() => {
-              onClick && onClick(term);
-            }}
-            selected={selectedTermIndex === index}
-            termName={term.name}
-            type={term.duration}
-            startDate={term.startDate}
-            endDate={term.endDate}
-          />
-        </motion.div>
-      ))}
+      {isFetching &&
+        new Array(5)
+          .fill(true)
+          .map((_, index) => (
+            <Skeleton key={index} className="w-full h-[55px]" />
+          ))}
+
+      {!isFetching &&
+        terms.map((term, index) => (
+          <motion.div
+            key={term.termId}
+            className="w-full"
+            variants={childrenAnimation}
+          >
+            <TermCard
+              onClick={() => {
+                onClick && onClick(term);
+              }}
+              selected={selectedTermIndex === index}
+              termName={term.name}
+              type={term.duration}
+              startDate={term.startDate}
+              endDate={term.endDate}
+            />
+          </motion.div>
+        ))}
     </motion.div>
   );
 };

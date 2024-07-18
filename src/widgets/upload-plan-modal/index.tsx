@@ -9,6 +9,10 @@ import { ChooseTermStage } from "../../features/choose-term-stage";
 import { UploadFileStage } from "../../features/upload-file-stage";
 import { ConfirmExpensesStage } from "../../features/confirm-expenses-stage";
 import { Expense } from "../../features/upload-file-stage/type";
+import { TermCreatePlan } from "../../providers/store/api/termApi";
+import { useCreatePlanMutation } from "../../providers/store/api/plansApi";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { toast } from "react-toastify";
 
 enum AnimationStage {
   LEFT = "left",
@@ -65,8 +69,35 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
     }
   }, [show]);
 
+  // Mutation
+  const [createPlan, { isLoading, isError, isSuccess }] =
+    useCreatePlanMutation();
+
+  // Get me
+  const { data: me } = useMeQuery();
+
+  // Chosen term
+  const [term, setTerm] = useState<TermCreatePlan>();
+
+  // Plan name
+  const [planName, setPlanName] = useState<string>();
+
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
+
+  // Close modal after upload successfully
+  useEffect(() => {
+    if (isSuccess) {
+      toast("Create plan successfully!", { type: "success" });
+      onClose && onClose();
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (isError) {
+      toast("Something went wrong, please try again!");
+    }
+  }, [isError]);
 
   return (
     <Modal
@@ -113,7 +144,8 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                 >
                   <ChooseTermStage
                     hide={stage !== 1}
-                    onTermSelected={() => {
+                    onTermSelected={(term) => {
+                      setTerm(term);
                       setStage(2);
                     }}
                   />
@@ -136,11 +168,13 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                 >
                   <UploadFileStage
                     hide={stage !== 2}
+                    termName={term?.name}
                     onPreviousState={() => {
                       setStage(1);
                     }}
-                    onNextStage={(expenses) => {
+                    onNextStage={(expenses, planName) => {
                       setExpenses(expenses);
+                      setPlanName(planName);
                       setStage(3);
                     }}
                   />
@@ -162,13 +196,43 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <ConfirmExpensesStage
+                    isCreatePlanLoading={isLoading}
                     expenses={expenses}
+                    termName={term?.name}
+                    planName={planName}
                     hide={stage !== 3}
                     onPreviousState={() => {
                       setStage(2);
                     }}
                     onNextStage={() => {
-                      setStage(4);
+                      if (term && planName) {
+                        createPlan({
+                          termId: term.termId,
+                          fileName: `${me?.department.name}_${term?.name}_plan`,
+                          planName: planName,
+                          expenses: expenses.map(
+                            ({
+                              name,
+                              costType,
+                              unitPrice,
+                              amount,
+                              projectName,
+                              supplierName,
+                              pic,
+                              notes,
+                            }) => ({
+                              name,
+                              costTypeId: costType.costTypeId,
+                              unitPrice,
+                              amount,
+                              projectName,
+                              supplierName,
+                              pic,
+                              notes,
+                            })
+                          ),
+                        });
+                      }
                     }}
                   />
                 </motion.div>

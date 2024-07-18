@@ -127,18 +127,6 @@ export const ReportManagementList: React.FC = () => {
           <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
             Report management
           </p>
-          <div className="ml-auto">
-            <Button
-              onClick={() => {
-                setShowUploadPlanModal(true);
-              }}
-            >
-              <div className="flex flex-row flex-wrap gap-3">
-                <FaUpload className="mt-0.5" />
-                <p className="text-sm font-semibold">Upload report</p>
-              </div>
-            </Button>
-          </div>
         </div>
       </BubbleBanner>
 

@@ -1,5 +1,8 @@
+import { CostType } from "../../providers/store/api/costTypeAPI";
+
 export interface Expense {
-  date: Date;
+  // date: Date;
+  costType: CostType;
   name: string;
   unitPrice: number;
   amount: number;

@@ -30,7 +30,7 @@ export const TermCard: React.FC<Props> = ({
     >
       <div
         className={cn(
-          "flex flex-row flex-wrap items-center w-full py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200",
+          "flex flex-row flex-wrap items-center w-full h-[55px] py-3 px-5 border-2 border-primary-100 hover:bg-primary-50 hover:border-primary-300 dark:border-primary-900/60 dark:hover:border-primary-800 dark:hover:bg-primary-950/30 rounded-lg cursor-pointer duration-200",
           {
             "bg-primary-50 border-primary-300 dark:border-primary-800 dark:bg-primary-950/30":
               selected,

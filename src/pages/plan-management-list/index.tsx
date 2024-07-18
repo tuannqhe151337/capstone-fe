@@ -85,7 +85,7 @@ export const PlanManagementList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchPlan, { data, error, isFetching }] = useLazyFetchPlansQuery();
+  const [fetchPlans, { data, error, isFetching }] = useLazyFetchPlansQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -127,7 +127,7 @@ export const PlanManagementList: React.FC = () => {
         paramters.statusId = statusId;
       }
 
-      fetchPlan(paramters, true);
+      fetchPlans(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
