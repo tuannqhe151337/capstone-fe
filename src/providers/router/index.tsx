@@ -325,6 +325,44 @@ const router = createBrowserRouter([
               };
             },
           },
+          {
+            path: "detail",
+            lazy: async () => {
+              const ReportDetailRootPage = (
+                await import("../../pages/report-detail-root-page")
+              ).ReportDetailRootPage;
+
+              return {
+                element: <ReportDetailRootPage />,
+              };
+            },
+            children: [
+              {
+                path: "expenses/:reportId",
+                lazy: async () => {
+                  const ReportDetailExpensePage = (
+                    await import("../../pages/report-detail-expense-page")
+                  ).ReportDetailExpensePage;
+
+                  return {
+                    element: <ReportDetailExpensePage />,
+                  };
+                },
+              },
+              {
+                path: "information/:reportId",
+                lazy: async () => {
+                  const ReportDetailInformationPage = (
+                    await import("../../pages/report-detail-information-page")
+                  ).ReportDetailInformationPage;
+
+                  return {
+                    element: <ReportDetailInformationPage />,
+                  };
+                },
+              },
+            ],
+          },
         ],
       },
 
