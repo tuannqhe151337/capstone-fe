@@ -178,7 +178,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate("detail/expenses");
+                  navigate(`detail/expenses/${row.reportId}`);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-extrabold">
