@@ -152,7 +152,7 @@ export const PlanManagementList: React.FC = () => {
                 setShowUploadPlanModal(true);
               }}
             >
-              <div className="flex flex-row flex-wrap gap-3">
+              <div className="flex flex-row flex-wrap gap-3 ">
                 <FaUpload className="mt-0.5" />
                 <p className="text-sm font-semibold">Upload plan</p>
               </div>

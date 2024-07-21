@@ -18,13 +18,52 @@ export interface Report {
   department: Department;
 }
 
-interface Term {
+export interface ReportDetailParameters {
+  reportId: string | number;
+}
+
+export interface ReportDetail {
+  id: string | number;
+  name: string;
+  biggestExpenditure: number;
+  totalCost: number;
+  term: Term;
+  planDueDate: string;
+  createdAt: string;
+  department: Department;
+  user: User;
+}
+
+export interface Term {
   id: number;
   name: string;
 }
 
-interface Department {
+export interface Department {
   id: number;
+  name: string;
+}
+
+export interface User {
+  userId: string | number;
+  username: string;
+  email: string;
+  department: Department;
+  role: Role;
+  position: Position;
+  deactivate: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Role {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface Position {
+  id: string | number;
   name: string;
 }
 
@@ -85,9 +124,16 @@ const reportsAPI = createApi({
           return endpoint;
         },
       }),
+      getReportDetail: builder.query<ReportDetail, ReportDetailParameters>({
+        query: ({ reportId }) => `/report/detail?reportId=${reportId}`,
+      }),
     };
   },
 });
 
-export const { useFetchReportsQuery, useLazyFetchReportsQuery } = reportsAPI;
+export const {
+  useFetchReportsQuery,
+  useLazyFetchReportsQuery,
+  useGetReportDetailQuery,
+} = reportsAPI;
 export { reportsAPI };
