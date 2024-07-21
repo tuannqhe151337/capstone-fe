@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListAnnualReportParameters {
   query?: string | null;
@@ -128,7 +128,10 @@ const annualAPI = createApi({
         providesTags: ["annual"],
       }),
 
-      fetchAnnualReportChart: builder.query<AnnualReportChart[], number>({
+      fetchAnnualReportChart: builder.query<
+        ListResponse<AnnualReportChart[]>,
+        number
+      >({
         query: (annualReportId) =>
           `annual-report/diagram?annualReportId=${annualReportId}`,
         providesTags: ["annual"],
