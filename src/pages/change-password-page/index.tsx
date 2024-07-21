@@ -1,11 +1,26 @@
 import { TERipple, TEInput } from "tw-elements-react";
-import { Variants, motion } from "framer-motion";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
+import {
+  useChangePasswordUserMutation,
+  useLazyFetchUserDetailQuery,
+} from "../../providers/store/api/usersApi";
+import { useEffect, useState } from "react";
+import { z, ZodType } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "react-toastify";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { ErrorData } from "../../providers/store/api/type";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { Button } from "../../shared/button";
+import { CgSpinner } from "react-icons/cg";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -56,8 +71,96 @@ const imageAnimation: Variants = {
   },
 };
 
+const heightPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.5,
+    },
+  },
+  visible: {
+    height: 60,
+  },
+};
+
+type FormData = {
+  oldPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
+const OldPasswordSchema = z.string().min(1, "Old password cannot be empty");
+
+const NewPasswordSchema = z.string().min(1, "New password cannot be empty");
+
+const ConfirmNewPasswordSchema = z
+  .string()
+  .min(1, "Confirm new password cannot be empty");
+
+export const ChangePassWordSchema: ZodType<FormData> = z
+  .object({
+    oldPassword: OldPasswordSchema,
+    newPassword: NewPasswordSchema,
+    confirmNewPassword: ConfirmNewPasswordSchema,
+  })
+  .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
+    if (confirmNewPassword !== newPassword) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "The confirm new password must be match with new password",
+        path: ["confirmNewPassword"],
+      });
+    }
+  });
+
 export const ChangePasswordPage: React.FC = () => {
   const { t } = useTranslation(["change-password"]);
+
+  // Navigate
+  const navigate = useNavigate();
+
+  // Get user detail
+  // const { userId } = useParams<{ userId: string }>();
+
+  // const [
+  //   fetchUserDetail,
+  //   { data: user, isFetching, isSuccess: isFetchUserDetailSuccess },
+  // ] = useLazyFetchUserDetailQuery();
+
+  // useEffect(() => {
+  //   if (userId) {
+  //     fetchUserDetail(parseInt(userId, 10), true);
+  //   }
+  // }, [userId]);
+
+  // Form
+  const {
+    register,
+    control,
+    watch,
+    formState: { dirtyFields, isValid },
+    handleSubmit,
+  } = useForm<FormData>({
+    resolver: zodResolver(ChangePassWordSchema),
+  });
+
+  // Mutation
+  const [changePassword, { isLoading, isSuccess, isError, error }] =
+    useChangePasswordUserMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    changePassword({
+      oldPassword: data.oldPassword,
+      newPassword: data.newPassword,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast("Change password successfully!", { type: "success" });
+      navigate("/profile");
+    }
+  }, [isSuccess]);
 
   return (
     <div className="flex flex-row flex-wrap w-full">
@@ -92,42 +195,104 @@ export const ChangePasswordPage: React.FC = () => {
                 {t("changePassword")}
               </motion.div>
 
+              <div className="relative w-full">
+                <AnimatePresence>
+                  {!isLoading && isError && (
+                    <div className="absolute w-full">
+                      <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+                        <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+                        <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+                          Old password is not correct
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </AnimatePresence>
+
+                <motion.div
+                  initial={AnimationStage.HIDDEN}
+                  animate={
+                    isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+                  }
+                  variants={heightPlaceholderAnimation}
+                />
+              </div>
+
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="password"
                   label={t("oldPassword")}
-                  className="mb-4 w-full bg-white dark:bg-neutral-900 "
+                  className=" w-full bg-white dark:bg-neutral-900 "
                   size="lg"
+                  autoFocus
+                  {...register("oldPassword", { required: true })}
                 ></TEInput>
+
+                <InputValidationMessage
+                  show={true}
+                  validateFn={() =>
+                    OldPasswordSchema.parse(watch("oldPassword"))
+                  }
+                  className="mb-4"
+                />
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="password"
                   label={t("newPassword")}
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className=" w-full bg-white dark:bg-neutral-900"
                   size="lg"
+                  autoFocus
+                  {...register("newPassword", { required: true })}
                 ></TEInput>
+                <InputValidationMessage
+                  show={true}
+                  validateFn={() =>
+                    NewPasswordSchema.parse(watch("newPassword"))
+                  }
+                  className="mb-4"
+                />
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="password"
                   label={t("confirmNewPassword")}
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
+                  autoFocus
+                  {...register("confirmNewPassword", { required: true })}
                 ></TEInput>
+                <InputValidationMessage
+                  show={true}
+                  validateFn={() => {
+                    ConfirmNewPasswordSchema.parse(watch("confirmNewPassword"));
+
+                    if (watch("newPassword") !== watch("confirmNewPassword")) {
+                      throw new Error(
+                        "Confirm new password must equal new password"
+                      );
+                    }
+                  }}
+                  className="mb-4"
+                />
               </motion.div>
 
               <motion.div className="mt-5" variants={childrenAnimation}>
-                <TERipple className="w-full">
-                  <button
-                    type="button"
-                    className="!p-3 w-full inline-block rounded bg-primary-500 px-6 pb-2 pt-2.5 text-xs font-semibold uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                    {t("changeNewPassword")}
-                  </button>
-                </TERipple>
+                <Button
+                  disabled={!isValid}
+                  containerClassName="w-full"
+                  className="font-bold"
+                  onClick={() => {
+                    handleSubmit(onSubmit)();
+                  }}
+                >
+                  {!isLoading && <>{t("changeNewPassword")}</>}
+                  {isLoading && (
+                    <CgSpinner className="m-auto text-lg animate-spin" />
+                  )}
+                </Button>
               </motion.div>
             </motion.div>
           </div>

@@ -212,7 +212,7 @@ const router = createBrowserRouter([
             },
           },
           {
-            path: "change-password",
+            path: "change-password/:planId",
             lazy: async () => {
               const ChangePasswordPage = (
                 await import("../../pages/change-password-page")
