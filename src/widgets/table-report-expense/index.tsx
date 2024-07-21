@@ -1,9 +1,10 @@
 import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
-import { Checkbox } from "../../shared/checkbox";
 import { Tag } from "../../shared/tag";
 import clsx from "clsx";
+import { ReportExpense } from "../../providers/store/api/reportsAPI";
+import { cn } from "../../shared/utils/cn";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -28,17 +29,6 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
-const childrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-    y: 10,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-    y: 0,
-  },
-};
-
 const rowAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
     opacity: 0,
@@ -47,6 +37,15 @@ const rowAnimation: Variants = {
   [AnimationStage.VISIBLE]: {
     opacity: 1,
     y: 0,
+  },
+};
+
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
   },
 };
 
@@ -65,13 +64,27 @@ export interface Expense {
 interface Props {
   listSelectedIndex?: Set<number>;
   onRowClick?: (index: number) => any;
-  expenses?: Expense[];
+  expenses?: ReportExpense[];
+  isFetching?: boolean;
+  page?: number | undefined | null;
+  totalPage?: number;
+  isDataEmpty?: boolean;
+  onPageChange?: (page: number | undefined | null) => any;
+  onPrevious?: () => any;
+  onNext?: () => any;
 }
 
 export const TableReportExpenses: React.FC<Props> = ({
   listSelectedIndex,
   onRowClick,
   expenses,
+  isFetching,
+  page,
+  totalPage,
+  isDataEmpty,
+  onPageChange,
+  onPrevious,
+  onNext,
 }) => {
   return (
     <div>
@@ -83,9 +96,6 @@ export const TableReportExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
-            <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              <Checkbox className="ml-1 mt-0.5" />
-            </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
@@ -125,9 +135,9 @@ export const TableReportExpenses: React.FC<Props> = ({
           variants={staggerChildrenAnimation}
         >
           {expenses &&
-            expenses.map((expense, index) => (
+            expenses.map((row, index) => (
               <motion.tr
-                key={expense.id}
+                key={row.expenseId}
                 className={clsx({
                   "cursor-pointer duration-200": true,
                   "bg-primary-100 dark:bg-primary-950":
@@ -144,47 +154,97 @@ export const TableReportExpenses: React.FC<Props> = ({
                   onRowClick && onRowClick(index);
                 }}
               >
-                <td className="pl-3.5 pr-2 py-3">
-                  <Checkbox
-                    className="m-auto"
-                    checked={listSelectedIndex && listSelectedIndex.has(index)}
-                  />
-                </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
-                  {expense.expenseName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.name}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
-                  {expense.costType}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.costType.name}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   <NumericFormat
                     displayType="text"
-                    value={expense.unitPrice}
+                    value={row.unitPrice}
                     disabled
                     thousandSeparator
                   />
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.amount}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.amount}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   <NumericFormat
                     displayType="text"
-                    value={expense.unitPrice * expense.amount}
+                    value={row.unitPrice * row.amount}
                     thousandSeparator
                   />
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.projectName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.projectName}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
-                  {expense.supplierName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.supplierName}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.pic}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.pic}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
-                  {expense.notes}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {row.notes}</>
+                  )}
                 </td>
                 <td className="px-2 py-3">
                   <Tag background="filled" variant="reviewed">
@@ -196,14 +256,28 @@ export const TableReportExpenses: React.FC<Props> = ({
         </motion.tbody>
       </table>
 
-      <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        variants={childrenAnimation}
-        transition={{ delay: 0.4 }}
-      >
-        <Pagination className="mt-3" page={1} totalPage={20} />
-      </motion.div>
+      {isDataEmpty && (
+        <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
+          No data found.
+        </div>
+      )}
+
+      {!isDataEmpty && (
+        <motion.div
+          initial={AnimationStage.HIDDEN}
+          animate={AnimationStage.VISIBLE}
+          variants={animation}
+        >
+          <Pagination
+            className="mt-6"
+            page={page}
+            totalPage={totalPage || 1}
+            onNext={onNext}
+            onPageChange={onPageChange}
+            onPrevious={onPrevious}
+          />
+        </motion.div>
+      )}
     </div>
   );
 };

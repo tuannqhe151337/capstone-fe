@@ -9,6 +9,15 @@ export interface ListReportParameters {
   pageSize: number;
 }
 
+export interface ListReportExpenseParameters {
+  query?: string | null;
+  reportId: number | null;
+  statusId?: number | null;
+  costTypeId?: number | null;
+  page: number;
+  pageSize: number;
+}
+
 export interface Report {
   reportId: number | string;
   name: string;
@@ -16,6 +25,31 @@ export interface Report {
   month: string;
   term: Term;
   department: Department;
+}
+
+export interface ReportExpense {
+  expenseId: number | string;
+  name: string;
+  costType: CostType;
+  unitPrice: number;
+  amount: number;
+  projectName: string;
+  supplierName: string;
+  pic: string;
+  notes: string;
+  status: Status;
+}
+
+export interface CostType {
+  costTypeId: number;
+  name: string;
+  code: string;
+}
+
+export interface Status {
+  statusId: number;
+  code: string;
+  name: string;
 }
 
 export interface ReportDetailParameters {
@@ -127,6 +161,29 @@ const reportsAPI = createApi({
       getReportDetail: builder.query<ReportDetail, ReportDetailParameters>({
         query: ({ reportId }) => `/report/detail?reportId=${reportId}`,
       }),
+
+      fetchReportExpenses: builder.query<
+        PaginationResponse<ReportExpense[]>,
+        ListReportExpenseParameters
+      >({
+        query: ({ query, reportId, costTypeId, statusId, page, pageSize }) => {
+          let endpoint = `report/expenses?reportId=${reportId}&page=${page}&size=${pageSize}`;
+
+          if (query && query !== "") {
+            endpoint += `&query=${query}`;
+          }
+
+          if (costTypeId) {
+            endpoint += `&costTypeId=${costTypeId}`;
+          }
+
+          if (statusId) {
+            endpoint += `&statusId=${statusId}`;
+          }
+
+          return endpoint;
+        },
+      }),
     };
   },
 });
@@ -135,5 +192,7 @@ export const {
   useFetchReportsQuery,
   useLazyFetchReportsQuery,
   useGetReportDetailQuery,
+  useFetchReportExpensesQuery,
+  useLazyFetchReportExpensesQuery,
 } = reportsAPI;
 export { reportsAPI };
