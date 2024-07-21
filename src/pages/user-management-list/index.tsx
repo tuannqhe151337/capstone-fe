@@ -6,7 +6,6 @@ import { HiUserAdd } from "react-icons/hi";
 import { Row, UserPlanTable } from "../../widgets/user-plan-table";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import {
   ListUserParameters,
   useLazyFetchUsersQuery,
@@ -83,7 +82,7 @@ export const UserManagementList: React.FC = () => {
   const navigate = useNavigate();
 
   // Query
-  const [fetchUser, { data, error, isFetching }] = useLazyFetchUsersQuery();
+  const [fetchUser, { data, isFetching }] = useLazyFetchUsersQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

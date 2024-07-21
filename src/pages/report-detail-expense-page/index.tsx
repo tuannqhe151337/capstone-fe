@@ -67,12 +67,12 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
 };
 
 export const ReportDetailExpensePage: React.FC = () => {
-  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
+  const [listSelectedIndex, _] = useState<Set<number>>(
     new Set()
   );
 
   // Query
-  const [fetchReport, { data, error, isFetching }] =
+  const [fetchReport, { data, isFetching }] =
     useLazyFetchReportExpensesQuery();
 
   const { reportId } = useParams<{ reportId: string }>();
@@ -83,7 +83,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   const [statusId, setStatusId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
-  const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
 
   useEffect(() => {
     if (listSelectedIndex.size !== 0) {

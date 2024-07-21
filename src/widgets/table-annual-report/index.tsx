@@ -1,5 +1,4 @@
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
@@ -39,7 +38,6 @@ interface Props {
 }
 
 export const TableAnnualReport: React.FC<Props> = ({
-  onCreatePlanClick,
   annual,
   isFetching,
   page,

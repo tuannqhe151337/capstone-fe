@@ -20,7 +20,7 @@ export const StartTermModal: React.FC<Props> = ({
   onClose,
   onStartTermSuccessfully,
 }) => {
-  const [startTerm, { isError, error, isLoading, isSuccess }] =
+  const [startTerm, { isError, isLoading, isSuccess }] =
     useStartTermMutation();
 
   useEffect(() => {

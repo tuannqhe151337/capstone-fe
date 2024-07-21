@@ -1,20 +1,11 @@
 import { Variants, motion } from "framer-motion";
-import { format } from "date-fns";
-import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaChartLine } from "react-icons/fa";
-import { BsStack } from "react-icons/bs";
-import { HiUser } from "react-icons/hi2";
-import { PiTreeStructureFill } from "react-icons/pi";
-import { FaClock } from "react-icons/fa6";
-import { RiProgress3Fill } from "react-icons/ri";
 import { AiOutlineFieldTime } from "react-icons/ai";
-import { BiSolidReport } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { useEffect } from "react";
 import { formatISODate } from "../../shared/utils/format-iso-date";
-import { Skeleton } from "../../shared/skeleton";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
 
 enum AnimationStage {
@@ -55,7 +46,7 @@ export const TermDetailInformationPage: React.FC = () => {
   // Get annual report expense
   const { termId } = useParams<{ termId: string }>();
 
-  const [fetchTermReportDetail, { data: term, isFetching, isSuccess }] =
+  const [fetchTermReportDetail, { data: term, isFetching }] =
     useLazyFetchTermDetailQuery();
 
   useEffect(() => {

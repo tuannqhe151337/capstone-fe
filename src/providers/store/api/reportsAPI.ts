@@ -102,11 +102,11 @@ export interface Position {
 }
 
 // DEV ONLY!!!
-const pause = (duration: number) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
-  });
-};
+// const pause = (duration: number) => {
+//   return new Promise((resolve) => {
+//     setTimeout(resolve, duration);
+//   });
+// };
 
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
 const staggeredBaseQuery = retry(

@@ -39,7 +39,7 @@ export const useFileUpload = ({
       if (event.dataTransfer.items) {
         // Use DataTransferItemList interface to access the file(s)
         await Promise.all(
-          [...event.dataTransfer.items].map(async (item, i) => {
+          [...event.dataTransfer.items].map(async (item) => {
             // If dropped items aren't files, reject them
             if (item.kind === "file") {
               const file = item.getAsFile();

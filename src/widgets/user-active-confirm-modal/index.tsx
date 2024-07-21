@@ -24,7 +24,7 @@ export const UserActiveConfirmModal: React.FC<Props> = ({
   onClose,
   onActivateSuccessfully,
 }) => {
-  const [activateUser, { isError, error, isLoading, isSuccess }] =
+  const [activateUser, { isError, isLoading, isSuccess }] =
     useActivateUserMutation();
 
   useEffect(() => {

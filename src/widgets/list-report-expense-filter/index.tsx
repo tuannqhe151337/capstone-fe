@@ -1,17 +1,12 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
-import { RiDeleteRow } from "react-icons/ri";
-import { Button } from "../../shared/button";
-import { FaDownload, FaListCheck } from "react-icons/fa6";
+import { FaDownload } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
-import { TERipple, TESelect } from "tw-elements-react";
+import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
-import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
-import { DepartmentFilter } from "../../entities/department-filter";
-import { StatusPlanFilter } from "../../entities/status-plan-filter";
 import { StatusTermFilter } from "../../entities/status-term-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 
@@ -70,21 +65,7 @@ const heightPlaceholderAnimation: Variants = {
   },
 };
 
-const ReviewExpenseWidth = 360;
-const widthPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.4,
-    },
-  },
-  visible: {
-    width: ReviewExpenseWidth,
-    transition: {
-      duration: 0.4,
-    },
-  },
-};
+
 
 interface Props {
   className?: string;

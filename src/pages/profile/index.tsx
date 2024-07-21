@@ -123,7 +123,7 @@ export const Profile: React.FC = () => {
   const { data, isLoading } = useMeQuery();
 
   // Select state
-  const [selectedOptionTerm, setSelectedOptionTerm] =
+  const [_, setSelectedOptionTerm] =
     useState<TermOption | null>(defaultOptionTerm);
 
   // Fetch initial data

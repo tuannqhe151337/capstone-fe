@@ -4,7 +4,6 @@ import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
 import {
-  Term,
   TermDetail,
   useDeleteTermMutation,
 } from "../../providers/store/api/termApi";
@@ -28,7 +27,7 @@ export const DeleteTermModal: React.FC<Props> = ({
   // Navigate
   const navigate = useNavigate();
 
-  const [deleteTerm, { isError, error, isLoading, isSuccess }] =
+  const [deleteTerm, { isError, isLoading, isSuccess }] =
     useDeleteTermMutation();
 
   useEffect(() => {

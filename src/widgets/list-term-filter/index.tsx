@@ -1,53 +1,5 @@
-import { Variants, motion } from "framer-motion";
-import { useState } from "react";
 import { SearchBox } from "../../shared/search-box";
 import { StatusTermFilter } from "../../entities/status-term-filter";
-
-enum AnimationStage {
-  HIDDEN = "hidden",
-  VISIBLE = "visible",
-}
-
-const staggerChildrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    transition: {
-      staggerChildren: 0.1,
-      staggerDirection: -1,
-      delayChildren: 0.2,
-      duration: 0.2,
-    },
-  },
-  [AnimationStage.VISIBLE]: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-      duration: 0.2,
-    },
-  },
-};
-
-const heightPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.5,
-    },
-  },
-  visible: {
-    height: 60,
-  },
-};
-
-const childrenAnimation: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 10,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-  },
-};
 
 interface Props {
   searchboxValue?: string;

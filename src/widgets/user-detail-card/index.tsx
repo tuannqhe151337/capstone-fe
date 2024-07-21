@@ -1,8 +1,6 @@
 import { motion, Variants } from "framer-motion";
 import { FaLocationDot, FaUser } from "react-icons/fa6";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
-import { HiOutlineMailOpen } from "react-icons/hi";
-import { LiaBirthdayCakeSolid } from "react-icons/lia";
 import { cn } from "../../shared/utils/cn";
 import React from "react";
 import { formatISODate } from "../../shared/utils/format-iso-date";

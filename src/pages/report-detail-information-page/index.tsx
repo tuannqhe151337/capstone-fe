@@ -2,16 +2,11 @@ import { Variants, motion } from "framer-motion";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaChartLine } from "react-icons/fa";
-import { BsStack } from "react-icons/bs";
 import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
-import { RiProgress3Fill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
-import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatISODate } from "../../shared/utils/format-iso-date";
-import clsx from "clsx";
-import { FaCheck } from "react-icons/fa6";
 import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
 
 enum AnimationStage {

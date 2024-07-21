@@ -1,7 +1,7 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Header } from "../../widgets/header";
 import { Sidebar } from "../../widgets/sidebar";
-import { useLazyMeQuery, useMeQuery } from "../../providers/store/api/authApi";
+import { useLazyMeQuery } from "../../providers/store/api/authApi";
 import { useEffect, useState } from "react";
 import { LogoutModal } from "../../widgets/logout-modal";
 
