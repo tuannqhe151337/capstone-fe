@@ -89,7 +89,7 @@ export const LanguageChanger: React.FC = () => {
   }
 
   return (
-    <div ref={ref} className="relative z-10 rounded-lg">
+    <div ref={ref} className="relative z-20 rounded-lg">
       <TERipple
         className="flex flex-row flex-wrap items-center px-3 group gap-2 mb-1 cursor-pointer"
         onClick={handleOnClick}

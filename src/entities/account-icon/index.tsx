@@ -38,7 +38,7 @@ export const AccountIcon: React.FC<Props> = ({ onLogoutClick }) => {
   });
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative z-30">
       <IconButton
         className="p-[6px]"
         onClick={() => {

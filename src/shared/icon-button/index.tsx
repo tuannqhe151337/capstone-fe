@@ -5,6 +5,7 @@ import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 
 interface Props {
   onClick?: React.MouseEventHandler<HTMLElement>;
+  containerClassName?: string;
   className?: string;
   tooltip?: string;
   showTooltip?: boolean;
@@ -14,13 +15,14 @@ interface Props {
 export const IconButton: React.FC<Props> = ({
   children,
   onClick,
+  containerClassName,
   className,
   tooltip,
 }) => {
   const isDarkMode = useDetectDarkmode();
 
   return (
-    <div className={`rounded-full bg-none overflow-hidden`}>
+    <div className={cn(`rounded-full bg-none overflow-hidden`, containerClassName)}>
       <TERipple
         rippleColor={isDarkMode ? "light" : "dark"}
         tabIndex={-1}
