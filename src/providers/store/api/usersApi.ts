@@ -32,6 +32,11 @@ export interface ActivateUserBody {
   id: string | number;
 }
 
+export interface ChangePasswordUserBody {
+  oldPassword: string;
+  newPassword: string;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -204,6 +209,15 @@ const usersApi = createApi({
         query: (userId) => `user/detail/${userId}`,
         providesTags: ["users"],
       }),
+
+      ChangePasswordUser: builder.mutation<any, ChangePasswordUserBody>({
+        query: (changePasswordUserBody) => ({
+          url: "user/change-password",
+          method: "POST",
+          body: changePasswordUserBody,
+        }),
+        invalidatesTags: ["users"],
+      }),
     };
   },
 });
@@ -217,5 +231,6 @@ export const {
   useUpdateUserMutation,
   useDeleteUserMutation,
   useActivateUserMutation,
+  useChangePasswordUserMutation,
 } = usersApi;
 export { usersApi };
