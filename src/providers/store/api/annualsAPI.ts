@@ -33,6 +33,11 @@ export interface AnnualReportExpense {
   costType: CostType;
 }
 
+export interface AnnualReportChart {
+  costType: CostType;
+  totalCost: number;
+}
+
 interface Department {
   id: number;
   name: string;
@@ -122,6 +127,12 @@ const annualAPI = createApi({
           `annual-report/detail?annualReportId=${annualReportId}`,
         providesTags: ["annual"],
       }),
+
+      fetchAnnualReportChart: builder.query<AnnualReportChart[], number>({
+        query: (annualReportId) =>
+          `annual-report/diagram?annualReportId=${annualReportId}`,
+        providesTags: ["annual"],
+      }),
     };
   },
 });
@@ -133,5 +144,7 @@ export const {
   useLazyFetchAnnualReportExpenseQuery,
   useFetchAnnualReportDetailQuery,
   useLazyFetchAnnualReportDetailQuery,
+  useFetchAnnualReportChartQuery,
+  useLazyFetchAnnualReportChartQuery,
 } = annualAPI;
 export { annualAPI };
