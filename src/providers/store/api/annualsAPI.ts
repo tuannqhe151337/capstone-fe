@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListAnnualReportParameters {
   query?: string | null;
@@ -31,6 +31,11 @@ export interface AnnualReportExpense {
   totalExpenses: number;
   biggestExpenditure: number;
   costType: CostType;
+}
+
+export interface AnnualReportChart {
+  costType: CostType;
+  totalCost: number;
 }
 
 interface Department {
@@ -122,6 +127,15 @@ const annualAPI = createApi({
           `annual-report/detail?annualReportId=${annualReportId}`,
         providesTags: ["annual"],
       }),
+
+      fetchAnnualReportChart: builder.query<
+        ListResponse<AnnualReportChart[]>,
+        number
+      >({
+        query: (annualReportId) =>
+          `annual-report/diagram?annualReportId=${annualReportId}`,
+        providesTags: ["annual"],
+      }),
     };
   },
 });
@@ -133,5 +147,7 @@ export const {
   useLazyFetchAnnualReportExpenseQuery,
   useFetchAnnualReportDetailQuery,
   useLazyFetchAnnualReportDetailQuery,
+  useFetchAnnualReportChartQuery,
+  useLazyFetchAnnualReportChartQuery,
 } = annualAPI;
 export { annualAPI };
