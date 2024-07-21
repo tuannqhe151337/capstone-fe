@@ -1,76 +1,13 @@
 import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
-import { HiDotsVertical } from "react-icons/hi";
-import { TablePlanExpenses } from "../../widgets/table-plan-expense";
-import { FaDownload, FaFilter, FaUpload } from "react-icons/fa6";
-import { SearchBox } from "../../shared/search-box";
-import { IconButton } from "../../shared/icon-button";
-import { RiDeleteRow } from "react-icons/ri";
-import { Button } from "../../shared/button";
-import { FaListCheck } from "react-icons/fa6";
-import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
-import { produce } from "immer";
 import { TableReportExpenses } from "../../widgets/table-report-expense";
-import { CostTypeFilter } from "../../entities/cost-type-filter";
-import { DepartmentFilter } from "../../entities/department-filter";
-
-const DUMMY_EXPENSES = [
-  {
-    id: 1,
-    expenseName: "Promotion event",
-    costType: "Direct cost",
-    unitPrice: 200000000,
-    amount: 3,
-    projectName: "IN22",
-    supplierName: "Internal",
-    pic: "AnhMN2",
-    notes: "N/A",
-  },
-  {
-    id: 2,
-    expenseName: "Social media",
-    costType: "Direct cost",
-    unitPrice: 15000000,
-    amount: 50,
-    projectName: "CAM1",
-    supplierName: "Internal",
-    pic: "LanNT12",
-    notes: "N/A",
-  },
-  {
-    id: 3,
-    expenseName: "Office supplies",
-    costType: "Administration cost",
-    unitPrice: 1000000,
-    amount: 100,
-    projectName: "REC1",
-    supplierName: "Hong Ha",
-    pic: "HongHD9",
-    notes: "N/A",
-  },
-  {
-    id: 4,
-    expenseName: "Internal training",
-    costType: "Operating cost",
-    unitPrice: 2000000,
-    amount: 6,
-    projectName: "RECT",
-    supplierName: "Fresher Academy",
-    pic: "LinhHM2",
-    notes: "N/A",
-  },
-  {
-    id: 5,
-    expenseName: "Team Building",
-    costType: "Administration cost",
-    unitPrice: 100000000,
-    amount: 6,
-    projectName: "TB1",
-    supplierName: "Saigon Tourist",
-    pic: "TuNM",
-    notes: "Approximate",
-  },
-];
+import { ListReportExpenseFilter } from "../../widgets/list-report-expense-filter";
+import {
+  ListReportExpenseParameters,
+  ReportExpense,
+  useLazyFetchReportExpensesQuery,
+} from "../../providers/store/api/reportsAPI";
+import { useParams } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -95,26 +32,58 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
-const childrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-    y: 5,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-    y: 0,
-  },
+interface Row extends ReportExpense {
+  isFetching?: boolean;
+}
+
+const generateEmptyReportExpenses = (total: number): Row[] => {
+  const reportExpenses: Row[] = [];
+
+  for (let i = 0; i < total; i++) {
+    reportExpenses.push({
+      expenseId: i,
+      name: "",
+      costType: {
+        costTypeId: 0,
+        name: "",
+        code: "",
+      },
+      unitPrice: 0,
+      amount: 0,
+      projectName: "",
+      supplierName: "",
+      pic: "",
+      notes: "",
+      status: {
+        statusId: 0,
+        code: "",
+        name: "",
+      },
+      isFetching: true,
+    });
+  }
+
+  return reportExpenses;
 };
 
 export const ReportDetailExpensePage: React.FC = () => {
-  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
+  const [listSelectedIndex, _] = useState<Set<number>>(
     new Set()
   );
 
-  const [costTypeId, setCostTypeId] = useState<number | null>();
-  const [departmentId, setDepartmentId] = useState<number | null>();
+  // Query
+  const [fetchReport, { data, isFetching }] =
+    useLazyFetchReportExpensesQuery();
 
-  const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const { reportId } = useParams<{ reportId: string }>();
+
+  // Searchbox state
+  const [searchboxValue, setSearchboxValue] = useState<string>("");
+  const [costTypeId, setCostTypeId] = useState<number | null>();
+  const [statusId, setStatusId] = useState<number | null>();
+  const [page, setPage] = useState<number>(1);
+
+  const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
 
   useEffect(() => {
     if (listSelectedIndex.size !== 0) {
@@ -124,66 +93,93 @@ export const ReportDetailExpensePage: React.FC = () => {
     }
   }, [listSelectedIndex]);
 
+  // Is data empty (derived from data)
+  const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
+
+  useEffect(() => {
+    setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
+  }, [data]);
+
+  // Fetch plan on change
+  useEffect(() => {
+    if (reportId) {
+      const timeoutId = setTimeout(() => {
+        const paramters: ListReportExpenseParameters = {
+          reportId: parseInt(reportId, 10),
+          query: searchboxValue,
+          page,
+          pageSize: 10,
+        };
+
+        if (costTypeId) {
+          paramters.costTypeId = costTypeId;
+        }
+
+        if (statusId) {
+          paramters.statusId = statusId;
+        }
+        fetchReport(paramters, true);
+      }, 200);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [searchboxValue, page, costTypeId, statusId]);
+
   return (
     <motion.div
       initial={AnimationStage.HIDDEN}
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
-      <div className="flex flex-row">
-        {/* Search box */}
-        <motion.div className="mt-4 w-[520px]" variants={childrenAnimation}>
-          <SearchBox />
-        </motion.div>
-
-        <motion.div className="flex justify-end mt-5 ml-4">
-          <motion.div variants={childrenAnimation} className="mr-4 ">
-            <CostTypeFilter
-              onChange={(option) => {
-                setCostTypeId(option?.value);
-              }}
-            />
-          </motion.div>
-
-          <motion.div variants={childrenAnimation} className="mr-4">
-            <DepartmentFilter
-              onChange={(option) => {
-                setDepartmentId(option?.value);
-              }}
-            />
-          </motion.div>
-        </motion.div>
-
-        <div className="mt-5">
-          <Button
-          // onClick={() => {
-          //   setShowUploadPlanModal(true);
-          // }}
-          >
-            <div className="flex flex-row flex-wrap gap-3 ">
-              <FaDownload className="mt-0.5" />
-              <p className="text-sm font-semibold">Dowload report</p>
-            </div>
-          </Button>
-        </div>
-      </div>
+      <ListReportExpenseFilter
+        className="pl-3 mt-7"
+        searchboxValue={searchboxValue}
+        onSearchboxChange={(value) => {
+          setSearchboxValue(value);
+        }}
+        onCostTypeIdChange={(costTypeId) => {
+          setCostTypeId(costTypeId);
+        }}
+        onStatusIdChange={(statusId) => {
+          setStatusId(statusId);
+        }}
+      />
 
       <TableReportExpenses
-        listSelectedIndex={listSelectedIndex}
-        expenses={DUMMY_EXPENSES}
-        onRowClick={(index) => {
-          setListSelectedIndex(
-            produce((state) => {
-              if (state.has(index)) {
-                state.delete(index);
+        expenses={isFetching ? generateEmptyReportExpenses(10) : data?.data}
+        isDataEmpty={isDataEmpty}
+        page={page}
+        totalPage={data?.pagination.numPages}
+        onNext={() =>
+          setPage((prevPage) => {
+            if (data?.pagination.numPages) {
+              if (prevPage + 1 > data?.pagination.numPages) {
+                return data?.pagination.numPages;
               } else {
-                state.add(index);
+                return prevPage + 1;
               }
-
-              return state;
-            })
-          );
+            } else {
+              return 1;
+            }
+          })
+        }
+        onPageChange={(page) => {
+          setPage(page || 1);
         }}
+        onPrevious={() =>
+          setPage((prevPage) => {
+            if (data?.pagination.numPages) {
+              if (prevPage === 1) {
+                return 1;
+              } else {
+                return prevPage - 1;
+              }
+            } else {
+              return 1;
+            }
+          })
+        }
+        isFetching={isFetching}
       />
     </motion.div>
   );

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import { FaUpload } from "react-icons/fa6";
 import { Variants, motion } from "framer-motion";
 import { Row, TableReportManagement } from "../../widgets/table-report";
 import {
@@ -75,7 +73,7 @@ export const ReportManagementList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchReport, { data, error, isFetching }] = useLazyFetchReportsQuery();
+  const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

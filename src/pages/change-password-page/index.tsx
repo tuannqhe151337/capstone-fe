@@ -1,22 +1,16 @@
-import { TERipple, TEInput } from "tw-elements-react";
+import {  TEInput } from "tw-elements-react";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { LanguageChanger } from "../../features/language-changer";
-import { ThemeChanger } from "../../features/theme-changer";
-import { DarkmodeChanger } from "../../features/darkmode-changer";
+import { Outlet, useNavigate } from "react-router-dom";
 import { BubbleBackground } from "../../entities/bubble-background";
 import {
   useChangePasswordUserMutation,
-  useLazyFetchUserDetailQuery,
 } from "../../providers/store/api/usersApi";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { z, ZodType } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData } from "../../providers/store/api/type";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { Button } from "../../shared/button";
 import { CgSpinner } from "react-icons/cg";
@@ -136,16 +130,15 @@ export const ChangePasswordPage: React.FC = () => {
   // Form
   const {
     register,
-    control,
     watch,
-    formState: { dirtyFields, isValid },
+    formState: {  isValid },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ChangePassWordSchema),
   });
 
   // Mutation
-  const [changePassword, { isLoading, isSuccess, isError, error }] =
+  const [changePassword, { isLoading, isSuccess, isError }] =
     useChangePasswordUserMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {

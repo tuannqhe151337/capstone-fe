@@ -85,7 +85,7 @@ export const PlanManagementList: React.FC = () => {
     useState<boolean>(false);
 
   // Query
-  const [fetchPlans, { data, error, isFetching }] = useLazyFetchPlansQuery();
+  const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

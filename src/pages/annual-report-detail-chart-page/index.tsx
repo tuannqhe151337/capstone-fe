@@ -21,7 +21,6 @@ export const AnnualReportDetailChartPage: React.FC = () => {
   }, [annualReportId]);
 
   useEffect(() => {
-    console.log("Annual report data:", annual);
   }, [annual]);
 
   if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;

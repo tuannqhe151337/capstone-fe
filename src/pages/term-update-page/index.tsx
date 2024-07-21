@@ -21,7 +21,6 @@ import { InputValidationMessage } from "../../shared/validation-input-message";
 import DurationRadioOption from "../../entities/duration-radio-option";
 import { RadioInput } from "../../shared/radio-input";
 import { CgSpinner } from "react-icons/cg";
-import { InputSkeleton } from "../user-edit-page/ui/input-skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -121,7 +120,7 @@ export const TermUpdate: React.FC = () => {
     register,
     control,
     watch,
-    formState: { dirtyFields, isValid, errors },
+    formState: { dirtyFields, isValid },
     handleSubmit,
     setValue,
   } = useForm<FormData>({

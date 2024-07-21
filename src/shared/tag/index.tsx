@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { cn } from "../utils/cn";
 
 type Background = "filled" | "unfilled";

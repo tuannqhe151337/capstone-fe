@@ -39,7 +39,7 @@ export const YearFilter: React.FC<Props> = ({
   // Convert data to option
   const loadOptions: LoadOptions<YearOption, any, any> = async (
     inputValue,
-    loadedOptions,
+    _,
     { page }
   ) => {
     // Filter options based on inputValue

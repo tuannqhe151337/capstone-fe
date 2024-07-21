@@ -143,7 +143,7 @@ export const UserEdit: React.FC = () => {
     register,
     control,
     watch,
-    formState: { dirtyFields, isValid, errors },
+    formState: { dirtyFields, isValid },
     handleSubmit,
     setValue,
   } = useForm<FormData>({

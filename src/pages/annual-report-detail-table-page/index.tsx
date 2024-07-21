@@ -4,7 +4,6 @@ import clsx from "clsx";
 import { Pagination } from "../../shared/pagination";
 import { useParams } from "react-router-dom";
 import {
-  AnnualReportExpense,
   ListAnnualReportExpenseParameters,
   useLazyFetchAnnualReportExpenseQuery,
 } from "../../providers/store/api/annualsAPI";
@@ -13,33 +12,33 @@ import { DepartmentFilter } from "../../entities/department-filter";
 import { cn } from "../../shared/utils/cn";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 
-interface Row extends AnnualReportExpense {
-  isFetching?: boolean;
-}
+// interface Row extends AnnualReportExpense {
+//   isFetching?: boolean;
+// }
 
-const generateEmptyAnnualExpenses = (total: number): Row[] => {
-  const annualExpenses: Row[] = [];
+// const generateEmptyAnnualExpenses = (total: number): Row[] => {
+//   const annualExpenses: Row[] = [];
 
-  for (let i = 0; i < total; i++) {
-    annualExpenses.push({
-      expenseId: 0,
-      biggestExpenditure: 0,
-      costType: {
-        costTypeId: 0,
-        name: "",
-        code: "",
-      },
-      totalExpenses: 0,
-      department: {
-        id: 0,
-        name: "",
-      },
-      isFetching: true,
-    });
-  }
+//   for (let i = 0; i < total; i++) {
+//     annualExpenses.push({
+//       expenseId: 0,
+//       biggestExpenditure: 0,
+//       costType: {
+//         costTypeId: 0,
+//         name: "",
+//         code: "",
+//       },
+//       totalExpenses: 0,
+//       department: {
+//         id: 0,
+//         name: "",
+//       },
+//       isFetching: true,
+//     });
+//   }
 
-  return annualExpenses;
-};
+//   return annualExpenses;
+// };
 
 enum AnimationStage {
   HIDDEN = "hidden",

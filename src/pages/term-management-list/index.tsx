@@ -70,16 +70,13 @@ const childrenAnimation: Variants = {
 export const TermManagementList: React.FC = () => {
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
-  const handleClick = () => {
-    setShowCreateModal(true);
-  };
 
   const handleCreateTermModal = () => {
     setShowCreateModal(false);
   };
 
   // Query
-  const [getListTerm, { data, error, isFetching }] = useLazyGetListTermQuery();
+  const [getListTerm, { data, isFetching }] = useLazyGetListTermQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
