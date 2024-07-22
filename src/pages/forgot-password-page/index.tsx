@@ -6,19 +6,20 @@ import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
-import { Button } from "../../shared/button";
-import { CgSpinner } from "react-icons/cg";
 import { z, ZodType } from "zod";
+import { useDispatch } from "react-redux";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useForgotPasswordMutation } from "../../providers/store/api/usersApi";
 import { useEffect, useState } from "react";
+import { setEmailToken } from "../../providers/store/slices/forgotPasswordSlice";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { LogoRedirect } from "../../widgets/logo-redirect";
 import { ErrorData } from "../../providers/store/api/type";
 import { FaCircleExclamation } from "react-icons/fa6";
-import { useDispatch } from "react-redux";
-import { setEmailToken } from "../../providers/store/slices/forgotPasswordSlice";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { Button } from "../../shared/button";
+import { CgSpinner } from "react-icons/cg";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -145,12 +146,7 @@ export const ForgotPasswordPage: React.FC = () => {
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">
-        <div className=" text-5xl text-primary-500 ml-16 p-6">
-          <span className="text-4xl font-black">F</span>
-          <span className="text-3xl font-extrabold">in</span>
-          <span className="text-4xl font-black">P</span>
-          <span className="text-3xl font-extrabold">lanning</span>
-        </div>
+        <LogoRedirect />
 
         <div className="ml-auto flex flex-row flex-wrap items-center pr-10 z-20">
           <div className="ml-1.5">

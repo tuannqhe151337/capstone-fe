@@ -241,18 +241,21 @@ export const TermDetailRootPage: React.FC<Props> = ({
                         exit={AnimationStage.HIDDEN}
                         variants={animation}
                       >
-                        <TERipple
-                          rippleColor="light"
-                          className="w-[160px]"
-                          onClick={() => {}}
-                        >
-                          <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
-                            <FaPlay className="mb-0.5 text-primary-400 dark:text-primary-600 mr-3 mt-[1.25px] dark:opacity-80" />
-                            <p className="mt-0.5 text-primary-400 dark:text-primary-600 dark:opacity-80">
-                              Start term
-                            </p>
-                          </div>
-                        </TERipple>
+                        {term && term.status.code === "NEW" && (
+                          <TERipple
+                            rippleColor="light"
+                            className="w-[160px]"
+                            onClick={() => {}}
+                          >
+                            <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
+                              <FaPlay className="mb-0.5 text-primary-400 dark:text-primary-600 mr-3 mt-[1.25px] dark:opacity-80" />
+                              <p className="mt-0.5 text-primary-400 dark:text-primary-600 dark:opacity-80">
+                                Start term
+                              </p>
+                            </div>
+                          </TERipple>
+                        )}
+
                         <TERipple
                           rippleColor="light"
                           className="w-[160px]"
