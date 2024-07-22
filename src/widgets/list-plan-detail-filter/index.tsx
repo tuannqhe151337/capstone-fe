@@ -7,11 +7,11 @@ import { FaListCheck } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
-import { TERipple, TESelect } from "tw-elements-react";
+import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
-import { StatusTermFilter } from "../../entities/status-term-filter";
+import { StatusPlanFilter } from "../../entities/status-plan-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -255,7 +255,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                 </motion.div>
 
                 <motion.div variants={childrenAnimation} className="mr-4">
-                  <StatusTermFilter
+                  <StatusPlanFilter
                     onChange={(option) => {
                       onStatusIdChange && onStatusIdChange(option?.value);
                     }}
