@@ -10,6 +10,15 @@ export interface ListPlanParameters {
   pageSize: number;
 }
 
+export interface ListPlanExpenseParameters {
+  query?: string | null;
+  planId: number | null;
+  statusId?: number | null;
+  costTypeId?: number | null;
+  page: number;
+  pageSize: number;
+}
+
 export interface PlanPreview {
   planId: number | string;
   name: string;
@@ -39,6 +48,25 @@ export interface PlanDetail {
   version: number;
 }
 
+export interface PlanExpense {
+  expenseId: number | string;
+  name: string;
+  costType: CostType;
+  unitPrice: number;
+  amount: number;
+  projectName: string;
+  supplierName: string;
+  pic: string;
+  notes: string;
+  status: StatusExpense;
+}
+
+export interface CostType {
+  costTypeId: number;
+  name: string;
+  code: string;
+}
+
 export interface PlanDeleteParameters {
   planId: string | number;
 }
@@ -66,6 +94,12 @@ export interface User {
   deactivate: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface StatusExpense {
+  statusId: number;
+  code: string;
+  name: string;
 }
 
 export interface Status {
@@ -214,6 +248,29 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plans"],
       }),
+
+      fetchPlanExpenses: builder.query<
+        PaginationResponse<PlanExpense[]>,
+        ListPlanExpenseParameters
+      >({
+        query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
+          let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
+
+          if (query && query !== "") {
+            endpoint += `&query=${query}`;
+          }
+
+          if (costTypeId) {
+            endpoint += `&costTypeId=${costTypeId}`;
+          }
+
+          if (statusId) {
+            endpoint += `&statusId=${statusId}`;
+          }
+
+          return endpoint;
+        },
+      }),
     };
   },
 });
@@ -225,5 +282,7 @@ export const {
   useDeletePlanMutation,
   useLazyGetPlanVersionQuery,
   useCreatePlanMutation,
+  useFetchPlanExpensesQuery,
+  useLazyFetchPlanExpensesQuery,
 } = plansApi;
 export { plansApi };

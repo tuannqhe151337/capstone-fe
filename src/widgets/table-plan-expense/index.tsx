@@ -4,6 +4,8 @@ import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import { Tag } from "../../shared/tag";
 import clsx from "clsx";
+import { PlanExpense } from "../../providers/store/api/plansApi";
+import { cn } from "../../shared/utils/cn";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -28,16 +30,16 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
-const childrenAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    opacity: 0,
-    y: 10,
-  },
-  [AnimationStage.VISIBLE]: {
-    opacity: 1,
-    y: 0,
-  },
-};
+// const childrenAnimation: Variants = {
+//   [AnimationStage.HIDDEN]: {
+//     opacity: 0,
+//     y: 10,
+//   },
+//   [AnimationStage.VISIBLE]: {
+//     opacity: 1,
+//     y: 0,
+//   },
+// };
 
 const rowAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
@@ -47,6 +49,15 @@ const rowAnimation: Variants = {
   [AnimationStage.VISIBLE]: {
     opacity: 1,
     y: 0,
+  },
+};
+
+const animation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
   },
 };
 
@@ -65,13 +76,27 @@ export interface Expense {
 interface Props {
   listSelectedIndex?: Set<number>;
   onRowClick?: (index: number) => any;
-  expenses?: Expense[];
+  expenses?: PlanExpense[];
+  isFetching?: boolean;
+  page?: number | undefined | null;
+  totalPage?: number;
+  isDataEmpty?: boolean;
+  onPageChange?: (page: number | undefined | null) => any;
+  onPrevious?: () => any;
+  onNext?: () => any;
 }
 
 export const TablePlanExpenses: React.FC<Props> = ({
   listSelectedIndex,
   onRowClick,
   expenses,
+  isFetching,
+  page,
+  totalPage,
+  isDataEmpty,
+  onPageChange,
+  onPrevious,
+  onNext,
 }) => {
   return (
     <div>
@@ -127,7 +152,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
           {expenses &&
             expenses.map((expense, index) => (
               <motion.tr
-                key={expense.id}
+                key={expense.expenseId}
                 className={clsx({
                   "cursor-pointer duration-200": true,
                   "bg-primary-100 dark:bg-primary-950":
@@ -151,10 +176,26 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   />
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
-                  {expense.expenseName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.name}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
-                  {expense.costType}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.costType.name}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   <NumericFormat
@@ -165,7 +206,15 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   />
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.amount}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.amount}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   <NumericFormat
@@ -175,16 +224,48 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   />
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.projectName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.projectName}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
-                  {expense.supplierName}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.supplierName}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
-                  {expense.pic}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.pic}</>
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
-                  {expense.notes}
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <> {expense.notes}</>
+                  )}
                 </td>
                 <td className="px-2 py-3">
                   <Tag background="filled" variant="reviewed">
@@ -196,14 +277,28 @@ export const TablePlanExpenses: React.FC<Props> = ({
         </motion.tbody>
       </table>
 
-      <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        variants={childrenAnimation}
-        transition={{ delay: 0.4 }}
-      >
-        <Pagination className="mt-3" page={1} totalPage={20} />
-      </motion.div>
+      {isDataEmpty && (
+        <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
+          No data found.
+        </div>
+      )}
+
+      {!isDataEmpty && (
+        <motion.div
+          initial={AnimationStage.HIDDEN}
+          animate={AnimationStage.VISIBLE}
+          variants={animation}
+        >
+          <Pagination
+            className="mt-6"
+            page={page}
+            totalPage={totalPage || 1}
+            onNext={onNext}
+            onPageChange={onPageChange}
+            onPrevious={onPrevious}
+          />
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -7,9 +7,11 @@ import { FaListCheck } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
-import { TERipple, TESelect } from "tw-elements-react";
+import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
+import { CostTypeFilter } from "../../entities/cost-type-filter";
+import { StatusPlanFilter } from "../../entities/status-plan-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -85,11 +87,19 @@ const widthPlaceholderAnimation: Variants = {
 interface Props {
   className?: string;
   showReviewExpense?: boolean;
+  searchboxValue?: string;
+  onSearchboxChange?: (value: string) => any;
+  onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
+  onStatusIdChange?: (statusId: number | null | undefined) => any;
 }
 
 export const ListPlanDetailFilter: React.FC<Props> = ({
   className,
   showReviewExpense,
+  searchboxValue,
+  onSearchboxChange,
+  onCostTypeIdChange,
+  onStatusIdChange,
 }) => {
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -114,7 +124,12 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
       >
         {/* Search box */}
         <motion.div className="flex-1" variants={childrenAnimation}>
-          <SearchBox />
+          <SearchBox
+            value={searchboxValue}
+            onChange={(e) =>
+              onSearchboxChange && onSearchboxChange(e.currentTarget.value)
+            }
+          />
         </motion.div>
 
         {/* Review expenses section */}
@@ -232,11 +247,19 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
             >
               <motion.div className="flex justify-end mt-4">
                 <motion.div variants={childrenAnimation} className="mr-4 ">
-                  <TESelect data={[]} label="Cost type" />
+                  <CostTypeFilter
+                    onChange={(option) => {
+                      onCostTypeIdChange && onCostTypeIdChange(option?.value);
+                    }}
+                  />
                 </motion.div>
 
                 <motion.div variants={childrenAnimation} className="mr-4">
-                  <TESelect data={[]} label="Status" />
+                  <StatusPlanFilter
+                    onChange={(option) => {
+                      onStatusIdChange && onStatusIdChange(option?.value);
+                    }}
+                  />
                 </motion.div>
               </motion.div>
             </motion.div>
