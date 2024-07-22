@@ -41,8 +41,14 @@ export interface ForgotPasswordBody {
   email: string;
 }
 
-export interface OTPBody {
+export interface OTPBodyAndToken {
   otp: string;
+  emailToken: string;
+}
+
+export interface ResetPasswordBodyAndToken {
+  newPassword: string;
+  otpToken: string;
 }
 
 export interface ListUserParameters {
@@ -237,11 +243,25 @@ const usersApi = createApi({
         }),
       }),
 
-      otp: builder.mutation<TokenMessage, OTPBody>({
-        query: (OTPBody) => ({
+      otp: builder.mutation<TokenMessage, OTPBodyAndToken>({
+        query: ({ otp, emailToken }) => ({
           url: "user/auth/otp",
           method: "POST",
-          body: OTPBody,
+          body: { otp },
+          headers: {
+            Authorization: emailToken,
+          },
+        }),
+      }),
+
+      resetPassword: builder.mutation<any, ResetPasswordBodyAndToken>({
+        query: ({ newPassword, otpToken }) => ({
+          url: "user/auth/reset-password",
+          method: "POST",
+          body: { newPassword },
+          headers: {
+            Authorization: otpToken,
+          },
         }),
       }),
     };
@@ -260,5 +280,6 @@ export const {
   useChangePasswordUserMutation,
   useForgotPasswordMutation,
   useOtpMutation,
+  useResetPasswordMutation,
 } = usersApi;
 export { usersApi };

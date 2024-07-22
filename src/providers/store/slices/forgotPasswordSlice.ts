@@ -3,8 +3,8 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "..";
 
 export interface TokenState {
-  emailToken: string;
-  otpToken: string;
+  emailToken?: string;
+  otpToken?: string;
 }
 
 const initialState: TokenState = {
@@ -22,11 +22,16 @@ export const tokenSlice = createSlice({
     setOtpToken: (state, action: PayloadAction<string>) => {
       state.otpToken = action.payload;
     },
+    deleteEmailTokenAndOtpToken: (state) => {
+      state.emailToken = undefined;
+      state.otpToken = undefined;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setEmailToken, setOtpToken } = tokenSlice.actions;
+export const { setEmailToken, setOtpToken, deleteEmailTokenAndOtpToken } =
+  tokenSlice.actions;
 
 export const selectEmailToken = (state: RootState) =>
   state.forgotPassword.emailToken;

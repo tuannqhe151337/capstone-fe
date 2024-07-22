@@ -1,5 +1,4 @@
-import { TERipple } from "tw-elements-react";
-import { Variants, motion } from "framer-motion";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
@@ -29,7 +28,7 @@ import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-char
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { CgSpinner } from "react-icons/cg";
 import { Button } from "../../shared/button";
-import { toast } from "react-toastify";
+import { FaCircleExclamation } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -80,35 +79,21 @@ const imageAnimation: Variants = {
   },
 };
 
+const heightPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.5,
+    },
+  },
+  visible: {
+    height: 60,
+  },
+};
+
 type FormData = {
   otp: string;
 };
-
-// const FormSchema = z.object({
-//   pin: z.string().min(6, {
-//     message: "Your one-time password must be 6 characters.",
-//   }),
-// });
-
-// export function InputOTPForm() {
-//   const form = useForm<z.infer<typeof FormSchema>>({
-//     resolver: zodResolver(FormSchema),
-//     defaultValues: {
-//       pin: "",
-//     },
-//   });
-// }
-
-// function onSubmit(data: z.infer<typeof FormSchema>) {
-//   toast({
-//     title: "You submitted the following values:",
-//     description: (
-//       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-//         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-//       </pre>
-//     ),
-//   })
-// }
 
 const OtpSchema = z.string().length(6, "OTP must be 6 characters long");
 
@@ -126,38 +111,32 @@ export const OtpPage: React.FC = () => {
 
   const emailToken = useSelector(selectEmailToken);
 
-  console.log(emailToken);
-
   // Form
   const {
-    register,
+    // register,
     watch,
     formState: { isValid },
     handleSubmit,
     control,
-    setValue,
+    // setValue,
   } = useForm<FormData>({
     resolver: zodResolver(OTPSchema),
   });
 
   // OTP values
-  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
-
-  const handleOtpChange = (index: number, value: string) => {
-    const newOtpValues = [...otpValues];
-    newOtpValues[index] = value;
-    setOtpValues(newOtpValues);
-    setValue("otp", newOtpValues.join(""), { shouldValidate: true });
-  };
+  // const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
 
   // Mutation
   const [otp, { isLoading, data, isSuccess, isError, error }] =
     useOtpMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    otp({
-      otp: data.otp,
-    });
+    if (emailToken) {
+      otp({
+        otp: data.otp,
+        emailToken,
+      });
+    }
   };
 
   useEffect(() => {
@@ -232,6 +211,29 @@ export const OtpPage: React.FC = () => {
               {t("otpConfirm")}
             </motion.div>
 
+            <div className="relative w-full">
+              <AnimatePresence>
+                {!isLoading && isError && (
+                  <div className="absolute w-full">
+                    <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+                      <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+                      <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+                        {errorMessage}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </AnimatePresence>
+
+              <motion.div
+                initial={AnimationStage.HIDDEN}
+                animate={
+                  isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+                }
+                variants={heightPlaceholderAnimation}
+              />
+            </div>
+
             <motion.div variants={childrenAnimation}>
               <Controller
                 name="otp"
@@ -252,19 +254,6 @@ export const OtpPage: React.FC = () => {
                   </InputOTP>
                 )}
               />
-              {/* <InputOTP maxLength={6}>
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                </InputOTPGroup>
-                <InputOTPSeparator />
-                <InputOTPGroup>
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP> */}
             </motion.div>
             <InputValidationMessage
               show={true}
