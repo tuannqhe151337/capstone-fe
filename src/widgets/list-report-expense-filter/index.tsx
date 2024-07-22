@@ -70,7 +70,6 @@ const heightPlaceholderAnimation: Variants = {
 interface Props {
   className?: string;
   searchboxValue?: string;
-
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
