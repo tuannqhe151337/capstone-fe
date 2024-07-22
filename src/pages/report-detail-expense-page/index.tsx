@@ -100,7 +100,7 @@ export const ReportDetailExpensePage: React.FC = () => {
     setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
   }, [data]);
 
-  // Fetch plan on change
+  // Fetch report expense on change
   useEffect(() => {
     if (reportId) {
       const timeoutId = setTimeout(() => {
