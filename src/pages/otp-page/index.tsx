@@ -13,6 +13,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "../../widgets/otp-input";
+import { LogoRedirect } from "../../widgets/logo-redirect";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,12 +70,7 @@ export const OtpPage: React.FC = () => {
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">
-        <div className="text-5xl text-primary-500 ml-16 p-6">
-          <span className="text-4xl font-black">F</span>
-          <span className="text-3xl font-extrabold">in</span>
-          <span className="text-4xl font-black">P</span>
-          <span className="text-3xl font-extrabold">lanning</span>
-        </div>
+        <LogoRedirect />
 
         <div className="ml-auto flex flex-row flex-wrap items-center pr-10 z-20">
           <div className="ml-1.5">
