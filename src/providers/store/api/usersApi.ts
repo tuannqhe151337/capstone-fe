@@ -37,6 +37,14 @@ export interface ChangePasswordUserBody {
   newPassword: string;
 }
 
+export interface ForgotPasswordBody {
+  email: string;
+}
+
+export interface OTPBody {
+  otp: string;
+}
+
 export interface ListUserParameters {
   query?: string | null;
   departmentId?: number | null;
@@ -88,6 +96,10 @@ interface Role {
 interface Position {
   id: number;
   name: string;
+}
+
+interface TokenMessage {
+  token: string;
 }
 
 // DEV ONLY!!!
@@ -210,13 +222,27 @@ const usersApi = createApi({
         providesTags: ["users"],
       }),
 
-      ChangePasswordUser: builder.mutation<any, ChangePasswordUserBody>({
+      changePasswordUser: builder.mutation<any, ChangePasswordUserBody>({
         query: (changePasswordUserBody) => ({
           url: "user/change-password",
           method: "POST",
           body: changePasswordUserBody,
         }),
-        invalidatesTags: ["users"],
+      }),
+      forgotPassword: builder.mutation<TokenMessage, ForgotPasswordBody>({
+        query: (forgotPasswordBody) => ({
+          url: "user/auth/forgot-password",
+          method: "POST",
+          body: forgotPasswordBody,
+        }),
+      }),
+
+      otp: builder.mutation<TokenMessage, OTPBody>({
+        query: (OTPBody) => ({
+          url: "user/auth/otp",
+          method: "POST",
+          body: OTPBody,
+        }),
       }),
     };
   },
@@ -232,5 +258,7 @@ export const {
   useDeleteUserMutation,
   useActivateUserMutation,
   useChangePasswordUserMutation,
+  useForgotPasswordMutation,
+  useOtpMutation,
 } = usersApi;
 export { usersApi };

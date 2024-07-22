@@ -1,7 +1,7 @@
 import { TERipple } from "tw-elements-react";
 import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
@@ -13,6 +13,23 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from "../../widgets/otp-input";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectEmailToken,
+  setOtpToken,
+} from "../../providers/store/slices/forgotPasswordSlice";
+import { z, ZodType } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { useOtpMutation } from "../../providers/store/api/usersApi";
+import { useEffect, useState } from "react";
+import { ErrorData } from "../../providers/store/api/type";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { CgSpinner } from "react-icons/cg";
+import { Button } from "../../shared/button";
+import { toast } from "react-toastify";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -63,8 +80,108 @@ const imageAnimation: Variants = {
   },
 };
 
+type FormData = {
+  otp: string;
+};
+
+// const FormSchema = z.object({
+//   pin: z.string().min(6, {
+//     message: "Your one-time password must be 6 characters.",
+//   }),
+// });
+
+// export function InputOTPForm() {
+//   const form = useForm<z.infer<typeof FormSchema>>({
+//     resolver: zodResolver(FormSchema),
+//     defaultValues: {
+//       pin: "",
+//     },
+//   });
+// }
+
+// function onSubmit(data: z.infer<typeof FormSchema>) {
+//   toast({
+//     title: "You submitted the following values:",
+//     description: (
+//       <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+//         <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+//       </pre>
+//     ),
+//   })
+// }
+
+const OtpSchema = z.string().length(6, "OTP must be 6 characters long");
+
+export const OTPSchema: ZodType<FormData> = z.object({
+  otp: OtpSchema,
+});
+
 export const OtpPage: React.FC = () => {
+  const dispatch = useDispatch();
+
   const { t } = useTranslation(["otp"]);
+
+  // Navigate
+  const navigate = useNavigate();
+
+  const emailToken = useSelector(selectEmailToken);
+
+  console.log(emailToken);
+
+  // Form
+  const {
+    register,
+    watch,
+    formState: { isValid },
+    handleSubmit,
+    control,
+    setValue,
+  } = useForm<FormData>({
+    resolver: zodResolver(OTPSchema),
+  });
+
+  // OTP values
+  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+
+  const handleOtpChange = (index: number, value: string) => {
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
+    setValue("otp", newOtpValues.join(""), { shouldValidate: true });
+  };
+
+  // Mutation
+  const [otp, { isLoading, data, isSuccess, isError, error }] =
+    useOtpMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    otp({
+      otp: data.otp,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      // toast("Change password successfully!", { type: "success" });
+      dispatch(setOtpToken(data.token));
+      navigate("/auth/reset-password");
+    }
+  }, [isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
 
   return (
     <div className="flex flex-row flex-wrap w-full">
@@ -116,7 +233,26 @@ export const OtpPage: React.FC = () => {
             </motion.div>
 
             <motion.div variants={childrenAnimation}>
-              <InputOTP maxLength={6}>
+              <Controller
+                name="otp"
+                control={control}
+                render={({ field }) => (
+                  <InputOTP maxLength={6} {...field}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                )}
+              />
+              {/* <InputOTP maxLength={6}>
                 <InputOTPGroup>
                   <InputOTPSlot index={0} />
                   <InputOTPSlot index={1} />
@@ -128,18 +264,28 @@ export const OtpPage: React.FC = () => {
                   <InputOTPSlot index={4} />
                   <InputOTPSlot index={5} />
                 </InputOTPGroup>
-              </InputOTP>
+              </InputOTP> */}
             </motion.div>
+            <InputValidationMessage
+              show={true}
+              validateFn={() => OtpSchema.parse(watch("otp"))}
+              className="mt-2 pl-0"
+            />
 
             <motion.div className="mt-5 w-full" variants={childrenAnimation}>
-              <TERipple className="w-full">
-                <button
-                  type="button"
-                  className="!p-3 w-full inline-block rounded bg-primary-500 px-6 pb-2 pt-2.5 text-xs font-semibold uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                >
-                  {t("confirm")}
-                </button>
-              </TERipple>
+              <Button
+                disabled={!isValid}
+                containerClassName="w-full"
+                className="font-bold"
+                onClick={() => {
+                  handleSubmit(onSubmit)();
+                }}
+              >
+                {!isLoading && <>{t("confirm")}</>}
+                {isLoading && (
+                  <CgSpinner className="m-auto text-lg animate-spin" />
+                )}
+              </Button>
             </motion.div>
 
             <motion.div

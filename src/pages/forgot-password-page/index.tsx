@@ -1,11 +1,24 @@
-import { TERipple, TEInput } from "tw-elements-react";
-import { Variants, motion } from "framer-motion";
+import { TEInput } from "tw-elements-react";
+import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
+import { Button } from "../../shared/button";
+import { CgSpinner } from "react-icons/cg";
+import { z, ZodType } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { useForgotPasswordMutation } from "../../providers/store/api/usersApi";
+import { useEffect, useState } from "react";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { ErrorData } from "../../providers/store/api/type";
+import { FaCircleExclamation } from "react-icons/fa6";
+import { useDispatch } from "react-redux";
+import { setEmailToken } from "../../providers/store/slices/forgotPasswordSlice";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -56,8 +69,78 @@ const imageAnimation: Variants = {
   },
 };
 
+const heightPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.5,
+    },
+  },
+  visible: {
+    height: 60,
+  },
+};
+
+type FormData = {
+  email: string;
+};
+
+const EmailSchema = z.string().min(1, "Email cannot be empty");
+
+export const ForgotPasswordSchema: ZodType<FormData> = z.object({
+  email: EmailSchema,
+});
+
 export const ForgotPasswordPage: React.FC = () => {
+  const dispatch = useDispatch();
+
   const { t } = useTranslation(["forgot-password"]);
+
+  // Navigate
+  const navigate = useNavigate();
+
+  // Form
+  const {
+    register,
+    watch,
+    formState: { isValid },
+    handleSubmit,
+  } = useForm<FormData>({
+    resolver: zodResolver(ForgotPasswordSchema),
+  });
+
+  // Mutation
+  const [forgotPassword, { isLoading, data, isSuccess, isError, error }] =
+    useForgotPasswordMutation();
+
+  const onSubmit: SubmitHandler<FormData> = (data) => {
+    forgotPassword({
+      email: data.email,
+    });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      // toast("Change password successfully!", { type: "success" });
+      dispatch(setEmailToken(data.token));
+      navigate("/auth/otp");
+    }
+  }, [isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
 
   return (
     <div className="flex flex-row flex-wrap w-full">
@@ -109,24 +192,59 @@ export const ForgotPasswordPage: React.FC = () => {
                 {t("forgotPassword")}
               </motion.div>
 
+              <div className="relative w-full">
+                <AnimatePresence>
+                  {!isLoading && isError && (
+                    <div className="absolute w-full">
+                      <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+                        <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+                        <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+                          {errorMessage}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </AnimatePresence>
+
+                <motion.div
+                  initial={AnimationStage.HIDDEN}
+                  animate={
+                    isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+                  }
+                  variants={heightPlaceholderAnimation}
+                />
+              </div>
+
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="email"
                   label={t("email")}
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
+                  autoFocus
+                  {...register("email", { required: true })}
                 ></TEInput>
+                <InputValidationMessage
+                  show={true}
+                  validateFn={() => EmailSchema.parse(watch("email"))}
+                  className="mt-2 pl-0"
+                />
               </motion.div>
 
               <motion.div className="mt-5" variants={childrenAnimation}>
-                <TERipple className="w-full">
-                  <button
-                    type="button"
-                    className="!p-3 w-full inline-block rounded bg-primary-500 px-6 pb-2 pt-2.5 text-xs font-semibold uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                  >
-                    {t("sendOTPCode")}
-                  </button>
-                </TERipple>
+                <Button
+                  disabled={!isValid}
+                  containerClassName="w-full"
+                  className="font-bold"
+                  onClick={() => {
+                    handleSubmit(onSubmit)();
+                  }}
+                >
+                  {!isLoading && <>{t("sendOTPCode")}</>}
+                  {isLoading && (
+                    <CgSpinner className="m-auto text-lg animate-spin" />
+                  )}
+                </Button>
               </motion.div>
             </motion.div>
           </div>
