@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { Button } from "../../shared/button";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { cn } from "../utils/cn";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   className?: string;
@@ -20,6 +21,8 @@ export const Pagination: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["pagination"]);
   return (
     <div
       className={cn(
@@ -36,11 +39,11 @@ export const Pagination: React.FC<Props> = ({
         }}
       >
         <FaAngleLeft className="opacity-70" />
-        <span className="ml-2 mr-1">Previous page</span>
+        <span className="ml-2 mr-1">{t("Previous page")}</span>
       </Button>
 
       <div className="flex flex-row flex-wrap items-center text-sm font-semibold text-neutral-400">
-        <span className="mr-1.5">Page</span>
+        <span className="mr-1.5">{t("Page")}</span>
         <input
           value={page || ""}
           className={clsx({
@@ -100,7 +103,7 @@ export const Pagination: React.FC<Props> = ({
           onNext && onNext();
         }}
       >
-        <span className="mr-3 ml-2 text-sm font-bold">Next page</span>
+        <span className="mr-3 ml-2 text-sm font-bold">{t("Next page")}</span>
         <FaAngleRight className="opacity-50" />
       </Button>
     </div>
