@@ -11,6 +11,7 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { DepartmentFilter } from "../../entities/department-filter";
 import { cn } from "../../shared/utils/cn";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
+import { useTranslation } from "react-i18next";
 
 // interface Row extends AnnualReportExpense {
 //   isFetching?: boolean;
@@ -86,6 +87,9 @@ const animation: Variants = {
 interface Props {}
 
 export const AnnualReportDetailTablePage: React.FC<Props> = () => {
+  // i18n
+  const { t } = useTranslation(["annual-report-detail"]);
+
   // Get annual report expense
   const { annualReportId } = useParams<{ annualReportId: string }>();
 
@@ -132,7 +136,7 @@ export const AnnualReportDetailTablePage: React.FC<Props> = () => {
     );
   }, [annual]);
 
-  if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
+  if (!isFetching && isSuccess && !annual) return <p>{t("No annual found")}</p>;
 
   return (
     <motion.div
@@ -169,25 +173,25 @@ export const AnnualReportDetailTablePage: React.FC<Props> = () => {
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Department
+              {t("Department")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Total expenses
+              {t("Total expenses")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Biggest expenditure
+              {t("Biggest expenditure")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Cost type
+              {t("Cost type")}
             </th>
           </tr>
         </thead>

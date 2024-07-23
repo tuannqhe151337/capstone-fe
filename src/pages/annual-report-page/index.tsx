@@ -10,6 +10,7 @@ import {
   useLazyFetchAnnualQuery,
 } from "../../providers/store/api/annualsAPI";
 import _ from "lodash";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyAnnual = (total: number): Row[] => {
   const annual: Row[] = [];
@@ -67,6 +68,9 @@ export const AnnualReportList: React.FC = () => {
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
+  // i18n
+  const { t } = useTranslation(["sidebar"]);
+
   // Query
   const [fetchAnnual, { data, isFetching }] = useLazyFetchAnnualQuery();
 
@@ -108,7 +112,7 @@ export const AnnualReportList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            Annual report
+            {t("Annual Report")}
           </p>
         </div>
       </BubbleBanner>

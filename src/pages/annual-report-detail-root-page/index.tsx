@@ -18,6 +18,7 @@ import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/a
 import { useEffect, useState } from "react";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { OverviewCard } from "../../entities/overview-card";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -56,6 +57,9 @@ const childrenAnimation: Variants = {
 type TabId = "overview" | "detail";
 
 export const AnnualReportDetailRootPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["annual-report-detail"]);
+
   // Location
   const location = useLocation();
 
@@ -93,7 +97,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
     }
   }, [location]);
 
-  if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
+  if (!isFetching && isSuccess && !annual) return <p>{t("No annual found")}</p>;
 
   return (
     <motion.div
@@ -109,16 +113,16 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               to={`/annual-report`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Annual Report
+              {t("Annual Report")}
             </Link>
             <span className="ml-3 text-base opacity-40">&gt;</span>
-            <span>Report {annual?.year}</span>
+            <span>{t("Report", { year: annual?.year })}</span>
           </p>
           <div className="ml-auto">
             <Button>
               <div className="flex flex-row flex-wrap items-center gap-2">
                 <FaDownload className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">Download report</p>
+                <p className="text-sm font-bold">{t("Download report")}</p>
               </div>
             </Button>
           </div>
@@ -131,7 +135,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         variants={childrenAnimation}
       >
         <p className="text-2xl font-extrabold text-primary mr-5">
-          Annual report of {annual?.year}
+          {t("ReportYear", { year: annual?.year })}
         </p>
 
         <div className="flex flex-row flex-wrap gap-3 ml-auto">
@@ -145,7 +149,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<RiCalendarScheduleFill className="text-4xl" />}
-            label={"Total terms"}
+            label={t("Total terms")}
             isFetching={isFetching}
             value={annual?.totalTerm}
             meteors
@@ -155,7 +159,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<PiTreeStructureFill className="text-4xl" />}
-            label={"Total departments"}
+            label={t("Total departments")}
             isFetching={isFetching}
             value={annual?.totalDepartment}
           />
@@ -164,7 +168,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaPiggyBank className="text-4xl" />}
-            label={"Total expenses"}
+            label={t("Total expenses")}
             isFetching={isFetching}
             value={formatViMoney(annual?.totalExpense || 0)}
           />
@@ -178,8 +182,8 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               className="-mb-0.5"
               selectedItemId={selectedTabId}
               items={[
-                { id: "overview", name: "Overview" },
-                { id: "detail", name: "Detail" },
+                { id: "overview", name: t("Overview") },
+                { id: "detail", name: t("Detail") },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {

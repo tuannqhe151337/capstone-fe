@@ -6,6 +6,7 @@ import { AnnualReport } from "../../providers/store/api/annualsAPI";
 import { cn } from "../../shared/utils/cn";
 import { formatISODate } from "../../shared/utils/format-iso-date";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -50,6 +51,8 @@ export const TableAnnualReport: React.FC<Props> = ({
   // Navigation
   const navigate = useNavigate();
 
+  const { t } = useTranslation(["table-annual-report"]);
+
   return (
     <div>
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
@@ -59,31 +62,31 @@ export const TableAnnualReport: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Report
+              {t("Report")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Total expense
+              {t("Total expense")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Total term
+              {t("Total term")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Total department
+              {t("Total department")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created date
+              {t("Created date")}
             </th>
           </tr>
         </thead>
