@@ -1,88 +1,33 @@
 // import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { useState } from "react";
-import { AsyncPaginate, LoadOptions } from "react-select-async-paginate";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
-import { useMeQuery } from "../../providers/store/api/authApi";
+import {
+  useMeQuery,
+  useUserSettingMutation,
+} from "../../providers/store/api/authApi";
 import { Switch } from "../../shared/switch";
 import { Link } from "react-router-dom";
-
-interface TermOption {
-  value: string | number;
-  label: string;
-}
-
-const pageSize = 10;
-
-const defaultOptionTerm = {
-  value: 0,
-  label: "Term",
-};
-
-const termDummyData = [
-  {
-    id: 1,
-    name: "Term 1",
-  },
-  {
-    id: 2,
-    name: "Term 2",
-  },
-  {
-    id: 3,
-    name: "Term 3",
-  },
-  {
-    id: 4,
-    name: "Term 4",
-  },
-  {
-    id: 5,
-    name: "Term 5",
-  },
-  {
-    id: 6,
-    name: "Term 6",
-  },
-  {
-    id: 7,
-    name: "Term 7",
-  },
-  {
-    id: 8,
-    name: "Term 8",
-  },
-  {
-    id: 9,
-    name: "Term 9",
-  },
-  {
-    id: 10,
-    name: "Term 10",
-  },
-  {
-    id: 11,
-    name: "Term 11",
-  },
-  {
-    id: 12,
-    name: "Term 12",
-  },
-  {
-    id: 13,
-    name: "Term 13",
-  },
-  {
-    id: 14,
-    name: "Term 14",
-  },
-  {
-    id: 15,
-    name: "Term 15",
-  },
-];
+import {
+  Option as ThemeOption,
+  ThemeFilter,
+} from "../../entities/theme-filter";
+import {
+  Option as LanguageOption,
+  LanguageFilter,
+} from "../../entities/language-filter";
+import { useEffect, useState } from "react";
+import { changeTheme } from "../../features/theme-changer/utils/change-theme";
+import {
+  LanguageCode,
+  LanguageCodes,
+  languages,
+  ThemeCode,
+  ThemeCodes,
+  themes,
+} from "../../type";
+import { changeLanguage } from "i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -119,39 +64,80 @@ const childrenAnimation: Variants = {
 };
 
 export const Profile: React.FC = () => {
+  // Theme change and language change state
+  const [themeCode, setThemeCode] = useState<ThemeCode>("blue");
+  const [languageCode, setLanguageCode] = useState<LanguageCode>("en");
+
   // Get data
-  const { data, isLoading } = useMeQuery();
+  const { data, isLoading, isSuccess } = useMeQuery();
 
-  // Select state
-  const [_, setSelectedOptionTerm] =
-    useState<TermOption | null>(defaultOptionTerm);
+  // Mutation
+  const [updateUserSetting] = useUserSettingMutation();
 
-  // Fetch initial data
-  const [pageTerm, setPageTerm] = useState<number>(1);
-
-  // Convert data to option for Term
-  const loadTermOptions: LoadOptions<TermOption, any, any> = async () => {
-    // Load options
-    const hasMoreTerm = pageTerm * pageSize < termDummyData.length;
-
-    const loadOptionsTerm = {
-      options: termDummyData?.map(({ id, name }) => ({
-        value: id,
-        label: name,
-      })),
-      hasMoreTerm,
-    };
-
-    if (pageTerm === 1) {
-      loadOptionsTerm.options.unshift(defaultOptionTerm);
+  // Handle theme change
+  const handleThemeChange = (option: ThemeOption | null | undefined) => {
+    if (option && data) {
+      updateUserSetting({
+        theme: option.value,
+        language: data.settings.language,
+        darkMode: data.settings.darkMode,
+      });
     }
-
-    // Update page
-    if (hasMoreTerm) {
-      setPageTerm((pageTerm) => pageTerm + 1);
-    }
-    return loadOptionsTerm;
   };
+
+  // Handle language change
+  const handleLanguageChange = (option: LanguageOption | null | undefined) => {
+    if (option && data) {
+      updateUserSetting({
+        theme: data.settings.theme,
+        language: option.value,
+        darkMode: data.settings.darkMode,
+      });
+    }
+  };
+
+  // Handle darkMode change
+  const handleDarkModeChange = (option: boolean) => {
+    if (data) {
+      updateUserSetting({
+        theme: data.settings.theme,
+        language: data.settings.language,
+        darkMode: option,
+      });
+    }
+  };
+
+  // Change theme
+  useEffect(() => {
+    if (data?.settings.theme) {
+      changeTheme(data?.settings.theme as ThemeCode);
+
+      let typedSelectedThemeCode: ThemeCode = "blue";
+
+      try {
+        typedSelectedThemeCode = ThemeCodes.check(data.settings.theme);
+      } catch (_) {
+      } finally {
+        setThemeCode(typedSelectedThemeCode);
+      }
+    }
+  }, [data?.settings.theme]);
+
+  // Change language
+  useEffect(() => {
+    if (data?.settings.language) {
+      changeLanguage(data?.settings.language as LanguageCode);
+
+      let typedSelectedLanguageCode: LanguageCode = "en";
+
+      try {
+        typedSelectedLanguageCode = LanguageCodes.check(data.settings.language);
+      } catch (_) {
+      } finally {
+        setLanguageCode(typedSelectedLanguageCode);
+      }
+    }
+  }, [data?.settings.language]);
 
   return (
     <div className="relative px-6">
@@ -208,52 +194,52 @@ export const Profile: React.FC = () => {
                   className="flex gap-3 mt-3"
                   variants={childrenAnimation}
                 >
-                  <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                  <p className="mt-2 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
                     Language
                   </p>
-                  <div className="ml-10 mt-5">
-                    <AsyncPaginate
-                      className="w-[200px] cursor-pointer"
-                      value={{
-                        value: data.settings.language,
-                        label: data.settings.language,
+                  {isSuccess && data && (
+                    <LanguageFilter
+                      option={{
+                        value: languageCode,
+                        label: languages[languageCode].name,
                       }}
-                      onChange={(value) => setSelectedOptionTerm(value)}
-                      options={[defaultOptionTerm]}
-                      loadOptions={loadTermOptions}
-                      classNamePrefix="custom-select"
+                      onChange={handleLanguageChange}
                     />
-                  </div>
+                  )}
                 </motion.div>
 
-                <motion.div className="flex gap-3" variants={childrenAnimation}>
-                  <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
+                <motion.div
+                  className="flex gap-3 mt-6"
+                  variants={childrenAnimation}
+                >
+                  <p className="mt-2 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
                     Theme
                   </p>
-                  <div className="ml-10 mt-5">
-                    <AsyncPaginate
-                      className="w-[200px] cursor-pointer"
-                      value={{
-                        value: data.settings.theme,
-                        label: data.settings.theme,
+                  {isSuccess && data && (
+                    <ThemeFilter
+                      option={{
+                        value: themeCode,
+                        label: themes[themeCode].name,
                       }}
-                      onChange={(value) => setSelectedOptionTerm(value)}
-                      options={[defaultOptionTerm]}
-                      loadOptions={loadTermOptions}
-                      classNamePrefix="custom-select"
+                      onChange={handleThemeChange}
                     />
-                  </div>
+                  )}
                 </motion.div>
 
-                <motion.div className="flex gap-3" variants={childrenAnimation}>
+                <motion.div
+                  className="flex gap-3 mt-2.5"
+                  variants={childrenAnimation}
+                >
                   <p className="mt-6 text-[16px] font-bold opacity-50 w-[100px] dark:opacity-60">
-                    Mode
+                    Dark Mode
                   </p>
-                  <div className="ml-10 mt-5">
+                  <div className="mt-5">
                     <Switch
                       size="lg"
-                      checked={data.settings.darkMode}
-                      onChange={() => {}}
+                      checked={!data.settings.darkMode}
+                      onChange={(e) => {
+                        handleDarkModeChange(!e.currentTarget.checked);
+                      }}
                     />
                   </div>
                 </motion.div>
@@ -264,7 +250,9 @@ export const Profile: React.FC = () => {
                   </p>
 
                   <span className="ml-2 inline-block font-bold text-primary-500 hover:text-primary-600 underline dark:text-primary-700 dark:hover:text-primary-600 duration-200">
-                    <Link to={`/profile/change-password/${data.userId}`}>Click here</Link>
+                    <Link to={`/profile/change-password/${data.userId}`}>
+                      Click here
+                    </Link>
                   </span>
                 </div>
               </>

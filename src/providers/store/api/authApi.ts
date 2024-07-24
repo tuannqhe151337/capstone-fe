@@ -54,6 +54,12 @@ export interface UserSetting {
   darkMode: boolean;
 }
 
+export interface UserSettingBody {
+  language: string;
+  theme: string;
+  darkMode: Boolean;
+}
+
 export const authAPI = createApi({
   reducerPath: "authAPI",
   baseQuery: fetchBaseQuery({
@@ -66,7 +72,7 @@ export const authAPI = createApi({
       return headers;
     },
   }),
-  tagTypes: ["auth"],
+  tagTypes: ["me"],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginBody>({
       query: ({ username, password }) => ({
@@ -77,17 +83,25 @@ export const authAPI = createApi({
           password,
         },
       }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["me"],
     }),
     me: builder.query<UserResponse, void>({
       query: () => ({
         url: "auth/me",
       }),
-      providesTags: ["auth"],
+      providesTags: ["me"],
     }),
     logout: builder.mutation<void, void>({
       query: () => ({ url: "auth/logout", method: "POST" }),
-      invalidatesTags: ["auth"],
+      invalidatesTags: ["me"],
+    }),
+    userSetting: builder.mutation<any, UserSettingBody>({
+      query: (userSettingBody) => ({
+        url: "user/user-setting/update",
+        method: "PUT",
+        body: userSettingBody,
+      }),
+      invalidatesTags: ["me"],
     }),
   }),
 });
@@ -97,4 +111,5 @@ export const {
   useMeQuery,
   useLazyMeQuery,
   useLogoutMutation,
+  useUserSettingMutation
 } = authAPI;
