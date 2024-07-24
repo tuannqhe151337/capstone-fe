@@ -24,6 +24,7 @@ import {
   useLazyFetchTermDetailQuery,
 } from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
+import { StartTermModal } from "../../widgets/start-term-modal";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -104,6 +105,21 @@ export const TermDetailRootPage: React.FC<Props> = ({
 }) => {
   // Location
   const location = useLocation();
+
+  const [startModal, setStartModal] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setStartModal(true);
+  };
+
+  const handleCloseStartTermModal = () => {
+    setStartModal(false);
+  };
+
+  const onStartTermSuccessfully = () => {
+    console.log("askdjhfaiusdhfu");
+    setStartModal(false);
+  };
 
   // Navigation
   const navigate = useNavigate();
@@ -245,7 +261,12 @@ export const TermDetailRootPage: React.FC<Props> = ({
                           <TERipple
                             rippleColor="light"
                             className="w-[160px]"
-                            onClick={() => {}}
+                            // onClick={() => {}}
+
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleClick();
+                            }}
                           >
                             <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
                               <FaPlay className="mb-0.5 text-primary-400 dark:text-primary-600 mr-3 mt-[1.25px] dark:opacity-80" />
@@ -328,6 +349,16 @@ export const TermDetailRootPage: React.FC<Props> = ({
       )}
 
       {/* <StartTermModal /> */}
+
+      {term && (
+        <StartTermModal
+          termId={term.id}
+          termName={term.name}
+          show={startModal}
+          onClose={handleCloseStartTermModal}
+          onStartTermSuccessfully={onStartTermSuccessfully}
+        />
+      )}
     </motion.div>
   );
 };
