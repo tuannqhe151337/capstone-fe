@@ -24,10 +24,10 @@ export interface PlanPreview {
   name: string;
   term: Term;
   role: Role;
-  department: Department;
+  department: UserDepartment;
   version: number;
   isDelete: boolean;
-  status: Status;
+  status: PlanStatus;
 }
 
 export interface PlanDetailParameters {
@@ -40,10 +40,10 @@ export interface PlanDetail {
   biggestExpenditure: number;
   totalPlan: number;
   term: Term;
-  status: Status;
+  status: PlanStatus;
   planDueDate: string;
   createdAt: string;
-  department: Department;
+  department: PlanDepartment;
   user: User;
   version: number;
 }
@@ -58,7 +58,7 @@ export interface PlanExpense {
   supplierName: string;
   pic: string;
   notes: string;
-  status: StatusExpense;
+  status: ExpenseStatus;
 }
 
 export interface CostType {
@@ -88,7 +88,7 @@ export interface User {
   userId: string | number;
   username: string;
   email: string;
-  department: Department;
+  department: UserDepartment;
   role: Role;
   position: Position;
   deactivate: boolean;
@@ -96,17 +96,24 @@ export interface User {
   updatedAt: string;
 }
 
-export interface StatusExpense {
+export interface ExpenseStatus {
   statusId: number;
   code: string;
   name: string;
 }
 
-export interface Status {
+export interface PlanStatus {
   id: number;
   name: string;
-  code: string;
+  code: PlanCode;
 }
+
+export type PlanCode =
+  | "new"
+  | "waiting-for-reviewed"
+  | "approved"
+  | "reviewed"
+  | "closed";
 
 export interface Position {
   id: string | number;
@@ -118,8 +125,13 @@ export interface Term {
   name: string;
 }
 
-export interface Department {
+export interface UserDepartment {
   id: number;
+  name: string;
+}
+
+export interface PlanDepartment {
+  departmentId: number;
   name: string;
 }
 
@@ -138,6 +150,23 @@ export interface CreatePlanBody {
 
 export interface ExpenseBody {
   name: string;
+  costTypeId: number;
+  unitPrice: number;
+  amount: number;
+  projectName: string;
+  supplierName: string;
+  pic: string;
+  notes?: string | number;
+}
+
+export interface ReuploadPlanBody {
+  planId: string | number;
+  data: ReuploadExpenseBody[];
+}
+
+export interface ReuploadExpenseBody {
+  expenseCode: string;
+  expenseName: string;
   costTypeId: number;
   unitPrice: number;
   amount: number;
@@ -171,7 +200,7 @@ const plansApi = createApi({
       return fetch(...args);
     },
   }),
-  tagTypes: ["plans"],
+  tagTypes: ["plans", "plan-detail"],
   endpoints(builder) {
     return {
       fetchPlans: builder.query<
@@ -203,6 +232,7 @@ const plansApi = createApi({
       }),
       getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
         query: ({ planId }) => `/plan/detail?planId=${planId}`,
+        providesTags: ["plan-detail"],
       }),
       deletePlan: builder.mutation<any, PlanDeleteParameters>({
         query: ({ planId }) => ({
@@ -218,6 +248,7 @@ const plansApi = createApi({
       >({
         query: ({ page, pageSize, planId }) =>
           `/plan/versions?planId=${planId}&page=${page}&size=${pageSize}`,
+        providesTags: ["plan-detail"],
         // Only have one cache entry because the arg always maps to one string
         serializeQueryArgs: ({ endpointName }) => {
           return endpointName;
@@ -270,6 +301,15 @@ const plansApi = createApi({
 
           return endpoint;
         },
+        providesTags: ["plan-detail"],
+      }),
+      reuploadPlan: builder.mutation<any, ReuploadPlanBody>({
+        query: (reuploadPlanBody) => ({
+          url: "plan/re-upload",
+          method: "PUT",
+          body: reuploadPlanBody,
+        }),
+        invalidatesTags: ["plan-detail"],
       }),
     };
   },
@@ -284,5 +324,6 @@ export const {
   useCreatePlanMutation,
   useFetchPlanExpensesQuery,
   useLazyFetchPlanExpensesQuery,
+  useReuploadPlanMutation,
 } = plansApi;
 export { plansApi };

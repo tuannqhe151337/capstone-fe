@@ -101,6 +101,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
         if (index + 1 >= BeginLine) {
           // Get data from cell
           // const rawDate = row[ColumnNameIndexMappingConfig.date];
+          const expenseCode = row[ColumnNameIndexMappingConfig.expenseCode];
           const rawExpenseName = row[ColumnNameIndexMappingConfig.expenseName];
           const rawCostType = row[ColumnNameIndexMappingConfig.costType];
           const rawUnitPrice = row[ColumnNameIndexMappingConfig.unitPrice];
@@ -284,6 +285,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
           } else {
             if (costType) {
               expenses.push({
+                code: typeof expenseCode === "string" ? expenseCode : "",
                 name: expenseName,
                 costType,
                 // date,

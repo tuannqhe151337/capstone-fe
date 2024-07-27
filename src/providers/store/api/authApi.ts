@@ -27,7 +27,7 @@ export interface UserResponse {
 }
 
 export interface Department {
-  id: string;
+  id: string | number;
   name: string;
 }
 

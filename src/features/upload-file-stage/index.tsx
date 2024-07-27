@@ -73,6 +73,10 @@ const animation: Variants = {
 interface Props {
   hide?: boolean;
   termName?: string;
+  planName?: string;
+  isPlanNameEditable?: boolean;
+  hideBackButton?: boolean;
+  onDownloadTemplateClick?: Function;
   onPreviousState?: () => any;
   onNextStage?: (expenses: Expense[], planName: string) => any;
 }
@@ -80,6 +84,10 @@ interface Props {
 export const UploadFileStage: React.FC<Props> = ({
   hide,
   termName,
+  planName: propsPlanName,
+  isPlanNameEditable = true,
+  hideBackButton = false,
+  onDownloadTemplateClick,
   onPreviousState,
   onNextStage,
 }) => {
@@ -103,7 +111,7 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileSize, setFileSize] = useState<number>();
 
   // Plan name
-  const [planName, setPlanName] = useState<string>("");
+  const [planName, setPlanName] = useState<string>(propsPlanName || "");
 
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -184,6 +192,7 @@ export const UploadFileStage: React.FC<Props> = ({
           <TEInput
             className="w-full"
             label="Plan name"
+            disabled={!isPlanNameEditable}
             value={planName}
             onChange={(e) => setPlanName(e.currentTarget.value)}
             autoFocus
@@ -232,6 +241,9 @@ export const UploadFileStage: React.FC<Props> = ({
                   variant="secondary"
                   containerClassName="ml-auto"
                   className="flex flex-row flex-wrap items-center"
+                  onClick={() => {
+                    onDownloadTemplateClick && onDownloadTemplateClick();
+                  }}
                 >
                   <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
                   <span className="text-sm dark:text-primary-500">
@@ -332,15 +344,17 @@ export const UploadFileStage: React.FC<Props> = ({
         className="flex flex-row flex-wrap items-center gap-5 w-full mt-auto"
         variants={callToActionAnimation}
       >
-        <Button
-          variant="tertiary"
-          className="w-[300px]"
-          onClick={() => {
-            onPreviousState && onPreviousState();
-          }}
-        >
-          Back
-        </Button>
+        {!hideBackButton && (
+          <Button
+            variant="tertiary"
+            className="w-[300px]"
+            onClick={() => {
+              onPreviousState && onPreviousState();
+            }}
+          >
+            Back
+          </Button>
+        )}
 
         {fileUploadStage === FileUploadStage.VALIDATION_ERROR ? (
           <Button
