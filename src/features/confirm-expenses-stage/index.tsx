@@ -42,7 +42,8 @@ const childrenAnimation: Variants = {
 };
 
 interface Props {
-  isCreatePlanLoading?: boolean;
+  submitButtonText?: string;
+  isLoading?: boolean;
   termName?: string;
   planName?: string;
   expenses?: Expense[];
@@ -52,7 +53,8 @@ interface Props {
 }
 
 export const ConfirmExpensesStage: React.FC<Props> = ({
-  isCreatePlanLoading,
+  submitButtonText,
+  isLoading,
   termName,
   planName,
   expenses,
@@ -101,7 +103,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
       {/* Buttons */}
       <div className="flex flex-row flex-wrap items-center gap-5 mt-4 w-full">
         <Button
-          disabled={isCreatePlanLoading}
+          disabled={isLoading}
           variant="tertiary"
           className="w-[300px]"
           onClick={() => {
@@ -111,16 +113,14 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
           Back
         </Button>
         <Button
-          disabled={isCreatePlanLoading}
+          disabled={isLoading}
           containerClassName="flex-1"
           onClick={() => {
             onNextStage && onNextStage();
           }}
         >
-          {!isCreatePlanLoading && "Create new plan"}
-          {isCreatePlanLoading && (
-            <CgSpinner className="m-auto text-lg animate-spin" />
-          )}
+          {!isLoading && submitButtonText}
+          {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
         </Button>
       </div>
     </motion.div>

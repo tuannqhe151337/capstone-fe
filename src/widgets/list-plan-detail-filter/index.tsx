@@ -3,7 +3,7 @@ import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { RiDeleteRow } from "react-icons/ri";
 import { Button } from "../../shared/button";
-import { FaListCheck } from "react-icons/fa6";
+import { FaListCheck, FaUpload } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
@@ -216,13 +216,25 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                   >
                     <TERipple
                       rippleColor="light"
-                      className="w-max"
+                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200 border-b-2 border-b-neutral-100 dark:border-b-neutral-700"
                       onClick={() => {}}
                     >
-                      <div className="flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
+                      <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                         <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" />
                         <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
                           Download plan
+                        </p>
+                      </div>
+                    </TERipple>
+                    <TERipple
+                      rippleColor="light"
+                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200"
+                      onClick={() => {}}
+                    >
+                      <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
+                        <FaUpload className="mr-3 text-primary-400 dark:text-neutral-400" />
+                        <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
+                          Reupload plan
                         </p>
                       </div>
                     </TERipple>

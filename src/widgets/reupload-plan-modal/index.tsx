@@ -5,13 +5,10 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { StepProgress } from "./component/step-progress";
 import clsx from "clsx";
-import { ChooseTermStage } from "../../features/choose-term-stage";
 import { UploadFileStage } from "../../features/upload-file-stage";
 import { ConfirmExpensesStage } from "../../features/confirm-expenses-stage";
 import { Expense } from "../../features/upload-file-stage/type";
-import { TermCreatePlan } from "../../providers/store/api/termApi";
-import { useCreatePlanMutation } from "../../providers/store/api/plansApi";
-import { useMeQuery } from "../../providers/store/api/authApi";
+import { useReuploadPlanMutation } from "../../providers/store/api/plansApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadTemplateFileFromServer } from "../../shared/utils/download-file-from-server";
@@ -49,11 +46,20 @@ const stageAnimation: Variants = {
 };
 
 interface Props {
+  planId?: string | number;
+  planName?: string;
+  termName?: string;
   show: boolean;
   onClose: () => any;
 }
 
-export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
+export const ReuploadPlanModal: React.FC<Props> = ({
+  planId,
+  planName,
+  termName,
+  show,
+  onClose,
+}) => {
   // Stages
   const [stage, setStage] = useState<number>(0);
 
@@ -72,17 +78,8 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
   }, [show]);
 
   // Mutation
-  const [createPlan, { isLoading, isError, isSuccess }] =
-    useCreatePlanMutation();
-
-  // Get me
-  const { data: me } = useMeQuery();
-
-  // Chosen term
-  const [term, setTerm] = useState<TermCreatePlan>();
-
-  // Plan name
-  const [planName, setPlanName] = useState<string>();
+  const [reuploadPlan, { isLoading, isError, isSuccess }] =
+    useReuploadPlanMutation();
 
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -134,27 +131,46 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
               <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
                 <motion.div
                   className={clsx({
-                    "w-3/4": true,
                     block: stage === 1,
                     hidden: stage !== 1,
                   })}
                   initial={AnimationStage.RIGHT}
-                  animate={
-                    stage > 1 ? AnimationStage.LEFT : AnimationStage.VISIBLE
-                  }
+                  animate={(() => {
+                    if (stage < 1) return AnimationStage.RIGHT;
+                    if (stage === 1) return AnimationStage.VISIBLE;
+                    if (stage > 1) return AnimationStage.LEFT;
+                  })()}
                   variants={stageAnimation}
                 >
-                  <ChooseTermStage
+                  <UploadFileStage
                     hide={stage !== 1}
-                    onTermSelected={(term) => {
-                      setTerm(term);
+                    termName={termName}
+                    planName={planName}
+                    isPlanNameEditable={false}
+                    onDownloadTemplateClick={() => {
+                      const token = localStorage.getItem(
+                        LocalStorageItemKey.TOKEN
+                      );
+
+                      if (token && planId) {
+                        downloadTemplateFileFromServer(
+                          `${
+                            import.meta.env.VITE_BACKEND_HOST
+                          }plan/download/last-version-xlsx?planId=${planId}`,
+                          token
+                        );
+                      }
+                    }}
+                    hideBackButton={true}
+                    onNextStage={(expenses) => {
+                      setExpenses(expenses);
                       setStage(2);
                     }}
                   />
                 </motion.div>
               </div>
 
-              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0">
+              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0 h-full">
                 <motion.div
                   className={clsx({
                     block: stage === 2,
@@ -168,87 +184,45 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   })()}
                   variants={stageAnimation}
                 >
-                  <UploadFileStage
+                  <ConfirmExpensesStage
+                    submitButtonText="Reupload plan"
+                    isLoading={isLoading}
+                    expenses={expenses}
+                    termName={termName}
+                    planName={planName}
                     hide={stage !== 2}
-                    termName={term?.name}
-                    onDownloadTemplateClick={() => {
-                      const token = localStorage.getItem(
-                        LocalStorageItemKey.TOKEN
-                      );
-
-                      if (token) {
-                        // downloadTemplateFileFromServer(
-                        //   `${
-                        //     import.meta.env.VITE_BACKEND_HOST
-                        //   }plan/download/last-version-xlsx?planId=3`,
-                        //   token
-                        // );
-                      }
-                    }}
                     onPreviousState={() => {
                       setStage(1);
                     }}
-                    onNextStage={(expenses, planName) => {
-                      setExpenses(expenses);
-                      setPlanName(planName);
-                      setStage(3);
-                    }}
-                  />
-                </motion.div>
-              </div>
-
-              <div className="absolute flex flex-row flex-wrap justify-center w-full top-0 left-0 h-full">
-                <motion.div
-                  className={clsx({
-                    block: stage === 3,
-                    hidden: stage !== 3,
-                  })}
-                  initial={AnimationStage.RIGHT}
-                  animate={(() => {
-                    if (stage < 3) return AnimationStage.RIGHT;
-                    if (stage === 3) return AnimationStage.VISIBLE;
-                    if (stage > 3) return AnimationStage.LEFT;
-                  })()}
-                  variants={stageAnimation}
-                >
-                  <ConfirmExpensesStage
-                    submitButtonText="Create new plan"
-                    isLoading={isLoading}
-                    expenses={expenses}
-                    termName={term?.name}
-                    planName={planName}
-                    hide={stage !== 3}
-                    onPreviousState={() => {
-                      setStage(2);
-                    }}
                     onNextStage={() => {
-                      if (term && planName) {
-                        createPlan({
-                          termId: term.termId,
-                          fileName: `${me?.department.name}_${term?.name}_plan`,
-                          planName: planName,
-                          expenses: expenses.map(
-                            ({
-                              name,
-                              costType,
-                              unitPrice,
-                              amount,
-                              projectName,
-                              supplierName,
-                              pic,
-                              notes,
-                            }) => ({
-                              name,
-                              costTypeId: costType.costTypeId,
-                              unitPrice,
-                              amount,
-                              projectName,
-                              supplierName,
-                              pic,
-                              notes,
-                            })
-                          ),
-                        });
+                      if (termName && planName) {
+                        planId &&
+                          reuploadPlan({
+                            planId,
+                            data: expenses.map(
+                              ({
+                                code,
+                                name,
+                                costType,
+                                unitPrice,
+                                amount,
+                                projectName,
+                                supplierName,
+                                pic,
+                                notes,
+                              }) => ({
+                                expenseCode: code,
+                                expenseName: name,
+                                costTypeId: costType.costTypeId,
+                                unitPrice,
+                                amount,
+                                projectName,
+                                supplierName,
+                                pic,
+                                notes,
+                              })
+                            ),
+                          });
                       }
                     }}
                   />

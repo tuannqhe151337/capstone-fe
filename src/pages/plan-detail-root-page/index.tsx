@@ -4,13 +4,24 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Tag } from "../../shared/tag";
 import { FaMoneyBillTrendUp, FaCoins } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
 import { PlanTag } from "../../entities/plan-tag";
+import { Button } from "../../shared/button";
+import { FaUpload } from "react-icons/fa";
+import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { parseISO } from "date-fns";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,8 +80,19 @@ export const PlanDetailRootPage: React.FC = () => {
   // Parameters
   const { planId } = useParams<{ planId: string }>();
 
+  // Me
+  const { data: me } = useMeQuery();
+
+  // Modal
+  const [showReupload, setShowReupload] = useState<boolean>(false);
+
   // Query
-  const { data, isError, isFetching, isSuccess } = useGetPlanDetailQuery({
+  const {
+    data: plan,
+    isError,
+    isFetching,
+    isSuccess,
+  } = useGetPlanDetailQuery({
     planId: planId ? parseInt(planId, 10) : 0,
   });
 
@@ -104,7 +126,39 @@ export const PlanDetailRootPage: React.FC = () => {
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
-      <BubbleBanner></BubbleBanner>
+      <BubbleBanner>
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/plan-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Plan management
+            </Link>
+            <span className="ml-3 text-base opacity-40">&gt;</span>
+            <span>Plan detail</span>
+          </p>
+          <div className="ml-auto">
+            {/* Check the department of user is the same with plan, the plan is not closed yet, and not pass the due date */}
+            {plan &&
+              me?.department.id === plan.department.departmentId &&
+              plan.status.code !== "closed" &&
+              parseISO(plan?.planDueDate, { additionalDigits: 2 }) >
+                new Date() && (
+                <Button
+                  onClick={() => {
+                    setShowReupload(true);
+                  }}
+                >
+                  <div className="flex flex-row flex-wrap gap-3 ">
+                    <FaUpload className="mt-0.5" />
+                    <p className="text-sm font-semibold">Reupload plan</p>
+                  </div>
+                </Button>
+              )}
+          </div>
+        </div>
+      </BubbleBanner>
 
       {/* Title */}
       <motion.div className="mt-6 px-7" variants={childrenAnimation}>
@@ -120,16 +174,16 @@ export const PlanDetailRootPage: React.FC = () => {
                 exit={AnimationStage.HIDDEN}
               >
                 <p className="text-2xl font-extrabold text-primary mr-5">
-                  {data?.name}
+                  {plan?.name}
                 </p>
 
                 <div className="flex flex-row flex-wrap items-center justify-center gap-3">
                   <Tag background="unfilled" variant="waiting">
-                    v{data?.version}
+                    v{plan?.version}
                   </Tag>
                   <PlanTag
-                    statusCode={data.status.code}
-                    statusName={data.status.name}
+                    statusCode={plan.status.code}
+                    statusName={plan.status.name}
                   />
                 </div>
               </motion.div>
@@ -144,7 +198,7 @@ export const PlanDetailRootPage: React.FC = () => {
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={"Term"}
             isFetching={isFetching}
-            value={data?.term.name}
+            value={plan?.term.name}
             meteors
           />
         </motion.div>
@@ -154,7 +208,7 @@ export const PlanDetailRootPage: React.FC = () => {
             icon={<FaMoneyBillTrendUp className="text-4xl" />}
             label={"Biggest expenditure"}
             isFetching={isFetching}
-            value={formatViMoney(data?.biggestExpenditure || 0)}
+            value={formatViMoney(plan?.biggestExpenditure || 0)}
           />
         </motion.div>
 
@@ -163,7 +217,7 @@ export const PlanDetailRootPage: React.FC = () => {
             icon={<FaCoins className="text-4xl" />}
             label={"Total plan"}
             isFetching={isFetching}
-            value={formatViMoney(data?.totalPlan || 0)}
+            value={formatViMoney(plan?.totalPlan || 0)}
           />
         </motion.div>
       </div>
@@ -205,6 +259,16 @@ export const PlanDetailRootPage: React.FC = () => {
           </motion.div>
         </div>
       </div>
+
+      <ReuploadPlanModal
+        show={showReupload}
+        planId={plan?.id}
+        planName={plan?.name}
+        termName={plan?.term.name}
+        onClose={() => {
+          setShowReupload(false);
+        }}
+      />
     </motion.div>
   );
 };

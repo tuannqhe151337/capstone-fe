@@ -11,6 +11,7 @@ export enum FileUploadStage {
 export interface Expense {
   // date: Date;
   costType: CostType;
+  code: string;
   name: string;
   unitPrice: number;
   amount: number;
