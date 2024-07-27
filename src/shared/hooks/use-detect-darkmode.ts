@@ -1,6 +1,7 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../providers/store";
+import { useMeQuery } from "../../providers/store/api/authApi";
 
 export const useDetectDarkmode = () => {
-  return useSelector((state: RootState) => state.darkMode.isDarkMode);
+  const { data } = useMeQuery();
+
+  return !data?.settings.darkMode;
 };

@@ -63,7 +63,7 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
-  onStartTermSuccessfully?: (term: Term) => any;
+  onStartTermSuccessfully?: (termId: string | number) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
@@ -259,12 +259,15 @@ export const TableTermManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <StartTermModal
-        term={chosenTerm}
-        show={startModal}
-        onClose={handleCloseStartTermModal}
-        onStartTermSuccessfully={onStartTermSuccessfully}
-      />
+      {chosenTerm && (
+        <StartTermModal
+          termId={chosenTerm.termId}
+          termName={chosenTerm.name}
+          show={startModal}
+          onClose={handleCloseStartTermModal}
+          onStartTermSuccessfully={onStartTermSuccessfully}
+        />
+      )}
     </div>
   );
 };

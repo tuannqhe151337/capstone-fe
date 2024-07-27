@@ -8,25 +8,26 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 
 interface Props {
-  term?: Term;
+  termId: string | number;
+  termName: string;
   show: boolean;
   onClose: () => any;
-  onStartTermSuccessfully?: (term: Term) => any;
+  onStartTermSuccessfully?: (termId: string | number) => any;
 }
 
 export const StartTermModal: React.FC<Props> = ({
-  term,
+  termId,
+  termName,
   show,
   onClose,
   onStartTermSuccessfully,
 }) => {
-  const [startTerm, { isError, isLoading, isSuccess }] =
-    useStartTermMutation();
+  const [startTerm, { isError, isLoading, isSuccess }] = useStartTermMutation();
 
   useEffect(() => {
-    if (!isLoading && isSuccess && !isError && term) {
+    if (!isLoading && isSuccess && !isError) {
       toast("Activate term successfully!", { type: "success" });
-      onStartTermSuccessfully && onStartTermSuccessfully(term);
+      onStartTermSuccessfully && onStartTermSuccessfully(termId);
       onClose && onClose();
     }
   }, [isError, isLoading, isSuccess]);
@@ -61,8 +62,7 @@ export const StartTermModal: React.FC<Props> = ({
           <div className="font-semibold dark:font-bold text-primary-400 dark:text-primary-600 mt-5">
             You're going to start term{" "}
             <span className="font-extrabold dark:text-primary-500">
-              {/* TODO: Fix term name */}
-              "Finalcial plan December Q3 2021"
+              "{termName}"
             </span>
           </div>
 
@@ -90,8 +90,8 @@ export const StartTermModal: React.FC<Props> = ({
             containerClassName="flex-1"
             className="font-bold p-3"
             onClick={() => {
-              if (term?.termId) {
-                startTerm({ termId: term.termId });
+              if (termId) {
+                startTerm({ termId });
               }
             }}
           >

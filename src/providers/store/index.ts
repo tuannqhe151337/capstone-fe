@@ -1,5 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import darkModeReducer from "./slices/darkModeSlice";
 import forgotPasswordReducer from "./slices/forgotPasswordSlice";
 import { authAPI } from "./api/authApi";
 import { setupListeners } from "@reduxjs/toolkit/query";
@@ -16,7 +15,6 @@ import { reportsAPI } from "./api/reportsAPI";
 
 export const store = configureStore({
   reducer: {
-    darkMode: darkModeReducer,
     forgotPassword: forgotPasswordReducer,
     [authAPI.reducerPath]: authAPI.reducer,
     [usersAPI.reducerPath]: usersAPI.reducer,

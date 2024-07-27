@@ -191,6 +191,7 @@ const usersApi = createApi({
         },
         providesTags: ["users"],
       }),
+
       createUser: builder.mutation<any, CreateUserBody>({
         query: (createUserBody) => ({
           url: "user",
@@ -199,6 +200,7 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+
       updateUser: builder.mutation<any, UpdateUserBody>({
         query: (updateUserBody) => ({
           url: "user",
@@ -207,6 +209,7 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+
       deleteUser: builder.mutation<any, DeleteUserBody>({
         query: (deleteUserBody) => ({
           url: "user",
@@ -215,6 +218,7 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+
       activateUser: builder.mutation<any, ActivateUserBody>({
         query: (activateUserBody) => ({
           url: "user/activate",
@@ -223,6 +227,7 @@ const usersApi = createApi({
         }),
         invalidatesTags: ["users"],
       }),
+
       fetchUserDetail: builder.query<UserDetail, number>({
         query: (userId) => `user/detail/${userId}`,
         providesTags: ["users"],
@@ -235,6 +240,7 @@ const usersApi = createApi({
           body: changePasswordUserBody,
         }),
       }),
+
       forgotPassword: builder.mutation<TokenMessage, ForgotPasswordBody>({
         query: (forgotPasswordBody) => ({
           url: "user/auth/forgot-password",
