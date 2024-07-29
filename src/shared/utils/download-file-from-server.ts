@@ -1,6 +1,7 @@
-export const downloadTemplateFileFromServer = async (
+export const downloadFileFromServer = async (
   url: string,
-  token?: string
+  token?: string,
+  fileName?: string
 ) => {
   const response = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` || "" },
@@ -13,7 +14,7 @@ export const downloadTemplateFileFromServer = async (
   const link = document.createElement("a");
 
   link.href = fileurl;
-  link.setAttribute("download", "template.xlsx");
+  link.setAttribute("download", fileName ? fileName : `template.xlsx`);
   link.target = "_blank";
 
   link.click();

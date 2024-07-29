@@ -14,7 +14,6 @@ import { useCreatePlanMutation } from "../../providers/store/api/plansApi";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
-import { downloadTemplateFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   LEFT = "left",

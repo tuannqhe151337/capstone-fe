@@ -26,7 +26,7 @@ export const Tag: React.FC<Props> = ({
     <div
       className={cn(
         {
-          "text-xs font-bold": true,
+          "text-xs font-bold text-center w-max": true,
           rounded: true,
           border: true,
           "duration-200": true,

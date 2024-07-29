@@ -9,6 +9,7 @@ import { DeletePlanModal } from "../delete-plan-modal";
 import { PlanPreview } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
 import { PlanTag } from "../../entities/plan-tag";
+import { useMeQuery } from "../../providers/store/api/authApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -64,6 +65,9 @@ export const TablePlanManagement: React.FC<Props> = ({
 }) => {
   // Navigation
   const navigate = useNavigate();
+
+  // Get me's data
+  const { data: me } = useMeQuery();
 
   // Chosen plan's id
   const [chosenPlan, setChosenPlan] = useState<PlanPreview>();
@@ -198,26 +202,28 @@ export const TablePlanManagement: React.FC<Props> = ({
                   {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
-                  <motion.div
-                    initial={AnimationStage.HIDDEN}
-                    animate={
-                      hoverRowIndex === index
-                        ? AnimationStage.VISIBLE
-                        : AnimationStage.HIDDEN
-                    }
-                    exit={AnimationStage.HIDDEN}
-                    variants={animation}
-                  >
-                    <IconButton
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setChosenPlan(plan);
-                        handleClick();
-                      }}
+                  {me?.department.id === plan.department.departmentId && (
+                    <motion.div
+                      initial={AnimationStage.HIDDEN}
+                      animate={
+                        hoverRowIndex === index
+                          ? AnimationStage.VISIBLE
+                          : AnimationStage.HIDDEN
+                      }
+                      exit={AnimationStage.HIDDEN}
+                      variants={animation}
                     >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
-                  </motion.div>
+                      <IconButton
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setChosenPlan(plan);
+                          handleClick();
+                        }}
+                      >
+                        <FaTrash className="text-red-600 text-xl" />
+                      </IconButton>
+                    </motion.div>
+                  )}
                 </td>
               </motion.tr>
             ))}

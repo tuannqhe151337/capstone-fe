@@ -49,7 +49,7 @@ export interface PlanDetail {
 }
 
 export interface PlanExpense {
-  expenseId: number | string;
+  expenseId: number;
   name: string;
   costType: CostType;
   unitPrice: number;
@@ -98,9 +98,15 @@ export interface User {
 
 export interface ExpenseStatus {
   statusId: number;
-  code: string;
+  code: ExpenseCode;
   name: string;
 }
+
+export type ExpenseCode =
+  | "NEW"
+  | "WAITING_FOR_APPROVAL"
+  | "APPROVED"
+  | "DENIED";
 
 export interface PlanStatus {
   id: number;
@@ -126,7 +132,7 @@ export interface Term {
 }
 
 export interface UserDepartment {
-  id: number;
+  departmentId: number;
   name: string;
 }
 
@@ -176,6 +182,11 @@ export interface ReuploadExpenseBody {
   notes?: string | number;
 }
 
+export interface ReviewExpensesBody {
+  planId: number;
+  listExpenseId: number[];
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -200,7 +211,7 @@ const plansApi = createApi({
       return fetch(...args);
     },
   }),
-  tagTypes: ["plans", "plan-detail"],
+  tagTypes: ["plans", "plan-detail", "plan-expenses"],
   endpoints(builder) {
     return {
       fetchPlans: builder.query<
@@ -287,6 +298,8 @@ const plansApi = createApi({
         query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
           let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
 
+          console.log(query, planId, costTypeId, statusId, page, pageSize);
+
           if (query && query !== "") {
             endpoint += `&query=${query}`;
           }
@@ -301,7 +314,7 @@ const plansApi = createApi({
 
           return endpoint;
         },
-        providesTags: ["plan-detail"],
+        providesTags: ["plan-detail", "plan-expenses"],
       }),
       reuploadPlan: builder.mutation<any, ReuploadPlanBody>({
         query: (reuploadPlanBody) => ({
@@ -310,6 +323,20 @@ const plansApi = createApi({
           body: reuploadPlanBody,
         }),
         invalidatesTags: ["plan-detail"],
+      }),
+      approveExpenses: builder.mutation<any, ReviewExpensesBody>({
+        query: (reviewExpenseBody) => ({
+          url: "plan/expense-approval",
+          method: "PUT",
+          body: reviewExpenseBody,
+        }),
+      }),
+      denyExpenses: builder.mutation<any, ReviewExpensesBody>({
+        query: (reviewExpenseBody) => ({
+          url: "plan/expense-deny",
+          method: "PUT",
+          body: reviewExpenseBody,
+        }),
       }),
     };
   },
@@ -325,5 +352,7 @@ export const {
   useFetchPlanExpensesQuery,
   useLazyFetchPlanExpensesQuery,
   useReuploadPlanMutation,
+  useApproveExpensesMutation,
+  useDenyExpensesMutation,
 } = plansApi;
 export { plansApi };
