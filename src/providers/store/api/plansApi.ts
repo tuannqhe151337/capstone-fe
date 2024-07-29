@@ -115,11 +115,11 @@ export interface PlanStatus {
 }
 
 export type PlanCode =
-  | "new"
-  | "waiting-for-reviewed"
-  | "approved"
-  | "reviewed"
-  | "closed";
+  | "NEW"
+  | "WAITING_FOR_REVIEWED"
+  | "APPROVED"
+  | "REVIEWED"
+  | "CLOSED";
 
 export interface Position {
   id: string | number;

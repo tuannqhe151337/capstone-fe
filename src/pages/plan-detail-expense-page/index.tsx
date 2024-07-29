@@ -275,7 +275,7 @@ export const PlanDetailExpensePage: React.FC = () => {
                 import.meta.env.VITE_BACKEND_HOST
               }plan/download/last-version-xlsx?planId=${planId}`,
               token,
-              plan.name
+              `${plan.name}.xlsx`
             );
           }
         }}
@@ -294,6 +294,21 @@ export const PlanDetailExpensePage: React.FC = () => {
                 state.delete(expenseId);
               } else {
                 state.add(expenseId);
+              }
+
+              return state;
+            })
+          );
+        }}
+        onSelectAllClick={() => {
+          setListSelectedId(
+            produce((state) => {
+              if (state.size === data?.data.length) {
+                state = new Set();
+              } else {
+                data?.data.forEach(({ expenseId }) => {
+                  state.add(expenseId);
+                });
               }
 
               return state;

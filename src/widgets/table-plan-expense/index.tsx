@@ -2,7 +2,6 @@ import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
-import { Tag } from "../../shared/tag";
 import clsx from "clsx";
 import { PlanExpense } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
@@ -77,6 +76,7 @@ export interface Expense {
 interface Props {
   isRowSelectable?: boolean;
   listSelectedId?: Set<number>;
+  onSelectAllClick?: () => any;
   onRowClick?: (expenseId: number) => any;
   expenses?: PlanExpense[];
   isFetching?: boolean;
@@ -91,6 +91,7 @@ interface Props {
 export const TablePlanExpenses: React.FC<Props> = ({
   isRowSelectable,
   listSelectedId,
+  onSelectAllClick,
   onRowClick,
   expenses,
   isFetching,
@@ -113,7 +114,12 @@ export const TablePlanExpenses: React.FC<Props> = ({
           <tr>
             {isRowSelectable && (
               <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-                <Checkbox className="ml-1 mt-0.5" />
+                <Checkbox
+                  className="ml-1 mt-0.5"
+                  onChange={() => {
+                    onSelectAllClick && onSelectAllClick();
+                  }}
+                />
               </th>
             )}
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
