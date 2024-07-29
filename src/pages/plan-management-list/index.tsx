@@ -20,7 +20,7 @@ const generateEmptyPlans = (total: number): Row[] => {
       planId: 0,
       name: "",
       department: {
-        id: 0,
+        departmentId: 0,
         name: "",
       },
       term: {
@@ -30,7 +30,7 @@ const generateEmptyPlans = (total: number): Row[] => {
       status: {
         id: 0,
         name: "",
-        code: "",
+        code: "new",
       },
       role: {
         id: 0,

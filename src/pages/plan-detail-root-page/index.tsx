@@ -9,12 +9,16 @@ import {
   Outlet,
   useLocation,
   useNavigate,
+  useOutletContext,
   useParams,
 } from "react-router-dom";
-import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
+import {
+  PlanDetail,
+  useGetPlanDetailQuery,
+} from "../../providers/store/api/plansApi";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
 import { PlanTag } from "../../entities/plan-tag";
 import { Button } from "../../shared/button";
@@ -70,6 +74,12 @@ const animation: Variants = {
 
 type TabId = "expenses" | "detail" | "version";
 
+type ContextType = {
+  setShowReuploadModal: Dispatch<SetStateAction<boolean>>;
+  showReuploadButton: boolean;
+  plan: PlanDetail;
+};
+
 export const PlanDetailRootPage: React.FC = () => {
   // Location
   const location = useLocation();
@@ -84,7 +94,7 @@ export const PlanDetailRootPage: React.FC = () => {
   const { data: me } = useMeQuery();
 
   // Modal
-  const [showReupload, setShowReupload] = useState<boolean>(false);
+  const [showReuploadModal, setShowReuploadModal] = useState<boolean>(false);
 
   // Query
   const {
@@ -119,6 +129,20 @@ export const PlanDetailRootPage: React.FC = () => {
     }
   }, [location]);
 
+  // Show reupload button: check the department of user is the same with plan, the plan is not closed yet, and not pass the due date
+  const showReuploadButton = useMemo<boolean>(() => {
+    if (plan && me) {
+      const sameDepartment = me.department.id === plan.department.departmentId;
+      const planNotClosed = plan.status.code !== "closed";
+      const planNotPassedDueDate =
+        parseISO(plan?.planDueDate, { additionalDigits: 2 }) > new Date();
+
+      return sameDepartment && planNotClosed && planNotPassedDueDate;
+    }
+
+    return false;
+  }, [plan, me]);
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -139,23 +163,18 @@ export const PlanDetailRootPage: React.FC = () => {
             <span>Plan detail</span>
           </p>
           <div className="ml-auto">
-            {/* Check the department of user is the same with plan, the plan is not closed yet, and not pass the due date */}
-            {plan &&
-              me?.department.id === plan.department.departmentId &&
-              plan.status.code !== "closed" &&
-              parseISO(plan?.planDueDate, { additionalDigits: 2 }) >
-                new Date() && (
-                <Button
-                  onClick={() => {
-                    setShowReupload(true);
-                  }}
-                >
-                  <div className="flex flex-row flex-wrap gap-3 ">
-                    <FaUpload className="mt-0.5" />
-                    <p className="text-sm font-semibold">Reupload plan</p>
-                  </div>
-                </Button>
-              )}
+            {showReuploadButton && (
+              <Button
+                onClick={() => {
+                  setShowReuploadModal(true);
+                }}
+              >
+                <div className="flex flex-row flex-wrap gap-3 ">
+                  <FaUpload className="mt-0.5" />
+                  <p className="text-sm font-semibold">Reupload plan</p>
+                </div>
+              </Button>
+            )}
           </div>
         </div>
       </BubbleBanner>
@@ -255,20 +274,26 @@ export const PlanDetailRootPage: React.FC = () => {
           </div>
 
           <motion.div layout>
-            <Outlet />
+            <Outlet
+              context={{ setShowReuploadModal, showReuploadButton, plan }}
+            />
           </motion.div>
         </div>
       </div>
 
       <ReuploadPlanModal
-        show={showReupload}
+        show={showReuploadModal}
         planId={plan?.id}
         planName={plan?.name}
         termName={plan?.term.name}
         onClose={() => {
-          setShowReupload(false);
+          setShowReuploadModal(false);
         }}
       />
     </motion.div>
   );
+};
+
+export const usePlanDetailContext = () => {
+  return useOutletContext<ContextType>();
 };

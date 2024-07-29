@@ -12,6 +12,7 @@ import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { StatusPlanFilter } from "../../entities/status-plan-filter";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -88,18 +89,28 @@ interface Props {
   className?: string;
   showReviewExpense?: boolean;
   searchboxValue?: string;
+  showReupload?: boolean;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
+  onApproveExpensesClick?: () => any;
+  onDenyExpensesClick?: () => any;
+  onDownloadClick?: () => any;
+  onReuploadClick?: () => any;
 }
 
 export const ListPlanDetailFilter: React.FC<Props> = ({
   className,
   showReviewExpense,
   searchboxValue,
+  showReupload,
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onApproveExpensesClick,
+  onDenyExpensesClick,
+  onDownloadClick,
+  onReuploadClick,
 }) => {
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -149,7 +160,13 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                     transition={{ delay: 0.5 }}
                   >
                     <motion.div variants={childrenAnimation}>
-                      <Button variant="error" containerClassName="mr-3">
+                      <Button
+                        variant="error"
+                        containerClassName="mr-3"
+                        onClick={() => {
+                          onDenyExpensesClick && onDenyExpensesClick();
+                        }}
+                      >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <RiDeleteRow className="text-xl" />
                           <p className="text-sm font-semibold">Deny expense</p>
@@ -158,7 +175,12 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                     </motion.div>
 
                     <motion.div variants={childrenAnimation}>
-                      <Button containerClassName="mr-3">
+                      <Button
+                        containerClassName="mr-3"
+                        onClick={() => {
+                          onApproveExpensesClick && onApproveExpensesClick();
+                        }}
+                      >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <FaListCheck className="text-lg" />
                           <p className="text-sm font-semibold">
@@ -216,8 +238,15 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                   >
                     <TERipple
                       rippleColor="light"
-                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200 border-b-2 border-b-neutral-100 dark:border-b-neutral-700"
-                      onClick={() => {}}
+                      className={clsx({
+                        "w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200":
+                          true,
+                        "border-b-2 border-b-neutral-100 dark:border-b-neutral-700":
+                          showReupload,
+                      })}
+                      onClick={() => {
+                        onDownloadClick && onDownloadClick();
+                      }}
                     >
                       <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                         <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" />
@@ -226,18 +255,22 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         </p>
                       </div>
                     </TERipple>
-                    <TERipple
-                      rippleColor="light"
-                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200"
-                      onClick={() => {}}
-                    >
-                      <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
-                        <FaUpload className="mr-3 text-primary-400 dark:text-neutral-400" />
-                        <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
-                          Reupload plan
-                        </p>
-                      </div>
-                    </TERipple>
+                    {showReupload && (
+                      <TERipple
+                        rippleColor="light"
+                        className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200"
+                        onClick={() => {
+                          onReuploadClick && onReuploadClick();
+                        }}
+                      >
+                        <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
+                          <FaUpload className="mr-3 text-primary-400 dark:text-neutral-400" />
+                          <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
+                            Reupload plan
+                          </p>
+                        </div>
+                      </TERipple>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

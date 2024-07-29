@@ -6,9 +6,18 @@ import { produce } from "immer";
 import {
   ListPlanExpenseParameters,
   PlanExpense,
+  plansApi,
+  useApproveExpensesMutation,
+  useDenyExpensesMutation,
   useLazyFetchPlanExpensesQuery,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
+import { useAppDispatch } from "../../providers/store/hook";
+import { toast } from "react-toastify";
+import { usePlanDetailContext } from "../plan-detail-root-page";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -57,7 +66,7 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       notes: "",
       status: {
         statusId: 0,
-        code: "",
+        code: "NEW",
         name: "",
       },
       isFetching: true,
@@ -67,24 +76,42 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
   return planExpenses;
 };
 
+const pageSize = 10;
+
 export const PlanDetailExpensePage: React.FC = () => {
-  const [listSelectedIndex, setListSelectedIndex] = useState<Set<number>>(
-    new Set()
-  );
+  // Dispatch
+  const dispatch = useAppDispatch();
+
+  // Get show upload modal method
+  const { plan, setShowReuploadModal, showReuploadButton } =
+    usePlanDetailContext();
+
+  // Get params
+  const { planId } = useParams<{ planId: string }>();
+
+  // Get me's data
+  const { data: me } = useMeQuery();
+
+  // Selectable row
+  const [listSelectedId, setListSelectedId] = useState<Set<number>>(new Set());
   const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
   useEffect(() => {
-    if (listSelectedIndex.size !== 0) {
+    if (listSelectedId.size !== 0) {
       setShowReviewExpense(true);
     } else {
       setShowReviewExpense(false);
     }
-  }, [listSelectedIndex]);
+  }, [listSelectedId]);
+
+  // Approve and deny mutation
+  const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
+    useApproveExpensesMutation();
+  const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
+    useDenyExpensesMutation();
 
   // Query
   const [fetchPlanExpense, { data, isFetching }] =
     useLazyFetchPlanExpensesQuery();
-
-  const { planId } = useParams<{ planId: string }>();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -104,10 +131,10 @@ export const PlanDetailExpensePage: React.FC = () => {
     if (planId) {
       const timeoutId = setTimeout(() => {
         const paramters: ListPlanExpenseParameters = {
-          planId: parseInt(planId, 10),
+          planId: parseInt(planId),
           query: searchboxValue,
           page,
-          pageSize: 10,
+          pageSize,
         };
 
         if (costTypeId) {
@@ -122,7 +149,20 @@ export const PlanDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId]);
+  }, [searchboxValue, page, costTypeId, statusId, planId]);
+
+  // Show successfully toast on approve or deny expenses
+  useEffect(() => {
+    if (approveExpensesSuccess) {
+      toast("Approve expenses successfully!", { type: "success" });
+    }
+  }, [approveExpensesSuccess]);
+
+  useEffect(() => {
+    if (denyExpensesSuccess) {
+      toast("Deny expenses successfully!", { type: "success" });
+    }
+  }, [denyExpensesSuccess]);
 
   return (
     <motion.div
@@ -143,18 +183,117 @@ export const PlanDetailExpensePage: React.FC = () => {
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
         }}
+        onApproveExpensesClick={() => {
+          if (planId) {
+            let planIdInt: number;
+            try {
+              // Parse planId to int
+              if (typeof planId === "string") {
+                planIdInt = parseInt(planId);
+              } else {
+                planIdInt = planId;
+              }
+
+              // Call API approve expenses
+              approveExpenses({
+                planId: planIdInt,
+                listExpenseId: Array.from(listSelectedId),
+              });
+
+              // Manually update cache
+              dispatch(
+                plansApi.util.updateQueryData(
+                  "fetchPlanExpenses",
+                  {
+                    planId: planIdInt,
+                    costTypeId,
+                    query: searchboxValue,
+                    page,
+                    pageSize,
+                  },
+                  (draft) => {
+                    draft.data.forEach((expense, index) => {
+                      if (listSelectedId.has(expense.expenseId)) {
+                        (draft.data[index].status.code = "APPROVED"),
+                          (draft.data[index].status.name = "Approved");
+                      }
+                    });
+                  }
+                )
+              );
+            } catch {}
+          }
+        }}
+        onDenyExpensesClick={() => {
+          if (planId) {
+            // Parse planId to int
+            let planIdInt: number;
+            try {
+              if (typeof planId === "string") {
+                planIdInt = parseInt(planId);
+              } else {
+                planIdInt = planId;
+              }
+
+              // Call API deny expenses
+              denyExpenses({
+                planId: planIdInt,
+                listExpenseId: Array.from(listSelectedId),
+              });
+
+              // Manually update cache
+              dispatch(
+                plansApi.util.updateQueryData(
+                  "fetchPlanExpenses",
+                  {
+                    planId: planIdInt,
+                    costTypeId,
+                    query: searchboxValue,
+                    page,
+                    pageSize,
+                  },
+                  (draft) => {
+                    draft.data.forEach((expense, index) => {
+                      if (listSelectedId.has(expense.expenseId)) {
+                        (draft.data[index].status.code = "DENIED"),
+                          (draft.data[index].status.name = "Denied");
+                      }
+                    });
+                  }
+                )
+              );
+            } catch {}
+          }
+        }}
+        showReupload={showReuploadButton}
+        onDownloadClick={() => {
+          const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+          if (token && planId) {
+            downloadFileFromServer(
+              `${
+                import.meta.env.VITE_BACKEND_HOST
+              }plan/download/last-version-xlsx?planId=${planId}`,
+              token,
+              plan.name
+            );
+          }
+        }}
+        onReuploadClick={() => {
+          setShowReuploadModal(true);
+        }}
       />
 
       <TablePlanExpenses
-        listSelectedIndex={listSelectedIndex}
-        // expenses={DUMMY_EXPENSES}
-        onRowClick={(index) => {
-          setListSelectedIndex(
+        isRowSelectable={me?.role.code === Role.ACCOUNTANT}
+        listSelectedId={listSelectedId}
+        onRowClick={(expenseId) => {
+          setListSelectedId(
             produce((state) => {
-              if (state.has(index)) {
-                state.delete(index);
+              if (state.has(expenseId)) {
+                state.delete(expenseId);
               } else {
-                state.add(index);
+                state.add(expenseId);
               }
 
               return state;
@@ -165,7 +304,7 @@ export const PlanDetailExpensePage: React.FC = () => {
         isDataEmpty={isDataEmpty}
         page={page}
         totalPage={data?.pagination.numPages}
-        onNext={() =>
+        onNext={() => {
           setPage((prevPage) => {
             if (data?.pagination.numPages) {
               if (prevPage + 1 > data?.pagination.numPages) {
@@ -176,12 +315,18 @@ export const PlanDetailExpensePage: React.FC = () => {
             } else {
               return 1;
             }
-          })
-        }
+          });
+
+          // Reset selected index
+          setListSelectedId(new Set());
+        }}
         onPageChange={(page) => {
           setPage(page || 1);
+
+          // Reset selected index
+          setListSelectedId(new Set());
         }}
-        onPrevious={() =>
+        onPrevious={() => {
           setPage((prevPage) => {
             if (data?.pagination.numPages) {
               if (prevPage === 1) {
@@ -192,8 +337,11 @@ export const PlanDetailExpensePage: React.FC = () => {
             } else {
               return 1;
             }
-          })
-        }
+          });
+
+          // Reset selected index
+          setListSelectedId(new Set());
+        }}
         isFetching={isFetching}
       />
     </motion.div>

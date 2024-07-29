@@ -11,7 +11,7 @@ import { Expense } from "../../features/upload-file-stage/type";
 import { useReuploadPlanMutation } from "../../providers/store/api/plansApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
-import { downloadTemplateFileFromServer } from "../../shared/utils/download-file-from-server";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   LEFT = "left",
@@ -153,7 +153,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                       );
 
                       if (token && planId) {
-                        downloadTemplateFileFromServer(
+                        downloadFileFromServer(
                           `${
                             import.meta.env.VITE_BACKEND_HOST
                           }plan/download/last-version-xlsx?planId=${planId}`,

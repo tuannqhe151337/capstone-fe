@@ -6,6 +6,7 @@ import { Tag } from "../../shared/tag";
 import clsx from "clsx";
 import { PlanExpense } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
+import { PlanExpenseTag } from "../../entities/plan-expense-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -74,8 +75,9 @@ export interface Expense {
 }
 
 interface Props {
-  listSelectedIndex?: Set<number>;
-  onRowClick?: (index: number) => any;
+  isRowSelectable?: boolean;
+  listSelectedId?: Set<number>;
+  onRowClick?: (expenseId: number) => any;
   expenses?: PlanExpense[];
   isFetching?: boolean;
   page?: number | undefined | null;
@@ -87,7 +89,8 @@ interface Props {
 }
 
 export const TablePlanExpenses: React.FC<Props> = ({
-  listSelectedIndex,
+  isRowSelectable,
+  listSelectedId,
   onRowClick,
   expenses,
   isFetching,
@@ -108,9 +111,11 @@ export const TablePlanExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
-            <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              <Checkbox className="ml-1 mt-0.5" />
-            </th>
+            {isRowSelectable && (
+              <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
+                <Checkbox className="ml-1 mt-0.5" />
+              </th>
+            )}
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
@@ -154,32 +159,43 @@ export const TablePlanExpenses: React.FC<Props> = ({
               <motion.tr
                 key={expense.expenseId}
                 className={clsx({
-                  "cursor-pointer duration-200": true,
-                  "bg-primary-100 dark:bg-primary-950":
-                    listSelectedIndex && listSelectedIndex.has(index),
-                  "hover:bg-primary-100/70 hover:dark:bg-neutral-800":
-                    listSelectedIndex && !listSelectedIndex.has(index),
+                  "border-b-2 duration-200": true,
+                  "cursor-pointer hover:bg-primary-100/70 hover:dark:bg-neutral-800":
+                    isRowSelectable && !isFetching,
+                  "border-b-primary-200/50 dark:border-b-primary-900/50 bg-primary-100 dark:bg-primary-950":
+                    isRowSelectable &&
+                    listSelectedId &&
+                    listSelectedId.has(expense.expenseId),
+                  "border-b-transparent":
+                    listSelectedId && !listSelectedId.has(expense.expenseId),
                   "bg-primary-50/70 dark:bg-neutral-800/70":
                     index % 2 === 1 &&
-                    listSelectedIndex &&
-                    !listSelectedIndex.has(index),
+                    listSelectedId &&
+                    !listSelectedId.has(expense.expenseId),
                 })}
                 variants={rowAnimation}
                 onClick={() => {
-                  onRowClick && onRowClick(index);
+                  isRowSelectable &&
+                    !isFetching &&
+                    onRowClick &&
+                    onRowClick(expense.expenseId);
                 }}
               >
-                <td className="pl-3.5 pr-2 py-3">
-                  <Checkbox
-                    className="m-auto"
-                    checked={listSelectedIndex && listSelectedIndex.has(index)}
-                  />
-                </td>
+                {isRowSelectable && (
+                  <td className="pl-3.5 pr-2 py-3">
+                    <Checkbox
+                      className="m-auto"
+                      checked={
+                        listSelectedId && listSelectedId.has(expense.expenseId)
+                      }
+                    />
+                  </td>
+                )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -190,7 +206,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -198,18 +214,26 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
-                  <NumericFormat
-                    displayType="text"
-                    value={expense.unitPrice}
-                    disabled
-                    thousandSeparator
-                  />
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <NumericFormat
+                      displayType="text"
+                      value={expense.unitPrice}
+                      disabled
+                      thousandSeparator
+                    />
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -217,17 +241,25 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
-                  <NumericFormat
-                    displayType="text"
-                    value={expense.unitPrice * expense.amount}
-                    thousandSeparator
-                  />
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <NumericFormat
+                      displayType="text"
+                      value={expense.unitPrice * expense.amount}
+                      thousandSeparator
+                    />
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -238,7 +270,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -249,7 +281,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -260,7 +292,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <span
                       className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
                       )}
                     ></span>
                   ) : (
@@ -268,9 +300,18 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="px-2 py-3">
-                  <Tag background="filled" variant="reviewed">
-                    Accepted
-                  </Tag>
+                  {isFetching ? (
+                    <span
+                      className={cn(
+                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
+                      )}
+                    ></span>
+                  ) : (
+                    <PlanExpenseTag
+                      className="m-auto"
+                      statusCode={expense.status.code}
+                    />
+                  )}
                 </td>
               </motion.tr>
             ))}
