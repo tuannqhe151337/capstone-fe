@@ -3,7 +3,7 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { FaExclamation } from "react-icons/fa";
-import { Term, useStartTermMutation } from "../../providers/store/api/termApi";
+import { useStartTermMutation } from "../../providers/store/api/termApi";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 

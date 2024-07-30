@@ -30,7 +30,7 @@ const generateEmptyPlans = (total: number): Row[] => {
       status: {
         id: 0,
         name: "",
-        code: "new",
+        code: "NEW",
       },
       role: {
         id: 0,

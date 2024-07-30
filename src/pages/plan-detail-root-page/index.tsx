@@ -133,7 +133,7 @@ export const PlanDetailRootPage: React.FC = () => {
   const showReuploadButton = useMemo<boolean>(() => {
     if (plan && me) {
       const sameDepartment = me.department.id === plan.department.departmentId;
-      const planNotClosed = plan.status.code !== "closed";
+      const planNotClosed = plan.status.code !== "CLOSED";
       const planNotPassedDueDate =
         parseISO(plan?.planDueDate, { additionalDigits: 2 }) > new Date();
 

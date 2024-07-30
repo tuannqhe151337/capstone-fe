@@ -115,11 +115,11 @@ export interface PlanStatus {
 }
 
 export type PlanCode =
-  | "new"
-  | "waiting-for-reviewed"
-  | "approved"
-  | "reviewed"
-  | "closed";
+  | "NEW"
+  | "WAITING_FOR_REVIEWED"
+  | "APPROVED"
+  | "REVIEWED"
+  | "CLOSED";
 
 export interface Position {
   id: string | number;
@@ -185,6 +185,10 @@ export interface ReuploadExpenseBody {
 export interface ReviewExpensesBody {
   planId: number;
   listExpenseId: number[];
+}
+
+export interface SubmitPlanBody {
+  planId: number;
 }
 
 // DEV ONLY!!!
@@ -298,8 +302,6 @@ const plansApi = createApi({
         query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
           let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
 
-          console.log(query, planId, costTypeId, statusId, page, pageSize);
-
           if (query && query !== "") {
             endpoint += `&query=${query}`;
           }
@@ -338,6 +340,14 @@ const plansApi = createApi({
           body: reviewExpenseBody,
         }),
       }),
+      submitPlanForReview: builder.mutation<any, SubmitPlanBody>({
+        query: (submitPlanBody) => ({
+          url: "plan/submit-for-review",
+          method: "PUT",
+          body: submitPlanBody,
+        }),
+        invalidatesTags: ["plan-detail"],
+      }),
     };
   },
 });
@@ -354,5 +364,6 @@ export const {
   useReuploadPlanMutation,
   useApproveExpensesMutation,
   useDenyExpensesMutation,
+  useSubmitPlanForReviewMutation,
 } = plansApi;
 export { plansApi };
