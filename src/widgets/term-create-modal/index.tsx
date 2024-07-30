@@ -226,6 +226,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             <DurationRadioOption
               radioInput={
                 <RadioInput
+                  disabled
                   value={Duration.MONTHLY}
                   checked={selectedOption === Duration.MONTHLY}
                   {...register("duration")}
@@ -250,15 +251,18 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             />
 
             <DurationRadioOption
+              disabled
               radioInput={
                 <RadioInput
+                  disabled
                   value={Duration.QUARTERLY}
                   checked={selectedOption === Duration.QUARTERLY}
                   {...register("duration")}
                 />
               }
-              onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
-              isSelected={selectedOption === Duration.QUARTERLY}
+              // onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
+              // isSelected={selectedOption === Duration.QUARTERLY}
+              tooltip="We'll complete this feature in the future"
               label={"Quarterly"}
               fromToDate={
                 <>
@@ -275,15 +279,18 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             />
 
             <DurationRadioOption
+              disabled
               radioInput={
                 <RadioInput
+                  disabled
                   value={Duration.HALF_YEARLY}
                   checked={selectedOption === Duration.HALF_YEARLY}
                   {...register("duration")}
                 />
               }
-              onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
-              isSelected={selectedOption === Duration.HALF_YEARLY}
+              // onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
+              // isSelected={selectedOption === Duration.HALF_YEARLY}
+              tooltip="We'll complete this feature in the future"
               label={"Half year"}
               fromToDate={
                 <>
