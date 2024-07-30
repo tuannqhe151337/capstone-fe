@@ -23,11 +23,11 @@ const generateEmptyReports = (total: number): Row[] => {
         id: 0,
         name: "",
       },
-      department: {
-        id: 0,
-        name: "",
-      },
       isFetching: true,
+      status: {
+        code: "WAITING_FOR_REVIEWED",
+      },
+      createdAt: "",
     });
   }
 
@@ -79,7 +79,6 @@ export const ReportManagementList: React.FC = () => {
   const [searchboxValue, setSearchboxValue] = useState<string>("");
 
   const [termId, setTermId] = useState<number | null>();
-  const [departmentId, setDepartmentId] = useState<number | null>();
 
   const [page, setPage] = useState<number>(1);
 
@@ -103,14 +102,11 @@ export const ReportManagementList: React.FC = () => {
         paramters.termId = termId;
       }
 
-      if (departmentId) {
-        paramters.departmentId = departmentId;
-      }
       fetchReport(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId, departmentId]);
+  }, [searchboxValue, page, termId]);
 
   return (
     <motion.div
@@ -136,9 +132,6 @@ export const ReportManagementList: React.FC = () => {
           }}
           onTermIdChange={(termId) => {
             setTermId(termId);
-          }}
-          onDepartmentIdChange={(departmentId) => {
-            setDepartmentId(departmentId);
           }}
         />
       </motion.div>

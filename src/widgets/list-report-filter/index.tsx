@@ -56,14 +56,12 @@ interface Props {
   searchboxValue?: string;
   onSearchboxChange?: (value: string) => any;
   onTermIdChange?: (termId: number | null | undefined) => any;
-  onDepartmentIdChange?: (departmentId: number | null | undefined) => any;
 }
 
 export const ListReportFilter: React.FC<Props> = ({
   searchboxValue,
   onSearchboxChange,
   onTermIdChange,
-  onDepartmentIdChange,
 }) => {
   // UI: show 3 select box
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -81,14 +79,6 @@ export const ListReportFilter: React.FC<Props> = ({
           <TermFilter
             onChange={(option) => {
               onTermIdChange && onTermIdChange(option?.value);
-            }}
-          />
-        </motion.div>
-
-        <motion.div variants={childrenAnimation} className="mr-4">
-          <DepartmentFilter
-            onChange={(option) => {
-              onDepartmentIdChange && onDepartmentIdChange(option?.value);
             }}
           />
         </motion.div>

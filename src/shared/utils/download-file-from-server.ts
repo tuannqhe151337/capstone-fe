@@ -3,19 +3,23 @@ export const downloadFileFromServer = async (
   token?: string,
   fileName?: string
 ) => {
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` || "" },
-  });
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` || "" },
+    });
 
-  const blob = await response.blob();
+    const blob = await response.blob();
 
-  const fileurl = window.URL.createObjectURL(new Blob([blob]));
+    const fileurl = window.URL.createObjectURL(new Blob([blob]));
 
-  const link = document.createElement("a");
+    const link = document.createElement("a");
 
-  link.href = fileurl;
-  link.setAttribute("download", fileName ? fileName : `template.xlsx`);
-  link.target = "_blank";
+    link.href = fileurl;
+    link.setAttribute("download", fileName ? fileName : `template.xlsx`);
+    link.target = "_blank";
 
-  link.click();
+    link.click();
+  } catch (e) {
+    console.log(e);
+  }
 };
