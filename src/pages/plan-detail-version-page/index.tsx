@@ -170,7 +170,7 @@ export const PlanDetailVersionPage: React.FC = () => {
               <motion.tr
                 key={version}
                 className={clsx({
-                  "cursor-pointer hover:text-neutral-500 hover:underline duration-200":
+                  "group cursor-pointer hover:text-neutral-500 duration-200":
                     true,
                   "h-[61px] bg-neutral-50 dark:bg-neutral-800/50": i % 2 === 1,
                   "text-neutral-500/90 dark:text-neutral-400": i === 0,
@@ -191,7 +191,7 @@ export const PlanDetailVersionPage: React.FC = () => {
                   }
                 }}
               >
-                <td className="text-sm font-bold  text-center py-5 w-[150px]">
+                <td className="text-sm font-bold text-center py-5 w-[150px] group-hover:underline duration-200">
                   {version} {i === 0 && "(current)"}
                 </td>
                 <td className="text-sm font-bold text-center py-5 w-[200px]">

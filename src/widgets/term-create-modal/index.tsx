@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { add, format } from "date-fns";
 import { CgSpinner } from "react-icons/cg";
-import { parseISODateForBody } from "../../shared/utils/parse-iso-date-for-body";
+import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
 import DurationRadioOption from "../../entities/duration-radio-option";
 import { RadioInput } from "../../shared/radio-input";
 
@@ -108,8 +108,8 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
     createTerm({
       name: data.name,
       duration: duration,
-      startDate: parseISODateForBody(data.startDate),
-      planDueDate: parseISODateForBody(data.planDueDate),
+      startDate: formatISODateForBody(data.startDate),
+      planDueDate: formatISODateForBody(data.planDueDate),
     });
   };
 

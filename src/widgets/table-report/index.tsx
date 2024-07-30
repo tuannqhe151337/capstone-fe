@@ -8,7 +8,10 @@ import clsx from "clsx";
 import { DeleteReportModal } from "../delete-report-modal";
 import { Report } from "../../providers/store/api/reportsAPI";
 import { cn } from "../../shared/utils/cn";
-
+import { Skeleton } from "../../shared/skeleton";
+import { ReportTag } from "../../entities/report-tag";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { format } from "date-fns";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -98,24 +101,7 @@ export const TableReportManagement: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Department
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Version
-            </th>
-            <th scope="col">
-              <IconButton
-                className="px-3"
-                tooltip="Add new plan"
-                onClick={() => {
-                  onCreatePlanClick && onCreatePlanClick();
-                }}
-              >
-                <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
-              </IconButton>
+              Created at
             </th>
           </tr>
         </thead>
@@ -145,73 +131,37 @@ export const TableReportManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate(`detail/expenses/${row.reportId}`);
+                  navigate(`detail/expenses/${row.reportId} `);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-extrabold">
+                <td className="whitespace-nowrap px-6 py-6 font-extrabold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
-                    <>{row.name}</>
+                    <>
+                      <span className="group-hover:underline">{row.name}</span>{" "}
+                      <ReportTag statusCode={row.status.code} />
+                    </>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <>{row.term.name}</>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
-                    <>{row.department.name}</>
-                  )}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
-                  {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
+                    <>
+                      {format(
+                        parseISOInResponse(row.createdAt),
+                        "dd MMMM yyyy"
                       )}
-                    ></span>
-                  ) : (
-                    <>{row.version}</>
+                    </>
                   )}
-                </td>
-                <td className="whitespace-nowrap px-6 py-4">
-                  <motion.div
-                    initial={AnimationStage.HIDDEN}
-                    animate={
-                      hoverRowIndex === index
-                        ? AnimationStage.VISIBLE
-                        : AnimationStage.HIDDEN
-                    }
-                    exit={AnimationStage.HIDDEN}
-                    variants={animation}
-                  >
-                    <IconButton
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleClick();
-                      }}
-                    >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
-                  </motion.div>
                 </td>
               </motion.tr>
             ))}

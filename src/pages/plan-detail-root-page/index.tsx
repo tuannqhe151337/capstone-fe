@@ -26,6 +26,7 @@ import { FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { parseISO } from "date-fns";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -135,7 +136,7 @@ export const PlanDetailRootPage: React.FC = () => {
       const sameDepartment = me.department.id === plan.department.departmentId;
       const planNotClosed = plan.status.code !== "CLOSED";
       const planNotPassedDueDate =
-        parseISO(plan?.planDueDate, { additionalDigits: 2 }) > new Date();
+        parseISOInResponse(plan.planDueDate) > new Date();
 
       return sameDepartment && planNotClosed && planNotPassedDueDate;
     }

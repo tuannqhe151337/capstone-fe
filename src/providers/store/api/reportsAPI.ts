@@ -24,8 +24,15 @@ export interface Report {
   version: string;
   month: string;
   term: Term;
-  department: Department;
+  status: ReportStatus;
+  createdAt: string;
 }
+
+export interface ReportStatus {
+  code: ReportStatusCode;
+}
+
+export type ReportStatusCode = "WAITING_FOR_REVIEWED" | "APPROVED" | "REVIEWED";
 
 export interface ReportExpense {
   expenseId: number | string;
