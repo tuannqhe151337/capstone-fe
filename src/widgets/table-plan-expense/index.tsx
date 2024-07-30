@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { PlanExpense } from "../../providers/store/api/plansApi";
 import { cn } from "../../shared/utils/cn";
 import { PlanExpenseTag } from "../../entities/plan-expense-tag";
+import { Button } from "../../shared/button";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -75,6 +76,8 @@ export interface Expense {
 
 interface Props {
   isRowSelectable?: boolean;
+  showSubmitPlanButton?: boolean;
+  onSubmitForReview?: () => any;
   listSelectedId?: Set<number>;
   onSelectAllClick?: () => any;
   onRowClick?: (expenseId: number) => any;
@@ -90,6 +93,8 @@ interface Props {
 
 export const TablePlanExpenses: React.FC<Props> = ({
   isRowSelectable,
+  showSubmitPlanButton,
+  onSubmitForReview,
   listSelectedId,
   onSelectAllClick,
   onRowClick,
@@ -344,6 +349,19 @@ export const TablePlanExpenses: React.FC<Props> = ({
             onPageChange={onPageChange}
             onPrevious={onPrevious}
           />
+        </motion.div>
+      )}
+
+      {showSubmitPlanButton && (
+        <motion.div
+          className="w-full mt-5"
+          initial={AnimationStage.HIDDEN}
+          animate={AnimationStage.VISIBLE}
+          variants={animation}
+        >
+          <Button containerClassName="w-full" onClick={onSubmitForReview}>
+            Submit for review
+          </Button>
         </motion.div>
       )}
     </div>

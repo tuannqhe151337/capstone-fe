@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { TablePlanExpenses } from "../../widgets/table-plan-expense";
 import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
@@ -10,6 +10,7 @@ import {
   useApproveExpensesMutation,
   useDenyExpensesMutation,
   useLazyFetchPlanExpensesQuery,
+  useSubmitPlanForReviewMutation,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
 import { useMeQuery } from "../../providers/store/api/authApi";
@@ -92,6 +93,10 @@ export const PlanDetailExpensePage: React.FC = () => {
   // Get me's data
   const { data: me } = useMeQuery();
 
+  // Query
+  const [fetchPlanExpense, { data, isFetching }] =
+    useLazyFetchPlanExpensesQuery();
+
   // Selectable row
   const [listSelectedId, setListSelectedId] = useState<Set<number>>(new Set());
   const [showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
@@ -109,9 +114,24 @@ export const PlanDetailExpensePage: React.FC = () => {
   const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
     useDenyExpensesMutation();
 
-  // Query
-  const [fetchPlanExpense, { data, isFetching }] =
-    useLazyFetchPlanExpensesQuery();
+  // Submit plan for review
+  const [submitPlanForReview, { isSuccess: submitPlanForReviewSuccess }] =
+    useSubmitPlanForReviewMutation();
+
+  const showSubmitPlanButton = useMemo(() => {
+    if (plan) {
+      return (
+        plan.status.code === "NEW" &&
+        plan.department.departmentId === me?.department.id
+      );
+    }
+  }, [plan, me]);
+
+  useEffect(() => {
+    if (submitPlanForReviewSuccess) {
+      toast("Submit plan successfully!", { type: "success" });
+    }
+  }, [submitPlanForReviewSuccess]);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -317,6 +337,10 @@ export const PlanDetailExpensePage: React.FC = () => {
         }}
         expenses={isFetching ? generateEmptyPlanExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
+        showSubmitPlanButton={showSubmitPlanButton}
+        onSubmitForReview={() => {
+          planId && submitPlanForReview({ planId: parseInt(planId) });
+        }}
         page={page}
         totalPage={data?.pagination.numPages}
         onNext={() => {

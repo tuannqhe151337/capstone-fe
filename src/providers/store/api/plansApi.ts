@@ -187,6 +187,10 @@ export interface ReviewExpensesBody {
   listExpenseId: number[];
 }
 
+export interface SubmitPlanBody {
+  planId: number;
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -298,8 +302,6 @@ const plansApi = createApi({
         query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
           let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
 
-          console.log(query, planId, costTypeId, statusId, page, pageSize);
-
           if (query && query !== "") {
             endpoint += `&query=${query}`;
           }
@@ -338,6 +340,14 @@ const plansApi = createApi({
           body: reviewExpenseBody,
         }),
       }),
+      submitPlanForReview: builder.mutation<any, SubmitPlanBody>({
+        query: (submitPlanBody) => ({
+          url: "plan/submit-for-review",
+          method: "PUT",
+          body: submitPlanBody,
+        }),
+        invalidatesTags: ["plan-detail"],
+      }),
     };
   },
 });
@@ -354,5 +364,6 @@ export const {
   useReuploadPlanMutation,
   useApproveExpensesMutation,
   useDenyExpensesMutation,
+  useSubmitPlanForReviewMutation,
 } = plansApi;
 export { plansApi };
