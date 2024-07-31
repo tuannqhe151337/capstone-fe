@@ -25,6 +25,7 @@ import { CgSpinner } from "react-icons/cg";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
+import { PasswordInput } from "../../shared/password-input";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -217,14 +218,13 @@ export const ResetPasswordPage: React.FC = () => {
               />
 
               <motion.div variants={childrenAnimation}>
-                <TEInput
-                  type="password"
+                <PasswordInput
                   label={t("newPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
                   {...register("newPassword", { required: true })}
-                ></TEInput>
+                />
                 <InputValidationMessage
                   show={true}
                   validateFn={() =>
@@ -235,14 +235,13 @@ export const ResetPasswordPage: React.FC = () => {
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
-                <TEInput
-                  type="password"
+                <PasswordInput
                   label={t("confirmNewPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
                   {...register("confirmPassword", { required: true })}
-                ></TEInput>
+                />
 
                 <InputValidationMessage
                   show={true}

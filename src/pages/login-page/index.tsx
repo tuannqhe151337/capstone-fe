@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { TERipple, TEInput } from "tw-elements-react";
-import { AnimatePresence, Variants, motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
@@ -12,12 +12,11 @@ import {
   useLazyMeQuery,
   useLoginMutation,
 } from "../../providers/store/api/authApi";
-import { FaCircleExclamation } from "react-icons/fa6";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CgSpinner } from "react-icons/cg";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { LogoRedirect } from "../../widgets/logo-redirect";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
+import { PasswordInput } from "../../shared/password-input";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -77,18 +76,6 @@ const errorMessageAnimation: Variants = {
   },
 };
 
-const heightPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.5,
-    },
-  },
-  visible: {
-    height: 60,
-  },
-};
-
 export const LoginPage: React.FC = () => {
   // Navigate
   const navigate = useNavigate();
@@ -126,7 +113,6 @@ export const LoginPage: React.FC = () => {
   // Password input state
   const [password, setPassword] = useState<string>("");
   const [isPasswordDirty, setIsPasswordDirty] = useState<boolean>(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
   // Handling submit
   const handleSubmit = async () => {
@@ -237,9 +223,8 @@ export const LoginPage: React.FC = () => {
               </motion.div>
 
               {/* Password input */}
-              <motion.div className="relative" variants={childrenAnimation}>
-                <TEInput
-                  type={isPasswordVisible ? "text" : "password"}
+              <motion.div variants={childrenAnimation}>
+                <PasswordInput
                   label="Password"
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
@@ -257,19 +242,6 @@ export const LoginPage: React.FC = () => {
                     }
                   }}
                 />
-                <div className="absolute top-0 right-0 h-full">
-                  <div
-                    className="flex flex-row flex-wrap items-center justify-center h-full rounded-full cursor-pointer px-4 group duration-200"
-                    onClick={() => {
-                      setIsPasswordVisible((prevState) => !prevState);
-                    }}
-                  >
-                    <div className="text-lg text-primary-500 group-hover:text-primary-400 group-active:text-primary-600 dark:text-primary-600 dark:group-hover:text-primary-500 dark:group-active:text-primary-500 duration-200">
-                      {isPasswordVisible && <FaEyeSlash />}
-                      {!isPasswordVisible && <FaEye />}
-                    </div>
-                  </div>
-                </div>
               </motion.div>
 
               <motion.div
