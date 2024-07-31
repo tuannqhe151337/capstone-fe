@@ -11,6 +11,7 @@ import {
   useLazyFetchUsersQuery,
 } from "../../providers/store/api/usersApi";
 import _ from "lodash";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -138,6 +139,12 @@ export const UserManagementList: React.FC = () => {
     departmentId,
     positionId,
   ]);
+
+  // Shortkey to create new user
+  useHotkeys("ctrl + =", (e) => {
+    e.preventDefault();
+    navigate(`/user-management/create`);
+  });
 
   return (
     <motion.div
