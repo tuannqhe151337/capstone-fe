@@ -20,7 +20,7 @@ export const TableCell: React.FC<Props> = ({
         )}
       ></span>
     ) : (
-      <p className="font-extrabold py-2">{children}</p>
+      <p className="font-bold py-2">{children}</p>
     )}
   </td>
 );

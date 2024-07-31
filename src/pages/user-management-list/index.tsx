@@ -3,7 +3,7 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { ListUserFiler } from "../../widgets/list-user-filter";
 import { HiUserAdd } from "react-icons/hi";
-import { Row, UserPlanTable } from "../../widgets/user-plan-table";
+import { Row, UserTable } from "../../widgets/table-user";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,6 +11,7 @@ import {
   useLazyFetchUsersQuery,
 } from "../../providers/store/api/usersApi";
 import _ from "lodash";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -139,6 +140,12 @@ export const UserManagementList: React.FC = () => {
     positionId,
   ]);
 
+  // Shortkey to create new user
+  useHotkeys("ctrl + =", (e) => {
+    e.preventDefault();
+    navigate(`/user-management/create`);
+  });
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -186,7 +193,7 @@ export const UserManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <UserPlanTable
+        <UserTable
           users={isFetching ? generateEmptyUsers(10) : data?.data}
           isDataEmpty={isDataEmpty}
           onDeactivateSuccessfully={(user) => {

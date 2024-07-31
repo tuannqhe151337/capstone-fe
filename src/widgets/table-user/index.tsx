@@ -1,7 +1,7 @@
 import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
 import { TableCell } from "./ui/table-cell";
@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { UserActiveConfirmModal } from "../user-active-confirm-modal";
 import { UserDeactiveConfirmModal } from "../user-deactive-confirm-modal";
 import { UserPreview } from "../../providers/store/api/usersApi";
+import { useHotkeys } from "react-hotkeys-hook";
+import { UserActionContextMenu } from "../../entities/user-action-context-menu";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -60,7 +62,7 @@ interface Props {
   onNext?: () => any;
 }
 
-export const UserPlanTable: React.FC<Props> = ({
+export const UserTable: React.FC<Props> = ({
   users,
   isFetching,
   page,
@@ -79,7 +81,7 @@ export const UserPlanTable: React.FC<Props> = ({
   // Deactivate and activate user's id state
   const [chosenUser, setChosenUser] = useState<UserPreview>();
 
-  // UI
+  // UI: activate and deactivate modal
   const [activeModal, setActiveModal] = useState<boolean>(false);
   const [deactiveModal, setDeactiveModal] = useState<boolean>(false);
 
@@ -90,6 +92,25 @@ export const UserPlanTable: React.FC<Props> = ({
   const handleCloseDeactiveModal = () => {
     setDeactiveModal(false);
   };
+
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
 
   return (
     <div>
@@ -181,6 +202,13 @@ export const UserPlanTable: React.FC<Props> = ({
                     event.stopPropagation();
                     navigate(`detail/${user.userId}`);
                   }}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    setShowContextMenu(true);
+                    setContextMenuLeft(e.pageX);
+                    setContextMenuTop(e.pageY);
+                    setChosenUser(user);
+                  }}
                 >
                   <TableCell
                     isFetching={isFetching}
@@ -266,14 +294,46 @@ export const UserPlanTable: React.FC<Props> = ({
         user={chosenUser}
         show={activeModal}
         onClose={handleCloseActiveModal}
-        onActivateSuccessfully={onActivateSuccessfully}
+        onActivateSuccessfully={(user) => {
+          onActivateSuccessfully && onActivateSuccessfully(user);
+          setActiveModal(false);
+        }}
       />
+
       <UserDeactiveConfirmModal
         user={chosenUser}
         show={deactiveModal}
         onClose={handleCloseDeactiveModal}
-        onDeactivateSuccessfully={onDeactivateSuccessfully}
+        onDeactivateSuccessfully={(user) => {
+          onDeactivateSuccessfully && onDeactivateSuccessfully(user);
+          setDeactiveModal(false);
+        }}
       />
+
+      {chosenUser && (
+        <UserActionContextMenu
+          show={showContextMenu}
+          left={contextMenuLeft}
+          top={contextMenuTop}
+          showActivateUser={chosenUser?.deactivate}
+          showDeactivateUser={!chosenUser?.deactivate}
+          onCreateUser={() => {
+            navigate(`/user-management/create`);
+          }}
+          onEditUser={() => {
+            navigate(`/user-management/edit/${chosenUser.userId}`);
+          }}
+          onActivateUser={() => {
+            setActiveModal(true);
+          }}
+          onDeactivateUser={() => {
+            setDeactiveModal(true);
+          }}
+          onViewDetail={() => {
+            navigate(`/user-management/detail/${chosenUser.userId}`);
+          }}
+        />
+      )}
     </div>
   );
 };
