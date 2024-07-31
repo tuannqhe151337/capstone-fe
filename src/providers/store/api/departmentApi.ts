@@ -2,14 +2,18 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface Department {
-  id: number;
+  departmentId: number;
   name: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListDepartmentParameters {
-  query: string;
+  query?: string;
   page: number;
   pageSize: number;
+  sortBy?: string;
+  sortType?: string;
 }
 
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
@@ -34,11 +38,25 @@ export const departmentAPI = createApi({
   baseQuery: staggeredBaseQuery,
   endpoints: (builder) => ({
     getListDepartment: builder.query<
-      PaginationResponse<[Department]>,
+      PaginationResponse<Department[]>,
       ListDepartmentParameters
     >({
-      query: ({ page, pageSize, query }) => {
-        return `/department/user-paging-department?page=${page}&size=${pageSize}&query=${query}`;
+      query: ({ page, pageSize, query, sortBy, sortType }) => {
+        let url = `/department/list?page=${page}&size=${pageSize}`;
+
+        if (query) {
+          url += `&query=${query}`;
+        }
+
+        if (sortBy) {
+          url += `&sortBy=${sortBy}`;
+        }
+
+        if (sortType) {
+          url += `&sortType=${sortType}`;
+        }
+
+        return url;
       },
     }),
   }),

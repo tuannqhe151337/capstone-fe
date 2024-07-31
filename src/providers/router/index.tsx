@@ -73,6 +73,7 @@ const router = createBrowserRouter([
           };
         },
       },
+
       // Plan management pages
       {
         path: "plan-management",
@@ -420,6 +421,25 @@ const router = createBrowserRouter([
                 },
               },
             ],
+          },
+        ],
+      },
+
+      // List department pages
+      {
+        path: "department-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const DepartmentManagementListPage = (
+                await import("../../pages/department-management-list")
+              ).DepartmentManagementList;
+
+              return {
+                element: <DepartmentManagementListPage />,
+              };
+            },
           },
         ],
       },

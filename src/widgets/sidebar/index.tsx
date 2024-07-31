@@ -4,7 +4,7 @@ import { MdDashboard } from "react-icons/md";
 import { FaUserGroup } from "react-icons/fa6";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { HiDocumentReport } from "react-icons/hi";
-import { FaChartPie, FaChartLine, FaBars } from "react-icons/fa";
+import { FaChartPie, FaChartLine, FaBars, FaCoins } from "react-icons/fa";
 import { Tab } from "./ui/tab";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { IconButton } from "../../shared/icon-button";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
+import { HiOfficeBuilding } from "react-icons/hi";
 
 export const Sidebar = () => {
   // i18n
@@ -140,6 +141,36 @@ export const Sidebar = () => {
                 icon={<FaUserGroup className="text-2xl -ml-0.5" />}
                 text={t("User management")}
                 selected={location.pathname.startsWith("/user-management")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Department management */}
+        {data?.role.code === Role.ADMIN && (
+          <div>
+            <Link to={`/department-management`}>
+              <Tab
+                icon={<HiOfficeBuilding className="text-2xl -ml-0.5" />}
+                text={t("Department")}
+                selected={location.pathname.startsWith(
+                  "/department-management"
+                )}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Cost type management */}
+        {data?.role.code === Role.ADMIN && (
+          <div>
+            <Link to={`/cost-type-management`}>
+              <Tab
+                icon={<FaCoins className="text-2xl -ml-0.5" />}
+                text={t("Cost type")}
+                selected={location.pathname.startsWith("/cost-type-management")}
                 isExpanded={isExpanded}
               />
             </Link>

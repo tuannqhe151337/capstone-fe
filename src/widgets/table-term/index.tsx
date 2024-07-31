@@ -9,7 +9,7 @@ import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
 import { StartTermModal } from "../start-term-modal";
 import clsx from "clsx";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { cn } from "../../shared/utils/cn";
 import { Term } from "../../providers/store/api/termApi";
 
@@ -189,7 +189,7 @@ export const TableTermManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <> {formatISODate(row.startDate)}</>
+                    <> {formatISODateFromResponse(row.startDate)}</>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -200,7 +200,7 @@ export const TableTermManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <> {formatISODate(row.endDate)}</>
+                    <> {formatISODateFromResponse(row.endDate)}</>
                   )}
                 </td>
 

@@ -3,7 +3,7 @@ import { FaLocationDot, FaUser } from "react-icons/fa6";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";
 import { cn } from "../../shared/utils/cn";
 import React from "react";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { UserListItem } from "./ui/user-list-item";
 import { MdEmail } from "react-icons/md";
 
@@ -106,7 +106,7 @@ export const UserDetailCard: React.FC<Props> = ({
             isLoading={isLoading}
             icon={<FaBirthdayCake />}
             label="Date of birth"
-            value={formatISODate(dateOfBirth)}
+            value={formatISODateFromResponse(dateOfBirth)}
           />
         </motion.div>
 

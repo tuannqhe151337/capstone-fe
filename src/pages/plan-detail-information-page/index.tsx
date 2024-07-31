@@ -9,7 +9,7 @@ import { FaClock } from "react-icons/fa6";
 import { RiProgress3Fill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import clsx from "clsx";
 import { FaCheck } from "react-icons/fa6";
 
@@ -81,7 +81,9 @@ export const PlanDetailInformationPage: React.FC = () => {
             icon={<FaChartLine className="text-2xl mr-1.5" />}
             title="Plan due date"
             value={
-              (data?.planDueDate && formatISODate(data?.planDueDate)) || ""
+              (data?.planDueDate &&
+                formatISODateFromResponse(data?.planDueDate)) ||
+              ""
             }
           />
         </motion.div>
@@ -156,7 +158,10 @@ export const PlanDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<FaClock className="text-2xl" />}
             title="Created at"
-            value={(data?.createdAt && formatISODate(data?.createdAt)) || ""}
+            value={
+              (data?.createdAt && formatISODateFromResponse(data?.createdAt)) ||
+              ""
+            }
           />
         </motion.div>
 
