@@ -25,7 +25,6 @@ import { Button } from "../../shared/button";
 import { FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
 import { useMeQuery } from "../../providers/store/api/authApi";
-import { parseISO } from "date-fns";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {

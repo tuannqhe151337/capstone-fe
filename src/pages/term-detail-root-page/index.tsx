@@ -117,7 +117,6 @@ export const TermDetailRootPage: React.FC<Props> = ({
   };
 
   const onStartTermSuccessfully = () => {
-    console.log("askdjhfaiusdhfu");
     setStartModal(false);
   };
 

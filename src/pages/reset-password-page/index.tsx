@@ -1,5 +1,4 @@
-import { TEInput } from "tw-elements-react";
-import { AnimatePresence, Variants, motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
@@ -23,7 +22,6 @@ import { ErrorData } from "../../providers/store/api/type";
 import { Button } from "../../shared/button";
 import { CgSpinner } from "react-icons/cg";
 import { InputValidationMessage } from "../../shared/validation-input-message";
-import { FaCircleExclamation } from "react-icons/fa6";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { PasswordInput } from "../../shared/password-input";
 
@@ -76,18 +74,6 @@ const imageAnimation: Variants = {
   },
 };
 
-const heightPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.5,
-    },
-  },
-  visible: {
-    height: 60,
-  },
-};
-
 type FormData = {
   newPassword: string;
   confirmPassword: string;
@@ -136,7 +122,6 @@ export const ResetPasswordPage: React.FC = () => {
     useResetPasswordMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    console.log(otpToken);
     if (otpToken) {
       resetPassword({
         newPassword: data.newPassword,

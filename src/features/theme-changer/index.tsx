@@ -83,7 +83,7 @@ export const ThemeChanger = () => {
       <AnimatePresence>
         {isDropdownOpen && (
           <motion.div
-            className="absolute z-2o shadow bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
+            className="absolute z-20 shadow bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
             initial={AnimationStage.HIDDEN}
             animate={AnimationStage.VISIBLE}
             exit={AnimationStage.HIDDEN}

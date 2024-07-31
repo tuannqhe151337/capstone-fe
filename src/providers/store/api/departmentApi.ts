@@ -24,6 +24,11 @@ export interface CreateDepartmentBody {
   departmentName: string;
 }
 
+export interface UpdateDepartmentBody {
+  departmentId: number;
+  departmentName: string;
+}
+
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
@@ -77,6 +82,14 @@ export const departmentAPI = createApi({
       }),
       invalidatesTags: ["departments"],
     }),
+    updateDepartment: builder.mutation<any, UpdateDepartmentBody>({
+      query: (updateDepartmentBody) => ({
+        url: `/department/update`,
+        method: "PUT",
+        body: updateDepartmentBody,
+      }),
+      invalidatesTags: ["departments"],
+    }),
     deleteDepartment: builder.mutation<any, DeleteDepartmentBody>({
       query: (deleteDepartmentBody) => ({
         url: `/department`,
@@ -92,4 +105,5 @@ export const {
   useLazyGetListDepartmentQuery,
   useDeleteDepartmentMutation,
   useCreateDepartmentMutation,
+  useUpdateDepartmentMutation,
 } = departmentAPI;
