@@ -1,62 +1,90 @@
+import { AsyncPaginate } from "react-select-async-paginate";
+import type { LoadOptions } from "react-select-async-paginate";
 import { useState } from "react";
-import Select from "react-select";
-import {
-  CostType,
-  useGetListCostTypeQuery,
-} from "../../providers/store/api/costTypeAPI";
+import { cn } from "../../shared/utils/cn";
+import { useLazyGetListCostTypeQuery } from "../../providers/store/api/costTypeAPI";
 
-interface Option {
+interface CostTypeOption {
   value: number;
   label: string;
 }
 
-const DefaultOption: Option = {
+const pageSize = 10;
+
+const DefaultOption: CostTypeOption = {
   value: 0,
   label: "All cost type",
 };
 
-const convertCostTypeToOptions = (
-  roles: CostType[],
-  excludeRoleId?: number
-) => {
-  return roles
-    .map(({ costTypeId, name }) => ({ label: name, value: costTypeId }))
-    .filter(({ value }) => value !== excludeRoleId);
-};
-
 interface Props {
-  defaultOption?: Option;
-  onChange?: (option: Option | null | undefined) => any;
+  className?: string;
+  onChange?: (option: CostTypeOption | null) => any;
+  defaultOption?: CostTypeOption;
 }
 
 export const CostTypeFilter: React.FC<Props> = ({
+  className,
   onChange,
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const { data, isFetching } = useGetListCostTypeQuery();
+  const [page, setPage] = useState<number>(1);
+  const [getListCostTypeQuery, { isFetching }] = useLazyGetListCostTypeQuery();
+
+  // Convert data to option
+  const loadOptions: LoadOptions<CostTypeOption, any, any> = async (query) => {
+    // Fetch data
+    const data = await getListCostTypeQuery({
+      page,
+      pageSize,
+      query,
+    }).unwrap();
+
+    // Load options
+    const hasMore = page < data.pagination.numPages;
+
+    const loadOptions = {
+      options: data?.data
+        .map(({ costTypeId, name }) => ({
+          value: costTypeId,
+          label: name,
+        }))
+        .filter(({ value }) => value !== defaultOption.value),
+      hasMore,
+    };
+
+    if (page === 1 && query === "") {
+      loadOptions.options.unshift(defaultOption);
+    }
+
+    // Update page
+    if (hasMore) {
+      setPage((page) => page + 1);
+    }
+
+    return loadOptions;
+  };
 
   // Select state
-  const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+  const [selectedOption, setSelectedOption] = useState<CostTypeOption | null>(
+    defaultOption
+  );
 
   return (
     <div>
-      <Select
+      <AsyncPaginate
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
-        isSearchable
-        isLoading={isFetching}
+        className={cn("w-[200px] cursor-pointer", className)}
         value={selectedOption}
+        isLoading={isFetching}
         onChange={(value) => {
           if (value) {
             setSelectedOption(value);
             onChange && onChange(value);
           }
         }}
-        options={[
-          defaultOption,
-          ...convertCostTypeToOptions(data?.data || [], defaultOption.value),
-        ]}
+        options={[defaultOption]}
+        loadOptions={loadOptions}
       />
     </div>
   );
