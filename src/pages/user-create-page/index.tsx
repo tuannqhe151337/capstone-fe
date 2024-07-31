@@ -25,6 +25,7 @@ import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-char
 import { toast } from "react-toastify";
 import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
+import { ErrorNotificationCard } from "../../shared/error-notification-card";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -396,19 +397,10 @@ export const UserCreate: React.FC = () => {
           </motion.div>
         </div>
 
-        <motion.div
-          className="relative mx-7 mt-1"
-          initial={AnimationStage.HIDDEN}
-          animate={isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
-          variants={errorAnimation}
-        >
-          <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
-            <FaCircleExclamation className="text-red-500 dark:text-red-600" />
-            <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
-              {errorMessage}
-            </p>
-          </div>
-        </motion.div>
+        <ErrorNotificationCard
+          show={!isLoading && isError}
+          errorMessage={errorMessage}
+        />
 
         <div className="mx-7 flex justify-center mt-4">
           <Button

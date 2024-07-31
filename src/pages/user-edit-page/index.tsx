@@ -120,7 +120,7 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
   address: AddressSchema,
 });
 
-export const UserEdit: React.FC = () => {
+export const UserEditPage: React.FC = () => {
   // Navigate
   const navigate = useNavigate();
 

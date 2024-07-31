@@ -40,36 +40,32 @@ export interface Row extends Department {
 }
 
 interface Props {
-  onCreatePlanClick?: () => any;
   isFetching?: boolean;
   departments?: Row[];
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
-  onDeleteSuccessfully?: (plan: PlanPreview) => any;
+  onCreateDepartment?: () => any;
+  onDeleteDepartment?: (department: Department) => any;
+  onEditDepartment?: (department: Department) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
 }
 
 export const TableDepartment: React.FC<Props> = ({
-  onCreatePlanClick,
   departments,
   isFetching,
   page,
   totalPage,
   isDataEmpty,
-  onDeleteSuccessfully,
+  onCreateDepartment,
+  onDeleteDepartment,
+  onEditDepartment,
   onPageChange,
   onPrevious,
   onNext,
 }) => {
-  // Navigation
-  const navigate = useNavigate();
-
-  // Chosen department's id
-  const [chosenDepartment, setChosenDepartment] = useState<Department>();
-
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -107,7 +103,7 @@ export const TableDepartment: React.FC<Props> = ({
                 className="px-3"
                 tooltip="Add new department"
                 onClick={() => {
-                  onCreatePlanClick && onCreatePlanClick();
+                  onCreateDepartment && onCreateDepartment();
                 }}
               >
                 <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
@@ -187,7 +183,7 @@ export const TableDepartment: React.FC<Props> = ({
                       tooltip="Edit department"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setChosenDepartment(department);
+                        onEditDepartment && onEditDepartment(department);
                       }}
                     >
                       <AiFillEdit className="text-primary-600 text-2xl" />
@@ -196,7 +192,7 @@ export const TableDepartment: React.FC<Props> = ({
                       tooltip="Delete department"
                       onClick={(event) => {
                         event.stopPropagation();
-                        setChosenDepartment(department);
+                        onDeleteDepartment && onDeleteDepartment(department);
                       }}
                     >
                       <FaTrash className="text-red-600 text-xl" />
