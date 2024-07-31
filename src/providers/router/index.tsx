@@ -443,6 +443,25 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // List cost type pages
+      {
+        path: "cost-type-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const CostTypeManagementListPage = (
+                await import("../../pages/cost-type-management-list")
+              ).CostTypeManagementList;
+
+              return {
+                element: <CostTypeManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);
