@@ -80,7 +80,7 @@ export const DepartmentActionContextMenu: React.FC<Props> = ({
               <span>elete department</span>
             </>
           }
-          onClick={onEditDepartment}
+          onClick={onDeleteDepartment}
         />
       </div>
     </ContextMenu>

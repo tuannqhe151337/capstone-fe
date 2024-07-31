@@ -80,7 +80,7 @@ export const PositionActionContextMenu: React.FC<Props> = ({
               <span>elete Position</span>
             </>
           }
-          onClick={onEditPosition}
+          onClick={onDeletePosition}
         />
       </div>
     </ContextMenu>
