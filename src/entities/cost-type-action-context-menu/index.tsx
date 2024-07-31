@@ -80,7 +80,7 @@ export const CostTypeActionContextMenu: React.FC<Props> = ({
               <span>elete cost type</span>
             </>
           }
-          onClick={onEditCostType}
+          onClick={onDeleteCostType}
         />
       </div>
     </ContextMenu>
