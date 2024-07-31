@@ -13,6 +13,7 @@ import { InputValidationMessage } from "../../shared/validation-input-message";
 import { Button } from "../../shared/button";
 import { CgSpinner } from "react-icons/cg";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
+import { PasswordInput } from "../../shared/password-input";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -180,14 +181,13 @@ export const ChangePasswordPage: React.FC = () => {
               />
 
               <motion.div variants={childrenAnimation}>
-                <TEInput
-                  type="password"
+                <PasswordInput
                   label={t("oldPassword")}
                   className=" w-full bg-white dark:bg-neutral-900 "
                   size="lg"
                   autoFocus
                   {...register("oldPassword", { required: true })}
-                ></TEInput>
+                />
 
                 <InputValidationMessage
                   show={true}
@@ -199,14 +199,13 @@ export const ChangePasswordPage: React.FC = () => {
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
-                <TEInput
-                  type="password"
+                <PasswordInput
                   label={t("newPassword")}
                   className=" w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
                   {...register("newPassword", { required: true })}
-                ></TEInput>
+                />
                 <InputValidationMessage
                   show={true}
                   validateFn={() =>
@@ -217,14 +216,13 @@ export const ChangePasswordPage: React.FC = () => {
               </motion.div>
 
               <motion.div variants={childrenAnimation}>
-                <TEInput
-                  type="password"
+                <PasswordInput
                   label={t("confirmNewPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
                   {...register("confirmNewPassword", { required: true })}
-                ></TEInput>
+                />
                 <InputValidationMessage
                   show={true}
                   validateFn={() => {
