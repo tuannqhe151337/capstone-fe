@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { AnnualReport } from "../../providers/store/api/annualsAPI";
 import { cn } from "../../shared/utils/cn";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useTranslation } from "react-i18next";
 
@@ -166,7 +166,7 @@ export const TableAnnualReport: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <div> {formatISODate(row.createDate)}</div>
+                    <div> {formatISODateFromResponse(row.createDate)}</div>
                   )}
                 </td>
               </tr>

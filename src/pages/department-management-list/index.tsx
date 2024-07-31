@@ -2,48 +2,31 @@ import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import { FaUpload } from "react-icons/fa6";
-import { ListPlanFilter } from "../../widgets/list-plan-filter";
-import { Row, TablePlanManagement } from "../../widgets/table-plan";
 import { Variants, motion } from "framer-motion";
-import {
-  ListPlanParameters,
-  useLazyFetchPlansQuery,
-} from "../../providers/store/api/plansApi";
 import _ from "lodash";
+import { Row, TableDepartment } from "../../widgets/table-department";
+import { SearchBox } from "../../shared/search-box";
+import { FaPlusCircle } from "react-icons/fa";
+import {
+  Department,
+  ListDepartmentParameters,
+  useLazyGetListDepartmentQuery,
+} from "../../providers/store/api/departmentApi";
 
-const generateEmptyPlans = (total: number): Row[] => {
-  const plans: Row[] = [];
+const generateEmptyDepartments = (total: number): Department[] => {
+  const departments: Row[] = [];
 
   for (let i = 0; i < total; i++) {
-    plans.push({
-      planId: 0,
+    departments.push({
+      departmentId: 0,
       name: "",
-      department: {
-        departmentId: 0,
-        name: "",
-      },
-      term: {
-        id: 0,
-        name: "",
-      },
-      status: {
-        id: 0,
-        name: "",
-        code: "NEW",
-      },
-      role: {
-        id: 0,
-        code: "",
-        name: "",
-      },
-      version: 0,
-      isDelete: false,
+      createdAt: "",
+      updatedAt: "",
       isFetching: true,
     });
   }
 
-  return plans;
+  return departments;
 };
 
 enum AnimationStage {
@@ -80,20 +63,17 @@ const childrenAnimation: Variants = {
   },
 };
 
-export const PlanManagementList: React.FC = () => {
+export const DepartmentManagementList: React.FC = () => {
   // UI: show modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
   // Query
-  const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
+  const [fetchDepartments, { data, isFetching }] =
+    useLazyGetListDepartmentQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
-
-  const [termId, setTermId] = useState<number | null>();
-  const [departmentId, setDepartmentId] = useState<number | null>();
-  const [statusId, setStatusId] = useState<number | null>();
 
   const [page, setPage] = useState<number>(1);
 
@@ -105,34 +85,26 @@ export const PlanManagementList: React.FC = () => {
   }, [data]);
 
   // On delete plan successfully (for re-rendering)
-  const [deletedPlanId, setDeletedPlanId] = useState<string | number>();
+  const [deletedDepartmentId, setDeletedDepartmentId] = useState<
+    string | number
+  >();
 
   // Fetch plan on change
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const paramters: ListPlanParameters = {
+      const paramters: ListDepartmentParameters = {
         query: searchboxValue,
+        sortBy: "name",
+        sortType: "asc",
         page,
         pageSize: 10,
       };
 
-      if (termId) {
-        paramters.termId = termId;
-      }
-
-      if (departmentId) {
-        paramters.departmentId = departmentId;
-      }
-
-      if (statusId) {
-        paramters.statusId = statusId;
-      }
-
-      fetchPlans(paramters, true);
+      fetchDepartments(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId, departmentId, statusId, deletedPlanId]);
+  }, [searchboxValue, page, deletedDepartmentId]);
 
   return (
     <motion.div
@@ -145,7 +117,7 @@ export const PlanManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            Plan management
+            Department management
           </p>
           <div className="ml-auto">
             <Button
@@ -153,42 +125,31 @@ export const PlanManagementList: React.FC = () => {
                 setShowUploadPlanModal(true);
               }}
             >
-              <div className="flex flex-row flex-wrap gap-3 ">
-                <FaUpload className="mt-0.5" />
-                <p className="text-sm font-semibold">Upload plan</p>
+              <div className="flex flex-row flex-wrap items-center gap-2.5">
+                <FaPlusCircle className="text-xl" />
+                <p className="text-sm font-semibold">New department</p>
               </div>
             </Button>
           </div>
         </div>
       </BubbleBanner>
 
-      <motion.div variants={childrenAnimation}>
-        <ListPlanFilter
-          searchboxValue={searchboxValue}
-          onSearchboxChange={(value) => {
-            setSearchboxValue(value);
-          }}
-          onTermIdChange={(termId) => {
-            setTermId(termId);
-          }}
-          onDepartmentIdChange={(departmentId) => {
-            setDepartmentId(departmentId);
-          }}
-          onStatusIdChange={(statusId) => {
-            setStatusId(statusId);
-          }}
+      <motion.div className="mt-14" variants={childrenAnimation}>
+        <SearchBox
+          value={searchboxValue}
+          onChange={(e) => setSearchboxValue(e.currentTarget.value)}
         />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TablePlanManagement
+        <TableDepartment
           onCreatePlanClick={() => {
             setShowUploadPlanModal(true);
           }}
           onDeleteSuccessfully={(plan) => {
-            setDeletedPlanId(plan.planId);
+            setDeletedDepartmentId(plan.planId);
           }}
-          plans={isFetching ? generateEmptyPlans(10) : data?.data}
+          departments={isFetching ? generateEmptyDepartments(10) : data?.data}
           isDataEmpty={isDataEmpty}
           page={page}
           totalPage={data?.pagination.numPages}

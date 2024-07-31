@@ -48,7 +48,7 @@ export const DepartmentFilter: React.FC<Props> = ({
 
     const loadOptions = {
       options: data?.data
-        .map(({ id, name }) => ({
+        .map(({ departmentId: id, name }) => ({
           value: id,
           label: name,
         }))

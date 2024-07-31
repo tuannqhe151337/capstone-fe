@@ -6,7 +6,7 @@ import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
 
 enum AnimationStage {
@@ -77,7 +77,9 @@ export const ReportDetailInformationPage: React.FC = () => {
             icon={<FaChartLine className="text-2xl mr-1.5" />}
             title="Plan due date"
             value={
-              (data?.planDueDate && formatISODate(data?.planDueDate)) || ""
+              (data?.planDueDate &&
+                formatISODateFromResponse(data?.planDueDate)) ||
+              ""
             }
           />
         </motion.div>
@@ -99,7 +101,10 @@ export const ReportDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<FaClock className="text-2xl" />}
             title="Created at"
-            value={(data?.createdAt && formatISODate(data?.createdAt)) || ""}
+            value={
+              (data?.createdAt && formatISODateFromResponse(data?.createdAt)) ||
+              ""
+            }
           />
         </motion.div>
 

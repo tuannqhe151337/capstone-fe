@@ -5,7 +5,7 @@ import { AiOutlineFieldTime } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { useEffect } from "react";
-import { formatISODate } from "../../shared/utils/format-iso-date";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
 
 enum AnimationStage {
@@ -71,9 +71,9 @@ export const TermDetailInformationPage: React.FC = () => {
             title={term ? capitalizeFirstLetter(term.duration) : ""}
             value={
               term
-                ? formatISODate(term.startDate) +
+                ? formatISODateFromResponse(term.startDate) +
                   " - " +
-                  formatISODate(term.endDate)
+                  formatISODateFromResponse(term.endDate)
                 : ""
             }
           />
@@ -85,7 +85,7 @@ export const TermDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<FaChartLine className="text-2xl mr-1" />}
             title="Plan due date"
-            value={term ? formatISODate(term.planDueDate) : ""}
+            value={term ? formatISODateFromResponse(term.planDueDate) : ""}
           />
         </motion.div>
       </div>
