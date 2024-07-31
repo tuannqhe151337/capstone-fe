@@ -8,7 +8,10 @@ import { z, ZodType } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputValidationMessage } from "../../shared/validation-input-message";
-import { useCreateDepartmentMutation } from "../../providers/store/api/departmentApi";
+import {
+  Department,
+  useUpdateDepartmentMutation,
+} from "../../providers/store/api/departmentApi";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
@@ -22,20 +25,22 @@ const DepartmentNameSchema = z
   .min(5, "Department name length must be at least 5 characters")
   .max(50, "Department name length must be at most 50 characters");
 
-export const CreateDepartmentSchema: ZodType<FormData> = z.object({
+export const UpdateDepartmentSchema: ZodType<FormData> = z.object({
   departmentName: DepartmentNameSchema,
 });
 
 interface Props {
   show: boolean;
+  department: Department;
   onClose: () => any;
-  onCreateSuccessfully?: () => any;
+  onUpdateSuccessfully?: () => any;
 }
 
-export const DepartmentCreateModal: React.FC<Props> = ({
+export const DepartmentEditModal: React.FC<Props> = ({
   show,
+  department,
   onClose,
-  onCreateSuccessfully,
+  onUpdateSuccessfully,
 }) => {
   // Form
   const {
@@ -44,8 +49,12 @@ export const DepartmentCreateModal: React.FC<Props> = ({
     formState: { dirtyFields, isValid },
     handleSubmit,
     reset,
+    setValue,
   } = useForm<FormData>({
-    resolver: zodResolver(CreateDepartmentSchema), // Apply the zodResolver
+    resolver: zodResolver(UpdateDepartmentSchema), // Apply the zodResolver
+    defaultValues: {
+      departmentName: department.name,
+    },
   });
 
   // Reset
@@ -53,20 +62,28 @@ export const DepartmentCreateModal: React.FC<Props> = ({
     reset();
   }, [show]);
 
-  // Create new department mutation
-  const [createDepartment, { isSuccess, isLoading, isError }] =
-    useCreateDepartmentMutation();
+  // Update form on external department name change
+  useEffect(() => {
+    setValue("departmentName", department.name);
+  }, [department]);
+
+  // Update new department mutation
+  const [updateDepartment, { isSuccess, isLoading, isError }] =
+    useUpdateDepartmentMutation();
 
   // On submit
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createDepartment({ departmentName: data.departmentName });
+    updateDepartment({
+      departmentId: department.departmentId,
+      departmentName: data.departmentName,
+    });
   };
 
   useEffect(() => {
     if (!isLoading && isSuccess) {
-      toast("Create department successfully!", { type: "success" });
+      toast("Update department successfully!", { type: "success" });
 
-      onCreateSuccessfully && onCreateSuccessfully();
+      onUpdateSuccessfully && onUpdateSuccessfully();
     }
   }, [isLoading, isSuccess]);
 
@@ -92,7 +109,7 @@ export const DepartmentCreateModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Create department
+              Update department
             </div>
 
             <ErrorNotificationCard
@@ -140,7 +157,7 @@ export const DepartmentCreateModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Create new department"}
+              {!isLoading && "Update department"}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

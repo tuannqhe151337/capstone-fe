@@ -1,16 +1,15 @@
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
-import { PlanPreview } from "../../providers/store/api/plansApi";
 import { Department } from "../../providers/store/api/departmentApi";
 import { Skeleton } from "../../shared/skeleton";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
-import { MdEdit } from "react-icons/md";
+import { DepartmentActionContextMenu } from "../../entities/department-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
+import { useHotkeys } from "react-hotkeys-hook";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -68,6 +67,28 @@ export const TableDepartment: React.FC<Props> = ({
 }) => {
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
+
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
+
+  // Chosen department
+  const [chosenDepartment, setChosenDepartment] = useState<Department>();
 
   return (
     <div>
@@ -133,6 +154,13 @@ export const TableDepartment: React.FC<Props> = ({
                 }}
                 onMouseLeave={() => {
                   setHoverRowIndex(undefined);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenDepartment(department);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-center w-[100px]">
@@ -225,14 +253,24 @@ export const TableDepartment: React.FC<Props> = ({
         </motion.div>
       )}
 
-      {/* {chosenDepartment && (
-        <DeletePlanModal
-          plan={chosenDepartment}
-          show={startModal}
-          onClose={handleDeletePlanModal}
-          onDeleteSuccessfully={onDeleteSuccessfully}
-        />
-      )} */}
+      <DepartmentActionContextMenu
+        show={showContextMenu}
+        left={contextMenuLeft}
+        top={contextMenuTop}
+        onCreateDepartment={() => {
+          onCreateDepartment && onCreateDepartment();
+        }}
+        onEditDepartment={() => {
+          chosenDepartment &&
+            onEditDepartment &&
+            onEditDepartment(chosenDepartment);
+        }}
+        onDeleteDepartment={() => {
+          chosenDepartment &&
+            onDeleteDepartment &&
+            onDeleteDepartment(chosenDepartment);
+        }}
+      />
     </div>
   );
 };

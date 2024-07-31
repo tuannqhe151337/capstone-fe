@@ -13,6 +13,8 @@ import {
 } from "../../providers/store/api/departmentApi";
 import { DeleteDepartmentModal } from "../../widgets/delete-department-modal";
 import { DepartmentCreateModal } from "../../widgets/department-create-modal";
+import { DepartmentEditModal } from "../../widgets/department-edit-modal";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -116,6 +118,11 @@ export const DepartmentManagementList: React.FC = () => {
   const [showCreateDepartment, setShowCreateDepartment] =
     useState<boolean>(false);
 
+  useHotkeys("ctrl + =", (e) => {
+    e.preventDefault();
+    setShowCreateDepartment(true);
+  });
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -161,6 +168,7 @@ export const DepartmentManagementList: React.FC = () => {
             setShowDeleteDepartmentModal(true);
           }}
           onEditDepartment={(department) => {
+            setChosenEditDepartment(department);
             setShowEditDepartmentModal(true);
           }}
           departments={isFetching ? generateEmptyDepartments(10) : data?.data}
@@ -209,6 +217,19 @@ export const DepartmentManagementList: React.FC = () => {
           }}
           onDeleteSuccessfully={() => {
             setShowDeleteDepartmentModal(false);
+          }}
+        />
+      )}
+
+      {chosenEditDepartment && (
+        <DepartmentEditModal
+          show={showEditDepartmentModal}
+          department={chosenEditDepartment}
+          onClose={() => {
+            setShowEditDepartmentModal(false);
+          }}
+          onUpdateSuccessfully={() => {
+            setShowEditDepartmentModal(false);
           }}
         />
       )}

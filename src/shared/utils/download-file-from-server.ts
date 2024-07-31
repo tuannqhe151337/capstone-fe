@@ -19,7 +19,5 @@ export const downloadFileFromServer = async (
     link.target = "_blank";
 
     link.click();
-  } catch (e) {
-    console.log(e);
-  }
+  } catch (_) {}
 };
