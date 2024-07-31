@@ -462,6 +462,25 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // List position pages
+      {
+        path: "position-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const PositionManagementListPage = (
+                await import("../../pages/position-management-list")
+              ).PositionManagementList;
+
+              return {
+                element: <PositionManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);

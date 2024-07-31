@@ -4,12 +4,29 @@ import { LocalStorageItemKey, PaginationResponse } from "./type";
 export interface Position {
   id: number;
   name: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ListPositionParameters {
-  query: string;
+  query?: string;
   page: number;
   pageSize: number;
+  sortBy?: string;
+  sortType?: string;
+}
+
+export interface DeletePositionBody {
+  positionId: number;
+}
+
+export interface CreatePositionBody {
+  positionName: string;
+}
+
+export interface UpdatePositionBody {
+  positionId: number;
+  positionName: string;
 }
 
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
@@ -32,16 +49,47 @@ const staggeredBaseQuery = retry(
 export const positionAPI = createApi({
   reducerPath: "positionAPI",
   baseQuery: staggeredBaseQuery,
+  tagTypes: ["positions"],
   endpoints: (builder) => ({
     getListPosition: builder.query<
-      PaginationResponse<[Position]>,
+      PaginationResponse<Position[]>,
       ListPositionParameters
     >({
       query: ({ page, pageSize, query }) => {
         return `/position/user-paging-position?page=${page}&size=${pageSize}&query=${query}`;
       },
+      providesTags: ["positions"],
+    }),
+    createPosition: builder.mutation<any, CreatePositionBody>({
+      query: (createPositionBody) => ({
+        url: `/position/create`,
+        method: "POST",
+        body: createPositionBody,
+      }),
+      invalidatesTags: ["positions"],
+    }),
+    updatePosition: builder.mutation<any, UpdatePositionBody>({
+      query: (updatePositionBody) => ({
+        url: `/position/update`,
+        method: "PUT",
+        body: updatePositionBody,
+      }),
+      invalidatesTags: ["positions"],
+    }),
+    deletePosition: builder.mutation<any, DeletePositionBody>({
+      query: (deletePositionBody) => ({
+        url: `/position`,
+        method: "DELETE",
+        body: deletePositionBody,
+      }),
+      invalidatesTags: ["positions"],
     }),
   }),
 });
 
-export const { useLazyGetListPositionQuery } = positionAPI;
+export const {
+  useLazyGetListPositionQuery,
+  useCreatePositionMutation,
+  useUpdatePositionMutation,
+  useDeletePositionMutation,
+} = positionAPI;

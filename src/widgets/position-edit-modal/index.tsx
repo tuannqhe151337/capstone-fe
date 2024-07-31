@@ -9,36 +9,36 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import {
-  CostType,
-  useUpdateCostTypeMutation,
-} from "../../providers/store/api/costTypeAPI";
+  Position,
+  useUpdatePositionMutation,
+} from "../../providers/store/api/positionApi";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 
 type FormData = {
-  costTypeName: string;
+  positionName: string;
 };
 
-const CostTypeNameSchema = z
+const PositionNameSchema = z
   .string()
-  .min(5, "Cost type name length must be at least 5 characters")
-  .max(50, "Cost type name length must be at most 50 characters");
+  .min(5, "Position name length must be at least 5 characters")
+  .max(50, "Position name length must be at most 50 characters");
 
-export const UpdateCostTypeSchema: ZodType<FormData> = z.object({
-  costTypeName: CostTypeNameSchema,
+export const UpdatePositionSchema: ZodType<FormData> = z.object({
+  positionName: PositionNameSchema,
 });
 
 interface Props {
   show: boolean;
-  costType: CostType;
+  position: Position;
   onClose: () => any;
   onUpdateSuccessfully?: () => any;
 }
 
-export const CostTypeEditModal: React.FC<Props> = ({
+export const PositionEditModal: React.FC<Props> = ({
   show,
-  costType,
+  position,
   onClose,
   onUpdateSuccessfully,
 }) => {
@@ -51,9 +51,9 @@ export const CostTypeEditModal: React.FC<Props> = ({
     reset,
     setValue,
   } = useForm<FormData>({
-    resolver: zodResolver(UpdateCostTypeSchema), // Apply the zodResolver
+    resolver: zodResolver(UpdatePositionSchema), // Apply the zodResolver
     defaultValues: {
-      costTypeName: costType.name,
+      positionName: position.name,
     },
   });
 
@@ -62,26 +62,26 @@ export const CostTypeEditModal: React.FC<Props> = ({
     reset();
   }, [show]);
 
-  // Update form on external cost type name change
+  // Update form on external position name change
   useEffect(() => {
-    setValue("costTypeName", costType.name);
-  }, [costType]);
+    setValue("positionName", position.name);
+  }, [position]);
 
-  // Update new CostType mutation
-  const [updateCostType, { isSuccess, isLoading, isError }] =
-    useUpdateCostTypeMutation();
+  // Update new Position mutation
+  const [updatePosition, { isSuccess, isLoading, isError }] =
+    useUpdatePositionMutation();
 
   // On submit
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    updateCostType({
-      costTypeId: costType.costTypeId,
-      costTypeName: data.costTypeName,
+    updatePosition({
+      positionId: position.id,
+      positionName: data.positionName,
     });
   };
 
   useEffect(() => {
     if (!isLoading && isSuccess) {
-      toast("Update cost type successfully!", { type: "success" });
+      toast("Update position successfully!", { type: "success" });
 
       onUpdateSuccessfully && onUpdateSuccessfully();
     }
@@ -109,30 +109,30 @@ export const CostTypeEditModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Update CostType
+              Update position
             </div>
 
             <ErrorNotificationCard
               show={!isLoading && isError}
-              errorMessage="Duplicate CostType name"
+              errorMessage="Duplicate Position name"
             />
 
             <div className="w-full mt-10">
               <TEInput
                 autoFocus
                 className="w-full"
-                label="CostType name"
+                label="Position name"
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     e.currentTarget.blur();
                   }
                 }}
-                {...register("costTypeName", { required: true })}
+                {...register("positionName", { required: true })}
               />
               <InputValidationMessage
-                show={dirtyFields.costTypeName || false}
+                show={dirtyFields.positionName || false}
                 validateFn={() =>
-                  CostTypeNameSchema.parse(watch("costTypeName"))
+                  PositionNameSchema.parse(watch("positionName"))
                 }
               />
             </div>
@@ -157,7 +157,7 @@ export const CostTypeEditModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Update cost type"}
+              {!isLoading && "Update Position"}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}
