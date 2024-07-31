@@ -109,19 +109,19 @@ export const CostTypeEditModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Update CostType
+              Update cost type
             </div>
 
             <ErrorNotificationCard
               show={!isLoading && isError}
-              errorMessage="Duplicate CostType name"
+              errorMessage="Duplicate cost type name"
             />
 
             <div className="w-full mt-10">
               <TEInput
                 autoFocus
                 className="w-full"
-                label="CostType name"
+                label="Cost type name"
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     e.currentTarget.blur();

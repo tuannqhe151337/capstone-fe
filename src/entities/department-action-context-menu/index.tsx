@@ -51,7 +51,6 @@ export const DepartmentActionContextMenu: React.FC<Props> = ({
     >
       <div className="flex flex-col flex-wrap items-center justify-center">
         <ContextMenuItem
-          borderBottom
           icon={<FaPlusCircle className="text-xl dark:opacity-60" />}
           text={
             <>

@@ -3,7 +3,7 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { ListUserFiler } from "../../widgets/list-user-filter";
 import { HiUserAdd } from "react-icons/hi";
-import { Row, UserPlanTable } from "../../widgets/user-plan-table";
+import { Row, UserTable } from "../../widgets/table-user";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import {
@@ -186,7 +186,7 @@ export const UserManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <UserPlanTable
+        <UserTable
           users={isFetching ? generateEmptyUsers(10) : data?.data}
           isDataEmpty={isDataEmpty}
           onDeactivateSuccessfully={(user) => {

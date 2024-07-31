@@ -24,7 +24,9 @@ export const TableCellUsername: React.FC<Props> = ({
       ></span>
     ) : (
       <>
-        <p className="inline-block mr-3 group-hover:underline">{children}</p>
+        <p className="inline-block font-extrabold mr-3 group-hover:underline">
+          {children}
+        </p>
 
         {deactivated && (
           <Tag

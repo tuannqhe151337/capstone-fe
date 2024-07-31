@@ -140,7 +140,7 @@ export const CostTypeCreateModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Create new CostType"}
+              {!isLoading && "Create new cost type"}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}
