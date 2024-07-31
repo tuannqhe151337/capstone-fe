@@ -24,6 +24,7 @@ import { Button } from "../../shared/button";
 import { CgSpinner } from "react-icons/cg";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { ErrorNotificationCard } from "../../shared/error-notification-card";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -210,28 +211,10 @@ export const ResetPasswordPage: React.FC = () => {
                 {t("enterNewPassword")}
               </motion.div>
 
-              <div className="relative w-full">
-                <AnimatePresence>
-                  {!isLoading && isError && (
-                    <div className="absolute w-full">
-                      <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
-                        <FaCircleExclamation className="text-red-500 dark:text-red-600" />
-                        <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
-                          {errorMessage}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </AnimatePresence>
-
-                <motion.div
-                  initial={AnimationStage.HIDDEN}
-                  animate={
-                    isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
-                  }
-                  variants={heightPlaceholderAnimation}
-                />
-              </div>
+              <ErrorNotificationCard
+                show={!isLoading && isError}
+                errorMessage={errorMessage}
+              />
 
               <motion.div variants={childrenAnimation}>
                 <TEInput

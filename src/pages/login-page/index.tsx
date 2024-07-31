@@ -17,6 +17,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CgSpinner } from "react-icons/cg";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { LogoRedirect } from "../../widgets/logo-redirect";
+import { ErrorNotificationCard } from "../../shared/error-notification-card";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -193,28 +194,10 @@ export const LoginPage: React.FC = () => {
                 {t("login")}
               </motion.div>
 
-              <div className="relative w-full">
-                <AnimatePresence>
-                  {!isLoading && isError && (
-                    <div className="absolute w-full">
-                      <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
-                        <FaCircleExclamation className="text-red-500 dark:text-red-600" />
-                        <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
-                          Wrong username or password
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </AnimatePresence>
-
-                <motion.div
-                  initial={AnimationStage.HIDDEN}
-                  animate={
-                    isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
-                  }
-                  variants={heightPlaceholderAnimation}
-                />
-              </div>
+              <ErrorNotificationCard
+                show={!isLoading && isError}
+                errorMessage="Wrong username or password"
+              />
 
               {/* Username input */}
               <motion.div variants={childrenAnimation}>

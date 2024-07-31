@@ -16,6 +16,14 @@ export interface ListDepartmentParameters {
   sortType?: string;
 }
 
+export interface DeleteDepartmentBody {
+  departmentId: number;
+}
+
+export interface CreateDepartmentBody {
+  departmentName: string;
+}
+
 // maxRetries: 5 is the default, and can be omitted. Shown for documentation purposes.
 const staggeredBaseQuery = retry(
   fetchBaseQuery({
@@ -36,6 +44,7 @@ const staggeredBaseQuery = retry(
 export const departmentAPI = createApi({
   reducerPath: "departmentAPI",
   baseQuery: staggeredBaseQuery,
+  tagTypes: ["departments"],
   endpoints: (builder) => ({
     getListDepartment: builder.query<
       PaginationResponse<Department[]>,
@@ -58,8 +67,29 @@ export const departmentAPI = createApi({
 
         return url;
       },
+      providesTags: ["departments"],
+    }),
+    createDepartment: builder.mutation<any, CreateDepartmentBody>({
+      query: (createDepartmentBody) => ({
+        url: `/department/create`,
+        method: "POST",
+        body: createDepartmentBody,
+      }),
+      invalidatesTags: ["departments"],
+    }),
+    deleteDepartment: builder.mutation<any, DeleteDepartmentBody>({
+      query: (deleteDepartmentBody) => ({
+        url: `/department`,
+        method: "DELETE",
+        body: deleteDepartmentBody,
+      }),
+      invalidatesTags: ["departments"],
     }),
   }),
 });
 
-export const { useLazyGetListDepartmentQuery } = departmentAPI;
+export const {
+  useLazyGetListDepartmentQuery,
+  useDeleteDepartmentMutation,
+  useCreateDepartmentMutation,
+} = departmentAPI;

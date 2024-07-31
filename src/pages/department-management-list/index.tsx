@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { Variants, motion } from "framer-motion";
 import _ from "lodash";
 import { Row, TableDepartment } from "../../widgets/table-department";
@@ -12,6 +11,8 @@ import {
   ListDepartmentParameters,
   useLazyGetListDepartmentQuery,
 } from "../../providers/store/api/departmentApi";
+import { DeleteDepartmentModal } from "../../widgets/delete-department-modal";
+import { DepartmentCreateModal } from "../../widgets/department-create-modal";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -64,10 +65,6 @@ const childrenAnimation: Variants = {
 };
 
 export const DepartmentManagementList: React.FC = () => {
-  // UI: show modal
-  const [showUploadPlanModal, setShowUploadPlanModal] =
-    useState<boolean>(false);
-
   // Query
   const [fetchDepartments, { data, isFetching }] =
     useLazyGetListDepartmentQuery();
@@ -84,11 +81,6 @@ export const DepartmentManagementList: React.FC = () => {
     setIsDataEmpty(!isFetching && data && data.data && data.data.length === 0);
   }, [data]);
 
-  // On delete plan successfully (for re-rendering)
-  const [deletedDepartmentId, setDeletedDepartmentId] = useState<
-    string | number
-  >();
-
   // Fetch plan on change
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -104,7 +96,25 @@ export const DepartmentManagementList: React.FC = () => {
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, deletedDepartmentId]);
+  }, [searchboxValue, page]);
+
+  // Delete department
+  const [showDeleteDepartmentModal, setShowDeleteDepartmentModal] =
+    useState<boolean>(false);
+
+  const [chosenDeleteDepartment, setChosenDeleteDepartment] =
+    useState<Department>();
+
+  // Edit department
+  const [showEditDepartmentModal, setShowEditDepartmentModal] =
+    useState<boolean>(false);
+
+  const [chosenEditDepartment, setChosenEditDepartment] =
+    useState<Department>();
+
+  // Create department
+  const [showCreateDepartment, setShowCreateDepartment] =
+    useState<boolean>(false);
 
   return (
     <motion.div
@@ -122,7 +132,7 @@ export const DepartmentManagementList: React.FC = () => {
           <div className="ml-auto">
             <Button
               onClick={() => {
-                setShowUploadPlanModal(true);
+                setShowCreateDepartment(true);
               }}
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
@@ -143,11 +153,15 @@ export const DepartmentManagementList: React.FC = () => {
 
       <motion.div variants={childrenAnimation}>
         <TableDepartment
-          onCreatePlanClick={() => {
-            setShowUploadPlanModal(true);
+          onCreateDepartment={() => {
+            setShowCreateDepartment(true);
           }}
-          onDeleteSuccessfully={(plan) => {
-            setDeletedDepartmentId(plan.planId);
+          onDeleteDepartment={(department) => {
+            setChosenDeleteDepartment(department);
+            setShowDeleteDepartmentModal(true);
+          }}
+          onEditDepartment={(department) => {
+            setShowEditDepartmentModal(true);
           }}
           departments={isFetching ? generateEmptyDepartments(10) : data?.data}
           isDataEmpty={isDataEmpty}
@@ -186,10 +200,26 @@ export const DepartmentManagementList: React.FC = () => {
         />
       </motion.div>
 
-      <UploadPlanModal
-        show={showUploadPlanModal}
+      {chosenDeleteDepartment && (
+        <DeleteDepartmentModal
+          show={showDeleteDepartmentModal}
+          department={chosenDeleteDepartment}
+          onClose={() => {
+            setShowDeleteDepartmentModal(false);
+          }}
+          onDeleteSuccessfully={() => {
+            setShowDeleteDepartmentModal(false);
+          }}
+        />
+      )}
+
+      <DepartmentCreateModal
+        show={showCreateDepartment}
         onClose={() => {
-          setShowUploadPlanModal(false);
+          setShowCreateDepartment(false);
+        }}
+        onCreateSuccessfully={() => {
+          setShowCreateDepartment(false);
         }}
       />
     </motion.div>
