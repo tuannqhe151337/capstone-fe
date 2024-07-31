@@ -34,7 +34,7 @@ export const ContextMenuItem: React.FC<Props> = ({
     >
       <div
         className={cn(
-          "flex flex-row flex-wrap items-center gap-5 px-5 py-3 text-neutral-500/80 group-hover:text-primary-600 dark:text-neutral-300 dark:group-hover:text-primary-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200",
+          "flex flex-row flex-wrap items-center gap-5 px-5 py-3 text-neutral-500/80 group-hover:text-primary-600 dark:text-neutral-300 dark:group-hover:text-primary-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-sm font-bold duration-200",
           className
         )}
       >

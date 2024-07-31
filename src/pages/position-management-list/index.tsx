@@ -3,25 +3,25 @@ import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { Variants, motion } from "framer-motion";
 import _ from "lodash";
-import { Row, TableCostType } from "../../widgets/table-cost-type";
+import { Row, TablePosition } from "../../widgets/table-position";
 import { SearchBox } from "../../shared/search-box";
 import { FaPlusCircle } from "react-icons/fa";
 import {
-  CostType,
-  ListCostTypeParameters,
-  useLazyGetListCostTypeQuery,
-} from "../../providers/store/api/costTypeAPI";
-import { DeleteCostTypeModal } from "../../widgets/delete-cost-type-modal";
-import { CostTypeCreateModal } from "../../widgets/cost-type-create-modal";
-import { CostTypeEditModal } from "../../widgets/cost-type-edit-modal";
+  Position,
+  ListPositionParameters,
+  useLazyGetListPositionQuery,
+} from "../../providers/store/api/positionApi";
+import { DeletePositionModal } from "../../widgets/delete-position-modal";
+import { PositionCreateModal } from "../../widgets/position-create-modal";
+import { PositionEditModal } from "../../widgets/position-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 
-const generateEmptyCostTypes = (total: number): CostType[] => {
-  const costTypes: Row[] = [];
+const generateEmptyPositions = (total: number): Position[] => {
+  const positions: Row[] = [];
 
   for (let i = 0; i < total; i++) {
-    costTypes.push({
-      costTypeId: 0,
+    positions.push({
+      id: 0,
       name: "",
       createdAt: "",
       updatedAt: "",
@@ -29,7 +29,7 @@ const generateEmptyCostTypes = (total: number): CostType[] => {
     });
   }
 
-  return costTypes;
+  return positions;
 };
 
 enum AnimationStage {
@@ -66,9 +66,9 @@ const childrenAnimation: Variants = {
   },
 };
 
-export const CostTypeManagementList: React.FC = () => {
+export const PositionManagementList: React.FC = () => {
   // Query
-  const [fetchCostTypes, { data, isFetching }] = useLazyGetListCostTypeQuery();
+  const [fetchPositions, { data, isFetching }] = useLazyGetListPositionQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -85,7 +85,7 @@ export const CostTypeManagementList: React.FC = () => {
   // Fetch plan on change
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      const paramters: ListCostTypeParameters = {
+      const paramters: ListPositionParameters = {
         query: searchboxValue,
         sortBy: "name",
         sortType: "asc",
@@ -93,30 +93,30 @@ export const CostTypeManagementList: React.FC = () => {
         pageSize: 10,
       };
 
-      fetchCostTypes(paramters, true);
+      fetchPositions(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
   }, [searchboxValue, page]);
 
-  // Delete CostType
-  const [showDeleteCostTypeModal, setShowDeleteCostTypeModal] =
+  // Delete Position
+  const [showDeletePositionModal, setShowDeletePositionModal] =
     useState<boolean>(false);
 
-  const [chosenDeleteCostType, setChosenDeleteCostType] = useState<CostType>();
+  const [chosenDeletePosition, setChosenDeletePosition] = useState<Position>();
 
-  // Edit CostType
-  const [showEditCostTypeModal, setShowEditCostTypeModal] =
+  // Edit Position
+  const [showEditPositionModal, setShowEditPositionModal] =
     useState<boolean>(false);
 
-  const [chosenEditCostType, setChosenEditCostType] = useState<CostType>();
+  const [chosenEditPosition, setChosenEditPosition] = useState<Position>();
 
-  // Create CostType
-  const [showCreateCostType, setShowCreateCostType] = useState<boolean>(false);
+  // Create Position
+  const [showCreatePosition, setShowCreatePosition] = useState<boolean>(false);
 
   useHotkeys("ctrl + =", (e) => {
     e.preventDefault();
-    setShowCreateCostType(true);
+    setShowCreatePosition(true);
   });
 
   return (
@@ -130,17 +130,17 @@ export const CostTypeManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            Cost type management
+            Position management
           </p>
           <div className="ml-auto">
             <Button
               onClick={() => {
-                setShowCreateCostType(true);
+                setShowCreatePosition(true);
               }}
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New cost type</p>
+                <p className="text-sm font-semibold">New Position</p>
               </div>
             </Button>
           </div>
@@ -155,19 +155,19 @@ export const CostTypeManagementList: React.FC = () => {
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
-        <TableCostType
-          onCreateCostType={() => {
-            setShowCreateCostType(true);
+        <TablePosition
+          onCreatePosition={() => {
+            setShowCreatePosition(true);
           }}
-          onDeleteCostType={(costType) => {
-            setChosenDeleteCostType(costType);
-            setShowDeleteCostTypeModal(true);
+          onDeletePosition={(position) => {
+            setChosenDeletePosition(position);
+            setShowDeletePositionModal(true);
           }}
-          onEditCostType={(costType) => {
-            setChosenEditCostType(costType);
-            setShowEditCostTypeModal(true);
+          onEditPosition={(position) => {
+            setChosenEditPosition(position);
+            setShowEditPositionModal(true);
           }}
-          costTypes={isFetching ? generateEmptyCostTypes(10) : data?.data}
+          positions={isFetching ? generateEmptyPositions(10) : data?.data}
           isDataEmpty={isDataEmpty}
           page={page}
           totalPage={data?.pagination.numPages}
@@ -204,39 +204,39 @@ export const CostTypeManagementList: React.FC = () => {
         />
       </motion.div>
 
-      {chosenDeleteCostType && (
-        <DeleteCostTypeModal
-          show={showDeleteCostTypeModal}
-          costType={chosenDeleteCostType}
+      {chosenDeletePosition && (
+        <DeletePositionModal
+          show={showDeletePositionModal}
+          position={chosenDeletePosition}
           onClose={() => {
-            setShowDeleteCostTypeModal(false);
+            setShowDeletePositionModal(false);
           }}
           onDeleteSuccessfully={() => {
-            setShowDeleteCostTypeModal(false);
+            setShowDeletePositionModal(false);
           }}
         />
       )}
 
-      {chosenEditCostType && (
-        <CostTypeEditModal
-          show={showEditCostTypeModal}
-          costType={chosenEditCostType}
+      {chosenEditPosition && (
+        <PositionEditModal
+          show={showEditPositionModal}
+          position={chosenEditPosition}
           onClose={() => {
-            setShowEditCostTypeModal(false);
+            setShowEditPositionModal(false);
           }}
           onUpdateSuccessfully={() => {
-            setShowEditCostTypeModal(false);
+            setShowEditPositionModal(false);
           }}
         />
       )}
 
-      <CostTypeCreateModal
-        show={showCreateCostType}
+      <PositionCreateModal
+        show={showCreatePosition}
         onClose={() => {
-          setShowCreateCostType(false);
+          setShowCreatePosition(false);
         }}
         onCreateSuccessfully={() => {
-          setShowCreateCostType(false);
+          setShowCreatePosition(false);
         }}
       />
     </motion.div>

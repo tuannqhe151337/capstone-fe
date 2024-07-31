@@ -13,6 +13,7 @@ import { IconButton } from "../../shared/icon-button";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
 import { HiOfficeBuilding } from "react-icons/hi";
+import { PiOfficeChairFill } from "react-icons/pi";
 
 export const Sidebar = () => {
   // i18n
@@ -171,6 +172,20 @@ export const Sidebar = () => {
                 icon={<FaCoins className="text-2xl -ml-0.5" />}
                 text={t("Cost type")}
                 selected={location.pathname.startsWith("/cost-type-management")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Position management */}
+        {data?.role.code === Role.ADMIN && (
+          <div>
+            <Link to={`/position-management`}>
+              <Tab
+                icon={<PiOfficeChairFill className="text-2xl -ml-0.5" />}
+                text={t("Position")}
+                selected={location.pathname.startsWith("/position-management")}
                 isExpanded={isExpanded}
               />
             </Link>
