@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface Department {
   departmentId: number;
@@ -56,7 +56,7 @@ export const departmentAPI = createApi({
       ListDepartmentParameters
     >({
       query: ({ page, pageSize, query, sortBy, sortType }) => {
-        let url = `/department/list?page=${page}&size=${pageSize}`;
+        let url = `/department/list-paginate?page=${page}&size=${pageSize}`;
 
         if (query) {
           url += `&query=${query}`;
@@ -72,6 +72,12 @@ export const departmentAPI = createApi({
 
         return url;
       },
+      providesTags: ["departments"],
+    }),
+    getAllDepartment: builder.query<ListResponse<Department[]>, any>({
+      query: () => ({
+        url: `/department/list`,
+      }),
       providesTags: ["departments"],
     }),
     createDepartment: builder.mutation<any, CreateDepartmentBody>({
@@ -103,6 +109,7 @@ export const departmentAPI = createApi({
 
 export const {
   useLazyGetListDepartmentQuery,
+  useGetAllDepartmentQuery,
   useDeleteDepartmentMutation,
   useCreateDepartmentMutation,
   useUpdateDepartmentMutation,

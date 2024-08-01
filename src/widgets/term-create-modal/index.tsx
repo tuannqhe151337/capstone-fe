@@ -179,6 +179,11 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             label="Term name"
             className="bg-white dark:bg-neutral-900 custom-wrapper mt-8 border rounded font-bold opacity-70 "
             autoFocus
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                e.currentTarget.blur();
+              }
+            }}
             {...register("name", { required: true })}
           />
           <InputValidationMessage

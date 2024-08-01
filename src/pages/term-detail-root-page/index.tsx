@@ -19,10 +19,7 @@ import { TERipple } from "tw-elements-react";
 import { Button } from "../../shared/button";
 import { MdEdit } from "react-icons/md";
 import { DeleteTermModal } from "../../widgets/delete-term-modal";
-import {
-  TermDetail,
-  useLazyFetchTermDetailQuery,
-} from "../../providers/store/api/termApi";
+import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
 import { StartTermModal } from "../../widgets/start-term-modal";
 
@@ -97,7 +94,7 @@ const animation: Variants = {
 type TabId = "detail" | "plan" | "report";
 
 interface Props {
-  onDeleteSuccessFully?: (term: TermDetail) => any;
+  onDeleteSuccessFully?: (termId: string | number) => any;
 }
 
 export const TermDetailRootPage: React.FC<Props> = ({
@@ -334,14 +331,18 @@ export const TermDetailRootPage: React.FC<Props> = ({
               }}
             />
           </div>
-          <Outlet />
+
+          <motion.div layout>
+            <Outlet />
+          </motion.div>
         </div>
       </div>
 
       {term && (
         <DeleteTermModal
           show={deleteModal}
-          term={term}
+          termId={term.id}
+          termName={term.name}
           onClose={handleDeleteTermModal}
           onDeleteSuccessFully={onDeleteSuccessFully}
         />

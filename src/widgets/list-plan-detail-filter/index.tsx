@@ -230,7 +230,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
               <AnimatePresence>
                 {showOptions && (
                   <motion.div
-                    className="absolute right-0 z-20 shadow bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
+                    className="absolute right-0 z-20 shadow-lg bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
                     initial={AnimationStage.HIDDEN}
                     animate={AnimationStage.VISIBLE}
                     exit={AnimationStage.HIDDEN}
@@ -249,8 +249,8 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       }}
                     >
                       <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
-                        <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" />
-                        <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
+                        <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-500 dark:text-neutral-400" />
+                        <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
                           Download plan
                         </p>
                       </div>
@@ -264,8 +264,8 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         }}
                       >
                         <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
-                          <FaUpload className="mr-3 text-primary-400 dark:text-neutral-400" />
-                          <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
+                          <FaUpload className="mr-3 text-primary-500 dark:text-neutral-400" />
+                          <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
                             Reupload plan
                           </p>
                         </div>

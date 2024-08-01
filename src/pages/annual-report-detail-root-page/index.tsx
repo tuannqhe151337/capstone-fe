@@ -19,6 +19,9 @@ import { useEffect, useState } from "react";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { OverviewCard } from "../../entities/overview-card";
 import { useTranslation } from "react-i18next";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -116,10 +119,32 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               {t("Annual Report")}
             </Link>
             <span className="ml-3 text-base opacity-40">&gt;</span>
-            <span>{t("Report", { year: annual?.year })}</span>
+            <span>
+              {t("Report", {
+                year: parseISOInResponse(annual?.createdAt).getFullYear(),
+              })}
+            </span>
           </p>
           <div className="ml-auto">
-            <Button>
+            <Button
+              onClick={() => {
+                const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+                if (token && annual) {
+                  downloadFileFromServer(
+                    `${
+                      import.meta.env.VITE_BACKEND_HOST
+                    }annual-report/download-xlsx?annualReportId=${
+                      annual.annualReportId
+                    }`,
+                    token,
+                    `annual-report-${parseISOInResponse(
+                      annual.createdAt
+                    ).getFullYear()}.xlsx`
+                  );
+                }
+              }}
+            >
               <div className="flex flex-row flex-wrap items-center gap-2">
                 <FaDownload className="text-xl mb-0.5" />
                 <p className="text-sm font-bold">{t("Download report")}</p>
@@ -135,7 +160,9 @@ export const AnnualReportDetailRootPage: React.FC = () => {
         variants={childrenAnimation}
       >
         <p className="text-2xl font-extrabold text-primary mr-5">
-          {t("ReportYear", { year: annual?.year })}
+          {t("ReportYear", {
+            year: parseISOInResponse(annual?.createdAt).getFullYear(),
+          })}
         </p>
 
         <div className="flex flex-row flex-wrap gap-3 ml-auto">

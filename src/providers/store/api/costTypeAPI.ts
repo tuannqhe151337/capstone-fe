@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface CostType {
   costTypeId: number;
@@ -56,7 +56,7 @@ export const costTypeAPI = createApi({
       ListCostTypeParameters
     >({
       query: ({ page, pageSize, query, sortBy, sortType }) => {
-        let url = `/cost-type/list?page=${page}&size=${pageSize}`;
+        let url = `/cost-type/list-paginate?page=${page}&size=${pageSize}`;
 
         if (query) {
           url += `&query=${query}`;
@@ -72,6 +72,12 @@ export const costTypeAPI = createApi({
 
         return url;
       },
+      providesTags: ["cost-types"],
+    }),
+    getAllCostType: builder.query<ListResponse<CostType[]>, void>({
+      query: () => ({
+        url: `/cost-type/list`,
+      }),
       providesTags: ["cost-types"],
     }),
     createCostType: builder.mutation<any, CreateCostTypeBody>({
@@ -103,6 +109,7 @@ export const costTypeAPI = createApi({
 
 export const {
   useGetListCostTypeQuery,
+  useGetAllCostTypeQuery,
   useLazyGetListCostTypeQuery,
   useDeleteCostTypeMutation,
   useCreateCostTypeMutation,

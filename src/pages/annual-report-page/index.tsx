@@ -4,7 +4,6 @@ import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { Variants, motion } from "framer-motion";
 import { Row, TableAnnualReport } from "../../widgets/table-annual-report";
 import { YearFilter } from "../../entities/year-filter";
-
 import {
   ListAnnualReportParameters,
   useLazyFetchAnnualQuery,
@@ -18,11 +17,10 @@ const generateEmptyAnnual = (total: number): Row[] => {
   for (let i = 0; i < total; i++) {
     annual.push({
       annualReportId: 0,
-      year: "",
       totalTerm: 0,
       totalExpense: 0,
       totalDepartment: 0,
-      createDate: "",
+      createdAt: "",
       isFetching: true,
     });
   }

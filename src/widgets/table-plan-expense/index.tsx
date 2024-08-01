@@ -4,9 +4,9 @@ import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
 import { PlanExpense } from "../../providers/store/api/plansApi";
-import { cn } from "../../shared/utils/cn";
 import { PlanExpenseTag } from "../../entities/plan-expense-tag";
 import { Button } from "../../shared/button";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -204,33 +204,21 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.costType.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
@@ -242,22 +230,14 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.amount}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
@@ -268,55 +248,35 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.projectName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.supplierName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.pic}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.notes}</>
                   )}
                 </td>
                 <td className="px-2 py-3">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[100px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <PlanExpenseTag
                       className="m-auto"
