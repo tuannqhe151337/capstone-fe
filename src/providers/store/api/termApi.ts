@@ -7,6 +7,8 @@ export enum Duration {
   "HALF_YEARLY" = "HALF_YEARLY",
 }
 
+export type TermStatusCode = "IN_PROGRESS" | "NEW" | "CLOSED";
+
 export interface CreateTermBody {
   name: string;
   duration: Duration;
@@ -41,7 +43,7 @@ export interface Term {
 interface Status {
   id: number;
   name: string;
-  code: string;
+  code: TermStatusCode;
 }
 
 export interface ListTermParameters {

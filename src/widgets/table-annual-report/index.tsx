@@ -3,10 +3,16 @@ import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { AnnualReport } from "../../providers/store/api/annualsAPI";
-import { cn } from "../../shared/utils/cn";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useTranslation } from "react-i18next";
+import { Skeleton } from "../../shared/skeleton";
+import { AnnualReportActionContextMenu } from "../../entities/annual-report-action-context-menu";
+import { useEffect, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -39,7 +45,7 @@ interface Props {
 }
 
 export const TableAnnualReport: React.FC<Props> = ({
-  annual,
+  annual: annualReports,
   isFetching,
   page,
   totalPage,
@@ -52,6 +58,26 @@ export const TableAnnualReport: React.FC<Props> = ({
   const navigate = useNavigate();
 
   const { t } = useTranslation(["table-annual-report"]);
+
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+  const [chosenAnnualReport, setChosenAnnualReport] = useState<AnnualReport>();
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
 
   return (
     <div>
@@ -91,8 +117,8 @@ export const TableAnnualReport: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {annual &&
-            annual.map((row, index) => (
+          {annualReports &&
+            annualReports.map((annualReport, index) => (
               <tr
                 key={index}
                 className={clsx({
@@ -111,62 +137,54 @@ export const TableAnnualReport: React.FC<Props> = ({
                 //   setHoverRowIndex(undefined);
                 // }}
                 onClick={() => {
-                  navigate(`detail/chart/${row.annualReportId}`);
+                  navigate(`detail/chart/${annualReport.annualReportId}`);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenAnnualReport(annualReport);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
-                    <div>Report {row.year}</div>
+                    <div className="font-extrabold group-hover:underline">
+                      Report{" "}
+                      {parseISOInResponse(annualReport.createdAt).getFullYear()}
+                    </div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
-                    <div> {formatViMoney(row.totalExpense)}</div>
+                    <div> {formatViMoney(annualReport.totalExpense)}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
-                    <div> {row.totalTerm}</div>
+                    <div> {annualReport.totalTerm}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
-                    <div> {row.totalDepartment}</div>
+                    <div> {annualReport.totalDepartment}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-6 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
-                    <div> {formatISODateFromResponse(row.createDate)}</div>
+                    <div>
+                      {formatISODateFromResponse(annualReport.createdAt)}
+                    </div>
                   )}
                 </td>
               </tr>
@@ -195,6 +213,39 @@ export const TableAnnualReport: React.FC<Props> = ({
           />
         </motion.div>
       )}
+
+      <AnnualReportActionContextMenu
+        show={showContextMenu}
+        top={contextMenuTop}
+        left={contextMenuLeft}
+        onOverviewClick={() => {
+          navigate(
+            `/annual-report/detail/chart/${chosenAnnualReport?.annualReportId}`
+          );
+        }}
+        onDetailClick={() => {
+          navigate(
+            `/annual-report/detail/table/${chosenAnnualReport?.annualReportId}`
+          );
+        }}
+        onDownloadClick={() => {
+          const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+          if (token && chosenAnnualReport) {
+            downloadFileFromServer(
+              `${
+                import.meta.env.VITE_BACKEND_HOST
+              }annual-report/download-xlsx?annualReportId=${
+                chosenAnnualReport.annualReportId
+              }`,
+              token,
+              `annual-report-${parseISOInResponse(
+                chosenAnnualReport.createdAt
+              ).getFullYear()}.xlsx`
+            );
+          }
+        }}
+      />
     </div>
   );
 };

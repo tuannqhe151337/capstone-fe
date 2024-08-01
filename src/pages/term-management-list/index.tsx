@@ -11,6 +11,7 @@ import {
   useLazyGetListTermQuery,
 } from "../../providers/store/api/termApi";
 import _ from "lodash";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const generateEmptyTerms = (total: number): Row[] => {
   const terms: Row[] = [];
@@ -22,7 +23,7 @@ const generateEmptyTerms = (total: number): Row[] => {
       status: {
         id: 0,
         name: "",
-        code: "",
+        code: "NEW",
       },
       startDate: "",
       endDate: "",
@@ -68,12 +69,17 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
+  // Create modal
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
-
 
   const handleCreateTermModal = () => {
     setShowCreateModal(false);
   };
+
+  useHotkeys("ctrl + =", (e) => {
+    e.preventDefault();
+    setShowCreateModal(true);
+  });
 
   // Query
   const [getListTerm, { data, isFetching }] = useLazyGetListTermQuery();

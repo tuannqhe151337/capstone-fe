@@ -3,23 +3,22 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
-import {
-  TermDetail,
-  useDeleteTermMutation,
-} from "../../providers/store/api/termApi";
+import { useDeleteTermMutation } from "../../providers/store/api/termApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-  term: TermDetail;
+  termId: string | number;
+  termName: string;
   show: boolean;
   onClose: () => any;
-  onDeleteSuccessFully?: (user: TermDetail) => any;
+  onDeleteSuccessFully?: (termId: string | number) => any;
 }
 
 export const DeleteTermModal: React.FC<Props> = ({
-  term,
+  termId,
+  termName,
   show,
   onClose,
   onDeleteSuccessFully,
@@ -31,9 +30,9 @@ export const DeleteTermModal: React.FC<Props> = ({
     useDeleteTermMutation();
 
   useEffect(() => {
-    if (!isLoading && isSuccess && !isError && term) {
+    if (!isLoading && isSuccess && !isError) {
       toast("Delete term successfully!", { type: "success" });
-      onDeleteSuccessFully && onDeleteSuccessFully(term);
+      onDeleteSuccessFully && onDeleteSuccessFully(termId);
       onClose && onClose();
       navigate("/term-management");
     }
@@ -68,7 +67,7 @@ export const DeleteTermModal: React.FC<Props> = ({
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
             You're going to delete term{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "Financial plan December Q3 2021"
+              "{termName}"
             </span>
             .
           </div>
@@ -96,9 +95,7 @@ export const DeleteTermModal: React.FC<Props> = ({
             variant="error"
             buttonType="outlined"
             onClick={() => {
-              if (term?.id) {
-                deleteTerm({ id: term.id });
-              }
+              deleteTerm({ id: termId });
             }}
           >
             Yes, delete

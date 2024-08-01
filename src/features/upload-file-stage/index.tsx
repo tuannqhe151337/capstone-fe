@@ -11,7 +11,7 @@ import { EmptyFileUploadUI } from "./ui/empty-file-upload-ui";
 import { Expense, ExpenseError, FileUploadStage } from "./type";
 import { DisabledSelect } from "../../shared/disabled-select";
 import { processFile } from "./model/process-file";
-import { useGetListCostTypeQuery } from "../../providers/store/api/costTypeAPI";
+import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
 import { ErrorExpensesTable } from "./components/error-expenses-table";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { InputValidationMessage } from "../../shared/validation-input-message";
@@ -92,7 +92,7 @@ export const UploadFileStage: React.FC<Props> = ({
   onNextStage,
 }) => {
   // Cost type
-  const { data } = useGetListCostTypeQuery();
+  const { data } = useGetAllCostTypeQuery();
 
   // Department from user's detail
   const { data: me } = useMeQuery();
@@ -152,10 +152,7 @@ export const UploadFileStage: React.FC<Props> = ({
 
           // TODO: Handle file upload logic here
           if (data?.data) {
-            const { errors, expenses, isError } = await processFile(
-              file,
-              data.data
-            );
+            const { errors, expenses, isError } = await processFile(file, []);
 
             setExpenses(expenses);
             setExpenseErrors(errors);

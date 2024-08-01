@@ -1,17 +1,18 @@
-import { FaPlusCircle, FaTrash } from "react-icons/fa";
-import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeleteReportModal } from "../delete-report-modal";
 import { Report } from "../../providers/store/api/reportsAPI";
-import { cn } from "../../shared/utils/cn";
 import { Skeleton } from "../../shared/skeleton";
 import { ReportTag } from "../../entities/report-tag";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 import { format } from "date-fns";
+import { useHotkeys } from "react-hotkeys-hook";
+import { ReportActionContextMenu } from "../../entities/report-action-context-menu";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -41,7 +42,6 @@ export interface Row extends Report {
 }
 
 interface Props {
-  onCreatePlanClick?: () => any;
   isFetching?: boolean;
   reports?: Row[];
   page?: number | undefined | null;
@@ -53,7 +53,6 @@ interface Props {
 }
 
 export const TableReportManagement: React.FC<Props> = ({
-  onCreatePlanClick,
   reports,
   isFetching,
   page,
@@ -70,15 +69,35 @@ export const TableReportManagement: React.FC<Props> = ({
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   // UI: show delete button
-  const [startModal, setStartModal] = useState<boolean>(false);
+  const [showDeleteModel, setShowDeleteModal] = useState<boolean>(false);
 
   const handleClick = () => {
-    setStartModal(true);
+    setShowDeleteModal(true);
   };
 
   const handleDeleteReportModal = () => {
-    setStartModal(false);
+    setShowDeleteModal(false);
   };
+
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+  const [chosenReport, setChosenReport] = useState<Report>();
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
 
   return (
     <div>
@@ -107,7 +126,7 @@ export const TableReportManagement: React.FC<Props> = ({
         </thead>
         <tbody>
           {reports &&
-            reports.map((row, index) => (
+            reports.map((report, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -131,7 +150,14 @@ export const TableReportManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate(`detail/expenses/${row.reportId} `);
+                  navigate(`detail/expenses/${report.reportId} `);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenReport(report);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-6 font-extrabold">
@@ -139,8 +165,10 @@ export const TableReportManagement: React.FC<Props> = ({
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <>
-                      <span className="group-hover:underline">{row.name}</span>{" "}
-                      <ReportTag statusCode={row.status.code} />
+                      <span className="group-hover:underline">
+                        {report.name}
+                      </span>{" "}
+                      <ReportTag statusCode={report.status.code} />
                     </>
                   )}
                 </td>
@@ -148,7 +176,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <>{row.term.name}</>
+                    <>{report.term.name}</>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-6 font-bold">
@@ -157,7 +185,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   ) : (
                     <>
                       {format(
-                        parseISOInResponse(row.createdAt),
+                        parseISOInResponse(report.createdAt),
                         "dd MMMM yyyy"
                       )}
                     </>
@@ -190,7 +218,43 @@ export const TableReportManagement: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <DeleteReportModal show={startModal} onClose={handleDeleteReportModal} />
+      <DeleteReportModal
+        show={showDeleteModel}
+        onClose={handleDeleteReportModal}
+      />
+
+      {chosenReport && (
+        <ReportActionContextMenu
+          show={showContextMenu}
+          top={contextMenuTop}
+          left={contextMenuLeft}
+          onViewDetail={() => {
+            navigate(
+              `/report-management/detail/information/${chosenReport.reportId}`
+            );
+          }}
+          onReview={() => {
+            navigate(
+              `/report-management/detail/expenses/${chosenReport.reportId}`
+            );
+          }}
+          onDownload={() => {
+            const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+            if (token && chosenReport) {
+              downloadFileFromServer(
+                `${
+                  import.meta.env.VITE_BACKEND_HOST
+                }report/download-xlsx?annualReportId=${chosenReport.reportId}`,
+                token,
+                `report-${parseISOInResponse(
+                  chosenReport.createdAt
+                ).getFullYear()}.xlsx`
+              );
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

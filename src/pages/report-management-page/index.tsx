@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { UploadPlanModal } from "../../widgets/upload-plan-modal";
 import { Variants, motion } from "framer-motion";
 import { Row, TableReportManagement } from "../../widgets/table-report";
 import {
@@ -69,9 +68,6 @@ const childrenAnimation: Variants = {
 };
 
 export const ReportManagementList: React.FC = () => {
-  const [showUploadPlanModal, setShowUploadPlanModal] =
-    useState<boolean>(false);
-
   // Query
   const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
 
@@ -110,7 +106,7 @@ export const ReportManagementList: React.FC = () => {
 
   return (
     <motion.div
-      className="px-6 pb-10"
+      className="px-6 pb-20"
       initial={AnimationStage.HIDDEN}
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
@@ -138,9 +134,6 @@ export const ReportManagementList: React.FC = () => {
 
       <motion.div variants={childrenAnimation}>
         <TableReportManagement
-          onCreatePlanClick={() => {
-            setShowUploadPlanModal(true);
-          }}
           reports={isFetching ? generateEmptyReports(10) : data?.data}
           isDataEmpty={isDataEmpty}
           page={page}
@@ -177,13 +170,6 @@ export const ReportManagementList: React.FC = () => {
           isFetching={isFetching}
         />
       </motion.div>
-
-      <UploadPlanModal
-        show={showUploadPlanModal}
-        onClose={() => {
-          setShowUploadPlanModal(false);
-        }}
-      />
     </motion.div>
   );
 };

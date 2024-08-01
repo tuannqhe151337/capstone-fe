@@ -1,15 +1,20 @@
 import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
 import { PlanPreview } from "../../providers/store/api/plansApi";
-import { cn } from "../../shared/utils/cn";
 import { PlanTag } from "../../entities/plan-tag";
 import { useMeQuery } from "../../providers/store/api/authApi";
+import { useHotkeys } from "react-hotkeys-hook";
+import { PlanActionContextMenu } from "../../entities/plan-action-context-menu";
+import { ReuploadPlanModal } from "../reupload-plan-modal";
+import { Skeleton } from "../../shared/skeleton";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -75,18 +80,38 @@ export const TablePlanManagement: React.FC<Props> = ({
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
-  const [startModal, setStartModal] = useState<boolean>(false);
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [showReuploadPlan, setShowReuploadPlan] = useState<boolean>(false);
 
   const handleClick = () => {
-    setStartModal(true);
+    setShowDeleteModal(true);
   };
 
   const handleDeletePlanModal = () => {
-    setStartModal(false);
+    setShowDeleteModal(false);
   };
 
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
+
   return (
-    <div>
+    <div className="pb-20">
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
@@ -117,7 +142,7 @@ export const TablePlanManagement: React.FC<Props> = ({
             <th scope="col">
               <IconButton
                 className="px-3"
-                tooltip="Add new plan"
+                tooltip="Upload new plan"
                 onClick={() => {
                   onCreatePlanClick && onCreatePlanClick();
                 }}
@@ -153,14 +178,17 @@ export const TablePlanManagement: React.FC<Props> = ({
                 onClick={() => {
                   navigate(`detail/expenses/${plan.planId}`);
                 }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenPlan(plan);
+                }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <div className="flex flex-row flex-wrap">
                       <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
@@ -178,22 +206,14 @@ export const TablePlanManagement: React.FC<Props> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{plan.term.name}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{plan.department.name}</div>
                   )}
@@ -202,28 +222,30 @@ export const TablePlanManagement: React.FC<Props> = ({
                   {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
-                  {me?.department.id === plan.department.departmentId && (
-                    <motion.div
-                      initial={AnimationStage.HIDDEN}
-                      animate={
-                        hoverRowIndex === index
-                          ? AnimationStage.VISIBLE
-                          : AnimationStage.HIDDEN
-                      }
-                      exit={AnimationStage.HIDDEN}
-                      variants={animation}
-                    >
-                      <IconButton
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          setChosenPlan(plan);
-                          handleClick();
-                        }}
+                  {!isFetching &&
+                    me?.department.id === plan.department.departmentId && (
+                      <motion.div
+                        initial={AnimationStage.HIDDEN}
+                        animate={
+                          hoverRowIndex === index
+                            ? AnimationStage.VISIBLE
+                            : AnimationStage.HIDDEN
+                        }
+                        exit={AnimationStage.HIDDEN}
+                        variants={animation}
                       >
-                        <FaTrash className="text-red-600 text-xl" />
-                      </IconButton>
-                    </motion.div>
-                  )}
+                        <IconButton
+                          tooltip="Delete plan"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setChosenPlan(plan);
+                            handleClick();
+                          }}
+                        >
+                          <FaTrash className="text-red-600 text-xl" />
+                        </IconButton>
+                      </motion.div>
+                    )}
                 </td>
               </motion.tr>
             ))}
@@ -254,9 +276,58 @@ export const TablePlanManagement: React.FC<Props> = ({
       {chosenPlan && (
         <DeletePlanModal
           plan={chosenPlan}
-          show={startModal}
+          show={showDeleteModal}
           onClose={handleDeletePlanModal}
           onDeleteSuccessfully={onDeleteSuccessfully}
+        />
+      )}
+
+      {chosenPlan && (
+        <ReuploadPlanModal
+          planId={chosenPlan.planId}
+          planName={chosenPlan.name}
+          termName={chosenPlan.term.name}
+          show={showReuploadPlan}
+          onClose={() => {
+            setShowReuploadPlan(false);
+          }}
+        />
+      )}
+
+      {chosenPlan && (
+        <PlanActionContextMenu
+          show={showContextMenu}
+          top={contextMenuTop}
+          left={contextMenuLeft}
+          showDeletePlan={
+            chosenPlan.department.departmentId === me?.department.id
+          }
+          showReuploadPlan={
+            chosenPlan.department.departmentId === me?.department.id
+          }
+          onDeletePlan={() => {
+            setShowDeleteModal(true);
+          }}
+          onReuploadPlan={() => {
+            setShowReuploadPlan(true);
+          }}
+          onUploadPlan={onCreatePlanClick}
+          onViewPlanDetail={() => {
+            navigate(`/plan-management/detail/expenses/${chosenPlan.planId}`);
+          }}
+          onDownloadPlan={() => {
+            const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+            if (token) {
+              downloadFileFromServer(
+                `${
+                  import.meta.env.VITE_BACKEND_HOST
+                }plan/download/last-version-xlsx?planId=${chosenPlan.planId}`,
+                token,
+                `${chosenPlan.name}.xlsx`
+              );
+            }
+          }}
         />
       )}
     </div>

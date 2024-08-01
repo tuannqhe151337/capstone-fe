@@ -155,7 +155,7 @@ export const PlanManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap gap-3 ">
                 <FaUpload className="mt-0.5" />
-                <p className="text-sm font-semibold">Upload plan</p>
+                <p className="text-sm font-semibold">Upload new plan</p>
               </div>
             </Button>
           </div>

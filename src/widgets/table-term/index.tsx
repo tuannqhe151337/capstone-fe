@@ -1,7 +1,7 @@
 import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,9 @@ import clsx from "clsx";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { cn } from "../../shared/utils/cn";
 import { Term } from "../../providers/store/api/termApi";
+import { useHotkeys } from "react-hotkeys-hook";
+import { TermActionContextMenu } from "../../entities/term-action-context-menu";
+import { DeleteTermModal } from "../delete-term-modal";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -87,6 +90,9 @@ export const TableTermManagement: React.FC<Props> = ({
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
   const [startModal, setStartModal] = useState<boolean>(false);
 
+  // UI: delete modal
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+
   // Start term's id state
   const [chosenTerm, setChosenTerm] = useState<Term>();
 
@@ -98,8 +104,27 @@ export const TableTermManagement: React.FC<Props> = ({
     setStartModal(false);
   };
 
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys("esc", () => {
+    setShowContextMenu(false);
+  });
+
   return (
-    <div>
+    <div className="pb-20">
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
@@ -137,16 +162,16 @@ export const TableTermManagement: React.FC<Props> = ({
         </thead>
         <tbody>
           {terms &&
-            terms.map((row, index) => (
+            terms.map((term, index) => (
               <tr
                 key={index}
                 className={clsx({
                   "group cursor-pointer border-b-2 border-neutral-100 dark:border-neutral-800 duration-200":
                     true,
                   "text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400":
-                    row.status.code !== "CLOSED",
+                    term.status.code !== "CLOSED",
                   "text-primary-500/70 hover:text-primary-500 dark:text-primary-800 dark:hover:text-primary-600":
-                    row.status.code === "CLOSED",
+                    term.status.code === "CLOSED",
                   "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
                     index % 2 === 0,
                   "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
@@ -159,7 +184,14 @@ export const TableTermManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate(`detail/information/${row.termId}`);
+                  navigate(`detail/information/${term.termId}`);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenTerm(term);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium w-[360px]">
@@ -173,9 +205,9 @@ export const TableTermManagement: React.FC<Props> = ({
                     ) : (
                       <>
                         <p className="font-extrabold py-2 ml-14 group-hover:underline">
-                          {row.name}
+                          {term.name}
                         </p>
-                        <div>{renderButton(row.status.code)}</div>
+                        <div>{renderButton(term.status.code)}</div>
                       </>
                     )}
                   </div>
@@ -189,7 +221,7 @@ export const TableTermManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <> {formatISODateFromResponse(row.startDate)}</>
+                    <> {formatISODateFromResponse(term.startDate)}</>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
@@ -200,12 +232,12 @@ export const TableTermManagement: React.FC<Props> = ({
                       )}
                     ></span>
                   ) : (
-                    <> {formatISODateFromResponse(row.endDate)}</>
+                    <> {formatISODateFromResponse(term.endDate)}</>
                   )}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4">
-                  {row.status.code === "NEW" && (
+                  {term.status.code === "NEW" && (
                     <motion.div
                       initial={AnimationStage.HIDDEN}
                       animate={
@@ -217,11 +249,11 @@ export const TableTermManagement: React.FC<Props> = ({
                       variants={animation}
                     >
                       <Button
-                        className="flex flex-row flex-wrap py-1.5 px-3"
+                        className="flex flex-row flex-wrap py-1 px-3"
                         onClick={(event) => {
                           event.stopPropagation();
                           handleClick();
-                          setChosenTerm(row);
+                          setChosenTerm(term);
                         }}
                       >
                         <FaPlay className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
@@ -266,6 +298,42 @@ export const TableTermManagement: React.FC<Props> = ({
           show={startModal}
           onClose={handleCloseStartTermModal}
           onStartTermSuccessfully={onStartTermSuccessfully}
+        />
+      )}
+
+      {chosenTerm && (
+        <DeleteTermModal
+          show={showDeleteModal}
+          termId={chosenTerm.termId}
+          termName={chosenTerm.name}
+          onClose={() => {
+            setShowDeleteModal(false);
+          }}
+          onDeleteSuccessFully={() => setShowDeleteModal(false)}
+        />
+      )}
+
+      {chosenTerm && (
+        <TermActionContextMenu
+          show={showContextMenu}
+          top={contextMenuTop}
+          left={contextMenuLeft}
+          showStartTerm={chosenTerm.status.code === "NEW"}
+          onStartTerm={() => {
+            setStartModal(true);
+          }}
+          onCreateTerm={onCreateTermClick}
+          onDeleteTerm={() => {
+            setShowDeleteModal(true);
+          }}
+          onEditTerm={() => {
+            navigate(`/term-management/update/${chosenTerm.termId}`);
+          }}
+          onViewTermDetail={() => {
+            navigate(
+              `/term-management/detail/information/${chosenTerm.termId}`
+            );
+          }}
         />
       )}
     </div>

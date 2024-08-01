@@ -18,11 +18,10 @@ export interface ListAnnualReportExpenseParameters {
 
 export interface AnnualReport {
   annualReportId: number | string;
-  year: string;
   totalTerm: number;
   totalExpense: number;
   totalDepartment: number;
-  createDate: string;
+  createdAt: string;
 }
 
 export interface AnnualReportExpense {
