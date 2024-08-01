@@ -133,11 +133,10 @@ export const PlanDetailRootPage: React.FC = () => {
   const showReuploadButton = useMemo<boolean>(() => {
     if (plan && me) {
       const sameDepartment = me.department.id === plan.department.departmentId;
-      const planNotClosed = plan.status.code !== "CLOSED";
       const planNotPassedDueDate =
         parseISOInResponse(plan.planDueDate) > new Date();
 
-      return sameDepartment && planNotClosed && planNotPassedDueDate;
+      return sameDepartment && planNotPassedDueDate;
     }
 
     return false;
@@ -200,10 +199,6 @@ export const PlanDetailRootPage: React.FC = () => {
                   <Tag background="unfilled" variant="waiting">
                     v{plan?.version}
                   </Tag>
-                  <PlanTag
-                    statusCode={plan.status.code}
-                    statusName={plan.status.name}
-                  />
                 </div>
               </motion.div>
             )}

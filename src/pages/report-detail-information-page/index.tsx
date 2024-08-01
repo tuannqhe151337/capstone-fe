@@ -1,13 +1,11 @@
 import { Variants, motion } from "framer-motion";
-import { RiCalendarScheduleFill } from "react-icons/ri";
+import { RiCalendarScheduleFill, RiProgress3Fill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
-import { FaChartLine } from "react-icons/fa";
-import { HiUser } from "react-icons/hi2";
-import { PiTreeStructureFill } from "react-icons/pi";
-import { FaClock } from "react-icons/fa6";
+import { FaCheck, FaClock } from "react-icons/fa6";
 import { useParams } from "react-router-dom";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,32 +67,49 @@ export const ReportDetailInformationPage: React.FC = () => {
             value={data?.term.name}
           />
         </motion.div>
-
-        {/* Plan due date */}
+      </div>
+      <div className="flex flex-col flex-wrap flex-1 gap-9">
+        {/* Status */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
-            icon={<FaChartLine className="text-2xl mr-1.5" />}
-            title="Plan due date"
+            icon={
+              <RiProgress3Fill
+                className={clsx({
+                  "text-3xl -mr-1": true,
+                  "text-green-600": data?.status.code === "APPROVED",
+                  "text-primary-400 dark:text-primary-600":
+                    data?.status.code === "REVIEWED",
+                })}
+              />
+            }
+            title="Status"
             value={
-              (data?.planDueDate &&
-                formatISODateFromResponse(data?.planDueDate)) ||
-              ""
+              <div
+                className={clsx({
+                  "flex flex-row flex-wrap items-center gap-2": true,
+                  "text-green-600": data?.status.code === "APPROVED",
+                  "text-primary-500":
+                    data?.status.code === "REVIEWED" ||
+                    data?.status.code === "WAITING_FOR_APPROVAL",
+                })}
+              >
+                <p
+                  className={clsx({
+                    "font-extrabold": true,
+                  })}
+                >
+                  {data?.status.name}
+                </p>
+                {data?.status.code === "REVIEWED" ||
+                data?.status.code === "APPROVED" ? (
+                  <FaCheck className="mb-0.5" />
+                ) : null}
+              </div>
             }
           />
         </motion.div>
 
-        {/* Department */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={<PiTreeStructureFill className="text-3xl" />}
-            title="Department"
-            value={data?.department.name}
-          />
-        </motion.div>
-      </div>
-      <div className="flex flex-col flex-wrap flex-1 gap-9">
         {/* Created at */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
@@ -105,16 +120,6 @@ export const ReportDetailInformationPage: React.FC = () => {
               (data?.createdAt && formatISODateFromResponse(data?.createdAt)) ||
               ""
             }
-          />
-        </motion.div>
-
-        {/* Created by */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={<HiUser className="text-3xl -ml-1" />}
-            title="Created by"
-            value={data?.user.username}
           />
         </motion.div>
       </div>

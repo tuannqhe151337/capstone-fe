@@ -186,39 +186,28 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setChosenPlan(plan);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                <td className="whitespace-nowrap px-6 py-7 font-extrabold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div className="flex flex-row flex-wrap">
-                      <p className="font-extrabold py-2 ml-14 group-hover:underline duration-200">
-                        {plan.name}
-                      </p>
-                      <div>
-                        <PlanTag
-                          className="ml-4 mt-1"
-                          statusCode={plan.status.code}
-                          statusName={plan.status.name}
-                        />
-                      </div>
-                    </div>
+                    <div className="group-hover:underline">{plan.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-7 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{plan.term.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-7 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{plan.department.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-bold">
+                <td className="whitespace-nowrap px-6 py-7 font-bold">
                   {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">

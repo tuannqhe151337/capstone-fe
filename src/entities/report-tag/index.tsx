@@ -14,16 +14,23 @@ export const ReportTag: React.FC<Props> = ({ statusCode, className }) => {
           Reviewed
         </Tag>
       );
-    case "WAITING_FOR_REVIEWED":
+    case "WAITING_FOR_APPROVAL":
       return (
         <Tag className={className} background="unfilled" variant="waiting">
-          Waiting for reviewed
+          Waiting for approval
         </Tag>
       );
     case "APPROVED":
       return (
         <Tag className={className} background="filled" variant="reviewed">
           Approved
+        </Tag>
+      );
+
+    case "CLOSED":
+      return (
+        <Tag className={className} background="unfilled" variant="deactivate">
+          Closed
         </Tag>
       );
     default:

@@ -3,7 +3,7 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
-import { PlanExpense } from "../../providers/store/api/plansApi";
+import { ExpenseStatus, PlanExpense } from "../../providers/store/api/plansApi";
 import { PlanExpenseTag } from "../../entities/plan-expense-tag";
 import { Button } from "../../shared/button";
 import { Skeleton } from "../../shared/skeleton";
@@ -72,6 +72,7 @@ export interface Expense {
   supplierName: string;
   pic: string;
   notes: string;
+  status: ExpenseStatus;
 }
 
 interface Props {

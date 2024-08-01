@@ -44,6 +44,10 @@ export const PlanActionContextMenu: React.FC<Props> = ({
     onUploadPlan && onUploadPlan();
   });
 
+  useHotkeys("d", () => {
+    onDownloadPlan && onDownloadPlan();
+  });
+
   useHotkeys("v", () => {
     onViewPlanDetail && onViewPlanDetail();
   });
@@ -52,7 +56,7 @@ export const PlanActionContextMenu: React.FC<Props> = ({
     showReuploadPlan && onReuploadPlan && onReuploadPlan();
   });
 
-  useHotkeys("d", () => {
+  useHotkeys("e", () => {
     showDeletePlan && onDeletePlan && onDeletePlan();
   });
 
@@ -117,8 +121,9 @@ export const PlanActionContextMenu: React.FC<Props> = ({
             icon={<FaTrash className="text-lg" />}
             text={
               <>
-                <span className="underline">D</span>
-                <span>elete plan</span>
+                <span>D</span>
+                <span className="underline">e</span>
+                <span>lete plan</span>
               </>
             }
             onClick={onDeletePlan}
