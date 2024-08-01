@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  ExpenseStatusCode,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListPlanParameters {
   query?: string | null;
@@ -27,7 +31,6 @@ export interface PlanPreview {
   department: UserDepartment;
   version: number;
   isDelete: boolean;
-  status: PlanStatus;
 }
 
 export interface PlanDetailParameters {
@@ -40,7 +43,6 @@ export interface PlanDetail {
   biggestExpenditure: number;
   totalPlan: number;
   term: Term;
-  status: PlanStatus;
   planDueDate: string;
   createdAt: string;
   department: PlanDepartment;
@@ -98,28 +100,9 @@ export interface User {
 
 export interface ExpenseStatus {
   statusId: number;
-  code: ExpenseCode;
+  code: ExpenseStatusCode;
   name: string;
 }
-
-export type ExpenseCode =
-  | "NEW"
-  | "WAITING_FOR_APPROVAL"
-  | "APPROVED"
-  | "DENIED";
-
-export interface PlanStatus {
-  id: number;
-  name: string;
-  code: PlanCode;
-}
-
-export type PlanCode =
-  | "NEW"
-  | "WAITING_FOR_REVIEWED"
-  | "APPROVED"
-  | "REVIEWED"
-  | "CLOSED";
 
 export interface Position {
   id: string | number;

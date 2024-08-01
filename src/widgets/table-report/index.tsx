@@ -150,7 +150,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   setHoverRowIndex(undefined);
                 }}
                 onClick={() => {
-                  navigate(`detail/expenses/${report.reportId} `);
+                  navigate(`detail/expenses/${report.reportId}`);
                 }}
                 onContextMenu={(e) => {
                   e.preventDefault();
@@ -164,12 +164,12 @@ export const TableReportManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <>
+                    <div className="flex flex-row flex-wrap items-center gap-5 ml-14">
                       <span className="group-hover:underline">
                         {report.name}
                       </span>{" "}
                       <ReportTag statusCode={report.status.code} />
-                    </>
+                    </div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-6 font-bold">

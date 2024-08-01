@@ -4,7 +4,7 @@ import { NumericFormat } from "react-number-format";
 import { Tag } from "../../shared/tag";
 import clsx from "clsx";
 import { ReportExpense } from "../../providers/store/api/reportsAPI";
-import { cn } from "../../shared/utils/cn";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -156,100 +156,84 @@ export const TableReportExpenses: React.FC<Props> = ({
               >
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {row.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {row.costType.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
-                  <NumericFormat
-                    displayType="text"
-                    value={row.unitPrice}
-                    disabled
-                    thousandSeparator
-                  />
+                  {isFetching ? (
+                    <Skeleton className="w-[120px]" />
+                  ) : (
+                    <NumericFormat
+                      displayType="text"
+                      value={row.unitPrice}
+                      disabled
+                      thousandSeparator
+                    />
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {row.amount}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
-                  <NumericFormat
-                    displayType="text"
-                    value={row.unitPrice * row.amount}
-                    thousandSeparator
-                  />
+                  {isFetching ? (
+                    <Skeleton className="w-[120px]" />
+                  ) : (
+                    <NumericFormat
+                      displayType="text"
+                      value={row.unitPrice * row.amount}
+                      thousandSeparator
+                    />
+                  )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
                     <> {row.projectName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[100px]" />
                   ) : (
                     <> {row.supplierName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {row.pic}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[80px]" />
                   ) : (
                     <> {row.notes}</>
                   )}
                 </td>
                 <td className="px-2 py-3">
-                  <Tag background="filled" variant="reviewed">
-                    Accepted
-                  </Tag>
+                  {isFetching ? (
+                    <Skeleton className="w-[80px]" />
+                  ) : (
+                    <Tag background="filled" variant="reviewed">
+                      Accepted
+                    </Tag>
+                  )}
                 </td>
               </motion.tr>
             ))}

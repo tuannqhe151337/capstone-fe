@@ -29,3 +29,5 @@ export enum Role {
   ACCOUNTANT = "accountant",
   FINANCIAL_STAFF = "financial-staff",
 }
+
+export type ExpenseStatusCode = "WAITING_FOR_APPROVAL" | "APPROVED" | "DENIED";

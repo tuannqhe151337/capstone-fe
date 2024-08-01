@@ -24,7 +24,9 @@ const generateEmptyReports = (total: number): Row[] => {
       },
       isFetching: true,
       status: {
-        code: "WAITING_FOR_REVIEWED",
+        id: 0,
+        code: "WAITING_FOR_APPROVAL",
+        name: "",
       },
       createdAt: "",
     });

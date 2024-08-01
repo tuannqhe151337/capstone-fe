@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  ExpenseStatusCode,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListReportParameters {
   query?: string | null;
@@ -28,12 +32,6 @@ export interface Report {
   createdAt: string;
 }
 
-export interface ReportStatus {
-  code: ReportStatusCode;
-}
-
-export type ReportStatusCode = "WAITING_FOR_REVIEWED" | "APPROVED" | "REVIEWED";
-
 export interface ReportExpense {
   expenseId: number | string;
   name: string;
@@ -44,7 +42,7 @@ export interface ReportExpense {
   supplierName: string;
   pic: string;
   notes: string;
-  status: Status;
+  status: ReportExpenseStatus;
 }
 
 export interface CostType {
@@ -53,9 +51,9 @@ export interface CostType {
   code: string;
 }
 
-export interface Status {
+export interface ReportExpenseStatus {
   statusId: number;
-  code: string;
+  code: ExpenseStatusCode;
   name: string;
 }
 
@@ -66,14 +64,22 @@ export interface ReportDetailParameters {
 export interface ReportDetail {
   id: string | number;
   name: string;
-  biggestExpenditure: number;
-  totalCost: number;
   term: Term;
-  planDueDate: string;
+  status: ReportStatus;
   createdAt: string;
-  department: Department;
-  user: User;
 }
+
+export interface ReportStatus {
+  id: number;
+  name: string;
+  code: ReportStatusCode;
+}
+
+export type ReportStatusCode =
+  | "WAITING_FOR_APPROVAL"
+  | "REVIEWED"
+  | "APPROVED"
+  | "CLOSED";
 
 export interface Term {
   id: number;

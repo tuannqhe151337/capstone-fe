@@ -1,17 +1,13 @@
 import { Variants, motion } from "framer-motion";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
-import { FaChartLine } from "react-icons/fa";
 import { BsStack } from "react-icons/bs";
 import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
-import { RiProgress3Fill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
-import clsx from "clsx";
-import { FaCheck } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -74,20 +70,6 @@ export const PlanDetailInformationPage: React.FC = () => {
           />
         </motion.div>
 
-        {/* Plan due date */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={<FaChartLine className="text-2xl mr-1.5" />}
-            title="Plan due date"
-            value={
-              (data?.planDueDate &&
-                formatISODateFromResponse(data?.planDueDate)) ||
-              ""
-            }
-          />
-        </motion.div>
-
         {/* Department */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
@@ -99,49 +81,6 @@ export const PlanDetailInformationPage: React.FC = () => {
         </motion.div>
       </div>
       <div className="flex flex-col flex-wrap flex-1 gap-9">
-        {/* Status */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={
-              <RiProgress3Fill
-                className={clsx({
-                  "text-3xl -mr-1": true,
-                  "text-green-600": data?.status.code === "APPROVED",
-                  "text-primary-400 dark:text-primary-600":
-                    data?.status.code === "REVIEWED",
-                })}
-              />
-            }
-            title="Status"
-            value={
-              <div
-                className={clsx({
-                  "flex flex-row flex-wrap items-center gap-2": true,
-                  "text-green-600":
-                    data?.status.code === "NEW" ||
-                    data?.status.code === "APPROVED",
-                  "text-primary-500":
-                    data?.status.code === "REVIEWED" ||
-                    data?.status.code === "WAITING_FOR_REVIEWED",
-                })}
-              >
-                <p
-                  className={clsx({
-                    "font-extrabold": true,
-                  })}
-                >
-                  {data?.status.name}
-                </p>
-                {data?.status.code === "REVIEWED" ||
-                data?.status.code === "APPROVED" ? (
-                  <FaCheck className="mb-0.5" />
-                ) : null}
-              </div>
-            }
-          />
-        </motion.div>
-
         {/* Version */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem

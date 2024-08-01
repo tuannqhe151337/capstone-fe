@@ -65,11 +65,6 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       supplierName: "",
       pic: "",
       notes: "",
-      status: {
-        statusId: 0,
-        code: "NEW",
-        name: "",
-      },
       isFetching: true,
     });
   }
@@ -120,10 +115,7 @@ export const PlanDetailExpensePage: React.FC = () => {
 
   const showSubmitPlanButton = useMemo(() => {
     if (plan) {
-      return (
-        plan.status.code === "NEW" &&
-        plan.department.departmentId === me?.department.id
-      );
+      return plan.department.departmentId === me?.department.id;
     }
   }, [plan, me]);
 
@@ -204,86 +196,82 @@ export const PlanDetailExpensePage: React.FC = () => {
           setStatusId(statusId);
         }}
         onApproveExpensesClick={() => {
-          if (planId) {
-            let planIdInt: number;
-            try {
-              // Parse planId to int
-              if (typeof planId === "string") {
-                planIdInt = parseInt(planId);
-              } else {
-                planIdInt = planId;
-              }
-
-              // Call API approve expenses
-              approveExpenses({
-                planId: planIdInt,
-                listExpenseId: Array.from(listSelectedId),
-              });
-
-              // Manually update cache
-              dispatch(
-                plansApi.util.updateQueryData(
-                  "fetchPlanExpenses",
-                  {
-                    planId: planIdInt,
-                    costTypeId,
-                    query: searchboxValue,
-                    page,
-                    pageSize,
-                  },
-                  (draft) => {
-                    draft.data.forEach((expense, index) => {
-                      if (listSelectedId.has(expense.expenseId)) {
-                        (draft.data[index].status.code = "APPROVED"),
-                          (draft.data[index].status.name = "Approved");
-                      }
-                    });
-                  }
-                )
-              );
-            } catch {}
-          }
+          // if (planId) {
+          //   let planIdInt: number;
+          //   try {
+          //     // Parse planId to int
+          //     if (typeof planId === "string") {
+          //       planIdInt = parseInt(planId);
+          //     } else {
+          //       planIdInt = planId;
+          //     }
+          //     // Call API approve expenses
+          //     approveExpenses({
+          //       planId: planIdInt,
+          //       listExpenseId: Array.from(listSelectedId),
+          //     });
+          //     // Manually update cache
+          //     dispatch(
+          //       plansApi.util.updateQueryData(
+          //         "fetchPlanExpenses",
+          //         {
+          //           planId: planIdInt,
+          //           costTypeId,
+          //           query: searchboxValue,
+          //           page,
+          //           pageSize,
+          //         },
+          //         (draft) => {
+          //           draft.data.forEach((expense, index) => {
+          //             if (listSelectedId.has(expense.expenseId)) {
+          //               (draft.data[index].status.code = "APPROVED"),
+          //                 (draft.data[index].status.name = "Approved");
+          //             }
+          //           });
+          //         }
+          //       )
+          //     );
+          //   } catch {}
+          // }
         }}
         onDenyExpensesClick={() => {
-          if (planId) {
-            // Parse planId to int
-            let planIdInt: number;
-            try {
-              if (typeof planId === "string") {
-                planIdInt = parseInt(planId);
-              } else {
-                planIdInt = planId;
-              }
-
-              // Call API deny expenses
-              denyExpenses({
-                planId: planIdInt,
-                listExpenseId: Array.from(listSelectedId),
-              });
-
-              // Manually update cache
-              dispatch(
-                plansApi.util.updateQueryData(
-                  "fetchPlanExpenses",
-                  {
-                    planId: planIdInt,
-                    costTypeId,
-                    query: searchboxValue,
-                    page,
-                    pageSize,
-                  },
-                  (draft) => {
-                    draft.data.forEach((expense, index) => {
-                      if (listSelectedId.has(expense.expenseId)) {
-                        (draft.data[index].status.code = "DENIED"),
-                          (draft.data[index].status.name = "Denied");
-                      }
-                    });
-                  }
-                )
-              );
-            } catch {}
-          }
+          // if (planId) {
+          //   // Parse planId to int
+          //   let planIdInt: number;
+          //   try {
+          //     if (typeof planId === "string") {
+          //       planIdInt = parseInt(planId);
+          //     } else {
+          //       planIdInt = planId;
+          //     }
+          //     // Call API deny expenses
+          //     denyExpenses({
+          //       planId: planIdInt,
+          //       listExpenseId: Array.from(listSelectedId),
+          //     });
+          //     // Manually update cache
+          //     dispatch(
+          //       plansApi.util.updateQueryData(
+          //         "fetchPlanExpenses",
+          //         {
+          //           planId: planIdInt,
+          //           costTypeId,
+          //           query: searchboxValue,
+          //           page,
+          //           pageSize,
+          //         },
+          //         (draft) => {
+          //           draft.data.forEach((expense, index) => {
+          //             if (listSelectedId.has(expense.expenseId)) {
+          //               (draft.data[index].status.code = "DENIED"),
+          //                 (draft.data[index].status.name = "Denied");
+          //             }
+          //           });
+          //         }
+          //       )
+          //     );
+          //   } catch {}
+          // }
         }}
         showReupload={showReuploadButton}
         onDownloadClick={() => {
