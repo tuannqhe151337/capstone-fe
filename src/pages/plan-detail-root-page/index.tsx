@@ -20,7 +20,6 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
-import { PlanTag } from "../../entities/plan-tag";
 import { Button } from "../../shared/button";
 import { FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";

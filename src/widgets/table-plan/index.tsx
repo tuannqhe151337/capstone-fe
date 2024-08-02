@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
 import { PlanPreview } from "../../providers/store/api/plansApi";
-import { PlanTag } from "../../entities/plan-tag";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { useHotkeys } from "react-hotkeys-hook";
 import { PlanActionContextMenu } from "../../entities/plan-action-context-menu";
