@@ -14,6 +14,7 @@ import { ReportActionContextMenu } from "../../entities/report-action-context-me
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
+import { TermPreviewer } from "../../entities/term-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -105,7 +106,7 @@ export const TableReportManagement: React.FC<Props> = ({
 
   return (
     <div>
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
+      <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
             <th
@@ -158,7 +159,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   setChosenReport(report);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-6 font-extrabold">
+                <td className="whitespace-nowrap w-[500px] px-6 py-6 font-extrabold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -174,7 +175,9 @@ export const TableReportManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <>{report.term.name}</>
+                    <TermPreviewer termId={report.term.termId}>
+                      {report.term.name}
+                    </TermPreviewer>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-6 font-bold">

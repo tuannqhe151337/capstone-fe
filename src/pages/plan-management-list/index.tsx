@@ -26,7 +26,7 @@ const generateEmptyPlans = (total: number): Row[] => {
         name: "",
       },
       term: {
-        id: 0,
+        termId: 0,
         name: "",
         startDate: "",
         endDate: "",

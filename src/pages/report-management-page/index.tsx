@@ -21,7 +21,7 @@ const generateEmptyReports = (total: number): Row[] => {
       version: "",
       month: "",
       term: {
-        id: 0,
+        termId: 0,
         name: "",
         startDate: "",
         endDate: "",

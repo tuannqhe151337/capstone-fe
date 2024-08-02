@@ -87,7 +87,7 @@ export interface Position {
 }
 
 export interface Term {
-  id: number;
+  termId: number;
   name: string;
   startDate: string;
   endDate: string;

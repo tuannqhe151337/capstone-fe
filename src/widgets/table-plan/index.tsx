@@ -15,6 +15,7 @@ import { Skeleton } from "../../shared/skeleton";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
+import { TermPreviewer } from "../../entities/term-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -121,7 +122,7 @@ export const TablePlanManagement: React.FC<Props> = ({
 
   return (
     <div className="pb-24">
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
+      <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
             <th
@@ -206,7 +207,9 @@ export const TablePlanManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div>{plan.term.name}</div>
+                    <TermPreviewer termId={plan.term.termId}>
+                      {plan.term.name}
+                    </TermPreviewer>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-7 font-bold">
