@@ -104,6 +104,11 @@ export interface ReportActualCostResponse {
   actualCost: number;
 }
 
+export interface ReviewExpensesBody {
+  reportId: number;
+  listExpenseId: number[];
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -202,6 +207,22 @@ const reportsAPI = createApi({
           return endpoint;
         },
       }),
+
+      approveExpenses: builder.mutation<any, ReviewExpensesBody>({
+        query: (reviewExpenseBody) => ({
+          url: "report/expense-approval",
+          method: "PUT",
+          body: reviewExpenseBody,
+        }),
+      }),
+
+      denyExpenses: builder.mutation<any, ReviewExpensesBody>({
+        query: (reviewExpenseBody) => ({
+          url: "report/expense-deny",
+          method: "PUT",
+          body: reviewExpenseBody,
+        }),
+      }),
     };
   },
 });
@@ -214,5 +235,7 @@ export const {
   useGetReportDetailQuery,
   useFetchReportExpensesQuery,
   useLazyFetchReportExpensesQuery,
+  useApproveExpensesMutation,
+  useDenyExpensesMutation,
 } = reportsAPI;
 export { reportsAPI };

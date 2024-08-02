@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z, ZodType } from "zod";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
-import { FaCircleExclamation, FaLocationDot, FaUser } from "react-icons/fa6";
+import { FaLocationDot, FaUser } from "react-icons/fa6";
 import { Variants, motion } from "framer-motion";
 import { TEInput } from "tw-elements-react";
 import { FaBirthdayCake, FaPhoneAlt } from "react-icons/fa";

@@ -113,7 +113,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
   onReuploadClick,
 }) => {
   // Filter section
-  const [showFillterBtn, setShowFillterBtn] = useState(false);
+  const [showFilterBtn, setShowFillterBtn] = useState(false);
 
   // Show dropdown options
   const [showOptions, setShowOptions] = useState(false);
@@ -143,8 +143,8 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
           />
         </motion.div>
 
-        {/* Review expenses section */}
         <div className="flex flex-row flex-wrap items-center ml-2">
+          {/* Review expenses section */}
           <div className="relative self-start mt-0.5">
             <AnimatePresence>
               {showReviewExpense && (
@@ -279,10 +279,10 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
         </div>
       </motion.div>
 
-      {/* Filter dropdown section */}
+      {/* Filter section */}
       <div className="relative w-full">
         <AnimatePresence>
-          {showFillterBtn && (
+          {showFilterBtn && (
             <motion.div
               className="absolute w-full"
               initial={AnimationStage.HIDDEN}
@@ -314,7 +314,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
         <motion.div
           initial={AnimationStage.HIDDEN}
           animate={
-            showFillterBtn ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+            showFilterBtn ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
           }
           variants={heightPlaceholderAnimation}
         />

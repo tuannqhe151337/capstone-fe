@@ -67,14 +67,7 @@ export const TableReportManagement: React.FC<Props> = ({
   const navigate = useNavigate();
 
   // UI: show delete button
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
-
-  // UI: show delete button
   const [showDeleteModel, setShowDeleteModal] = useState<boolean>(false);
-
-  const handleClick = () => {
-    setShowDeleteModal(true);
-  };
 
   const handleDeleteReportModal = () => {
     setShowDeleteModal(false);
@@ -154,12 +147,6 @@ export const TableReportManagement: React.FC<Props> = ({
                   "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
                     index % 2 === 1,
                 })}
-                onMouseEnter={() => {
-                  setHoverRowIndex(index);
-                }}
-                onMouseLeave={() => {
-                  setHoverRowIndex(undefined);
-                }}
                 onClick={() => {
                   navigate(`detail/expenses/${report.reportId}`);
                 }}

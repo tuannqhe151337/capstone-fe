@@ -1,4 +1,4 @@
-import { AnimatePresence, Variants, motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
@@ -29,7 +29,6 @@ import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-char
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { CgSpinner } from "react-icons/cg";
 import { Button } from "../../shared/button";
-import { FaCircleExclamation } from "react-icons/fa6";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 
 enum AnimationStage {

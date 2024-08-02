@@ -21,21 +21,12 @@ export const useIsAuthorizedAndTimeToReviewReport = ({
     const reportNotClosed = reportStatusCode !== "CLOSED";
 
     const betweenEndAndReuploadStartDate =
-      parseISOInResponse(termEndDate) >= new Date() &&
-      parseISOInResponse(termReuploadStartDate) <= new Date();
+      parseISOInResponse(termEndDate) <= new Date() &&
+      parseISOInResponse(termReuploadStartDate) >= new Date();
 
     const betweenReuploadEndDateAndFinalEndDate =
-      parseISOInResponse(termReuploadEndDate) >= new Date() &&
-      parseISOInResponse(finalEndTermDate) <= new Date();
-
-    console.log(termEndDate);
-    console.log(termReuploadStartDate);
-
-    console.log(
-      reportNotClosed,
-      betweenEndAndReuploadStartDate,
-      betweenReuploadEndDateAndFinalEndDate
-    );
+      parseISOInResponse(termReuploadEndDate) <= new Date() &&
+      parseISOInResponse(finalEndTermDate) >= new Date();
 
     return (
       reportNotClosed &&

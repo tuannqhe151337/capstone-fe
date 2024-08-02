@@ -8,6 +8,10 @@ interface TermOption {
   label: string;
 }
 
+interface Additional {
+  page: number;
+}
+
 const pageSize = 10;
 
 const defaultOption: TermOption = {
@@ -21,16 +25,21 @@ interface Props {
 
 export const TermFilter: React.FC<Props> = ({ onChange }) => {
   // Fetch initial data
-  const [page, setPage] = useState<number>(1);
   const [getListTermQuery, { isFetching }] = useLazyGetListTermQuery();
 
   // Convert data to option
-  const loadOptions: LoadOptions<TermOption, any, any> = async (query) => {
+  const loadOptions: LoadOptions<TermOption, any, Additional> = async (
+    currentQuery,
+    _,
+    additional
+  ) => {
+    const page = additional?.page || 1;
+
     // Fetch data
     const data = await getListTermQuery({
-      page,
+      page: page || 1,
       pageSize,
-      query,
+      query: currentQuery,
     }).unwrap();
 
     // Load options
@@ -44,15 +53,14 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
         }))
         .filter(({ value }) => value !== defaultOption.value),
       hasMore,
+      additional: {
+        page: page + 1,
+      },
     };
 
-    if (page === 1 && query === "") {
+    // Default option
+    if (page === 1 && currentQuery === "") {
       loadOptions.options.unshift(defaultOption);
-    }
-
-    // Update page
-    if (hasMore) {
-      setPage((page) => page + 1);
     }
 
     return loadOptions;
@@ -78,6 +86,9 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
         }}
         options={[defaultOption]}
         loadOptions={loadOptions}
+        additional={{
+          page: 1,
+        }}
       />
     </div>
   );

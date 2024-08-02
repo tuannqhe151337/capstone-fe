@@ -1,7 +1,7 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
-import { FaDownload } from "react-icons/fa6";
+import { FaDownload, FaListCheck } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
@@ -9,6 +9,8 @@ import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { StatusTermFilter } from "../../entities/status-term-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
+import { Button } from "../../shared/button";
+import { RiDeleteRow } from "react-icons/ri";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -65,22 +67,44 @@ const heightPlaceholderAnimation: Variants = {
   },
 };
 
-
+const ReviewExpenseWidth = 360;
+const widthPlaceholderAnimation: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      delay: 0.4,
+    },
+  },
+  visible: {
+    width: ReviewExpenseWidth,
+    transition: {
+      duration: 0.4,
+    },
+  },
+};
 
 interface Props {
   className?: string;
+  showReviewExpense?: boolean;
   searchboxValue?: string;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
+  onApproveExpensesClick?: () => any;
+  onDenyExpensesClick?: () => any;
+  onDownloadClick?: () => any;
 }
 
 export const ListReportExpenseFilter: React.FC<Props> = ({
   className,
+  showReviewExpense,
   searchboxValue,
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onApproveExpensesClick,
+  onDenyExpensesClick,
+  onDownloadClick,
 }) => {
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -113,8 +137,68 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
           />
         </motion.div>
 
-        {/* Review expenses section */}
         <div className="flex flex-row flex-wrap items-center ml-2">
+          {/* Review expenses section */}
+          <div className="relative self-start mt-0.5">
+            <AnimatePresence>
+              {showReviewExpense && (
+                <div
+                  className="absolute right-0 top-0"
+                  style={{ width: ReviewExpenseWidth }}
+                >
+                  <motion.div
+                    className="flex flex-row flex-wrap items-center"
+                    initial={AnimationStage.HIDDEN}
+                    animate={AnimationStage.VISIBLE}
+                    variants={staggerChildrenAnimation}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <motion.div variants={childrenAnimation}>
+                      <Button
+                        variant="error"
+                        containerClassName="mr-3"
+                        onClick={() => {
+                          onDenyExpensesClick && onDenyExpensesClick();
+                        }}
+                      >
+                        <div className="flex flex-row flex-wrap items-center gap-3">
+                          <RiDeleteRow className="text-xl" />
+                          <p className="text-sm font-semibold">Deny expense</p>
+                        </div>
+                      </Button>
+                    </motion.div>
+
+                    <motion.div variants={childrenAnimation}>
+                      <Button
+                        containerClassName="mr-3"
+                        onClick={() => {
+                          onApproveExpensesClick && onApproveExpensesClick();
+                        }}
+                      >
+                        <div className="flex flex-row flex-wrap items-center gap-3">
+                          <FaListCheck className="text-lg" />
+                          <p className="text-sm font-semibold">
+                            Approve expense
+                          </p>
+                        </div>
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
+
+            <motion.div
+              initial={AnimationStage.HIDDEN}
+              animate={
+                showReviewExpense
+                  ? AnimationStage.VISIBLE
+                  : AnimationStage.HIDDEN
+              }
+              variants={widthPlaceholderAnimation}
+            />
+          </div>
+
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>
             <IconButton
@@ -149,7 +233,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                     <TERipple
                       rippleColor="light"
                       className="w-max"
-                      onClick={() => {}}
+                      onClick={onDownloadClick}
                     >
                       <div className="flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
                         <FaDownload className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" />
@@ -167,7 +251,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
         </div>
       </motion.div>
 
-      {/* Filter dropdown section */}
+      {/* Filter section */}
       <div className="relative w-full">
         <AnimatePresence>
           {showFillterBtn && (
