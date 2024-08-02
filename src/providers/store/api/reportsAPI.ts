@@ -76,6 +76,7 @@ export interface ReportStatus {
 }
 
 export type ReportStatusCode =
+  | "NEW"
   | "WAITING_FOR_APPROVAL"
   | "REVIEWED"
   | "APPROVED"
@@ -84,6 +85,11 @@ export type ReportStatusCode =
 export interface Term {
   id: number;
   name: string;
+  startDate: string;
+  endDate: string;
+  reuploadStartDate: string;
+  reuploadEndDate: string;
+  finalEndTermDate: string;
 }
 
 export interface Department {
@@ -112,6 +118,14 @@ export interface Role {
 export interface Position {
   id: string | number;
   name: string;
+}
+
+export interface ReportExpectedCostResponse {
+  expectedCost: number;
+}
+
+export interface ReportActualCostResponse {
+  actualCost: number;
 }
 
 // DEV ONLY!!!
@@ -171,8 +185,23 @@ const reportsAPI = createApi({
           return endpoint;
         },
       }),
+
       getReportDetail: builder.query<ReportDetail, ReportDetailParameters>({
         query: ({ reportId }) => `/report/detail?reportId=${reportId}`,
+      }),
+
+      getReportActualCost: builder.query<
+        ReportActualCostResponse,
+        ReportDetailParameters
+      >({
+        query: ({ reportId }) => `/report/actual-cost?reportId=${reportId}`,
+      }),
+
+      getReportExpectedCost: builder.query<
+        ReportExpectedCostResponse,
+        ReportDetailParameters
+      >({
+        query: ({ reportId }) => `/report/expected-cost?reportId=${reportId}`,
       }),
 
       fetchReportExpenses: builder.query<
@@ -203,6 +232,8 @@ const reportsAPI = createApi({
 
 export const {
   useFetchReportsQuery,
+  useGetReportActualCostQuery,
+  useGetReportExpectedCostQuery,
   useLazyFetchReportsQuery,
   useGetReportDetailQuery,
   useFetchReportExpensesQuery,

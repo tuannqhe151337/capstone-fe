@@ -1,11 +1,14 @@
 import { Variants, motion } from "framer-motion";
 import { RiCalendarScheduleFill, RiProgress3Fill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
-import { FaCheck, FaClock } from "react-icons/fa6";
+import { FaCheck, FaClock, FaFileImport } from "react-icons/fa6";
+import { SiClockify } from "react-icons/si";
 import { useParams } from "react-router-dom";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
 import clsx from "clsx";
+import { format } from "date-fns";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -46,7 +49,7 @@ export const ReportDetailInformationPage: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
 
   // Query
-  const { data, isFetching } = useGetReportDetailQuery({
+  const { data: report, isFetching } = useGetReportDetailQuery({
     reportId: reportId ? parseInt(reportId, 10) : 0,
   });
 
@@ -64,7 +67,39 @@ export const ReportDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<RiCalendarScheduleFill className="text-3xl" />}
             title="Term"
-            value={data?.term.name}
+            value={report?.term.name}
+          />
+        </motion.div>
+
+        {/* Start-end date */}
+        <motion.div variants={childrenAnimation}>
+          <DetailPropertyItem
+            isFetching={isFetching}
+            icon={<SiClockify className="text-3xl" />}
+            title="Start - end date"
+            value={`${format(
+              parseISOInResponse(report?.term.startDate),
+              "dd/MM/yyyy"
+            )} - ${format(
+              parseISOInResponse(report?.term.endDate),
+              "dd/MM/yyyy"
+            )}`}
+          />
+        </motion.div>
+
+        {/* Reupload period */}
+        <motion.div variants={childrenAnimation}>
+          <DetailPropertyItem
+            isFetching={isFetching}
+            icon={<FaFileImport className="text-3xl -ml-1 mr-1" />}
+            title="Reupload plan period"
+            value={`${format(
+              parseISOInResponse(report?.term.reuploadStartDate),
+              "dd/MM/yyyy"
+            )} - ${format(
+              parseISOInResponse(report?.term.reuploadEndDate),
+              "dd/MM/yyyy"
+            )}`}
           />
         </motion.div>
       </div>
@@ -76,10 +111,10 @@ export const ReportDetailInformationPage: React.FC = () => {
             icon={
               <RiProgress3Fill
                 className={clsx({
-                  "text-3xl -mr-1": true,
-                  "text-green-600": data?.status.code === "APPROVED",
+                  "text-3xl": true,
+                  "text-green-600": report?.status.code === "APPROVED",
                   "text-primary-400 dark:text-primary-600":
-                    data?.status.code === "REVIEWED",
+                    report?.status.code === "REVIEWED",
                 })}
               />
             }
@@ -88,10 +123,10 @@ export const ReportDetailInformationPage: React.FC = () => {
               <div
                 className={clsx({
                   "flex flex-row flex-wrap items-center gap-2": true,
-                  "text-green-600": data?.status.code === "APPROVED",
+                  "text-green-600": report?.status.code === "APPROVED",
                   "text-primary-500":
-                    data?.status.code === "REVIEWED" ||
-                    data?.status.code === "WAITING_FOR_APPROVAL",
+                    report?.status.code === "REVIEWED" ||
+                    report?.status.code === "WAITING_FOR_APPROVAL",
                 })}
               >
                 <p
@@ -99,10 +134,10 @@ export const ReportDetailInformationPage: React.FC = () => {
                     "font-extrabold": true,
                   })}
                 >
-                  {data?.status.name}
+                  {report?.status.name}
                 </p>
-                {data?.status.code === "REVIEWED" ||
-                data?.status.code === "APPROVED" ? (
+                {report?.status.code === "REVIEWED" ||
+                report?.status.code === "APPROVED" ? (
                   <FaCheck className="mb-0.5" />
                 ) : null}
               </div>
@@ -114,10 +149,11 @@ export const ReportDetailInformationPage: React.FC = () => {
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
-            icon={<FaClock className="text-2xl" />}
+            icon={<FaClock className="text-2xl ml-1" />}
             title="Created at"
             value={
-              (data?.createdAt && formatISODateFromResponse(data?.createdAt)) ||
+              (report?.createdAt &&
+                formatISODateFromResponse(report?.createdAt)) ||
               ""
             }
           />

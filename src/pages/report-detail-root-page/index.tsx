@@ -8,7 +8,12 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
-import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
+import {
+  useGetReportActualCostQuery,
+  useGetReportDetailQuery,
+  useGetReportExpectedCostQuery,
+} from "../../providers/store/api/reportsAPI";
+import { ReportTag } from "../../entities/report-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,7 +74,15 @@ export const ReportDetailRootPage: React.FC = () => {
 
   // Query
   const { data, isError, isFetching, isSuccess } = useGetReportDetailQuery({
-    reportId: reportId ? parseInt(reportId, 10) : 0,
+    reportId: reportId ? parseInt(reportId) : 0,
+  });
+
+  const { data: expectedCostData } = useGetReportExpectedCostQuery({
+    reportId: reportId ? parseInt(reportId) : 0,
+  });
+
+  const { data: actualCostData } = useGetReportActualCostQuery({
+    reportId: reportId ? parseInt(reportId) : 0,
   });
 
   // Tablist state
@@ -116,6 +129,7 @@ export const ReportDetailRootPage: React.FC = () => {
                 <p className="text-2xl font-extrabold text-primary mr-5">
                   {data?.name}
                 </p>
+                <ReportTag statusCode={data.status.code} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -136,18 +150,18 @@ export const ReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaMoneyBillTrendUp className="text-4xl" />}
-            label={"Biggest expenditure"}
+            label={"Expected cost"}
             isFetching={isFetching}
-            value={formatViMoney(data?.biggestExpenditure || 0)}
+            value={formatViMoney(expectedCostData?.expectedCost || 0)}
           />
         </motion.div>
 
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaCoins className="text-4xl" />}
-            label={"Total cost"}
+            label={"Actual cost"}
             isFetching={isFetching}
-            value={formatViMoney(data?.totalCost || 0)}
+            value={formatViMoney(actualCostData?.actualCost || 0)}
           />
         </motion.div>
       </div>

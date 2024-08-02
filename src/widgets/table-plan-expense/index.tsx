@@ -5,7 +5,6 @@ import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
 import { ExpenseStatus, PlanExpense } from "../../providers/store/api/plansApi";
 import { PlanExpenseTag } from "../../entities/plan-expense-tag";
-import { Button } from "../../shared/button";
 import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
@@ -76,7 +75,7 @@ export interface Expense {
 }
 
 interface Props {
-  isRowSelectable?: boolean;
+  isRowsSelectable?: boolean;
   showSubmitPlanButton?: boolean;
   onSubmitForReview?: () => any;
   listSelectedId?: Set<number>;
@@ -93,9 +92,7 @@ interface Props {
 }
 
 export const TablePlanExpenses: React.FC<Props> = ({
-  isRowSelectable,
-  showSubmitPlanButton,
-  onSubmitForReview,
+  isRowsSelectable = false,
   listSelectedId,
   onSelectAllClick,
   onRowClick,
@@ -118,7 +115,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
-            {isRowSelectable && (
+            {isRowsSelectable && (
               <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
                 <Checkbox
                   className="ml-1 mt-0.5"
@@ -173,27 +170,30 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 className={clsx({
                   "border-b-2 duration-200": true,
                   "cursor-pointer hover:bg-primary-100/70 hover:dark:bg-neutral-800":
-                    isRowSelectable && !isFetching,
+                    isRowsSelectable && !isFetching,
                   "border-b-primary-200/50 dark:border-b-primary-900/50 bg-primary-100 dark:bg-primary-950":
-                    isRowSelectable &&
+                    isRowsSelectable &&
                     listSelectedId &&
                     listSelectedId.has(expense.expenseId),
                   "border-b-transparent":
-                    listSelectedId && !listSelectedId.has(expense.expenseId),
+                    (listSelectedId &&
+                      !listSelectedId.has(expense.expenseId)) ||
+                    !listSelectedId,
                   "bg-primary-50/70 dark:bg-neutral-800/70":
-                    index % 2 === 1 &&
-                    listSelectedId &&
-                    !listSelectedId.has(expense.expenseId),
+                    (index % 2 === 1 &&
+                      listSelectedId &&
+                      !listSelectedId.has(expense.expenseId)) ||
+                    (index % 2 === 1 && !listSelectedId),
                 })}
                 variants={rowAnimation}
                 onClick={() => {
-                  isRowSelectable &&
+                  isRowsSelectable &&
                     !isFetching &&
                     onRowClick &&
                     onRowClick(expense.expenseId);
                 }}
               >
-                {isRowSelectable && (
+                {isRowsSelectable && (
                   <td className="pl-3.5 pr-2 py-3">
                     <Checkbox
                       className="m-auto"
@@ -310,19 +310,6 @@ export const TablePlanExpenses: React.FC<Props> = ({
             onPageChange={onPageChange}
             onPrevious={onPrevious}
           />
-        </motion.div>
-      )}
-
-      {showSubmitPlanButton && (
-        <motion.div
-          className="w-full mt-5"
-          initial={AnimationStage.HIDDEN}
-          animate={AnimationStage.VISIBLE}
-          variants={animation}
-        >
-          <Button containerClassName="w-full" onClick={onSubmitForReview}>
-            Submit for review
-          </Button>
         </motion.div>
       )}
     </div>

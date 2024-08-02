@@ -309,28 +309,28 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plan-detail"],
       }),
-      approveExpenses: builder.mutation<any, ReviewExpensesBody>({
-        query: (reviewExpenseBody) => ({
-          url: "plan/expense-approval",
-          method: "PUT",
-          body: reviewExpenseBody,
-        }),
-      }),
-      denyExpenses: builder.mutation<any, ReviewExpensesBody>({
-        query: (reviewExpenseBody) => ({
-          url: "plan/expense-deny",
-          method: "PUT",
-          body: reviewExpenseBody,
-        }),
-      }),
-      submitPlanForReview: builder.mutation<any, SubmitPlanBody>({
-        query: (submitPlanBody) => ({
-          url: "plan/submit-for-review",
-          method: "PUT",
-          body: submitPlanBody,
-        }),
-        invalidatesTags: ["plan-detail"],
-      }),
+      // approveExpenses: builder.mutation<any, ReviewExpensesBody>({
+      //   query: (reviewExpenseBody) => ({
+      //     url: "plan/expense-approval",
+      //     method: "PUT",
+      //     body: reviewExpenseBody,
+      //   }),
+      // }),
+      // denyExpenses: builder.mutation<any, ReviewExpensesBody>({
+      //   query: (reviewExpenseBody) => ({
+      //     url: "plan/expense-deny",
+      //     method: "PUT",
+      //     body: reviewExpenseBody,
+      //   }),
+      // }),
+      // submitPlanForReview: builder.mutation<any, SubmitPlanBody>({
+      //   query: (submitPlanBody) => ({
+      //     url: "plan/submit-for-review",
+      //     method: "PUT",
+      //     body: submitPlanBody,
+      //   }),
+      //   invalidatesTags: ["plan-detail"],
+      // }),
     };
   },
 });
@@ -345,8 +345,8 @@ export const {
   useFetchPlanExpensesQuery,
   useLazyFetchPlanExpensesQuery,
   useReuploadPlanMutation,
-  useApproveExpensesMutation,
-  useDenyExpensesMutation,
-  useSubmitPlanForReviewMutation,
+  // useApproveExpensesMutation,
+  // useDenyExpensesMutation,
+  // useSubmitPlanForReviewMutation,
 } = plansApi;
 export { plansApi };

@@ -2,21 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { TablePlanExpenses } from "../../widgets/table-plan-expense";
 import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
-import { produce } from "immer";
 import {
   ListPlanExpenseParameters,
   PlanExpense,
-  plansApi,
-  useApproveExpensesMutation,
-  useDenyExpensesMutation,
   useLazyFetchPlanExpensesQuery,
-  useSubmitPlanForReviewMutation,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
 import { useMeQuery } from "../../providers/store/api/authApi";
-import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
-import { useAppDispatch } from "../../providers/store/hook";
-import { toast } from "react-toastify";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
@@ -59,6 +52,11 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
         name: "",
         code: "",
       },
+      status: {
+        statusId: 0,
+        code: "APPROVED",
+        name: "Approved",
+      },
       unitPrice: 0,
       amount: 0,
       projectName: "",
@@ -75,9 +73,6 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
 const pageSize = 10;
 
 export const PlanDetailExpensePage: React.FC = () => {
-  // Dispatch
-  const dispatch = useAppDispatch();
-
   // Get show upload modal method
   const { plan, setShowReuploadModal, showReuploadButton } =
     usePlanDetailContext();
@@ -104,26 +99,16 @@ export const PlanDetailExpensePage: React.FC = () => {
   }, [listSelectedId]);
 
   // Approve and deny mutation
-  const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
-    useApproveExpensesMutation();
-  const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
-    useDenyExpensesMutation();
-
-  // Submit plan for review
-  const [submitPlanForReview, { isSuccess: submitPlanForReviewSuccess }] =
-    useSubmitPlanForReviewMutation();
+  // const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
+  //   useApproveExpensesMutation();
+  // const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
+  //   useDenyExpensesMutation();
 
   const showSubmitPlanButton = useMemo(() => {
     if (plan) {
       return plan.department.departmentId === me?.department.id;
     }
   }, [plan, me]);
-
-  useEffect(() => {
-    if (submitPlanForReviewSuccess) {
-      toast("Submit plan successfully!", { type: "success" });
-    }
-  }, [submitPlanForReviewSuccess]);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -164,17 +149,17 @@ export const PlanDetailExpensePage: React.FC = () => {
   }, [searchboxValue, page, costTypeId, statusId, planId]);
 
   // Show successfully toast on approve or deny expenses
-  useEffect(() => {
-    if (approveExpensesSuccess) {
-      toast("Approve expenses successfully!", { type: "success" });
-    }
-  }, [approveExpensesSuccess]);
+  // useEffect(() => {
+  //   if (approveExpensesSuccess) {
+  //     toast("Approve expenses successfully!", { type: "success" });
+  //   }
+  // }, [approveExpensesSuccess]);
 
-  useEffect(() => {
-    if (denyExpensesSuccess) {
-      toast("Deny expenses successfully!", { type: "success" });
-    }
-  }, [denyExpensesSuccess]);
+  // useEffect(() => {
+  //   if (denyExpensesSuccess) {
+  //     toast("Deny expenses successfully!", { type: "success" });
+  //   }
+  // }, [denyExpensesSuccess]);
 
   return (
     <motion.div
@@ -293,42 +278,38 @@ export const PlanDetailExpensePage: React.FC = () => {
       />
 
       <TablePlanExpenses
-        isRowSelectable={me?.role.code === Role.ACCOUNTANT}
-        listSelectedId={listSelectedId}
-        onRowClick={(expenseId) => {
-          setListSelectedId(
-            produce((state) => {
-              if (state.has(expenseId)) {
-                state.delete(expenseId);
-              } else {
-                state.add(expenseId);
-              }
+        // isRowsSelectable={me?.role.code === Role.ACCOUNTANT}
+        // listSelectedId={listSelectedId}
+        // onRowClick={(expenseId) => {
+        //   setListSelectedId(
+        //     produce((state) => {
+        //       if (state.has(expenseId)) {
+        //         state.delete(expenseId);
+        //       } else {
+        //         state.add(expenseId);
+        //       }
+        //       return state;
+        //     })
+        //   );
+        // }}
+        // onSelectAllClick={() => {
+        //   setListSelectedId(
+        //     produce((state) => {
+        //       if (state.size === data?.data.length) {
+        //         state = new Set();
+        //       } else {
+        //         data?.data.forEach(({ expenseId }) => {
+        //           state.add(expenseId);
+        //         });
+        //       }
 
-              return state;
-            })
-          );
-        }}
-        onSelectAllClick={() => {
-          setListSelectedId(
-            produce((state) => {
-              if (state.size === data?.data.length) {
-                state = new Set();
-              } else {
-                data?.data.forEach(({ expenseId }) => {
-                  state.add(expenseId);
-                });
-              }
-
-              return state;
-            })
-          );
-        }}
+        //       return state;
+        //     })
+        //   );
+        // }}
         expenses={isFetching ? generateEmptyPlanExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
         showSubmitPlanButton={showSubmitPlanButton}
-        onSubmitForReview={() => {
-          planId && submitPlanForReview({ planId: parseInt(planId) });
-        }}
         page={page}
         totalPage={data?.pagination.numPages}
         onNext={() => {
