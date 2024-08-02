@@ -1,5 +1,5 @@
 import { TEInput } from "tw-elements-react";
-import { AnimatePresence, Variants, motion } from "framer-motion";
+import { Variants, motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useNavigate } from "react-router-dom";
 import { LanguageChanger } from "../../features/language-changer";
@@ -16,7 +16,6 @@ import { setEmailToken } from "../../providers/store/slices/forgotPasswordSlice"
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { LogoRedirect } from "../../widgets/logo-redirect";
 import { ErrorData } from "../../providers/store/api/type";
-import { FaCircleExclamation } from "react-icons/fa6";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { Button } from "../../shared/button";
 import { CgSpinner } from "react-icons/cg";
@@ -68,18 +67,6 @@ const imageAnimation: Variants = {
     transition: {
       duration: 1,
     },
-  },
-};
-
-const heightPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.5,
-    },
-  },
-  visible: {
-    height: 60,
   },
 };
 

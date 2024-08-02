@@ -9,6 +9,10 @@ interface DepartmentOption {
   label: string;
 }
 
+interface Additional {
+  page: number;
+}
+
 const pageSize = 10;
 
 const DefaultOption: DepartmentOption = {
@@ -28,19 +32,22 @@ export const DepartmentFilter: React.FC<Props> = ({
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const [page, setPage] = useState<number>(1);
   const [getListDepartmentQuery, { isFetching }] =
     useLazyGetListDepartmentQuery();
 
   // Convert data to option
-  const loadOptions: LoadOptions<DepartmentOption, any, any> = async (
-    query
+  const loadOptions: LoadOptions<DepartmentOption, any, Additional> = async (
+    currentQuery,
+    _,
+    additional
   ) => {
+    const page = additional?.page || 1;
+
     // Fetch data
     const data = await getListDepartmentQuery({
       page,
       pageSize,
-      query,
+      query: currentQuery,
     }).unwrap();
 
     // Load options
@@ -56,13 +63,9 @@ export const DepartmentFilter: React.FC<Props> = ({
       hasMore,
     };
 
-    if (page === 1 && query === "") {
+    // Default option
+    if (page === 1 && currentQuery === "") {
       loadOptions.options.unshift(defaultOption);
-    }
-
-    // Update page
-    if (hasMore) {
-      setPage((page) => page + 1);
     }
 
     return loadOptions;
@@ -88,6 +91,9 @@ export const DepartmentFilter: React.FC<Props> = ({
         }}
         options={[defaultOption]}
         loadOptions={loadOptions}
+        additional={{
+          page: 1,
+        }}
       />
     </div>
   );

@@ -9,6 +9,10 @@ interface PositionOption {
   label: string;
 }
 
+interface Additional {
+  page: number;
+}
+
 const pageSize = 10;
 
 const DefaultOption: PositionOption = {
@@ -28,16 +32,21 @@ export const PositionFilter: React.FC<Props> = ({
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const [page, setPage] = useState<number>(1);
   const [getListPositionQuery, { isFetching }] = useLazyGetListPositionQuery();
 
   // Convert data to option
-  const loadOptions: LoadOptions<PositionOption, any, any> = async (query) => {
+  const loadOptions: LoadOptions<PositionOption, any, Additional> = async (
+    currentQuery,
+    _,
+    additional
+  ) => {
+    const page = additional?.page || 1;
+
     // Fetch data
     const data = await getListPositionQuery({
       page,
       pageSize,
-      query,
+      query: currentQuery,
     }).unwrap();
 
     // Load options
@@ -53,13 +62,9 @@ export const PositionFilter: React.FC<Props> = ({
       hasMore,
     };
 
-    if (page === 1 && query === "") {
+    // Default option
+    if (page === 1 && currentQuery === "") {
       loadOptions.options.unshift(defaultOption);
-    }
-
-    // Update page
-    if (hasMore) {
-      setPage((page) => page + 1);
     }
 
     return loadOptions;
@@ -85,6 +90,9 @@ export const PositionFilter: React.FC<Props> = ({
         }}
         options={[defaultOption]}
         loadOptions={loadOptions}
+        additional={{
+          page: 1,
+        }}
       />
     </div>
   );

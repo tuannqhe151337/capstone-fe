@@ -8,9 +8,11 @@ import { Row, TablePlanManagement } from "../../widgets/table-plan";
 import { Variants, motion } from "framer-motion";
 import {
   ListPlanParameters,
+  plansApi,
   useLazyFetchPlansQuery,
 } from "../../providers/store/api/plansApi";
 import _ from "lodash";
+import { useDispatch } from "react-redux";
 
 const generateEmptyPlans = (total: number): Row[] => {
   const plans: Row[] = [];
@@ -81,12 +83,19 @@ const childrenAnimation: Variants = {
 };
 
 export const PlanManagementList: React.FC = () => {
+  // Query
+  const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(plansApi.util.resetApiState());
+  }, []);
+
   // UI: show modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
-
-  // Query
-  const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

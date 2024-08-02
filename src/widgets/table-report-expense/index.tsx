@@ -1,11 +1,14 @@
 import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
-import { Tag } from "../../shared/tag";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
 import { Expense } from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
+import { ExpenseTag } from "../../entities/expense-tag";
+import { useEffect, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
+import { ExpenseActionContextMenu } from "../../entities/expense-action-context-menu";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -60,6 +63,9 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
+  onApproveExpensesClick?: (expenseIds: number[]) => any;
+  onDenyExpensesClick?: (expenseIds: number[]) => any;
+  onEscPress?: () => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
@@ -75,10 +81,43 @@ export const TableReportExpenses: React.FC<Props> = ({
   page,
   totalPage,
   isDataEmpty,
+  onApproveExpensesClick,
+  onDenyExpensesClick,
+  onEscPress,
   onPageChange,
   onPrevious,
   onNext,
 }) => {
+  // Chosen expense
+  const [chosenExpense, setChosenExpense] = useState<Expense>();
+
+  // UI: context menu
+  const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [contextMenuTop, setContextMenuTop] = useState<number>(0);
+  const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const clickHandler = () => {
+      setShowContextMenu(false);
+    };
+
+    document.addEventListener("click", clickHandler);
+
+    return () => document.removeEventListener("click", clickHandler);
+  }, []);
+
+  useHotkeys(
+    "esc",
+    () => {
+      setShowContextMenu(false);
+
+      if (!showContextMenu) {
+        onEscPress && onEscPress();
+      }
+    },
+    { enableOnFormTags: ["input", "INPUT"] }
+  );
+
   return (
     <div>
       <table className="table-auto sm:mt-3 lg:mt-7 xl:mx-auto">
@@ -89,6 +128,17 @@ export const TableReportExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
+            {isRowsSelectable && !isFetching && (
+              <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
+                <Checkbox
+                  className="ml-1 mt-0.5"
+                  checked={listSelectedId?.size === expenses?.length}
+                  onChange={() => {
+                    onSelectAllClick && onSelectAllClick();
+                  }}
+                />
+              </th>
+            )}
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
@@ -151,16 +201,21 @@ export const TableReportExpenses: React.FC<Props> = ({
                 })}
                 variants={rowAnimation}
                 onClick={() => {
-                  onRowClick && onRowClick(index);
+                  onRowClick && onRowClick(expense.expenseId);
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setShowContextMenu(true);
+                  setContextMenuLeft(e.pageX);
+                  setContextMenuTop(e.pageY);
+                  setChosenExpense(expense);
                 }}
               >
                 {isRowsSelectable && !isFetching && (
                   <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
                     <Checkbox
                       className="ml-1 mt-0.5"
-                      onChange={() => {
-                        onSelectAllClick && onSelectAllClick();
-                      }}
+                      checked={listSelectedId?.has(expense.expenseId)}
                     />
                   </th>
                 )}
@@ -237,13 +292,13 @@ export const TableReportExpenses: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="px-2 py-3">
-                  {isFetching ? (
-                    <Skeleton className="w-[80px]" />
-                  ) : (
-                    <Tag background="filled" variant="reviewed">
-                      Accepted
-                    </Tag>
-                  )}
+                  <div className="flex flex-row flex-wrap items-center justify-center">
+                    {isFetching ? (
+                      <Skeleton className="w-[80px]" />
+                    ) : (
+                      <ExpenseTag statusCode={expense.status.code} />
+                    )}
+                  </div>
                 </td>
               </motion.tr>
             ))}
@@ -272,6 +327,36 @@ export const TableReportExpenses: React.FC<Props> = ({
           />
         </motion.div>
       )}
+
+      <ExpenseActionContextMenu
+        show={showContextMenu}
+        top={contextMenuTop}
+        left={contextMenuLeft}
+        onApproveExpensesClick={() => {
+          if (listSelectedId && listSelectedId.size > 0) {
+            onApproveExpensesClick &&
+              onApproveExpensesClick(Array.from(listSelectedId));
+          } else {
+            chosenExpense &&
+              onApproveExpensesClick &&
+              onApproveExpensesClick([chosenExpense.expenseId]);
+          }
+
+          setShowContextMenu(false);
+        }}
+        onDenyExpensesClick={() => {
+          if (listSelectedId && listSelectedId.size > 0) {
+            onDenyExpensesClick &&
+              onDenyExpensesClick(Array.from(listSelectedId));
+          } else {
+            chosenExpense &&
+              onDenyExpensesClick &&
+              onDenyExpensesClick([chosenExpense.expenseId]);
+          }
+
+          setShowContextMenu(false);
+        }}
+      />
     </div>
   );
 };

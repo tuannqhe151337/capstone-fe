@@ -4,10 +4,12 @@ import { Variants, motion } from "framer-motion";
 import { Row, TableReportManagement } from "../../widgets/table-report";
 import {
   ListReportParameters,
+  reportsAPI,
   useLazyFetchReportsQuery,
 } from "../../providers/store/api/reportsAPI";
 import _ from "lodash";
 import { ListReportFilter } from "../../widgets/list-report-filter";
+import { useDispatch } from "react-redux";
 
 const generateEmptyReports = (total: number): Row[] => {
   const reports: Row[] = [];
@@ -21,6 +23,11 @@ const generateEmptyReports = (total: number): Row[] => {
       term: {
         id: 0,
         name: "",
+        startDate: "",
+        endDate: "",
+        reuploadStartDate: "",
+        reuploadEndDate: "",
+        finalEndTermDate: "",
       },
       isFetching: true,
       status: {
@@ -72,6 +79,13 @@ const childrenAnimation: Variants = {
 export const ReportManagementList: React.FC = () => {
   // Query
   const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(reportsAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

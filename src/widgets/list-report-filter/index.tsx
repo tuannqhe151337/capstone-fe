@@ -4,7 +4,6 @@ import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
 import { TermFilter } from "../../entities/term-filter";
-import { DepartmentFilter } from "../../entities/department-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",

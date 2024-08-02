@@ -11,6 +11,7 @@ interface Props {
   left?: number;
   bottom?: number;
   right?: number;
+  showReviewOption?: boolean;
   onViewDetail?: () => any;
   onReview?: () => any;
   onDownload?: () => any;
@@ -23,6 +24,7 @@ export const ReportActionContextMenu: React.FC<Props> = ({
   left,
   bottom,
   right,
+  showReviewOption,
   onViewDetail,
   onReview,
   onDownload,
@@ -32,7 +34,7 @@ export const ReportActionContextMenu: React.FC<Props> = ({
   });
 
   useHotkeys("r", () => {
-    onReview && onReview();
+    showReviewOption && onReview && onReview();
   });
 
   useHotkeys("d", () => {
@@ -60,17 +62,19 @@ export const ReportActionContextMenu: React.FC<Props> = ({
           }
           onClick={onViewDetail}
         />
-        <ContextMenuItem
-          borderBottom
-          icon={<MdRateReview className="text-xl dark:opacity-60" />}
-          text={
-            <>
-              <span className="underline">R</span>
-              <span>eview report</span>
-            </>
-          }
-          onClick={onReview}
-        />
+        {showReviewOption && (
+          <ContextMenuItem
+            borderBottom
+            icon={<MdRateReview className="text-xl dark:opacity-60" />}
+            text={
+              <>
+                <span className="underline">R</span>
+                <span>eview report</span>
+              </>
+            }
+            onClick={onReview}
+          />
+        )}
         <ContextMenuItem
           icon={<MdDownload className="text-2xl -ml-0.5 dark:opacity-60" />}
           text={

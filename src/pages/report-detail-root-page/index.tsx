@@ -3,7 +3,13 @@ import { RiCalendarScheduleFill } from "react-icons/ri";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { FaMoneyBillTrendUp, FaCoins } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { useEffect, useState } from "react";
@@ -111,7 +117,20 @@ export const ReportDetailRootPage: React.FC = () => {
       animate={AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
-      <BubbleBanner></BubbleBanner>
+      <BubbleBanner>
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
+            <Link
+              to={`/report-management`}
+              className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
+            >
+              Report management
+            </Link>
+            <span className="ml-3 text-base opacity-40">&gt;</span>
+            <span>Report detail</span>
+          </p>
+        </div>
+      </BubbleBanner>
 
       {/* Title */}
       <motion.div className="mt-6 px-7" variants={childrenAnimation}>

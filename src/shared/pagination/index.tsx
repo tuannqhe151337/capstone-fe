@@ -3,6 +3,7 @@ import { Button } from "../../shared/button";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { cn } from "../utils/cn";
 import { useTranslation } from "react-i18next";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface Props {
   className?: string;
@@ -23,6 +24,16 @@ export const Pagination: React.FC<Props> = ({
 }) => {
   // i18n
   const { t } = useTranslation(["pagination"]);
+
+  // Hotkeys
+  useHotkeys(["shift + n", "shift + ."], () => {
+    onNext && onNext();
+  });
+
+  useHotkeys(["shift + p", "shift + ,"], () => {
+    onPrevious && onPrevious();
+  });
+
   return (
     <div
       className={cn(

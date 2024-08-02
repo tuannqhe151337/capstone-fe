@@ -127,6 +127,8 @@ export const ReportDetailInformationPage: React.FC = () => {
                   "text-primary-500":
                     report?.status.code === "REVIEWED" ||
                     report?.status.code === "WAITING_FOR_APPROVAL",
+                  "text-green-500 dark:text-green-600":
+                    report?.status.code === "NEW",
                 })}
               >
                 <p

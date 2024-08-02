@@ -13,6 +13,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ReportActionContextMenu } from "../../entities/report-action-context-menu";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -66,14 +67,7 @@ export const TableReportManagement: React.FC<Props> = ({
   const navigate = useNavigate();
 
   // UI: show delete button
-  const [hoverRowIndex, setHoverRowIndex] = useState<number>();
-
-  // UI: show delete button
   const [showDeleteModel, setShowDeleteModal] = useState<boolean>(false);
-
-  const handleClick = () => {
-    setShowDeleteModal(true);
-  };
 
   const handleDeleteReportModal = () => {
     setShowDeleteModal(false);
@@ -98,6 +92,16 @@ export const TableReportManagement: React.FC<Props> = ({
   useHotkeys("esc", () => {
     setShowContextMenu(false);
   });
+
+  // UI: context menu: show review option
+  const isAuthorizedAndTimeToReviewReport =
+    useIsAuthorizedAndTimeToReviewReport({
+      reportStatusCode: chosenReport?.status.code,
+      termEndDate: chosenReport?.term.endDate,
+      termReuploadStartDate: chosenReport?.term.reuploadStartDate,
+      termReuploadEndDate: chosenReport?.term.reuploadEndDate,
+      finalEndTermDate: chosenReport?.term.finalEndTermDate,
+    });
 
   return (
     <div>
@@ -143,12 +147,6 @@ export const TableReportManagement: React.FC<Props> = ({
                   "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
                     index % 2 === 1,
                 })}
-                onMouseEnter={() => {
-                  setHoverRowIndex(index);
-                }}
-                onMouseLeave={() => {
-                  setHoverRowIndex(undefined);
-                }}
                 onClick={() => {
                   navigate(`detail/expenses/${report.reportId}`);
                 }}
@@ -228,6 +226,7 @@ export const TableReportManagement: React.FC<Props> = ({
           show={showContextMenu}
           top={contextMenuTop}
           left={contextMenuLeft}
+          showReviewOption={isAuthorizedAndTimeToReviewReport}
           onViewDetail={() => {
             navigate(
               `/report-management/detail/information/${chosenReport.reportId}`
