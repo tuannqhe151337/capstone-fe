@@ -6,7 +6,7 @@ interface Props {
   statusCode: string;
 }
 
-export const PlanExpenseTag: React.FC<Props> = ({ statusCode, className }) => {
+export const ExpenseTag: React.FC<Props> = ({ statusCode, className }) => {
   switch (statusCode) {
     case "NEW":
       return (

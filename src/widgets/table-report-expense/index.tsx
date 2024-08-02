@@ -1,11 +1,11 @@
 import { Variants, motion } from "framer-motion";
 import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
-import { Tag } from "../../shared/tag";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
 import { Expense } from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
+import { ExpenseTag } from "../../entities/expense-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -89,6 +89,16 @@ export const TableReportExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
+            {isRowsSelectable && !isFetching && (
+              <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
+                <Checkbox
+                  className="ml-1 mt-0.5"
+                  onChange={() => {
+                    onSelectAllClick && onSelectAllClick();
+                  }}
+                />
+              </th>
+            )}
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
@@ -240,9 +250,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <Tag background="filled" variant="reviewed">
-                      Accepted
-                    </Tag>
+                    <ExpenseTag statusCode={expense.status.code} />
                   )}
                 </td>
               </motion.tr>

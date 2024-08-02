@@ -13,6 +13,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ReportActionContextMenu } from "../../entities/report-action-context-menu";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -98,6 +99,16 @@ export const TableReportManagement: React.FC<Props> = ({
   useHotkeys("esc", () => {
     setShowContextMenu(false);
   });
+
+  // UI: context menu: show review option
+  const isAuthorizedAndTimeToReviewReport =
+    useIsAuthorizedAndTimeToReviewReport({
+      reportStatusCode: chosenReport?.status.code,
+      termEndDate: chosenReport?.term.endDate,
+      termReuploadStartDate: chosenReport?.term.reuploadStartDate,
+      termReuploadEndDate: chosenReport?.term.reuploadEndDate,
+      finalEndTermDate: chosenReport?.term.finalEndTermDate,
+    });
 
   return (
     <div>
@@ -228,6 +239,7 @@ export const TableReportManagement: React.FC<Props> = ({
           show={showContextMenu}
           top={contextMenuTop}
           left={contextMenuLeft}
+          showReviewOption={isAuthorizedAndTimeToReviewReport}
           onViewDetail={() => {
             navigate(
               `/report-management/detail/information/${chosenReport.reportId}`

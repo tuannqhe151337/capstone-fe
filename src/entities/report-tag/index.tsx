@@ -12,7 +12,7 @@ export const ReportTag: React.FC<Props> = ({ statusCode, className }) => {
     case "NEW":
       return (
         <Tag className={className} background="unfilled" variant="new">
-          Reviewed
+          New
         </Tag>
       );
 

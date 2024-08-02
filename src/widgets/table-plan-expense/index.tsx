@@ -4,7 +4,7 @@ import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
 import { Expense } from "../../providers/store/api/type";
-import { PlanExpenseTag } from "../../entities/plan-expense-tag";
+import { ExpenseTag } from "../../entities/expense-tag";
 import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
@@ -63,7 +63,6 @@ const animation: Variants = {
 
 interface Props {
   isRowsSelectable?: boolean;
-  onSubmitForReview?: () => any;
   listSelectedId?: Set<number>;
   onSelectAllClick?: () => any;
   onRowClick?: (expenseId: number) => any;
@@ -265,7 +264,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <PlanExpenseTag
+                    <ExpenseTag
                       className="m-auto"
                       statusCode={expense.status.code}
                     />
