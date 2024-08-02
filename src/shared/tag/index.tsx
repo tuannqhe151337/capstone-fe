@@ -28,7 +28,7 @@ export const Tag: React.FC<Props> = ({
         {
           "text-xs font-bold text-center w-max": true,
           rounded: true,
-          border: true,
+          "border dark:border-neutral-900/40 dark:shadow-lg": true,
           "duration-200": true,
           "py-1 px-4": true,
           shadow: true,

@@ -11,7 +11,7 @@ import {
   InputOTPGroup,
   InputOTPSeparator,
   InputOTPSlot,
-} from "../../widgets/otp-input";
+} from "../../shared/otp-input";
 import { LogoRedirect } from "../../widgets/logo-redirect";
 
 import { useDispatch, useSelector } from "react-redux";
