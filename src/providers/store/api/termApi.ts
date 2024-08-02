@@ -67,7 +67,9 @@ export interface TermDetail {
   duration: Duration;
   startDate: string;
   endDate: string;
-  planDueDate: string;
+  reuploadStartDate: string;
+  reuploadEndDate: string;
+  finalEndTermDate: string;
   status: StatusTermDetail;
 }
 

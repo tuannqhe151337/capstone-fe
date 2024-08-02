@@ -1,9 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import {
-  ExpenseStatusCode,
-  LocalStorageItemKey,
-  PaginationResponse,
-} from "./type";
+import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListPlanParameters {
   query?: string | null;
@@ -50,19 +46,6 @@ export interface PlanDetail {
   version: number;
 }
 
-export interface PlanExpense {
-  expenseId: number;
-  name: string;
-  costType: CostType;
-  unitPrice: number;
-  amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
-  notes: string;
-  status: ExpenseStatus;
-}
-
 export interface CostType {
   costTypeId: number;
   name: string;
@@ -98,12 +81,6 @@ export interface User {
   updatedAt: string;
 }
 
-export interface ExpenseStatus {
-  statusId: number;
-  code: ExpenseStatusCode;
-  name: string;
-}
-
 export interface Position {
   id: string | number;
   name: string;
@@ -112,6 +89,11 @@ export interface Position {
 export interface Term {
   id: number;
   name: string;
+  startDate: string;
+  endDate: string;
+  reuploadStartDate: string;
+  reuploadEndDate: string;
+  finalEndTermDate: string;
 }
 
 export interface UserDepartment {
@@ -279,7 +261,7 @@ const plansApi = createApi({
       }),
 
       fetchPlanExpenses: builder.query<
-        PaginationResponse<PlanExpense[]>,
+        PaginationResponse<Expense[]>,
         ListPlanExpenseParameters
       >({
         query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {

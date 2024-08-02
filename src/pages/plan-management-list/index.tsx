@@ -26,11 +26,11 @@ const generateEmptyPlans = (total: number): Row[] => {
       term: {
         id: 0,
         name: "",
-      },
-      status: {
-        id: 0,
-        name: "",
-        code: "NEW",
+        startDate: "",
+        endDate: "",
+        reuploadStartDate: "",
+        reuploadEndDate: "",
+        finalEndTermDate: "",
       },
       role: {
         id: 0,

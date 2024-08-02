@@ -3,7 +3,7 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
-import { ExpenseStatus, PlanExpense } from "../../providers/store/api/plansApi";
+import { Expense } from "../../providers/store/api/type";
 import { PlanExpenseTag } from "../../entities/plan-expense-tag";
 import { Skeleton } from "../../shared/skeleton";
 
@@ -61,27 +61,13 @@ const animation: Variants = {
   },
 };
 
-export interface Expense {
-  id: number;
-  expenseName: string;
-  costType: string;
-  unitPrice: number;
-  amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
-  notes: string;
-  status: ExpenseStatus;
-}
-
 interface Props {
   isRowsSelectable?: boolean;
-  showSubmitPlanButton?: boolean;
   onSubmitForReview?: () => any;
   listSelectedId?: Set<number>;
   onSelectAllClick?: () => any;
   onRowClick?: (expenseId: number) => any;
-  expenses?: PlanExpense[];
+  expenses?: Expense[];
   isFetching?: boolean;
   page?: number | undefined | null;
   totalPage?: number;
@@ -115,7 +101,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
           variants={rowAnimation}
         >
           <tr>
-            {isRowsSelectable && (
+            {isRowsSelectable && !isFetching && (
               <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
                 <Checkbox
                   className="ml-1 mt-0.5"

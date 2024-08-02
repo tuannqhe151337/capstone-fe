@@ -1,9 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import {
-  ExpenseStatusCode,
-  LocalStorageItemKey,
-  PaginationResponse,
-} from "./type";
+import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface ListReportParameters {
   query?: string | null;
@@ -32,28 +28,8 @@ export interface Report {
   createdAt: string;
 }
 
-export interface ReportExpense {
-  expenseId: number | string;
-  name: string;
-  costType: CostType;
-  unitPrice: number;
-  amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
-  notes: string;
-  status: ReportExpenseStatus;
-}
-
 export interface CostType {
   costTypeId: number;
-  name: string;
-  code: string;
-}
-
-export interface ReportExpenseStatus {
-  statusId: number;
-  code: ExpenseStatusCode;
   name: string;
 }
 
@@ -205,7 +181,7 @@ const reportsAPI = createApi({
       }),
 
       fetchReportExpenses: builder.query<
-        PaginationResponse<ReportExpense[]>,
+        PaginationResponse<Expense[]>,
         ListReportExpenseParameters
       >({
         query: ({ query, reportId, costTypeId, statusId, page, pageSize }) => {

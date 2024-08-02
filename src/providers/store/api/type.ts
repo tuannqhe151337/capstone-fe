@@ -31,3 +31,27 @@ export enum Role {
 }
 
 export type ExpenseStatusCode = "WAITING_FOR_APPROVAL" | "APPROVED" | "DENIED";
+
+export interface Expense {
+  expenseId: number;
+  name: string;
+  costType: CostType;
+  unitPrice: number;
+  amount: number;
+  projectName: string;
+  supplierName: string;
+  pic: string;
+  notes: string;
+  status: ExpenseStatus;
+}
+
+export interface ExpenseStatus {
+  statusId: number;
+  code: ExpenseStatusCode;
+  name: string;
+}
+
+export interface CostType {
+  costTypeId: number;
+  name: string;
+}

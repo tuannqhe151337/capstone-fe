@@ -14,6 +14,7 @@ import { ReuploadPlanModal } from "../reupload-plan-modal";
 import { Skeleton } from "../../shared/skeleton";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -76,6 +77,15 @@ export const TablePlanManagement: React.FC<Props> = ({
   // Chosen plan's id
   const [chosenPlan, setChosenPlan] = useState<PlanPreview>();
 
+  // Should show reupload plan (authorization)
+  const isAuthorizedToReupload = useIsAuthorizedToReupload({
+    planDepartmentId: chosenPlan?.department.departmentId,
+    planTermStartDate: chosenPlan?.term.startDate,
+    planTermEndDate: chosenPlan?.term.endDate,
+    planTermReuploadStartDate: chosenPlan?.term.reuploadStartDate,
+    planTermReuploadEndDate: chosenPlan?.term.reuploadEndDate,
+  });
+
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -110,7 +120,7 @@ export const TablePlanManagement: React.FC<Props> = ({
   });
 
   return (
-    <div className="pb-20">
+    <div className="pb-24">
       <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
@@ -290,9 +300,7 @@ export const TablePlanManagement: React.FC<Props> = ({
           showDeletePlan={
             chosenPlan.department.departmentId === me?.department.id
           }
-          showReuploadPlan={
-            chosenPlan.department.departmentId === me?.department.id
-          }
+          showReuploadPlan={isAuthorizedToReupload}
           onDeletePlan={() => {
             setShowDeleteModal(true);
           }}

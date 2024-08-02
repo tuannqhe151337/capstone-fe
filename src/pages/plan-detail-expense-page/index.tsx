@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { TablePlanExpenses } from "../../widgets/table-plan-expense";
 import { ListPlanDetailFilter } from "../../widgets/list-plan-detail-filter";
 import {
   ListPlanExpenseParameters,
-  PlanExpense,
   useLazyFetchPlanExpensesQuery,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
-import { useMeQuery } from "../../providers/store/api/authApi";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -36,7 +35,7 @@ const staggerChildrenAnimation: Variants = {
   },
 };
 
-interface Row extends PlanExpense {
+interface Row extends Expense {
   isFetching?: boolean;
 }
 
@@ -50,7 +49,6 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       costType: {
         costTypeId: 0,
         name: "",
-        code: "",
       },
       status: {
         statusId: 0,
@@ -74,14 +72,10 @@ const pageSize = 10;
 
 export const PlanDetailExpensePage: React.FC = () => {
   // Get show upload modal method
-  const { plan, setShowReuploadModal, showReuploadButton } =
-    usePlanDetailContext();
+  const { plan, setShowReuploadModal } = usePlanDetailContext();
 
   // Get params
   const { planId } = useParams<{ planId: string }>();
-
-  // Get me's data
-  const { data: me } = useMeQuery();
 
   // Query
   const [fetchPlanExpense, { data, isFetching }] =
@@ -103,12 +97,6 @@ export const PlanDetailExpensePage: React.FC = () => {
   //   useApproveExpensesMutation();
   // const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
   //   useDenyExpensesMutation();
-
-  const showSubmitPlanButton = useMemo(() => {
-    if (plan) {
-      return plan.department.departmentId === me?.department.id;
-    }
-  }, [plan, me]);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -147,6 +135,15 @@ export const PlanDetailExpensePage: React.FC = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [searchboxValue, page, costTypeId, statusId, planId]);
+
+  // Authorized to show reupload button
+  const isAuthorizedToReupload = useIsAuthorizedToReupload({
+    planDepartmentId: plan?.department.departmentId,
+    planTermStartDate: plan?.term.startDate,
+    planTermEndDate: plan?.term.endDate,
+    planTermReuploadStartDate: plan?.term.reuploadStartDate,
+    planTermReuploadEndDate: plan?.term.reuploadEndDate,
+  });
 
   // Show successfully toast on approve or deny expenses
   // useEffect(() => {
@@ -258,11 +255,11 @@ export const PlanDetailExpensePage: React.FC = () => {
           //   } catch {}
           // }
         }}
-        showReupload={showReuploadButton}
+        showReupload={isAuthorizedToReupload}
         onDownloadClick={() => {
           const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
 
-          if (token && planId) {
+          if (token && plan && planId) {
             downloadFileFromServer(
               `${
                 import.meta.env.VITE_BACKEND_HOST
@@ -309,7 +306,6 @@ export const PlanDetailExpensePage: React.FC = () => {
         // }}
         expenses={isFetching ? generateEmptyPlanExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
-        showSubmitPlanButton={showSubmitPlanButton}
         page={page}
         totalPage={data?.pagination.numPages}
         onNext={() => {
