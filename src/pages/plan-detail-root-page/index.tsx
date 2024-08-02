@@ -18,13 +18,12 @@ import {
 } from "../../providers/store/api/plansApi";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
 import { Button } from "../../shared/button";
 import { FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
-import { useMeQuery } from "../../providers/store/api/authApi";
-import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -76,7 +75,7 @@ type TabId = "expenses" | "detail" | "version";
 type ContextType = {
   setShowReuploadModal: Dispatch<SetStateAction<boolean>>;
   showReuploadButton: boolean;
-  plan: PlanDetail;
+  plan?: PlanDetail;
 };
 
 export const PlanDetailRootPage: React.FC = () => {
@@ -88,9 +87,6 @@ export const PlanDetailRootPage: React.FC = () => {
 
   // Parameters
   const { planId } = useParams<{ planId: string }>();
-
-  // Me
-  const { data: me } = useMeQuery();
 
   // Modal
   const [showReuploadModal, setShowReuploadModal] = useState<boolean>(false);
@@ -129,17 +125,13 @@ export const PlanDetailRootPage: React.FC = () => {
   }, [location]);
 
   // Show reupload button: check the department of user is the same with plan, the plan is not closed yet, and not pass the due date
-  const showReuploadButton = useMemo<boolean>(() => {
-    if (plan && me) {
-      const sameDepartment = me.department.id === plan.department.departmentId;
-      const planNotPassedDueDate =
-        parseISOInResponse(plan.planDueDate) > new Date();
-
-      return sameDepartment && planNotPassedDueDate;
-    }
-
-    return false;
-  }, [plan, me]);
+  const isAuthorizedToReupload = useIsAuthorizedToReupload({
+    planDepartmentId: plan?.department.departmentId,
+    planTermStartDate: plan?.term.startDate,
+    planTermEndDate: plan?.term.endDate,
+    planTermReuploadStartDate: plan?.term.reuploadStartDate,
+    planTermReuploadEndDate: plan?.term.reuploadEndDate,
+  });
 
   return (
     <motion.div
@@ -161,7 +153,7 @@ export const PlanDetailRootPage: React.FC = () => {
             <span>Plan detail</span>
           </p>
           <div className="ml-auto">
-            {showReuploadButton && (
+            {isAuthorizedToReupload && (
               <Button
                 onClick={() => {
                   setShowReuploadModal(true);
@@ -269,7 +261,7 @@ export const PlanDetailRootPage: React.FC = () => {
 
           <motion.div layout>
             <Outlet
-              context={{ setShowReuploadModal, showReuploadButton, plan }}
+              context={{ setShowReuploadModal, showReuploadModal, plan }}
             />
           </motion.div>
         </div>

@@ -1,5 +1,5 @@
 // capitalizeFirstLetter.js
-export const capitalizeFirstLetter = (value: string) => {
+export const capitalizeFirstLetter = (value?: string) => {
   try {
     if (!value) {
       return "";

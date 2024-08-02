@@ -1,11 +1,12 @@
 import { Variants, motion } from "framer-motion";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
-import { FaChartLine } from "react-icons/fa";
-import { AiOutlineFieldTime } from "react-icons/ai";
 import { useParams } from "react-router-dom";
 import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { useEffect } from "react";
-import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
+import { SiClockify } from "react-icons/si";
+import { format } from "date-fns";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { FaFileImport } from "react-icons/fa6";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
 
 enum AnimationStage {
@@ -63,29 +64,32 @@ export const TermDetailInformationPage: React.FC = () => {
       variants={staggerChildrenAnimation}
     >
       <div className="flex flex-col flex-wrap flex-1 gap-9">
-        {/* Quarterly */}
+        {/* Start-end date */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
-            icon={<AiOutlineFieldTime className="text-3xl" />}
-            title={term ? capitalizeFirstLetter(term.duration) : ""}
-            value={
-              term
-                ? formatISODateFromResponse(term.startDate) +
-                  " - " +
-                  formatISODateFromResponse(term.endDate)
-                : ""
-            }
+            icon={<SiClockify className="text-2xl" />}
+            title={capitalizeFirstLetter(term?.duration)}
+            value={`${format(
+              parseISOInResponse(term?.startDate),
+              "dd/MM/yyyy"
+            )} - ${format(parseISOInResponse(term?.endDate), "dd/MM/yyyy")}`}
           />
         </motion.div>
 
-        {/* Plan due date */}
+        {/* Reupload period */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
-            icon={<FaChartLine className="text-2xl mr-1" />}
-            title="Plan due date"
-            value={term ? formatISODateFromResponse(term.planDueDate) : ""}
+            icon={<FaFileImport className="text-2xl -ml-1 mr-1" />}
+            title="Reupload plan period"
+            value={`${format(
+              parseISOInResponse(term?.reuploadStartDate),
+              "dd/MM/yyyy"
+            )} - ${format(
+              parseISOInResponse(term?.reuploadEndDate),
+              "dd/MM/yyyy"
+            )}`}
           />
         </motion.div>
       </div>

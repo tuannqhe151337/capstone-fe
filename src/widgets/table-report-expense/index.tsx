@@ -3,8 +3,9 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Tag } from "../../shared/tag";
 import clsx from "clsx";
-import { ReportExpense } from "../../providers/store/api/reportsAPI";
 import { Skeleton } from "../../shared/skeleton";
+import { Expense } from "../../providers/store/api/type";
+import { Checkbox } from "../../shared/checkbox";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -49,22 +50,12 @@ const animation: Variants = {
   },
 };
 
-export interface Expense {
-  id: number;
-  expenseName: string;
-  costType: string;
-  unitPrice: number;
-  amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
-  notes: string;
-}
-
 interface Props {
-  listSelectedIndex?: Set<number>;
+  isRowsSelectable?: boolean;
+  listSelectedId?: Set<number>;
+  onSelectAllClick?: () => any;
   onRowClick?: (index: number) => any;
-  expenses?: ReportExpense[];
+  expenses?: Expense[];
   isFetching?: boolean;
   page?: number | undefined | null;
   totalPage?: number;
@@ -75,7 +66,9 @@ interface Props {
 }
 
 export const TableReportExpenses: React.FC<Props> = ({
-  listSelectedIndex,
+  listSelectedId,
+  isRowsSelectable,
+  onSelectAllClick,
   onRowClick,
   expenses,
   isFetching,
@@ -135,37 +128,54 @@ export const TableReportExpenses: React.FC<Props> = ({
           variants={staggerChildrenAnimation}
         >
           {expenses &&
-            expenses.map((row, index) => (
+            expenses.map((expense, index) => (
               <motion.tr
-                key={row.expenseId}
+                key={expense.expenseId}
                 className={clsx({
-                  "cursor-pointer duration-200": true,
-                  "bg-primary-100 dark:bg-primary-950":
-                    listSelectedIndex && listSelectedIndex.has(index),
-                  "hover:bg-primary-100/70 hover:dark:bg-neutral-800":
-                    listSelectedIndex && !listSelectedIndex.has(index),
+                  "border-b-2 duration-200": true,
+                  "cursor-pointer hover:bg-primary-100/70 hover:dark:bg-neutral-800":
+                    isRowsSelectable && !isFetching,
+                  "border-b-primary-200/50 dark:border-b-primary-900/50 bg-primary-100 dark:bg-primary-950":
+                    isRowsSelectable &&
+                    listSelectedId &&
+                    listSelectedId.has(expense.expenseId),
+                  "border-b-transparent":
+                    (listSelectedId &&
+                      !listSelectedId.has(expense.expenseId)) ||
+                    !listSelectedId,
                   "bg-primary-50/70 dark:bg-neutral-800/70":
-                    index % 2 === 1 &&
-                    listSelectedIndex &&
-                    !listSelectedIndex.has(index),
+                    (index % 2 === 1 &&
+                      listSelectedId &&
+                      !listSelectedId.has(expense.expenseId)) ||
+                    (index % 2 === 1 && !listSelectedId),
                 })}
                 variants={rowAnimation}
                 onClick={() => {
                   onRowClick && onRowClick(index);
                 }}
               >
+                {isRowsSelectable && !isFetching && (
+                  <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
+                    <Checkbox
+                      className="ml-1 mt-0.5"
+                      onChange={() => {
+                        onSelectAllClick && onSelectAllClick();
+                      }}
+                    />
+                  </th>
+                )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {row.name}</>
+                    <> {expense.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {row.costType.name}</>
+                    <> {expense.costType.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
@@ -174,7 +184,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                   ) : (
                     <NumericFormat
                       displayType="text"
-                      value={row.unitPrice}
+                      value={expense.unitPrice}
                       disabled
                       thousandSeparator
                     />
@@ -184,7 +194,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {row.amount}</>
+                    <> {expense.amount}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
@@ -193,7 +203,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                   ) : (
                     <NumericFormat
                       displayType="text"
-                      value={row.unitPrice * row.amount}
+                      value={expense.unitPrice * expense.amount}
                       thousandSeparator
                     />
                   )}
@@ -202,28 +212,28 @@ export const TableReportExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <> {row.projectName}</>
+                    <> {expense.projectName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <> {row.supplierName}</>
+                    <> {expense.supplierName}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {row.pic}</>
+                    <> {expense.pic}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {row.notes}</>
+                    <> {expense.notes}</>
                   )}
                 </td>
                 <td className="px-2 py-3">

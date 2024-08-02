@@ -14,6 +14,7 @@ import { useCreatePlanMutation } from "../../providers/store/api/plansApi";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   LEFT = "left",
@@ -176,12 +177,12 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                       );
 
                       if (token) {
-                        // downloadTemplateFileFromServer(
-                        //   `${
-                        //     import.meta.env.VITE_BACKEND_HOST
-                        //   }plan/download/last-version-xlsx?planId=3`,
-                        //   token
-                        // );
+                        downloadFileFromServer(
+                          `${
+                            import.meta.env.VITE_BACKEND_HOST
+                          }plan/download/template/xlsx`,
+                          token
+                        );
                       }
                     }}
                     onPreviousState={() => {
