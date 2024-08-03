@@ -196,14 +196,14 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setChosenPlan(plan);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-7 font-extrabold">
+                <td className="whitespace-nowrap px-6 py-5 font-extrabold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <div className="group-hover:underline">{plan.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-7 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -212,14 +212,14 @@ export const TablePlanManagement: React.FC<Props> = ({
                     </TermPreviewer>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-7 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{plan.department.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-7 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 font-bold">
                   {plan.version}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">

@@ -201,14 +201,18 @@ export const TableReportExpenses: React.FC<Props> = ({
                 })}
                 variants={rowAnimation}
                 onClick={() => {
-                  onRowClick && onRowClick(expense.expenseId);
+                  isRowsSelectable &&
+                    onRowClick &&
+                    onRowClick(expense.expenseId);
                 }}
                 onContextMenu={(e) => {
-                  e.preventDefault();
-                  setShowContextMenu(true);
-                  setContextMenuLeft(e.pageX);
-                  setContextMenuTop(e.pageY);
-                  setChosenExpense(expense);
+                  if (isRowsSelectable) {
+                    e.preventDefault();
+                    setShowContextMenu(true);
+                    setContextMenuLeft(e.pageX);
+                    setContextMenuTop(e.pageY);
+                    setChosenExpense(expense);
+                  }
                 }}
               >
                 {isRowsSelectable && !isFetching && (
