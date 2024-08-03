@@ -2,8 +2,9 @@ import { FaInfoCircle } from "react-icons/fa";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ContextMenu } from "../../shared/context-menu";
 import { ContextMenuItem } from "../../shared/context-menu-item";
-import { FaFileImport, FaTrash, FaUpload } from "react-icons/fa6";
+import { FaTrash, FaUpload } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
+import { FaFileUpload } from "react-icons/fa";
 
 interface Props {
   className?: string;
@@ -94,7 +95,9 @@ export const PlanActionContextMenu: React.FC<Props> = ({
         />
         {showReuploadPlan && (
           <ContextMenuItem
-            icon={<FaFileImport className="text-xl -ml-0.5 dark:opacity-60" />}
+            icon={
+              <FaFileUpload className="text-xl -ml-[0.5px] dark:opacity-60" />
+            }
             text={
               <>
                 <span className="underline">R</span>

@@ -1,4 +1,4 @@
-import { FaPlusCircle, FaTrash } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
@@ -17,6 +17,8 @@ import { downloadFileFromServer } from "../../shared/utils/download-file-from-se
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 import { TermPreviewer } from "../../entities/term-previewer";
 import { PlanPreviewer } from "../../entities/plan-previewer";
+import { FaFileUpload } from "react-icons/fa";
+import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -87,16 +89,13 @@ export const TablePlanManagement: React.FC<Props> = ({
     planTermReuploadStartDate: chosenPlan?.term.reuploadStartDate,
     planTermReuploadEndDate: chosenPlan?.term.reuploadEndDate,
   });
+  const isAuthorizedToReuploadFn = useIsAuthorizedToReuploadFn();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [showReuploadPlan, setShowReuploadPlan] = useState<boolean>(false);
-
-  const handleClick = () => {
-    setShowDeleteModal(true);
-  };
 
   const handleDeletePlanModal = () => {
     setShowDeleteModal(false);
@@ -239,7 +238,13 @@ export const TablePlanManagement: React.FC<Props> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   {!isFetching &&
-                    me?.department.id === plan.department.departmentId && (
+                    isAuthorizedToReuploadFn({
+                      planDepartmentId: plan.department.departmentId,
+                      planTermStartDate: plan.term.startDate,
+                      planTermEndDate: plan.term.endDate,
+                      planTermReuploadStartDate: plan.term.reuploadStartDate,
+                      planTermReuploadEndDate: plan.term.reuploadEndDate,
+                    }) && (
                       <motion.div
                         initial={AnimationStage.HIDDEN}
                         animate={
@@ -251,14 +256,14 @@ export const TablePlanManagement: React.FC<Props> = ({
                         variants={animation}
                       >
                         <IconButton
-                          tooltip="Delete plan"
+                          tooltip="Reupload plan"
                           onClick={(event) => {
                             event.stopPropagation();
                             setChosenPlan(plan);
-                            handleClick();
+                            setShowReuploadPlan(true);
                           }}
                         >
-                          <FaTrash className="text-red-600 text-xl" />
+                          <FaFileUpload className="text-2xl" />
                         </IconButton>
                       </motion.div>
                     )}
