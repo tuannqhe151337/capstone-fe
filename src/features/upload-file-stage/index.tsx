@@ -17,7 +17,6 @@ import { useMeQuery } from "../../providers/store/api/authApi";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
 import { getFileExtension } from "./util/get-file-extension";
-import { FaFileCircleExclamation } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
