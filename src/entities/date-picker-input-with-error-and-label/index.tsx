@@ -1,9 +1,9 @@
 import React from "react";
-import { InputValidationMessage } from "../../../shared/validation-input-message";
+import { InputValidationMessage } from "../../shared/validation-input-message";
 import {
   DatePickerInputProps,
   DatePickerInput as DatePickerInputShared,
-} from "../../../shared/date-picker-input";
+} from "../../shared/date-picker-input";
 
 interface Props extends DatePickerInputProps {
   label?: React.ReactNode;
@@ -11,22 +11,22 @@ interface Props extends DatePickerInputProps {
   validateFn?: Function;
 }
 
-export const DatePickerInput: React.FC<Props> = ({
+export const DatePickerInputWithErrorAndLabel: React.FC<Props> = ({
   label,
   showValidationMessage,
   validateFn,
   ...props
 }) => {
   return (
-    <div className="flex flex-col flex-wrap gap-0.5 mt-6">
-      <div className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500">
+    <div className="flex flex-col flex-wrap gap-0.5">
+      <div className="text-xs font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500">
         {label}
       </div>
       <div className="custom-wrapper w-[200px]">
         <DatePickerInputShared {...props} />
 
         <InputValidationMessage
-          className="mt-1"
+          className="mt-1 w-max"
           show={showValidationMessage}
           validateFn={validateFn}
         />
