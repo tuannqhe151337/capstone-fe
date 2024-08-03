@@ -1,7 +1,7 @@
 import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeleteReportModal } from "../delete-report-modal";
 import { Report } from "../../providers/store/api/reportsAPI";
@@ -171,12 +171,20 @@ export const TableReportManagement: React.FC<Props> = ({
                     </div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
+                <td
+                  className="whitespace-nowrap px-6 py-5 font-bold"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <TermPreviewer termId={report.term.termId}>
-                      {report.term.name}
+                      <Link
+                        to={`/term-management/detail/information/${report.term.termId}`}
+                        className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
+                      >
+                        {report.term.name}
+                      </Link>
                     </TermPreviewer>
                   )}
                 </td>

@@ -3,7 +3,7 @@ import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import clsx from "clsx";
 import { DeletePlanModal } from "../delete-plan-modal";
 import { PlanPreview } from "../../providers/store/api/plansApi";
@@ -203,12 +203,20 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <div className="group-hover:underline">{plan.name}</div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
+                <td
+                  className="whitespace-nowrap px-6 py-5 font-bold"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <TermPreviewer termId={plan.term.termId}>
-                      {plan.term.name}
+                      <Link
+                        to={`/term-management/detail/information/${plan.term.termId}`}
+                        className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
+                      >
+                        {plan.term.name}
+                      </Link>
                     </TermPreviewer>
                   )}
                 </td>
