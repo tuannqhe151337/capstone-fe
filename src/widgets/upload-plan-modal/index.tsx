@@ -97,7 +97,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
 
   useEffect(() => {
     if (isError) {
-      toast("Something went wrong, please try again!");
+      toast("Something went wrong, please try again!", { type: "error" });
     }
   }, [isError]);
 

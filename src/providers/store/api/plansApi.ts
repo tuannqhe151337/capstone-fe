@@ -321,6 +321,7 @@ export const {
   useFetchPlansQuery,
   useLazyFetchPlansQuery,
   useGetPlanDetailQuery,
+  useLazyGetPlanDetailQuery,
   useDeletePlanMutation,
   useLazyGetPlanVersionQuery,
   useCreatePlanMutation,
