@@ -4,6 +4,7 @@ import { getZodMessasges } from "../../../shared/utils/get-zod-messages";
 import { Expense, ExpenseError } from "../type";
 import { format } from "date-fns";
 import { CostType } from "../../../providers/store/api/costTypeAPI";
+import { ExpenseStatus } from "../../../providers/store/api/type";
 
 // Beggining line to start to read expense
 const BeginLine = 3;
@@ -53,8 +54,18 @@ const AmountSchema = z.number().gt(0);
 const ProjectNameSchema = z.string();
 const SupplierNameSchema = z.string();
 const PicSchema = z.string();
+const StatusCodeSchema = z.string();
 
-export const processFile = async (file: File, costTypeList: CostType[]) => {
+export interface Options {
+  validateExpenseCode?: boolean;
+}
+
+export const processFile = async (
+  file: File,
+  costTypeList: CostType[],
+  expenseStatusList: ExpenseStatus[],
+  options?: Options
+) => {
   // Results and errors
   let expenses: Expense[] = [];
   let errors: ExpenseError[] = [];
@@ -67,6 +78,8 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
 
   // Convert list of cost type to map by name
   const costTypeMap = mapCostTypeListByLowercaseName(costTypeList);
+  const expenseStatusCodeMap =
+    mapExpenseStatusCodeByLowercaseName(expenseStatusList);
 
   // Convert to array buffer for xlsx to read
   const buffer = await file?.arrayBuffer();
@@ -111,6 +124,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
             row[ColumnNameIndexMappingConfig.supplierName];
           const rawPic = row[ColumnNameIndexMappingConfig.pic];
           const note = row[ColumnNameIndexMappingConfig.note];
+          const rawStatusCode = row[ColumnNameIndexMappingConfig.status];
 
           // Validation
           let isLineError = false;
@@ -125,6 +139,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
             pic: { value: "" },
             notes:
               note instanceof Date ? format(note, datePattern) : note || "",
+            status: { value: "" },
           };
 
           // -- Date
@@ -183,6 +198,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
             if (costTypeMap[costTypeName.toLowerCase()]) {
               costType = costTypeMap[costTypeName.toLowerCase()];
             } else {
+              isLineError = true;
               expenseError.costType.errorMessage = "Invalid cost type";
             }
           }
@@ -245,10 +261,34 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
             expenseError.pic.errorMessage = picErrorMessage;
           }
 
+          // -- Status
+          let status: ExpenseStatus | null | undefined = undefined;
+          if (options && options.validateExpenseCode) {
+            let statusCode = "";
+            const statusCodeErrorMessage = getZodMessasges(
+              () => (statusCode = StatusCodeSchema.parse(rawStatusCode))
+            );
+
+            if (statusCodeErrorMessage) {
+              isLineError = true;
+              expenseError.status.errorMessage = statusCodeErrorMessage;
+            }
+
+            if (statusCode) {
+              if (expenseStatusCodeMap[statusCode.toLowerCase()]) {
+                status = expenseStatusCodeMap[statusCode.toLowerCase()];
+              } else {
+                isLineError = true;
+                expenseError.status.errorMessage = "Invalid status code";
+              }
+            }
+          }
+
           // Add to result
           if (isLineError) {
             isError = isLineError;
 
+            // Fill in error's value
             expenseError.name.value =
               rawExpenseName instanceof Date
                 ? format(rawExpenseName, datePattern)
@@ -281,6 +321,14 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
 
             expenseError.pic.value =
               rawPic instanceof Date ? format(rawPic, datePattern) : rawPic;
+
+            if (options && options.validateExpenseCode) {
+              expenseError.status.value =
+                rawStatusCode instanceof Date
+                  ? format(rawStatusCode, datePattern)
+                  : rawStatusCode;
+            }
+
             errors.push(expenseError);
           } else {
             if (costType) {
@@ -295,6 +343,7 @@ export const processFile = async (file: File, costTypeList: CostType[]) => {
                 supplierName,
                 pic,
                 notes: note ? note.toString() : "",
+                status,
               });
             }
           }
@@ -316,4 +365,16 @@ const mapCostTypeListByLowercaseName = (
   }
 
   return costTypeMap;
+};
+
+const mapExpenseStatusCodeByLowercaseName = (
+  expenseStatusList: ExpenseStatus[]
+): Record<string, ExpenseStatus> => {
+  const expenseStatusCodeMap: Record<string, ExpenseStatus> = {};
+
+  for (const status of expenseStatusList) {
+    expenseStatusCodeMap[status.code.toLowerCase()] = status;
+  }
+
+  return expenseStatusCodeMap;
 };

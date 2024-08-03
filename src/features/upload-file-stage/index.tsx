@@ -15,6 +15,8 @@ import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
 import { ErrorExpensesTable } from "./components/error-expenses-table";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { InputValidationMessage } from "../../shared/validation-input-message";
+import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
+import { getFileExtension } from "./util/get-file-extension";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -74,6 +76,7 @@ interface Props {
   hide?: boolean;
   termName?: string;
   planName?: string;
+  validateExpenseCode?: boolean;
   isPlanNameEditable?: boolean;
   hideBackButton?: boolean;
   onDownloadTemplateClick?: Function;
@@ -85,6 +88,7 @@ export const UploadFileStage: React.FC<Props> = ({
   hide,
   termName,
   planName: propsPlanName,
+  validateExpenseCode,
   isPlanNameEditable = true,
   hideBackButton = false,
   onDownloadTemplateClick,
@@ -92,7 +96,8 @@ export const UploadFileStage: React.FC<Props> = ({
   onNextStage,
 }) => {
   // Cost type
-  const { data } = useGetAllCostTypeQuery();
+  const { data: costTypeListResult } = useGetAllCostTypeQuery();
+  const { data: expenseStatusListResult } = useGetAllExpenseStatusQuery();
 
   // Department from user's detail
   const { data: me } = useMeQuery();
@@ -146,13 +151,30 @@ export const UploadFileStage: React.FC<Props> = ({
         if (files.length > 0) {
           const file = files[0];
 
+          // UI: set to state for showing
           setFileUploadStage(FileUploadStage.PROCESSING);
           setFileName(file.name);
           setFileSize(file.size);
 
-          // TODO: Handle file upload logic here
-          if (data?.data) {
-            const { errors, expenses, isError } = await processFile(file, []);
+          // File extension
+          const fileExtension = getFileExtension(file.name);
+          if (
+            fileExtension !== "xlsx" &&
+            fileExtension !== "xls" &&
+            fileExtension !== "csv"
+          ) {
+            setFileUploadStage(FileUploadStage.INVALID_FORMAT_ERROR);
+            return;
+          }
+
+          // Handle file upload logic
+          if (costTypeListResult?.data && expenseStatusListResult?.data) {
+            const { errors, expenses, isError } = await processFile(
+              file,
+              costTypeListResult.data,
+              expenseStatusListResult.data,
+              { validateExpenseCode }
+            );
 
             setExpenses(expenses);
             setExpenseErrors(errors);
