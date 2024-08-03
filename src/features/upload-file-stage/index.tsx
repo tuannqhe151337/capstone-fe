@@ -17,6 +17,7 @@ import { useMeQuery } from "../../providers/store/api/authApi";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
 import { getFileExtension } from "./util/get-file-extension";
+import { FaFileCircleExclamation } from "react-icons/fa6";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -158,7 +159,11 @@ export const UploadFileStage: React.FC<Props> = ({
 
           // File extension
           const fileExtension = getFileExtension(file.name);
-          if (fileExtension !== "xlsx") {
+          if (
+            fileExtension !== "xlsx" &&
+            fileExtension !== "xls" &&
+            fileExtension !== "csv"
+          ) {
             setFileUploadStage(FileUploadStage.INVALID_FORMAT_ERROR);
             return;
           }

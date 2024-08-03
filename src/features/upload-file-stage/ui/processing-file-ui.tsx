@@ -1,6 +1,7 @@
 import { NumericFormat } from "react-number-format";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { RiFileExcel2Fill } from "react-icons/ri";
+import { FaFileCircleExclamation } from "react-icons/fa6";
 import { IconButton } from "../../../shared/icon-button";
 import { IoClose } from "react-icons/io5";
 import { FileUploadStage } from "../type";
@@ -165,7 +166,7 @@ export const ProcessingFileUI: React.FC<Props> = ({
                   transition={{ delay: 0.5 }}
                 >
                   <div className="flex flex-row flex-wrap justify-center items-center w-full h-full">
-                    <RiFileExcel2Fill className="text-[110px] text-red-600 dark:text-red-700" />
+                    <FaFileCircleExclamation className="-mr-5 text-[100px] text-red-600 dark:text-red-700" />
                   </div>
                 </motion.div>
               )}
