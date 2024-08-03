@@ -11,6 +11,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 import { mergeRefs } from "react-merge-refs";
 import { cn } from "../utils/cn";
+import { formatDate } from "../utils/format-date";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -67,7 +68,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
     const isDarkMode = useDetectDarkmode();
 
     const [inputValue, setInputValue] = useState<string>(
-      value ? format(value, datePattern) : ""
+      value ? formatDate(value, datePattern) : ""
     );
     const [monthSelected, setMonthSelected] = useState<Date>();
     const [isInputValueValid, setIsInputValueValid] = useState<boolean>();
@@ -161,7 +162,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
         <PatternFormat
           getInputRef={inputRef}
           className={cn(
-            "focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary dark:!text-neutral-400 duration-500",
+            "text-base font-semibold !text-neutral-500 focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary dark:!text-neutral-400 duration-500",
             {
               "outline-offset-1 outline-[2px] outline-red-600":
                 isInputValueValid === false,

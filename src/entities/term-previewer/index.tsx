@@ -8,6 +8,7 @@ import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
+import { cn } from "../../shared/utils/cn";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -24,11 +25,16 @@ const animation: Variants = {
 };
 
 interface Props {
-  termId?: number;
+  termId?: string | number;
   children?: React.ReactNode;
+  containerClassName?: string;
 }
 
-export const TermPreviewer: React.FC<Props> = ({ termId, children }) => {
+export const TermPreviewer: React.FC<Props> = ({
+  termId,
+  children,
+  containerClassName,
+}) => {
   // Query
   const [fetchTermDetail, { data: term, isSuccess }] =
     useLazyFetchTermDetailQuery();
@@ -39,13 +45,17 @@ export const TermPreviewer: React.FC<Props> = ({ termId, children }) => {
   // Load data
   useEffect(() => {
     if (termId && isHover) {
-      fetchTermDetail(termId, true);
+      if (typeof termId === "number") {
+        fetchTermDetail(termId, true);
+      } else {
+        fetchTermDetail(parseInt(termId), true);
+      }
     }
   }, [termId, isHover]);
 
   return (
     <div
-      className="relative w-max m-auto px-5 py-2"
+      className={cn("relative w-max m-auto px-5 py-2", containerClassName)}
       onMouseEnter={() => {
         setIsHover(true);
       }}
@@ -57,7 +67,7 @@ export const TermPreviewer: React.FC<Props> = ({ termId, children }) => {
       <AnimatePresence>
         {isHover && isSuccess && term && (
           <motion.div
-            className="absolute left-[100%] -top-3 bg-white dark:bg-neutral-800 border dark:border-neutral-800 rounded-lg shadow dark:shadow-lg cursor-auto"
+            className="absolute z-10 left-[100%] -top-3 bg-white dark:bg-neutral-800 border dark:border-neutral-800 rounded-lg shadow dark:shadow-lg cursor-auto"
             initial={AnimationStage.HIDDEN}
             animate={AnimationStage.VISIBLE}
             exit={AnimationStage.HIDDEN}

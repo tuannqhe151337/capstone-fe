@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { Variants, motion } from "framer-motion";
-import { DatePickerInput } from "../../shared/date-picker-input";
 import { z, ZodType } from "zod";
 import {
   Duration,
@@ -12,7 +11,6 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { add, format, parseISO } from "date-fns";
 import { toast } from "react-toastify";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { ErrorData } from "../../providers/store/api/type";
@@ -21,6 +19,12 @@ import { InputValidationMessage } from "../../shared/validation-input-message";
 import DurationRadioOption from "../../entities/duration-radio-option";
 import { RadioInput } from "../../shared/radio-input";
 import { CgSpinner } from "react-icons/cg";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
+import { DatePickerInputWithErrorAndLabel } from "../../entities/date-picker-input-with-error-and-label";
+import { InputSkeleton } from "../../shared/input-skeleton";
+import { formatDate } from "../../shared/utils/format-date";
+import { addDate } from "../../shared/utils/add-date";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -60,7 +64,9 @@ type FormData = {
   name: string;
   duration: string;
   startDate: Date;
-  planDueDate: Date;
+  endDate: Date;
+  reuploadStartDate: Date;
+  reuploadEndDate: Date;
 };
 
 const NameSchema = z.string().min(1, "Name cannot be empty");
@@ -71,12 +77,28 @@ const StartDateSchema = z.date({
   required_error: "Start date cannot be null",
 });
 
-const PlanDueDateSchema = z
+const EndDateSchema = z
   .date({
-    required_error: "Plan due date cannot be null",
+    required_error: "End date cannot be null",
   })
   .refine((date) => new Date(date) > new Date(), {
-    message: "Plan due date must be in the future",
+    message: "Must be in the future",
+  });
+
+const ReuploadStartDateSchema = z
+  .date({
+    required_error: "Cannot be null",
+  })
+  .refine((date) => new Date(date) > new Date(), {
+    message: "Must be in the future",
+  });
+
+const ReuploadEndDateSchema = z
+  .date({
+    required_error: "Cannot be null",
+  })
+  .refine((date) => new Date(date) > new Date(), {
+    message: "Must be in the future",
   });
 
 export const UpdateTermSchema: ZodType<FormData> = z
@@ -84,14 +106,32 @@ export const UpdateTermSchema: ZodType<FormData> = z
     name: NameSchema,
     duration: DurationSchema,
     startDate: StartDateSchema,
-    planDueDate: PlanDueDateSchema,
+    endDate: EndDateSchema,
+    reuploadStartDate: ReuploadStartDateSchema,
+    reuploadEndDate: ReuploadEndDateSchema,
   })
   .superRefine((data, ctx) => {
-    if (new Date(data.planDueDate) <= new Date(data.startDate)) {
+    if (new Date(data.endDate) <= new Date(data.startDate)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Plan due date must be after the start date",
-        path: ["planDueDate"],
+        message: "End date must be after the start date",
+        path: ["endDate"],
+      });
+    }
+
+    if (new Date(data.reuploadStartDate) <= new Date(data.endDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Reupload start date must be after end date",
+        path: ["reuploadStartDate"],
+      });
+    }
+
+    if (new Date(data.reuploadEndDate) <= new Date(data.reuploadStartDate)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Reupload end date must be after reupload start date",
+        path: ["reuploadEndDate"],
       });
     }
   });
@@ -131,11 +171,10 @@ export const TermUpdate: React.FC = () => {
     if (!isFetching && isFetchTermDetailSuccess && term) {
       setValue("name", term.name);
       setValue("duration", term.duration);
-      setValue("startDate", parseISO(term.startDate, { additionalDigits: 2 }));
-      setValue(
-        "planDueDate",
-        parseISO(term.planDueDate, { additionalDigits: 2 })
-      );
+      setValue("startDate", parseISOInResponse(term.startDate));
+      setValue("endDate", parseISOInResponse(term.endDate));
+      setValue("reuploadStartDate", parseISOInResponse(term.reuploadStartDate));
+      setValue("reuploadEndDate", parseISOInResponse(term.reuploadEndDate));
 
       setSelectedOption(term.duration as Duration);
     }
@@ -146,8 +185,12 @@ export const TermUpdate: React.FC = () => {
     useUpdateTermMutation();
 
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    const startDateString = data.startDate.toISOString().replace("Z", "");
-    const planDueDateString = data.planDueDate.toISOString().replace("Z", "");
+    const startDateString = formatISODateForBody(data.startDate);
+    const endDateString = formatISODateForBody(data.endDate);
+    const reuploadStartDateString = formatISODateForBody(
+      data.reuploadStartDate
+    );
+    const reuploadEndDateString = formatISODateForBody(data.reuploadEndDate);
 
     if (termId) {
       const numericTermId = parseInt(termId, 10);
@@ -157,7 +200,9 @@ export const TermUpdate: React.FC = () => {
         name: data.name,
         duration: data.duration as Duration,
         startDate: startDateString,
-        planDueDate: planDueDateString,
+        endDate: endDateString,
+        reuploadStartDate: reuploadStartDateString,
+        reuploadEndDate: reuploadEndDateString,
       });
     }
   };
@@ -204,8 +249,8 @@ export const TermUpdate: React.FC = () => {
     >
       {/* Banner */}
       <BubbleBanner>
-        <div className="flex flex-row flex-wrap w-full items-center mt-auto  z-10">
-          <p className="text-primary dark:text-primary/70 font-bold text-2xl w-fit ml-7 space-x-2">
+        <div className="flex flex-row flex-wrap w-full items-center mt-auto z-10">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
             <Link
               to={`../../term-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
@@ -225,7 +270,8 @@ export const TermUpdate: React.FC = () => {
         </div>
       </BubbleBanner>
 
-      <div className="border p-12 pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black flex flex-col">
+      <div className="border px-10 pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black flex flex-col">
+        {/* Term name */}
         <motion.div variants={childrenAnimation} className="">
           <TEInput
             type="text"
@@ -240,174 +286,235 @@ export const TermUpdate: React.FC = () => {
           />
         </motion.div>
 
-        <div className="">
-          <div className="flex flex-col flex-wrap gap-0.5 mt-6">
-            <motion.div
-              className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
-              variants={childrenAnimation}
+        {/* Start - end date */}
+        <div className="flex flex-row flex-wrap items-center gap-2 mt-3">
+          <motion.div variants={childrenAnimation}>
+            <InputSkeleton
+              containerClassName="w-[200px]"
+              skeletonClassName="w-[200px]"
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchTermDetailSuccess}
             >
-              Start date
-            </motion.div>
-            <motion.div
-              variants={childrenAnimation}
-              className="custom-wrapper w-[200px]"
-            >
-              {!isFetching && isFetchTermDetailSuccess && term && (
-                <>
-                  <Controller
-                    name="startDate"
-                    control={control}
-                    render={({ field: { onChange } }) => (
-                      <DatePickerInput
-                        value={parseISO(term.startDate, {
-                          additionalDigits: 2,
-                        })}
-                        onChange={(value) => onChange(value)}
-                      />
-                    )}
-                  />
-
-                  <InputValidationMessage
-                    className="mt-1"
-                    show={dirtyFields.startDate || false}
-                    validateFn={() => StartDateSchema.parse(watch("startDate"))}
-                  />
-                </>
-              )}
-            </motion.div>
-          </div>
-
-          <motion.div
-            className="flex flex-row gap-6 pt-6 w-full"
-            variants={childrenAnimation}
-          >
-            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
-              <DurationRadioOption
-                radioInput={
-                  <RadioInput
-                    value={Duration.MONTHLY}
-                    checked={selectedOption === Duration.MONTHLY}
-                    {...register("duration")}
-                  />
-                }
-                onClick={() => handleOnClickRadio(Duration.MONTHLY)}
-                isSelected={selectedOption === Duration.MONTHLY}
-                label={"Monthly"}
-                fromToDate={
-                  <>
-                    {watch("startDate") &&
-                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
-                    -{" "}
-                    {watch("startDate") &&
-                      format(
-                        add(watch("startDate"), { months: 1 }),
-                        "dd/MM/yyyy"
-                      )}
-                  </>
+              <Controller
+                name="startDate"
+                control={control}
+                render={({ field: { value, onChange } }) =>
+                  value && (
+                    <DatePickerInputWithErrorAndLabel
+                      label="Start date"
+                      showValidationMessage={dirtyFields.startDate || false}
+                      validateFn={() =>
+                        StartDateSchema.parse(watch("startDate"))
+                      }
+                      value={value}
+                      onChange={(value) => {
+                        onChange(value);
+                      }}
+                    />
+                  )
                 }
               />
-            )}
-            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
-              <DurationRadioOption
-                radioInput={
-                  <RadioInput
-                    value={Duration.QUARTERLY}
-                    checked={selectedOption === Duration.QUARTERLY}
-                    {...register("duration")}
-                  />
-                }
-                onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
-                isSelected={selectedOption === Duration.QUARTERLY}
-                label={"Quarterly"}
-                fromToDate={
-                  <>
-                    {watch("startDate") &&
-                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
-                    -{" "}
-                    {watch("startDate") &&
-                      format(
-                        add(watch("startDate"), { months: 3 }),
-                        "dd/MM/yyyy"
-                      )}
-                  </>
-                }
-              />
-            )}
-
-            {!isFetching && isFetchTermDetailSuccess && selectedOption && (
-              <DurationRadioOption
-                radioInput={
-                  <RadioInput
-                    value={Duration.HALF_YEARLY}
-                    checked={selectedOption === Duration.HALF_YEARLY}
-                    {...register("duration")}
-                  />
-                }
-                onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
-                isSelected={selectedOption === Duration.HALF_YEARLY}
-                label={"Half year"}
-                fromToDate={
-                  <>
-                    {watch("startDate") &&
-                      format(watch("startDate"), "dd/MM/yyyy")}{" "}
-                    -{" "}
-                    {watch("startDate") &&
-                      format(
-                        add(watch("startDate"), { months: 6 }),
-                        "dd/MM/yyyy"
-                      )}
-                  </>
-                }
-              />
-            )}
+            </InputSkeleton>
           </motion.div>
 
-          <div className="flex flex-col flex-wrap gap-0.5 mt-10">
-            <motion.div
-              className="text-sm font-semibold text-neutral-400 dark:font-bold dark:text-neutral-500"
-              variants={childrenAnimation}
-            >
-              Plan due date
-            </motion.div>
-            <motion.div
-              variants={childrenAnimation}
-              className="custom-wrapper w-[200px]"
-            >
-              {!isFetching && isFetchTermDetailSuccess && term && (
-                <>
-                  <Controller
-                    name="planDueDate"
-                    control={control}
-                    render={({ field: { onChange } }) => (
-                      <DatePickerInput
-                        value={parseISO(term.planDueDate, {
-                          additionalDigits: 2,
-                        })}
-                        onChange={(value) => onChange(value)}
-                        modalPosition={{ top: -120, right: -340 }}
-                      />
-                    )}
-                  />
-                  <InputValidationMessage
-                    className="mt-1"
-                    show={dirtyFields.planDueDate || false}
-                    validateFn={() => {
-                      PlanDueDateSchema.parse(watch("planDueDate"));
+          <motion.p
+            className="mt-1.5 font-bold text-lg text-neutral-400"
+            variants={childrenAnimation}
+          >
+            -
+          </motion.p>
 
-                      if (
-                        watch("planDueDate").getTime() <=
-                        watch("startDate").getTime()
-                      ) {
-                        throw new Error(
-                          "Plan due date must be greater that start date"
+          <motion.div variants={childrenAnimation}>
+            <InputSkeleton
+              containerClassName="w-[200px]"
+              skeletonClassName="w-[200px]"
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchTermDetailSuccess}
+            >
+              <Controller
+                name="endDate"
+                control={control}
+                render={({ field: { value, onChange } }) =>
+                  value && (
+                    <DatePickerInputWithErrorAndLabel
+                      label="End date"
+                      showValidationMessage={dirtyFields.endDate || false}
+                      validateFn={() => {
+                        EndDateSchema.parse(watch("endDate"));
+
+                        if (watch("endDate") < watch("startDate")) {
+                          throw new Error("Must be after start date");
+                        }
+                      }}
+                      value={value}
+                      onChange={(value) => {
+                        onChange(value);
+                      }}
+                    />
+                  )
+                }
+              />
+            </InputSkeleton>
+          </motion.div>
+        </div>
+
+        {/* Radio buttons */}
+        <motion.div
+          className="flex flex-row gap-6 pt-10 w-full"
+          variants={childrenAnimation}
+        >
+          <DurationRadioOption
+            radioInput={
+              <RadioInput
+                value={Duration.MONTHLY}
+                checked={selectedOption === Duration.MONTHLY}
+                {...register("duration")}
+              />
+            }
+            onClick={() => handleOnClickRadio(Duration.MONTHLY)}
+            isSelected={selectedOption === Duration.MONTHLY}
+            label={"Monthly"}
+            fromToDate={
+              <>
+                {formatDate(watch("startDate"))} -{" "}
+                {formatDate(addDate(watch("startDate"), { months: 1 }))}
+              </>
+            }
+          />
+
+          <DurationRadioOption
+            disabled
+            radioInput={
+              <RadioInput
+                disabled
+                value={Duration.QUARTERLY}
+                checked={selectedOption === Duration.QUARTERLY}
+                {...register("duration")}
+              />
+            }
+            // onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
+            // isSelected={selectedOption === Duration.QUARTERLY}
+            tooltip="We'll complete this feature in the future"
+            label={"Quarterly"}
+            fromToDate={
+              <>
+                {formatDate(watch("startDate"))} -{" "}
+                {formatDate(addDate(watch("startDate"), { months: 3 }))}
+              </>
+            }
+          />
+
+          <DurationRadioOption
+            disabled
+            radioInput={
+              <RadioInput
+                disabled
+                value={Duration.HALF_YEARLY}
+                checked={selectedOption === Duration.HALF_YEARLY}
+                {...register("duration")}
+              />
+            }
+            // onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
+            // isSelected={selectedOption === Duration.HALF_YEARLY}
+            tooltip="We'll complete this feature in the future"
+            label={"Half year"}
+            fromToDate={
+              <>
+                {formatDate(watch("startDate"))} -{" "}
+                {formatDate(addDate(watch("startDate"), { months: 6 }))}
+              </>
+            }
+          />
+        </motion.div>
+
+        {/* Reupload start - reupload end date */}
+        <div className="flex flex-row flex-wrap items-center gap-2 mt-10">
+          {/* Reupload start date */}
+          <motion.div variants={childrenAnimation}>
+            <InputSkeleton
+              containerClassName="w-[200px]"
+              skeletonClassName="w-[200px]"
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchTermDetailSuccess}
+            >
+              <Controller
+                name="reuploadStartDate"
+                control={control}
+                render={({ field: { value, onChange } }) =>
+                  value && (
+                    <DatePickerInputWithErrorAndLabel
+                      label="Reupload start date"
+                      modalPosition={{
+                        top: -100,
+                        right: -320,
+                      }}
+                      showValidationMessage={dirtyFields.startDate || false}
+                      validateFn={() => {
+                        ReuploadStartDateSchema.parse(
+                          watch("reuploadStartDate")
                         );
-                      }
-                    }}
-                  />
-                </>
-              )}
-            </motion.div>
-          </div>
+
+                        if (watch("reuploadStartDate") < watch("endDate")) {
+                          throw new Error("Must be after end date");
+                        }
+                      }}
+                      value={value}
+                      onChange={(value) => {
+                        onChange(value);
+                      }}
+                    />
+                  )
+                }
+              />
+            </InputSkeleton>
+          </motion.div>
+
+          <motion.p
+            className="mt-1.5 font-bold text-lg text-neutral-400"
+            variants={childrenAnimation}
+          >
+            -
+          </motion.p>
+
+          {/* Reupload end date */}
+          <motion.div variants={childrenAnimation}>
+            <InputSkeleton
+              containerClassName="w-[200px]"
+              skeletonClassName="w-[200px]"
+              showSkeleton={isFetching}
+              showInput={!isFetching && isFetchTermDetailSuccess}
+            >
+              <Controller
+                name="reuploadEndDate"
+                control={control}
+                render={({ field: { value, onChange } }) =>
+                  value && (
+                    <DatePickerInputWithErrorAndLabel
+                      label="Reupload end date"
+                      modalPosition={{
+                        top: -100,
+                        right: -320,
+                      }}
+                      showValidationMessage={dirtyFields.startDate || false}
+                      validateFn={() => {
+                        ReuploadEndDateSchema.parse(watch("reuploadEndDate"));
+
+                        if (
+                          watch("reuploadEndDate") < watch("reuploadStartDate")
+                        ) {
+                          throw new Error("Must be after reupload start date");
+                        }
+                      }}
+                      value={value}
+                      onChange={(value) => {
+                        onChange(value);
+                      }}
+                    />
+                  )
+                }
+              />
+            </InputSkeleton>
+          </motion.div>
         </div>
 
         {/* Buttons */}
@@ -415,7 +522,13 @@ export const TermUpdate: React.FC = () => {
           className="flex flex-row flex-wrap items-center gap-5 mt-12 "
           variants={childrenAnimation}
         >
-          <Button variant="tertiary" className="w-[300px] p-3">
+          <Button
+            variant="tertiary"
+            className="w-[300px] p-3"
+            onClick={() => {
+              navigate(`/term-management/detail/information/${term?.id}`);
+            }}
+          >
             Back
           </Button>
           <Button

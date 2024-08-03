@@ -27,7 +27,7 @@ import { CgSpinner } from "react-icons/cg";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
 import { ErrorData } from "../../providers/store/api/type";
-import { InputSkeleton } from "./ui/input-skeleton";
+import { InputSkeleton } from "../../shared/input-skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -252,10 +252,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <FaUser className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -281,10 +278,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div
-            className="relative h-[64px]"
-            variants={childrenAnimation}
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -316,10 +310,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -353,10 +344,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <MdEmail className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -383,10 +371,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -421,10 +406,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
@@ -459,10 +441,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               className="w-[200px]"
               showSkeleton={isFetching}
@@ -487,10 +466,7 @@ export const UserEditPage: React.FC = () => {
           <div>
             <FaLocationDot className="text-2xl mt-1 opacity-30" />
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="relative h-[64px]"
-          >
+          <motion.div variants={childrenAnimation}>
             <InputSkeleton
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}

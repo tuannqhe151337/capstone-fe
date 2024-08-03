@@ -13,6 +13,7 @@ import {
 } from "../../providers/store/api/plansApi";
 import _ from "lodash";
 import { useDispatch } from "react-redux";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const generateEmptyPlans = (total: number): Row[] => {
   const plans: Row[] = [];
@@ -115,6 +116,12 @@ export const PlanManagementList: React.FC = () => {
 
   // On delete plan successfully (for re-rendering)
   const [deletedPlanId, setDeletedPlanId] = useState<string | number>();
+
+  // Hotkey
+  useHotkeys(["ctrl + =", "ctrl + u"], (e) => {
+    e.preventDefault();
+    setShowUploadPlanModal(true);
+  });
 
   // Fetch plan on change
   useEffect(() => {

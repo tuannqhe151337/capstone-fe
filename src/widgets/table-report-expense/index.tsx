@@ -120,7 +120,7 @@ export const TableReportExpenses: React.FC<Props> = ({
 
   return (
     <div>
-      <table className="table-auto sm:mt-3 lg:mt-7 xl:mx-auto">
+      <table className="table-auto w-full sm:mt-3 lg:mt-7 xl:mx-auto">
         <motion.thead
           className="border-b-2 border-primary-100 dark:border-neutral-700/60 xl:text-base lg:text-sm md:text-sm sm:text-sm"
           initial={AnimationStage.HIDDEN}

@@ -10,11 +10,12 @@ import { Button } from "../../shared/button";
 import { StartTermModal } from "../start-term-modal";
 import clsx from "clsx";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
-import { cn } from "../../shared/utils/cn";
 import { Term } from "../../providers/store/api/termApi";
 import { useHotkeys } from "react-hotkeys-hook";
 import { TermActionContextMenu } from "../../entities/term-action-context-menu";
 import { DeleteTermModal } from "../delete-term-modal";
+import { Skeleton } from "../../shared/skeleton";
+import { TermPreviewer } from "../../entities/term-previewer";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -125,7 +126,7 @@ export const TableTermManagement: React.FC<Props> = ({
 
   return (
     <div className="pb-20">
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow overflow-hidden rounded-lg">
+      <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
           <tr>
             <th
@@ -195,42 +196,33 @@ export const TableTermManagement: React.FC<Props> = ({
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium w-[360px]">
-                  <div className="flex flex-row flex-wrap">
-                    {isFetching ? (
-                      <span
-                        className={cn(
-                          "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                        )}
-                      ></span>
-                    ) : (
-                      <>
-                        <p className="font-extrabold py-2 ml-14 group-hover:underline">
+                  {isFetching ? (
+                    <Skeleton className="w-[200px]" />
+                  ) : (
+                    <div className="flex flex-row flex-wrap w-max">
+                      <TermPreviewer
+                        termId={term.termId}
+                        containerClassName="py-2 ml-14"
+                      >
+                        <p className="font-extrabold group-hover:underline">
                           {term.name}
                         </p>
-                        <div>{renderButton(term.status.code)}</div>
-                      </>
-                    )}
-                  </div>
+                      </TermPreviewer>
+                      <div>{renderButton(term.status.code)}</div>
+                    </div>
+                  )}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <> {formatISODateFromResponse(term.startDate)}</>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold">
                   {isFetching ? (
-                    <span
-                      className={cn(
-                        "block h-[30px] mx-auto bg-neutral-200/70 animate-pulse rounded w-[200px]"
-                      )}
-                    ></span>
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <> {formatISODateFromResponse(term.endDate)}</>
                   )}
