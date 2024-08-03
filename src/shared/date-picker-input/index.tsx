@@ -35,7 +35,7 @@ interface ModalPosition {
   right?: number;
 }
 
-interface Props {
+export interface DatePickerInputProps {
   className?: string;
   calendarClassName?: string;
   datePattern?: string;
@@ -48,7 +48,7 @@ interface Props {
   onBlur?: () => any;
 }
 
-export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
+export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
   (
     {
       className,
@@ -207,7 +207,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, Props>(
         />
 
         <AnimatePresence>
-          {showModal && (
+          {showModal && isInputValueValid && (
             <motion.div
               className={`absolute bg-white dark:bg-neutral-700 shadow rounded-lg z-30 ${calendarClassName}`}
               style={{
