@@ -159,7 +159,7 @@ export const TableReportManagement: React.FC<Props> = ({
                   setChosenReport(report);
                 }}
               >
-                <td className="whitespace-nowrap w-[500px] px-6 py-6 font-extrabold">
+                <td className="whitespace-nowrap w-[500px] px-6 py-5 font-extrabold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -171,7 +171,7 @@ export const TableReportManagement: React.FC<Props> = ({
                     </div>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-6 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -180,7 +180,7 @@ export const TableReportManagement: React.FC<Props> = ({
                     </TermPreviewer>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-6 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (

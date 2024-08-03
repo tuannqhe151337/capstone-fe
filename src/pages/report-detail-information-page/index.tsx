@@ -71,12 +71,12 @@ export const ReportDetailInformationPage: React.FC = () => {
           />
         </motion.div>
 
-        {/* Start-end date */}
+        {/* Start-end term */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
             isFetching={isFetching}
             icon={<SiClockify className="text-3xl" />}
-            title="Start - end date"
+            title="Start - end term"
             value={`${format(
               parseISOInResponse(report?.term.startDate),
               "dd/MM/yyyy"
