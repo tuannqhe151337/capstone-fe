@@ -87,14 +87,14 @@ export const ReuploadPlanModal: React.FC<Props> = ({
   // Close modal after upload successfully
   useEffect(() => {
     if (isSuccess) {
-      toast("Create plan successfully!", { type: "success" });
+      toast("Reupload plan successfully!", { type: "success" });
       onClose && onClose();
     }
   }, [isSuccess]);
 
   useEffect(() => {
     if (isError) {
-      toast("Something went wrong, please try again!");
+      toast("Something went wrong, please try again!", { type: "error" });
     }
   }, [isError]);
 

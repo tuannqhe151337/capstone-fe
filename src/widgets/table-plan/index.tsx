@@ -16,6 +16,7 @@ import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 import { TermPreviewer } from "../../entities/term-previewer";
+import { PlanPreviewer } from "../../entities/plan-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -200,7 +201,9 @@ export const TablePlanManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div className="group-hover:underline">{plan.name}</div>
+                    <PlanPreviewer planId={plan.planId}>
+                      <div className="group-hover:underline">{plan.name}</div>
+                    </PlanPreviewer>
                   )}
                 </td>
                 <td
@@ -228,7 +231,11 @@ export const TablePlanManagement: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-5 font-bold">
-                  {plan.version}
+                  {isFetching ? (
+                    <Skeleton className="w-[100px]" />
+                  ) : (
+                    <>v{plan.version}</>
+                  )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4">
                   {!isFetching &&
