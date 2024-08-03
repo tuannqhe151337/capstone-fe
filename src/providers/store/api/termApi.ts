@@ -13,7 +13,9 @@ export interface CreateTermBody {
   name: string;
   duration: Duration;
   startDate: string;
-  planDueDate: string;
+  endDate: string;
+  reuploadStartDate: string;
+  reuploadEndDate: string;
 }
 
 export interface UpdateTermBody {
@@ -21,7 +23,9 @@ export interface UpdateTermBody {
   name: string;
   duration: Duration;
   startDate: string;
-  planDueDate: string;
+  endDate: string;
+  reuploadStartDate: string;
+  reuploadEndDate: string;
 }
 
 export interface StartTermBody {
@@ -150,6 +154,7 @@ export const termAPI = createApi({
         return endpoint;
       },
     }),
+
     createTerm: builder.mutation<any, CreateTermBody>({
       query: (createTermBody) => ({
         url: "term",
@@ -158,6 +163,7 @@ export const termAPI = createApi({
       }),
       invalidatesTags: ["terms"],
     }),
+
     fetchTermDetail: builder.query<TermDetail, number>({
       query: (id) => `term/${id}`,
       providesTags: ["terms"],
