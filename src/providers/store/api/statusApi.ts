@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  ExpenseStatus,
+  ListResponse,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface PlanStatus {
   statusId: number;
@@ -44,8 +49,16 @@ export const statusAPI = createApi({
         return `/plan/plan-status`;
       },
     }),
+    getAllExpenseStatus: builder.query<ListResponse<ExpenseStatus[]>, void>({
+      query: () => {
+        return `/plan/expense-status`;
+      },
+    }),
   }),
 });
 
-export const { useGetListStatusTermQuery, useGetListStatusPlanQuery } =
-  statusAPI;
+export const {
+  useGetListStatusTermQuery,
+  useGetListStatusPlanQuery,
+  useGetAllExpenseStatusQuery,
+} = statusAPI;

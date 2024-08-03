@@ -1,4 +1,5 @@
 import { CostType } from "../../providers/store/api/costTypeAPI";
+import { ExpenseStatus } from "../../providers/store/api/type";
 
 export enum FileUploadStage {
   EMPTY = "empty",
@@ -19,6 +20,7 @@ export interface Expense {
   supplierName: string;
   pic: string;
   notes?: string;
+  status?: ExpenseStatus;
 }
 
 export interface ExpenseFieldError {
@@ -36,4 +38,5 @@ export interface ExpenseError {
   supplierName: ExpenseFieldError;
   pic: ExpenseFieldError;
   notes?: string | number | undefined;
+  status: ExpenseFieldError;
 }
