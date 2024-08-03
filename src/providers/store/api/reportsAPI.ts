@@ -141,7 +141,7 @@ const staggeredBaseQuery = retry(
 const reportsAPI = createApi({
   reducerPath: "report",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["query"],
+  tagTypes: ["query", "actual-cost"],
   endpoints(builder) {
     return {
       fetchReports: builder.query<
@@ -176,6 +176,7 @@ const reportsAPI = createApi({
         ReportDetailParameters
       >({
         query: ({ reportId }) => `/report/actual-cost?reportId=${reportId}`,
+        providesTags: ["actual-cost"],
       }),
 
       getReportExpectedCost: builder.query<
@@ -214,6 +215,7 @@ const reportsAPI = createApi({
           method: "PUT",
           body: reviewExpenseBody,
         }),
+        invalidatesTags: ["actual-cost"],
       }),
 
       denyExpenses: builder.mutation<any, ReviewExpensesBody>({
@@ -222,6 +224,7 @@ const reportsAPI = createApi({
           method: "PUT",
           body: reviewExpenseBody,
         }),
+        invalidatesTags: ["actual-cost"],
       }),
     };
   },
@@ -230,9 +233,12 @@ const reportsAPI = createApi({
 export const {
   useFetchReportsQuery,
   useGetReportActualCostQuery,
+  useLazyGetReportActualCostQuery,
   useGetReportExpectedCostQuery,
+  useLazyGetReportExpectedCostQuery,
   useLazyFetchReportsQuery,
   useGetReportDetailQuery,
+  useLazyGetReportDetailQuery,
   useFetchReportExpensesQuery,
   useLazyFetchReportExpensesQuery,
   useApproveExpensesMutation,

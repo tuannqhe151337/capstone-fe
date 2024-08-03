@@ -15,6 +15,7 @@ import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { TermPreviewer } from "../../entities/term-previewer";
+import { ReportPreviewer } from "../../entities/report-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -163,10 +164,12 @@ export const TableReportManagement: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div className="flex flex-row flex-wrap items-center gap-5 ml-14">
-                      <span className="group-hover:underline">
-                        {report.name}
-                      </span>{" "}
+                    <div className="flex flex-row flex-wrap items-center ml-14">
+                      <ReportPreviewer reportId={report.reportId}>
+                        <span className="group-hover:underline pr-5">
+                          {report.name}
+                        </span>{" "}
+                      </ReportPreviewer>
                       <ReportTag statusCode={report.status.code} />
                     </div>
                   )}
