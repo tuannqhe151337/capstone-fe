@@ -1,10 +1,10 @@
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaUpload } from "react-icons/fa";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ContextMenu } from "../../shared/context-menu";
 import { ContextMenuItem } from "../../shared/context-menu-item";
-import { FaTrash, FaUpload } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
-import { FaFileUpload } from "react-icons/fa";
+import { ReloadCloudIcon } from "../../shared/reload-cloud-icon";
 
 interface Props {
   className?: string;
@@ -38,27 +38,39 @@ export const PlanActionContextMenu: React.FC<Props> = ({
   onDownloadPlan,
 }) => {
   useHotkeys("u", () => {
-    onUploadPlan && onUploadPlan();
+    if (show) {
+      onUploadPlan && onUploadPlan();
+    }
   });
 
   useHotkeys("c", () => {
-    onUploadPlan && onUploadPlan();
+    if (show) {
+      onUploadPlan && onUploadPlan();
+    }
   });
 
   useHotkeys("d", () => {
-    onDownloadPlan && onDownloadPlan();
+    if (show) {
+      onDownloadPlan && onDownloadPlan();
+    }
   });
 
   useHotkeys("v", () => {
-    onViewPlanDetail && onViewPlanDetail();
+    if (show) {
+      onViewPlanDetail && onViewPlanDetail();
+    }
   });
 
   useHotkeys("r", () => {
-    showReuploadPlan && onReuploadPlan && onReuploadPlan();
+    if (show) {
+      showReuploadPlan && onReuploadPlan && onReuploadPlan();
+    }
   });
 
   useHotkeys("e", () => {
-    showDeletePlan && onDeletePlan && onDeletePlan();
+    if (show) {
+      showDeletePlan && onDeletePlan && onDeletePlan();
+    }
   });
 
   return (
@@ -82,21 +94,10 @@ export const PlanActionContextMenu: React.FC<Props> = ({
           }
           onClick={onViewPlanDetail}
         />
-        <ContextMenuItem
-          borderBottom
-          icon={<MdDownload className="text-2xl -ml-0.5 dark:opacity-60" />}
-          text={
-            <>
-              <span className="underline">D</span>
-              <span>ownload plan</span>
-            </>
-          }
-          onClick={onDownloadPlan}
-        />
         {showReuploadPlan && (
           <ContextMenuItem
             icon={
-              <FaFileUpload className="text-xl -ml-[0.5px] dark:opacity-60" />
+              <ReloadCloudIcon className="w-[24px] -ml-0.5 fill-neutral-500/80 dark:fill-neutral-400 group-hover:fill-primary-600" />
             }
             text={
               <>
@@ -109,7 +110,19 @@ export const PlanActionContextMenu: React.FC<Props> = ({
         )}
         <ContextMenuItem
           borderBottom
-          icon={<FaUpload className="text-lg -mt-0.5 dark:opacity-60" />}
+          icon={<MdDownload className="text-2xl -ml-0.5 dark:opacity-60" />}
+          text={
+            <>
+              <span className="underline">D</span>
+              <span>ownload plan</span>
+            </>
+          }
+          onClick={onDownloadPlan}
+        />
+
+        <ContextMenuItem
+          borderBottom
+          icon={<FaUpload className="text-lg -mt-1.5 dark:opacity-60" />}
           text={
             <>
               <span className="underline">U</span>

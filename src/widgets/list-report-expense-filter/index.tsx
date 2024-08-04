@@ -1,9 +1,9 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
-import { FaDownload, FaListCheck } from "react-icons/fa6";
+import { FaListCheck, FaFilter } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
-import { FaFilter } from "react-icons/fa6";
+import { FaDownload } from "react-icons/fa";
 import { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
@@ -224,7 +224,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
               <AnimatePresence>
                 {showOptions && (
                   <motion.div
-                    className="absolute right-0 z-20 shadow bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
+                    className="absolute right-0 z-20 shadow-[0px_0px_5px] shadow-neutral-300 dark:shadow-neutral-900 bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
                     initial={AnimationStage.HIDDEN}
                     animate={AnimationStage.VISIBLE}
                     exit={AnimationStage.HIDDEN}
@@ -236,9 +236,9 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                       onClick={onDownloadClick}
                     >
                       <div className="flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
-                        <FaDownload className="mb-0.5 mr-3 text-primary-400 dark:text-neutral-400" />
+                        <FaDownload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
-                        <p className="mt-0.5 text-primary-400 dark:text-neutral-400">
+                        <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
                           Download report
                         </p>
                       </div>

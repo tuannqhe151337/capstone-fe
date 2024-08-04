@@ -80,18 +80,6 @@ const imageAnimation: Variants = {
   },
 };
 
-const heightPlaceholderAnimation: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      delay: 0.5,
-    },
-  },
-  visible: {
-    height: 60,
-  },
-};
-
 type FormData = {
   otp: string;
 };

@@ -29,15 +29,21 @@ export const PositionActionContextMenu: React.FC<Props> = ({
   onEditPosition,
 }) => {
   useHotkeys("c", () => {
-    onCreatePosition && onCreatePosition();
+    if (show) {
+      onCreatePosition && onCreatePosition();
+    }
   });
 
   useHotkeys("e", () => {
-    onEditPosition && onEditPosition();
+    if (show) {
+      onEditPosition && onEditPosition();
+    }
   });
 
   useHotkeys("d", () => {
-    onDeletePosition && onDeletePosition();
+    if (show) {
+      onDeletePosition && onDeletePosition();
+    }
   });
 
   return (

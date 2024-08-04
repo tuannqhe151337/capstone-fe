@@ -61,17 +61,6 @@ const childrenAnimation: Variants = {
   },
 };
 
-const errorAnimation: Variants = {
-  [AnimationStage.HIDDEN]: {
-    height: 0,
-    opacity: 0,
-  },
-  [AnimationStage.VISIBLE]: {
-    height: 45,
-    opacity: 1,
-  },
-};
-
 type Id = number;
 
 type FormData = {

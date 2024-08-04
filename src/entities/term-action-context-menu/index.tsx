@@ -36,23 +36,33 @@ export const TermActionContextMenu: React.FC<Props> = ({
   onDeleteTerm,
 }) => {
   useHotkeys("s", () => {
-    showStartTerm && onStartTerm && onStartTerm();
+    if (show) {
+      showStartTerm && onStartTerm && onStartTerm();
+    }
   });
 
   useHotkeys("c", () => {
-    onCreateTerm && onCreateTerm();
+    if (show) {
+      onCreateTerm && onCreateTerm();
+    }
   });
 
   useHotkeys("v", () => {
-    onViewTermDetail && onViewTermDetail();
+    if (show) {
+      onViewTermDetail && onViewTermDetail();
+    }
   });
 
   useHotkeys("e", () => {
-    onEditTerm && onEditTerm();
+    if (show) {
+      onEditTerm && onEditTerm();
+    }
   });
 
   useHotkeys("d", () => {
-    onDeleteTerm && onDeleteTerm();
+    if (show) {
+      onDeleteTerm && onDeleteTerm();
+    }
   });
 
   return (

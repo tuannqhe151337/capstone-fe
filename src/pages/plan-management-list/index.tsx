@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Button } from "../../shared/button";
 import { UploadPlanModal } from "../../widgets/upload-plan-modal";
-import { FaUpload } from "react-icons/fa6";
+import { FaUpload } from "react-icons/fa";
 import { ListPlanFilter } from "../../widgets/list-plan-filter";
 import { Row, TablePlanManagement } from "../../widgets/table-plan";
 import { Variants, motion } from "framer-motion";

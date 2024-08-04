@@ -29,15 +29,21 @@ export const DepartmentActionContextMenu: React.FC<Props> = ({
   onEditDepartment,
 }) => {
   useHotkeys("c", () => {
-    onCreateDepartment && onCreateDepartment();
+    if (show) {
+      onCreateDepartment && onCreateDepartment();
+    }
   });
 
   useHotkeys("e", () => {
-    onEditDepartment && onEditDepartment();
+    if (show) {
+      onEditDepartment && onEditDepartment();
+    }
   });
 
   useHotkeys("d", () => {
-    onDeleteDepartment && onDeleteDepartment();
+    if (show) {
+      onDeleteDepartment && onDeleteDepartment();
+    }
   });
 
   return (

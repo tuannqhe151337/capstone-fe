@@ -27,15 +27,21 @@ export const AnnualReportActionContextMenu: React.FC<Props> = ({
   onDownloadClick,
 }) => {
   useHotkeys("o", () => {
-    onOverviewClick && onOverviewClick();
+    if (show) {
+      onOverviewClick && onOverviewClick();
+    }
   });
 
   useHotkeys("v", () => {
-    onDetailClick && onDetailClick();
+    if (show) {
+      onDetailClick && onDetailClick();
+    }
   });
 
   useHotkeys("d", () => {
-    onDownloadClick && onDownloadClick();
+    if (show) {
+      onDownloadClick && onDownloadClick();
+    }
   });
 
   return (
