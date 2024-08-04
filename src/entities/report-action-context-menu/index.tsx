@@ -30,15 +30,21 @@ export const ReportActionContextMenu: React.FC<Props> = ({
   onDownload,
 }) => {
   useHotkeys("v", () => {
-    onViewDetail && onViewDetail();
+    if (show) {
+      onViewDetail && onViewDetail();
+    }
   });
 
   useHotkeys("r", () => {
-    showReviewOption && onReview && onReview();
+    if (show) {
+      showReviewOption && onReview && onReview();
+    }
   });
 
   useHotkeys("d", () => {
-    onDownload && onDownload();
+    if (show) {
+      onDownload && onDownload();
+    }
   });
 
   return (

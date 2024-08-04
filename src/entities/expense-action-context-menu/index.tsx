@@ -25,11 +25,15 @@ export const ExpenseActionContextMenu: React.FC<Props> = ({
   onDenyExpensesClick,
 }) => {
   useHotkeys("a", () => {
-    onApproveExpensesClick && onApproveExpensesClick();
+    if (show) {
+      onApproveExpensesClick && onApproveExpensesClick();
+    }
   });
 
   useHotkeys("d", () => {
-    onDenyExpensesClick && onDenyExpensesClick();
+    if (show) {
+      onDenyExpensesClick && onDenyExpensesClick();
+    }
   });
 
   return (

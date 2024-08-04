@@ -92,12 +92,6 @@ export const PlanDetailExpensePage: React.FC = () => {
     }
   }, [listSelectedId]);
 
-  // Approve and deny mutation
-  // const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
-  //   useApproveExpensesMutation();
-  // const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
-  //   useDenyExpensesMutation();
-
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
   const [costTypeId, setCostTypeId] = useState<number | null>();
@@ -145,19 +139,6 @@ export const PlanDetailExpensePage: React.FC = () => {
     planTermReuploadEndDate: plan?.term.reuploadEndDate,
   });
 
-  // Show successfully toast on approve or deny expenses
-  // useEffect(() => {
-  //   if (approveExpensesSuccess) {
-  //     toast("Approve expenses successfully!", { type: "success" });
-  //   }
-  // }, [approveExpensesSuccess]);
-
-  // useEffect(() => {
-  //   if (denyExpensesSuccess) {
-  //     toast("Deny expenses successfully!", { type: "success" });
-  //   }
-  // }, [denyExpensesSuccess]);
-
   return (
     <motion.div
       initial={AnimationStage.HIDDEN}
@@ -177,84 +158,6 @@ export const PlanDetailExpensePage: React.FC = () => {
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
         }}
-        onApproveExpensesClick={() => {
-          // if (planId) {
-          //   let planIdInt: number;
-          //   try {
-          //     // Parse planId to int
-          //     if (typeof planId === "string") {
-          //       planIdInt = parseInt(planId);
-          //     } else {
-          //       planIdInt = planId;
-          //     }
-          //     // Call API approve expenses
-          //     approveExpenses({
-          //       planId: planIdInt,
-          //       listExpenseId: Array.from(listSelectedId),
-          //     });
-          //     // Manually update cache
-          //     dispatch(
-          //       plansApi.util.updateQueryData(
-          //         "fetchPlanExpenses",
-          //         {
-          //           planId: planIdInt,
-          //           costTypeId,
-          //           query: searchboxValue,
-          //           page,
-          //           pageSize,
-          //         },
-          //         (draft) => {
-          //           draft.data.forEach((expense, index) => {
-          //             if (listSelectedId.has(expense.expenseId)) {
-          //               (draft.data[index].status.code = "APPROVED"),
-          //                 (draft.data[index].status.name = "Approved");
-          //             }
-          //           });
-          //         }
-          //       )
-          //     );
-          //   } catch {}
-          // }
-        }}
-        onDenyExpensesClick={() => {
-          // if (planId) {
-          //   // Parse planId to int
-          //   let planIdInt: number;
-          //   try {
-          //     if (typeof planId === "string") {
-          //       planIdInt = parseInt(planId);
-          //     } else {
-          //       planIdInt = planId;
-          //     }
-          //     // Call API deny expenses
-          //     denyExpenses({
-          //       planId: planIdInt,
-          //       listExpenseId: Array.from(listSelectedId),
-          //     });
-          //     // Manually update cache
-          //     dispatch(
-          //       plansApi.util.updateQueryData(
-          //         "fetchPlanExpenses",
-          //         {
-          //           planId: planIdInt,
-          //           costTypeId,
-          //           query: searchboxValue,
-          //           page,
-          //           pageSize,
-          //         },
-          //         (draft) => {
-          //           draft.data.forEach((expense, index) => {
-          //             if (listSelectedId.has(expense.expenseId)) {
-          //               (draft.data[index].status.code = "DENIED"),
-          //                 (draft.data[index].status.name = "Denied");
-          //             }
-          //           });
-          //         }
-          //       )
-          //     );
-          //   } catch {}
-          // }
-        }}
         showReupload={isAuthorizedToReupload}
         onDownloadClick={() => {
           const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
@@ -265,7 +168,7 @@ export const PlanDetailExpensePage: React.FC = () => {
                 import.meta.env.VITE_BACKEND_HOST
               }plan/download/last-version-xlsx?planId=${planId}`,
               token,
-              `${plan.name}.xlsx`
+              `${plan.name}-v${plan.version}.xlsx`
             );
           }
         }}
@@ -275,35 +178,6 @@ export const PlanDetailExpensePage: React.FC = () => {
       />
 
       <TablePlanExpenses
-        // isRowsSelectable={me?.role.code === Role.ACCOUNTANT}
-        // listSelectedId={listSelectedId}
-        // onRowClick={(expenseId) => {
-        //   setListSelectedId(
-        //     produce((state) => {
-        //       if (state.has(expenseId)) {
-        //         state.delete(expenseId);
-        //       } else {
-        //         state.add(expenseId);
-        //       }
-        //       return state;
-        //     })
-        //   );
-        // }}
-        // onSelectAllClick={() => {
-        //   setListSelectedId(
-        //     produce((state) => {
-        //       if (state.size === data?.data.length) {
-        //         state = new Set();
-        //       } else {
-        //         data?.data.forEach(({ expenseId }) => {
-        //           state.add(expenseId);
-        //         });
-        //       }
-
-        //       return state;
-        //     })
-        //   );
-        // }}
         expenses={isFetching ? generateEmptyPlanExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
         page={page}

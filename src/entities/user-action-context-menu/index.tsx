@@ -38,23 +38,33 @@ export const UserActionContextMenu: React.FC<Props> = ({
   onViewDetail,
 }) => {
   useHotkeys("c", () => {
-    onCreateUser && onCreateUser();
+    if (show) {
+      onCreateUser && onCreateUser();
+    }
   });
 
   useHotkeys("e", () => {
-    onEditUser && onEditUser();
+    if (show) {
+      onEditUser && onEditUser();
+    }
   });
 
   useHotkeys("a", () => {
-    showActivateUser && onActivateUser && onActivateUser();
+    if (show) {
+      showActivateUser && onActivateUser && onActivateUser();
+    }
   });
 
   useHotkeys("d", () => {
-    showDeactivateUser && onDeactivateUser && onDeactivateUser();
+    if (show) {
+      showDeactivateUser && onDeactivateUser && onDeactivateUser();
+    }
   });
 
   useHotkeys("v", () => {
-    onViewDetail && onViewDetail();
+    if (show) {
+      onViewDetail && onViewDetail();
+    }
   });
 
   return (

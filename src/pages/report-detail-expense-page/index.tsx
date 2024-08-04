@@ -11,11 +11,13 @@ import {
   useLazyFetchReportExpensesQuery,
 } from "../../providers/store/api/reportsAPI";
 import { useParams } from "react-router-dom";
-import { Expense } from "../../providers/store/api/type";
+import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { produce } from "immer";
 import { useAppDispatch } from "../../providers/store/hook";
 import { toast } from "react-toastify";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -291,6 +293,19 @@ export const ReportDetailExpensePage: React.FC = () => {
         }}
         onDenyExpensesClick={() => {
           denyExpensesAndUpdateCache(Array.from(listSelectedId));
+        }}
+        onDownloadClick={() => {
+          const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+          if (token && report && reportId) {
+            downloadFileFromServer(
+              `${
+                import.meta.env.VITE_BACKEND_HOST
+              }report/download-xlsx?reportId=${reportId}`,
+              token,
+              `${report.name}.xlsx`
+            );
+          }
         }}
       />
 

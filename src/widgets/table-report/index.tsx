@@ -258,11 +258,9 @@ export const TableReportManagement: React.FC<Props> = ({
               downloadFileFromServer(
                 `${
                   import.meta.env.VITE_BACKEND_HOST
-                }report/download-xlsx?annualReportId=${chosenReport.reportId}`,
+                }report/download-xlsx?reportId=${chosenReport.reportId}`,
                 token,
-                `report-${parseISOInResponse(
-                  chosenReport.createdAt
-                ).getFullYear()}.xlsx`
+                `${chosenReport.name}.xlsx`
               );
             }
           }}

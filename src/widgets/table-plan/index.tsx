@@ -17,8 +17,8 @@ import { downloadFileFromServer } from "../../shared/utils/download-file-from-se
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 import { TermPreviewer } from "../../entities/term-previewer";
 import { PlanPreviewer } from "../../entities/plan-previewer";
-import { FaFileUpload } from "react-icons/fa";
 import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
+import { ReloadCloudIcon } from "../../shared/reload-cloud-icon";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -263,7 +263,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                             setShowReuploadPlan(true);
                           }}
                         >
-                          <FaFileUpload className="text-2xl" />
+                          <ReloadCloudIcon className="w-[30px] fill-primary-600" />
                         </IconButton>
                       </motion.div>
                     )}

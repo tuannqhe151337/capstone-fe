@@ -3,13 +3,13 @@ import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { RiDeleteRow } from "react-icons/ri";
 import { Button } from "../../shared/button";
-import { FaListCheck, FaUpload } from "react-icons/fa6";
+import { FaDownload, FaUpload } from "react-icons/fa";
+import { FaListCheck } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
-import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { StatusPlanFilter } from "../../entities/status-plan-filter";
 import clsx from "clsx";
@@ -230,7 +230,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
               <AnimatePresence>
                 {showOptions && (
                   <motion.div
-                    className="absolute right-0 z-20 shadow-lg bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
+                    className="absolute right-0 z-20 shadow-[0px_0px_5px] shadow-neutral-300 dark:shadow-neutral-900 bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
                     initial={AnimationStage.HIDDEN}
                     animate={AnimationStage.VISIBLE}
                     exit={AnimationStage.HIDDEN}
@@ -249,7 +249,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       }}
                     >
                       <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
-                        <BsFillFileEarmarkArrowDownFill className="mb-0.5 mr-3 text-primary-500 dark:text-neutral-400" />
+                        <FaDownload className="mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
                           Download plan
                         </p>
@@ -264,7 +264,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         }}
                       >
                         <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
-                          <FaUpload className="mr-3 text-primary-500 dark:text-neutral-400" />
+                          <FaUpload className="mr-5 text-primary-500 dark:text-neutral-400" />
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
                             Reupload plan
                           </p>
