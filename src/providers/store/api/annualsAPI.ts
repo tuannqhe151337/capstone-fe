@@ -18,6 +18,7 @@ export interface ListAnnualReportExpenseParameters {
 
 export interface AnnualReport {
   annualReportId: number | string;
+  name: string;
   totalTerm: number;
   totalExpense: number;
   totalDepartment: number;
