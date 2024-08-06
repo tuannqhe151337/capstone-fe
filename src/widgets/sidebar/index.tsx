@@ -105,8 +105,7 @@ export const Sidebar = () => {
         )}
 
         {/* Financial report */}
-        {(data?.role.code === Role.ACCOUNTANT ||
-          data?.role.code === Role.FINANCIAL_STAFF) && (
+        {data?.role.code === Role.ACCOUNTANT && (
           <div>
             <Link to={`/report-management`}>
               <Tab
@@ -164,19 +163,16 @@ export const Sidebar = () => {
           </div>
         )}
 
-        {/* Cost type management */}
-        {data?.role.code === Role.ADMIN && (
-          <div>
-            <Link to={`/cost-type-management`}>
-              <Tab
-                icon={<FaCoins className="text-2xl -ml-0.5" />}
-                text={t("Cost type")}
-                selected={location.pathname.startsWith("/cost-type-management")}
-                isExpanded={isExpanded}
-              />
-            </Link>
-          </div>
-        )}
+        {/* Masterdata divider */}
+        {data?.role.code === Role.ACCOUNTANT ? (
+          isExpanded ? (
+            <div className="mt-3 mb-2 pl-4 text-sm font-bold text-neutral-400">
+              Masterdata
+            </div>
+          ) : (
+            <div className="w-full border-t-2 dark:border-t-neutral-800 mt-3 mb-2"></div>
+          )
+        ) : null}
 
         {/* Position management */}
         {data?.role.code === Role.ADMIN && (
@@ -186,6 +182,20 @@ export const Sidebar = () => {
                 icon={<PiOfficeChairFill className="text-2xl -ml-0.5" />}
                 text={t("Position")}
                 selected={location.pathname.startsWith("/position-management")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Cost type management */}
+        {data?.role.code === Role.ACCOUNTANT && (
+          <div>
+            <Link to={`/cost-type-management`}>
+              <Tab
+                icon={<FaCoins className="text-2xl -ml-0.5" />}
+                text={t("Cost type")}
+                selected={location.pathname.startsWith("/cost-type-management")}
                 isExpanded={isExpanded}
               />
             </Link>
