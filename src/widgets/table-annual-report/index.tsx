@@ -152,8 +152,7 @@ export const TableAnnualReport: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <div className="font-extrabold group-hover:underline">
-                      Report{" "}
-                      {parseISOInResponse(annualReport.createdAt).getFullYear()}
+                      Report {annualReport.name}
                     </div>
                   )}
                 </td>

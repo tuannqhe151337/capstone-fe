@@ -17,6 +17,7 @@ const generateEmptyAnnual = (total: number): Row[] => {
   for (let i = 0; i < total; i++) {
     annual.push({
       annualReportId: 0,
+      name: "",
       totalTerm: 0,
       totalExpense: 0,
       totalDepartment: 0,
