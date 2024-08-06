@@ -1,11 +1,14 @@
 import { Variants, motion } from "framer-motion";
 import { NumericFormat } from "react-number-format";
 import { Pagination } from "../../../shared/pagination";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ExpenseError } from "../type";
 import { HiExclamationCircle } from "react-icons/hi";
 import { TETooltip } from "tw-elements-react";
 import { EmptyText } from "../ui/empty-text";
+import { ExpenseTag } from "../../../entities/expense-tag";
+import { ExpenseStatusCodes } from "../../../providers/store/api/type";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -76,12 +79,57 @@ const calculateTotalCost = (
 interface Props {
   expenses?: ExpenseError[];
   hide?: boolean;
+  showExpenseCodeColumn?: boolean;
+  showStatusColumn?: boolean;
 }
 
 const pageSize = 5;
 
-export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
+export const ErrorExpensesTable: React.FC<Props> = ({
+  expenses,
+  hide,
+  showExpenseCodeColumn,
+  showStatusColumn,
+}) => {
   const [page, setPage] = useState<number>(1);
+
+  const renderExpenseCodeValue = useCallback(
+    (expenseCode?: string | number) => {
+      if (expenseCode) {
+        if (expenseCode.toString().length > 8) {
+          return (
+            <TETooltip className="cursor-default" title={expenseCode}>
+              {expenseCode.toString().substring(0, 8)}...
+            </TETooltip>
+          );
+        } else {
+          return <>{expenseCode}</>;
+        }
+      }
+    },
+    []
+  );
+
+  const renderStatusCode = useCallback((statusCode?: string | number) => {
+    if (statusCode) {
+      if (typeof statusCode === "string") {
+        try {
+          const typedStatusCode = ExpenseStatusCodes.check(statusCode);
+          if (typedStatusCode) {
+            return <ExpenseTag statusCode={typedStatusCode} />;
+          } else {
+            return <>{statusCode}</>;
+          }
+        } catch {
+          return <>{statusCode}</>;
+        }
+      } else {
+        return <>{statusCode}</>;
+      }
+    } else {
+      return <EmptyText />;
+    }
+  }, []);
 
   return (
     <div>
@@ -89,31 +137,98 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
         <table className="table-auto sm:mt-3 lg:mt-5 mx-auto">
           <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-400/70 dark:text-neutral-500">
             <tr>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              {showExpenseCodeColumn && (
+                <th
+                  className={clsx({
+                    "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                    "text-sm": showStatusColumn || showExpenseCodeColumn,
+                  })}
+                >
+                  <div className="w-max">Code</div>
+                </th>
+              )}
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Expenses</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Cost type</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Unit price (VND)</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Amount</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Total (VND)</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Project name</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Supplier name</div>
               </th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">PiC</th>
-              <th className="px-1 lg:py-1 font-semibold dark:font-bold">
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
+                PiC
+              </th>
+              <th
+                className={clsx({
+                  "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                  "text-sm": showStatusColumn || showExpenseCodeColumn,
+                })}
+              >
                 <div className="w-max">Notes</div>
               </th>
+              {showStatusColumn && (
+                <th
+                  className={clsx({
+                    "px-2 lg:py-1 font-semibold dark:font-bold": true,
+                    "text-sm": showStatusColumn || showExpenseCodeColumn,
+                  })}
+                >
+                  Status
+                </th>
+              )}
             </tr>
           </thead>
           <motion.tbody
@@ -128,6 +243,31 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                 .slice((page - 1) * pageSize, page * pageSize)
                 .map((expense, index) => (
                   <motion.tr key={index} variants={rowAnimation}>
+                    {/* Expense code */}
+                    {showExpenseCodeColumn && (
+                      <td className="px-4 py-4 lg:w-min sm:w-[100px] font-extrabold text-left">
+                        <div className="flex flex-row flex-wrap items-center w-max gap-1">
+                          {expense.code.errorMessage && (
+                            <TETooltip title={expense.code.errorMessage}>
+                              <HiExclamationCircle className="text-xl text-red-600" />
+                            </TETooltip>
+                          )}
+                          {expense.code.value ? (
+                            <div
+                              className={clsx({
+                                "text-sm":
+                                  showExpenseCodeColumn || showStatusColumn,
+                              })}
+                            >
+                              {renderExpenseCodeValue(expense.code.value)}
+                            </div>
+                          ) : (
+                            <EmptyText />
+                          )}
+                        </div>
+                      </td>
+                    )}
+
                     {/* Expense name */}
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-extrabold text-left">
                       <div className="flex flex-row flex-wrap items-center w-max gap-1">
@@ -137,7 +277,14 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                           </TETooltip>
                         )}
                         {expense.name.value ? (
-                          expense.name.value
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {expense.name.value}
+                          </div>
                         ) : (
                           <EmptyText />
                         )}
@@ -153,7 +300,14 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                           </TETooltip>
                         )}
                         {expense.costType.value ? (
-                          expense.costType.value
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {expense.costType.value}
+                          </div>
                         ) : (
                           <EmptyText />
                         )}
@@ -168,22 +322,34 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                             <HiExclamationCircle className="text-xl text-red-600" />
                           </TETooltip>
                         )}
-                        {typeof expense.unitPrice.value === "number" ? (
-                          <NumericFormat
-                            displayType="text"
-                            value={expense.unitPrice.value}
-                            disabled
-                            thousandSeparator
-                          />
-                        ) : (
-                          <div>
-                            {expense.unitPrice.value ? (
-                              expense.unitPrice.value
-                            ) : (
-                              <EmptyText />
-                            )}
-                          </div>
-                        )}
+                        <div
+                          className={clsx({
+                            "text-sm":
+                              showExpenseCodeColumn || showStatusColumn,
+                          })}
+                        >
+                          {typeof expense.unitPrice.value === "number" ? (
+                            <NumericFormat
+                              displayType="text"
+                              value={expense.unitPrice.value}
+                              disabled
+                              thousandSeparator
+                            />
+                          ) : (
+                            <div
+                              className={clsx({
+                                "text-sm":
+                                  showExpenseCodeColumn || showStatusColumn,
+                              })}
+                            >
+                              {expense.unitPrice.value ? (
+                                expense.unitPrice.value
+                              ) : (
+                                <EmptyText />
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
 
@@ -195,31 +361,44 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                             <HiExclamationCircle className="text-xl text-red-600" />
                           </TETooltip>
                         )}
-                        {typeof expense.amount.value === "number" ? (
-                          <NumericFormat
-                            displayType="text"
-                            value={expense.amount.value}
-                            disabled
-                            thousandSeparator
-                          />
-                        ) : expense.amount.value ? (
-                          expense.amount.value
-                        ) : (
-                          <EmptyText />
-                        )}
+                        <div
+                          className={clsx({
+                            "text-sm":
+                              showExpenseCodeColumn || showStatusColumn,
+                          })}
+                        >
+                          {typeof expense.amount.value === "number" ? (
+                            <NumericFormat
+                              displayType="text"
+                              value={expense.amount.value}
+                              disabled
+                              thousandSeparator
+                            />
+                          ) : expense.amount.value ? (
+                            expense.amount.value
+                          ) : (
+                            <EmptyText />
+                          )}
+                        </div>
                       </div>
                     </td>
 
                     {/* Total cost */}
                     <td className="px-4 py-4 xl:w-min font-bold text-right">
-                      <NumericFormat
-                        displayType="text"
-                        value={calculateTotalCost(
-                          expense.unitPrice.value,
-                          expense.amount.value
-                        )}
-                        thousandSeparator
-                      />
+                      <div
+                        className={clsx({
+                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                        })}
+                      >
+                        <NumericFormat
+                          displayType="text"
+                          value={calculateTotalCost(
+                            expense.unitPrice.value,
+                            expense.amount.value
+                          )}
+                          thousandSeparator
+                        />
+                      </div>
                     </td>
 
                     {/* Project name */}
@@ -231,7 +410,14 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                           </TETooltip>
                         )}
                         {expense.projectName.value ? (
-                          expense.projectName.value
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {expense.projectName.value}
+                          </div>
                         ) : (
                           <EmptyText />
                         )}
@@ -247,7 +433,14 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                           </TETooltip>
                         )}
                         {expense.supplierName.value ? (
-                          expense.supplierName.value
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {expense.supplierName.value}
+                          </div>
                         ) : (
                           <EmptyText />
                         )}
@@ -262,14 +455,52 @@ export const ErrorExpensesTable: React.FC<Props> = ({ expenses, hide }) => {
                             <HiExclamationCircle className="text-xl text-red-600" />
                           </TETooltip>
                         )}
-                        {expense.pic.value ? expense.pic.value : <EmptyText />}
+                        {expense.pic.value ? (
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {expense.pic.value}
+                          </div>
+                        ) : (
+                          <EmptyText />
+                        )}
                       </div>
                     </td>
 
                     {/* Note */}
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center text-neutral-400 dark:text-neutral-500">
-                      {expense.notes}
+                      <div
+                        className={clsx({
+                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                        })}
+                      >
+                        {expense.notes}
+                      </div>
                     </td>
+
+                    {/* Status */}
+                    {showStatusColumn && (
+                      <td>
+                        <div className="flex flex-row flex-wrap items-center w-max gap-1">
+                          {expense.status.errorMessage && (
+                            <TETooltip title={expense.status.errorMessage}>
+                              <HiExclamationCircle className="text-xl text-red-600" />
+                            </TETooltip>
+                          )}
+                          <div
+                            className={clsx({
+                              "text-sm":
+                                showExpenseCodeColumn || showStatusColumn,
+                            })}
+                          >
+                            {renderStatusCode(expense.status.value)}
+                          </div>
+                        </div>
+                      </td>
+                    )}
                   </motion.tr>
                 ))}
           </motion.tbody>

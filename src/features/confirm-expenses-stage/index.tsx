@@ -1,11 +1,9 @@
+import React from "react";
 import { Variants, motion } from "framer-motion";
-import { TEInput } from "tw-elements-react";
-import { DisabledSelect } from "../../shared/disabled-select";
 import { Button } from "../../shared/button";
 import { ConfirmExpensesTable } from "./components/confirm-expenses-table";
-import { Expense } from "./type";
-import { useMeQuery } from "../../providers/store/api/authApi";
 import { CgSpinner } from "react-icons/cg";
+import { Expense } from "../upload-file-stage/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,29 +40,32 @@ const childrenAnimation: Variants = {
 };
 
 interface Props {
+  inputSection?: React.ReactNode;
   submitButtonText?: string;
   isLoading?: boolean;
   termName?: string;
   planName?: string;
   expenses?: Expense[];
+  showExpenseCodeColumn?: boolean;
+  showStatusColumn?: boolean;
+  pageSize?: number;
   hide?: boolean;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
 
 export const ConfirmExpensesStage: React.FC<Props> = ({
+  inputSection,
   submitButtonText,
   isLoading,
-  termName,
-  planName,
   expenses,
+  showExpenseCodeColumn,
+  showStatusColumn,
+  pageSize,
   hide,
   onPreviousState,
   onNextStage,
 }) => {
-  // Department from user's detail
-  const { data: me } = useMeQuery();
-
   return (
     <motion.div
       className="w-max"
@@ -73,32 +74,16 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
       variants={staggerChildrenAnimation}
     >
       {/* Disabled term and department select box */}
-      <motion.div
-        className="flex flex-row flex-wrap items-center justify-center gap-3 mt-3"
-        variants={childrenAnimation}
-      >
-        <div className="flex-1 pt-5">
-          <TEInput
-            disabled
-            className="w-full"
-            label="Plan name"
-            value={planName || ""}
-          />
-        </div>
-        <DisabledSelect
-          className="w-[300px]"
-          label="Term"
-          value={termName || ""}
-        />
-        <DisabledSelect
-          className="w-[200px]"
-          label="Department"
-          value={me?.department.name || ""}
-        />
-      </motion.div>
+      <motion.div variants={childrenAnimation}>{inputSection}</motion.div>
 
       {/* Table */}
-      <ConfirmExpensesTable expenses={expenses} hide={hide} />
+      <ConfirmExpensesTable
+        expenses={expenses}
+        hide={hide}
+        pageSize={pageSize}
+        showExpenseCodeColumn={showExpenseCodeColumn}
+        showStatusColumn={showStatusColumn}
+      />
 
       {/* Buttons */}
       <div className="flex flex-row flex-wrap items-center gap-5 mt-4 w-full">

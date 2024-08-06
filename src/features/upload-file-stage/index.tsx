@@ -1,20 +1,16 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFileUpload } from "../../shared/hooks/use-file-upload";
-import { TEInput } from "tw-elements-react";
 import { Button } from "../../shared/button";
 import { BsFillFileEarmarkArrowDownFill } from "react-icons/bs";
 import { cn } from "../../shared/utils/cn";
 import { ProcessingFileUI } from "./ui/processing-file-ui";
 import { EmptyFileUploadUI } from "./ui/empty-file-upload-ui";
 import { Expense, ExpenseError, FileUploadStage } from "./type";
-import { DisabledSelect } from "../../shared/disabled-select";
 import { processFile } from "./model/process-file";
 import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
 import { ErrorExpensesTable } from "./components/error-expenses-table";
-import { useMeQuery } from "../../providers/store/api/authApi";
-import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
 import { getFileExtension } from "./util/get-file-extension";
 
@@ -74,22 +70,26 @@ const animation: Variants = {
 
 interface Props {
   hide?: boolean;
-  termName?: string;
-  planName?: string;
+  downloadButtonText?: string;
+  inputSection?: React.ReactNode;
+  dropzoneHeight?: number;
+  disableContinueButton?: boolean;
   validateExpenseCode?: boolean;
-  isPlanNameEditable?: boolean;
+  validateStatusCode?: boolean;
   hideBackButton?: boolean;
   onDownloadTemplateClick?: Function;
   onPreviousState?: () => any;
-  onNextStage?: (expenses: Expense[], planName: string) => any;
+  onNextStage?: (expenses: Expense[]) => any;
 }
 
 export const UploadFileStage: React.FC<Props> = ({
   hide,
-  termName,
-  planName: propsPlanName,
+  downloadButtonText = "Download template",
+  inputSection,
+  dropzoneHeight = 330,
+  disableContinueButton,
   validateExpenseCode,
-  isPlanNameEditable = true,
+  validateStatusCode,
   hideBackButton = false,
   onDownloadTemplateClick,
   onPreviousState,
@@ -98,9 +98,6 @@ export const UploadFileStage: React.FC<Props> = ({
   // Cost type
   const { data: costTypeListResult } = useGetAllCostTypeQuery();
   const { data: expenseStatusListResult } = useGetAllExpenseStatusQuery();
-
-  // Department from user's detail
-  const { data: me } = useMeQuery();
 
   // UI: file over
   const [isFileOver, setIsFileOver] = useState<boolean>(false);
@@ -115,25 +112,22 @@ export const UploadFileStage: React.FC<Props> = ({
   const [fileName, setFileName] = useState<string>();
   const [fileSize, setFileSize] = useState<number>();
 
-  // Plan name
-  const [planName, setPlanName] = useState<string>(propsPlanName || "");
-
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [expenseErrors, setExpenseErrors] = useState<ExpenseError[]>([]);
 
   // Auto move to next stage
   useEffect(() => {
-    if (fileUploadStage === FileUploadStage.SUCCESS && planName) {
+    if (fileUploadStage === FileUploadStage.SUCCESS && !disableContinueButton) {
       const timeoutId = setTimeout(() => {
-        onNextStage && onNextStage(expenses, planName);
+        onNextStage && onNextStage(expenses);
       }, 1250);
 
       return () => {
         clearTimeout(timeoutId);
       };
     }
-  }, [fileUploadStage, planName]);
+  }, [fileUploadStage]);
 
   // Handling upload file
   const { dragLeaveHandler, dragOverHandler, dropHandler, inputFileHandler } =
@@ -173,7 +167,7 @@ export const UploadFileStage: React.FC<Props> = ({
               file,
               costTypeListResult.data,
               expenseStatusListResult.data,
-              { validateExpenseCode }
+              { validateExpenseCode, validateStatusCode }
             );
 
             setExpenses(expenses);
@@ -195,50 +189,17 @@ export const UploadFileStage: React.FC<Props> = ({
         "pt-2": true,
         "md:w-full lg:w-[900px] xl:w-[1000px]":
           fileUploadStage !== FileUploadStage.VALIDATION_ERROR,
-        "lg:w-[950px] xl:w-[1100px]":
+        "lg:w-[950px] xl:w-[1200px]":
           fileUploadStage === FileUploadStage.VALIDATION_ERROR,
       })}
       initial={AnimationStage.HIDDEN}
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
-      {/* Disabled term and department select box */}
-      <motion.div
-        className="flex flex-row flex-wrap items-center justify-center gap-3"
-        variants={childrenAnimation}
-      >
-        <div className="flex-1 -mb-[45px]">
-          <TEInput
-            className="w-full"
-            label="Plan name"
-            disabled={!isPlanNameEditable}
-            value={planName}
-            onChange={(e) => setPlanName(e.currentTarget.value)}
-            autoFocus
-          />
-          <InputValidationMessage
-            className="mt-1"
-            validateFn={() => {
-              if (!planName) {
-                throw new Error("Plan name can not be empty.");
-              }
-            }}
-          />
-        </div>
-        <DisabledSelect
-          className="w-[300px]"
-          label="Term"
-          value={termName || ""}
-        />
-        <DisabledSelect
-          className="w-[200px]"
-          label="Department"
-          value={me?.department.name || ""}
-        />
-      </motion.div>
+      <motion.div variants={childrenAnimation}>{inputSection}</motion.div>
 
       {/* File dropzone section */}
-      <div className="relative h-[390px]">
+      <div className="relative" style={{ height: dropzoneHeight + 58 }}>
         <AnimatePresence>
           {fileUploadStage !== FileUploadStage.VALIDATION_ERROR && (
             <motion.div
@@ -266,7 +227,7 @@ export const UploadFileStage: React.FC<Props> = ({
                 >
                   <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
                   <span className="text-sm dark:text-primary-500">
-                    Download template
+                    {downloadButtonText}
                   </span>
                 </Button>
               </motion.div>
@@ -274,7 +235,7 @@ export const UploadFileStage: React.FC<Props> = ({
               {/* File dropzone */}
               <div
                 className={cn({
-                  "relative h-[300px] mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
+                  "relative mt-2 gap-16 group border-2 border-dashed rounded-lg duration-200":
                     true,
                   "cursor-pointer bg-primary-50/50 hover:bg-primary-50 hover:border-primary-300 dark:hover:border-primary-600/70 dark:bg-neutral-700/30 dark:border-neutral-600":
                     fileUploadStage === FileUploadStage.EMPTY,
@@ -287,6 +248,7 @@ export const UploadFileStage: React.FC<Props> = ({
                   "bg-red-200/30 dark:bg-red-950/40 border-red-200 dark:border-red-900":
                     fileUploadStage === FileUploadStage.INVALID_FORMAT_ERROR,
                 })}
+                style={{ height: dropzoneHeight }}
                 onDrop={dropHandler}
                 onDragOver={dragOverHandler}
                 onDragLeave={dragLeaveHandler}
@@ -352,7 +314,11 @@ export const UploadFileStage: React.FC<Props> = ({
               exit={AnimationStage.HIDDEN}
               variants={animation}
             >
-              <ErrorExpensesTable expenses={expenseErrors} />
+              <ErrorExpensesTable
+                expenses={expenseErrors}
+                showExpenseCodeColumn={validateExpenseCode}
+                showStatusColumn={validateStatusCode}
+              />
             </motion.div>
           )}
         </AnimatePresence>
@@ -360,7 +326,7 @@ export const UploadFileStage: React.FC<Props> = ({
 
       {/* Buttons */}
       <motion.div
-        className="flex flex-row flex-wrap items-center gap-5 w-full mt-auto"
+        className="flex flex-row flex-wrap items-center gap-5 w-full mt-5"
         variants={callToActionAnimation}
       >
         {!hideBackButton && (
@@ -386,12 +352,13 @@ export const UploadFileStage: React.FC<Props> = ({
           </Button>
         ) : (
           <Button
-            disabled={fileUploadStage !== FileUploadStage.SUCCESS || !planName}
+            disabled={
+              fileUploadStage !== FileUploadStage.SUCCESS ||
+              disableContinueButton
+            }
             containerClassName="flex-1"
             onClick={() => {
-              if (fileUploadStage === FileUploadStage.SUCCESS && planName) {
-                onNextStage && onNextStage(expenses, planName);
-              }
+              onNextStage && onNextStage(expenses);
             }}
           >
             Continue to confirm expenses

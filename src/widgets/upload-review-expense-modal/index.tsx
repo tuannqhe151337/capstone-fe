@@ -5,16 +5,13 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { StepProgress } from "./component/step-progress";
 import clsx from "clsx";
+import { UploadFileStage } from "../../features/upload-file-stage";
 import { ConfirmExpensesStage } from "../../features/confirm-expenses-stage";
 import { Expense } from "../../features/upload-file-stage/type";
-import { useReuploadPlanMutation } from "../../providers/store/api/plansApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
-import { UploadFileStage } from "./component/upload-file-stage";
-import { TEInput } from "tw-elements-react";
-import { DisabledSelect } from "../../shared/disabled-select";
-import { useMeQuery } from "../../providers/store/api/authApi";
+import { useReviewListExpensesMutation } from "../../providers/store/api/reportsAPI";
 
 enum AnimationStage {
   LEFT = "left",
@@ -49,23 +46,16 @@ const stageAnimation: Variants = {
 };
 
 interface Props {
-  planId?: string | number;
-  planName?: string;
-  termName?: string;
+  reportId?: string | number;
   show: boolean;
   onClose: () => any;
 }
 
-export const ReuploadPlanModal: React.FC<Props> = ({
-  planId,
-  planName,
-  termName,
+export const UploadReviewExpenseModal: React.FC<Props> = ({
+  reportId,
   show,
   onClose,
 }) => {
-  // Department from user's detail
-  const { data: me } = useMeQuery();
-
   // Stages
   const [stage, setStage] = useState<number>(0);
 
@@ -84,8 +74,8 @@ export const ReuploadPlanModal: React.FC<Props> = ({
   }, [show]);
 
   // Mutation
-  const [reuploadPlan, { isLoading, isError, isSuccess }] =
-    useReuploadPlanMutation();
+  const [reviewListExpenses, { isLoading, isError, isSuccess }] =
+    useReviewListExpensesMutation();
 
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -93,7 +83,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
   // Close modal after upload successfully
   useEffect(() => {
     if (isSuccess) {
-      toast("Reupload plan successfully!", { type: "success" });
+      toast("Upload report review file successfully!", { type: "success" });
       onClose && onClose();
     }
   }, [isSuccess]);
@@ -114,7 +104,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
         {/* Header */}
         <div className="relative pt-5">
           <p className="w-fit m-auto text-xl font-bold text-primary-500 dark:text-primary-600">
-            Choose term
+            Upload review file
           </p>
           <div className="absolute top-3 right-5">
             <IconButton
@@ -150,18 +140,20 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                 >
                   <UploadFileStage
                     hide={stage !== 1}
-                    termName={termName}
-                    planName={planName}
+                    dropzoneHeight={380}
+                    validateExpenseCode
+                    validateStatusCode
+                    downloadButtonText="Download report"
                     onDownloadTemplateClick={() => {
                       const token = localStorage.getItem(
                         LocalStorageItemKey.TOKEN
                       );
 
-                      if (token && planId) {
+                      if (token && reportId) {
                         downloadFileFromServer(
                           `${
                             import.meta.env.VITE_BACKEND_HOST
-                          }plan/download/last-version-xlsx?planId=${planId}`,
+                          }report/download-xlsx?reportId=${reportId}`,
                           token
                         );
                       }
@@ -190,66 +182,28 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                   variants={stageAnimation}
                 >
                   <ConfirmExpensesStage
-                    inputSection={
-                      <div className="flex flex-row flex-wrap items-center justify-center gap-3 mt-3">
-                        <div className="flex-1 pt-5">
-                          <TEInput
-                            disabled
-                            className="w-full"
-                            label="Plan name"
-                            value={planName || ""}
-                          />
-                        </div>
-                        <DisabledSelect
-                          className="w-[300px]"
-                          label="Term"
-                          value={termName || ""}
-                        />
-                        <DisabledSelect
-                          className="w-[200px]"
-                          label="Department"
-                          value={me?.department.name || ""}
-                        />
-                      </div>
-                    }
-                    submitButtonText="Reupload plan"
+                    pageSize={6}
+                    submitButtonText="Upload report review"
                     isLoading={isLoading}
                     expenses={expenses}
-                    termName={termName}
-                    planName={planName}
+                    showStatusColumn
+                    showExpenseCodeColumn
                     hide={stage !== 2}
                     onPreviousState={() => {
                       setStage(1);
                     }}
                     onNextStage={() => {
-                      if (termName && planName) {
-                        planId &&
-                          reuploadPlan({
-                            planId,
-                            data: expenses.map(
-                              ({
-                                code,
-                                name,
-                                costType,
-                                unitPrice,
-                                amount,
-                                projectName,
-                                supplierName,
-                                pic,
-                                notes,
-                              }) => ({
-                                expenseCode: code,
-                                expenseName: name,
-                                costTypeId: costType.costTypeId,
-                                unitPrice,
-                                amount,
-                                projectName,
-                                supplierName,
-                                pic,
-                                notes,
-                              })
-                            ),
-                          });
+                      if (reportId) {
+                        reviewListExpenses({
+                          reportId:
+                            typeof reportId === "string"
+                              ? parseInt(reportId)
+                              : reportId,
+                          listExpenses: expenses.map((expense) => ({
+                            expenseCode: expense.code,
+                            statusId: expense.status?.statusId || 0,
+                          })),
+                        });
                       }
                     }}
                   />
