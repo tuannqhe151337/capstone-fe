@@ -71,7 +71,13 @@ type FormData = {
 
 const OldPasswordSchema = z.string().min(1, "Old password cannot be empty");
 
-const NewPasswordSchema = z.string().min(1, "New password cannot be empty");
+const NewPasswordSchema = z
+  .string()
+  // .min(8, "New password must be at least 8 characters long")
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    "Use 8 characters or more and include a mix of letters, numbers, and symbols"
+  );
 
 const ConfirmNewPasswordSchema = z
   .string()
