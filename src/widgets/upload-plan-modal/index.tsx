@@ -6,7 +6,6 @@ import { IoClose } from "react-icons/io5";
 import { StepProgress } from "./component/step-progress";
 import clsx from "clsx";
 import { ChooseTermStage } from "../../features/choose-term-stage";
-import { UploadFileStage } from "../../features/upload-file-stage";
 import { ConfirmExpensesStage } from "../../features/confirm-expenses-stage";
 import { Expense } from "../../features/upload-file-stage/type";
 import { TermCreatePlan } from "../../providers/store/api/termApi";
@@ -15,6 +14,9 @@ import { useMeQuery } from "../../providers/store/api/authApi";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { UploadFileStage } from "./component/upload-file-stage";
+import { TEInput } from "tw-elements-react";
+import { DisabledSelect } from "../../shared/disabled-select";
 
 enum AnimationStage {
   LEFT = "left",
@@ -212,6 +214,28 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                   variants={stageAnimation}
                 >
                   <ConfirmExpensesStage
+                    inputSection={
+                      <div className="flex flex-row flex-wrap items-center justify-center gap-3 mt-3">
+                        <div className="flex-1 pt-5">
+                          <TEInput
+                            disabled
+                            className="w-full"
+                            label="Plan name"
+                            value={planName || ""}
+                          />
+                        </div>
+                        <DisabledSelect
+                          className="w-[300px]"
+                          label="Term"
+                          value={term?.name || ""}
+                        />
+                        <DisabledSelect
+                          className="w-[200px]"
+                          label="Department"
+                          value={me?.department.name || ""}
+                        />
+                      </div>
+                    }
                     submitButtonText="Create new plan"
                     isLoading={isLoading}
                     expenses={expenses}

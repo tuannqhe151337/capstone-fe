@@ -7,26 +7,26 @@ interface Props {
 }
 
 export const ExpenseTag: React.FC<Props> = ({ statusCode, className }) => {
-  switch (statusCode) {
-    case "NEW":
+  switch (statusCode.toLowerCase().replace("_", "")) {
+    case "new":
       return (
         <Tag className={className} background="unfilled" variant="new">
           New
         </Tag>
       );
-    case "DENIED":
+    case "denied":
       return (
         <Tag className={className} background="unfilled" variant="denied">
           Denied
         </Tag>
       );
-    case "WAITING_FOR_APPROVAL":
+    case "waitingforapproval":
       return (
         <Tag className={className} background="unfilled" variant="waiting">
           Waiting for approval
         </Tag>
       );
-    case "APPROVED":
+    case "approved":
       return (
         <Tag className={className} background="filled" variant="reviewed">
           Approved

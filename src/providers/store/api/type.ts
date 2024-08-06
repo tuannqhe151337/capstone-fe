@@ -1,3 +1,5 @@
+import { StringUnion } from "../../../type";
+
 export enum LocalStorageItemKey {
   TOKEN = "token",
   REFRESH_TOKEN = "refreshToken",
@@ -30,7 +32,13 @@ export enum Role {
   FINANCIAL_STAFF = "financial-staff",
 }
 
-export type ExpenseStatusCode = "WAITING_FOR_APPROVAL" | "APPROVED" | "DENIED";
+export const ExpenseStatusCodes = StringUnion(
+  "WAITING_FOR_APPROVAL",
+  "APPROVED",
+  "DENIED"
+);
+
+export type ExpenseStatusCode = typeof ExpenseStatusCodes.type;
 
 export interface Expense {
   expenseId: number;

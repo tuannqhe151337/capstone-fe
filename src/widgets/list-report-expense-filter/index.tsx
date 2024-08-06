@@ -3,7 +3,7 @@ import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
 import { FaListCheck, FaFilter } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
-import { FaDownload } from "react-icons/fa";
+import { FaDownload, FaUpload } from "react-icons/fa";
 import { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
@@ -93,6 +93,7 @@ interface Props {
   onApproveExpensesClick?: () => any;
   onDenyExpensesClick?: () => any;
   onDownloadClick?: () => any;
+  onUploadReviewReportClick?: () => any;
 }
 
 export const ListReportExpenseFilter: React.FC<Props> = ({
@@ -105,6 +106,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onApproveExpensesClick,
   onDenyExpensesClick,
   onDownloadClick,
+  onUploadReviewReportClick,
 }) => {
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -232,10 +234,23 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                   >
                     <TERipple
                       rippleColor="light"
-                      className="w-max"
+                      className="w-full border-b-2 border-b-neutral-100 dark:border-b-neutral-700 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
+                      onClick={onUploadReviewReportClick}
+                    >
+                      <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
+                        <FaUpload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
+
+                        <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
+                          Upload review file
+                        </p>
+                      </div>
+                    </TERipple>
+                    <TERipple
+                      rippleColor="light"
+                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
                       onClick={onDownloadClick}
                     >
-                      <div className="flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
+                      <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
                         <FaDownload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">

@@ -17,7 +17,6 @@ import { produce } from "immer";
 import { useAppDispatch } from "../../providers/store/hook";
 import { toast } from "react-toastify";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
-import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",

@@ -109,6 +109,16 @@ export interface ReviewExpensesBody {
   listExpenseId: number[];
 }
 
+export interface UploadReportExpenses {
+  reportId: number;
+  listExpenses: ExpenseBody[];
+}
+
+export interface ExpenseBody {
+  expenseCode: string;
+  statusId: number;
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -226,6 +236,14 @@ const reportsAPI = createApi({
         }),
         invalidatesTags: ["actual-cost"],
       }),
+      reviewListExpenses: builder.mutation<any, UploadReportExpenses>({
+        query: (uploadReportExpenses) => ({
+          url: "report/upload",
+          method: "POST",
+          body: uploadReportExpenses,
+        }),
+        invalidatesTags: ["actual-cost"],
+      }),
     };
   },
 });
@@ -243,5 +261,6 @@ export const {
   useLazyFetchReportExpensesQuery,
   useApproveExpensesMutation,
   useDenyExpensesMutation,
+  useReviewListExpensesMutation,
 } = reportsAPI;
 export { reportsAPI };

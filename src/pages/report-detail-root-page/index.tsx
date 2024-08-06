@@ -20,6 +20,11 @@ import {
   useGetReportExpectedCostQuery,
 } from "../../providers/store/api/reportsAPI";
 import { ReportTag } from "../../entities/report-tag";
+import { UploadReviewExpenseModal } from "../../widgets/upload-review-expense-modal";
+import { Button } from "../../shared/button";
+import { FaUpload } from "react-icons/fa";
+import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
+import { useHotkeys } from "react-hotkeys-hook";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -79,7 +84,12 @@ export const ReportDetailRootPage: React.FC = () => {
   const { reportId } = useParams<{ reportId: string }>();
 
   // Query
-  const { data, isError, isFetching, isSuccess } = useGetReportDetailQuery({
+  const {
+    data: report,
+    isError,
+    isFetching,
+    isSuccess,
+  } = useGetReportDetailQuery({
     reportId: reportId ? parseInt(reportId) : 0,
   });
 
@@ -110,6 +120,24 @@ export const ReportDetailRootPage: React.FC = () => {
     }
   }, [location]);
 
+  // UI: upload report's expenses modal
+  const [showReportReviewExpensesModal, setShowReportReviewExpensesModal] =
+    useState<boolean>(false);
+
+  const isAuthorizedAndTimeToReviewReport =
+    useIsAuthorizedAndTimeToReviewReport({
+      reportStatusCode: report?.status.code,
+      termEndDate: report?.term.endDate,
+      termReuploadStartDate: report?.term.reuploadStartDate,
+      termReuploadEndDate: report?.term.reuploadEndDate,
+      finalEndTermDate: report?.term.finalEndTermDate,
+    });
+
+  useHotkeys("ctrl + u", (e) => {
+    e.preventDefault();
+    setShowReportReviewExpensesModal(true);
+  });
+
   return (
     <motion.div
       className="px-6 pb-10"
@@ -119,6 +147,7 @@ export const ReportDetailRootPage: React.FC = () => {
     >
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
+          {/* Left */}
           <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
             <Link
               to={`/report-management`}
@@ -129,6 +158,22 @@ export const ReportDetailRootPage: React.FC = () => {
             <span className="ml-3 text-base opacity-40">&gt;</span>
             <span>Report detail</span>
           </p>
+
+          {/* Right */}
+          {isAuthorizedAndTimeToReviewReport && (
+            <div className="ml-auto">
+              <Button
+                onClick={() => {
+                  setShowReportReviewExpensesModal(true);
+                }}
+              >
+                <div className="flex flex-row flex-wrap gap-3 ">
+                  <FaUpload className="mt-0.5" />
+                  <p className="text-sm font-semibold">Upload review file</p>
+                </div>
+              </Button>
+            </div>
+          )}
         </div>
       </BubbleBanner>
 
@@ -146,9 +191,9 @@ export const ReportDetailRootPage: React.FC = () => {
                 exit={AnimationStage.HIDDEN}
               >
                 <p className="text-2xl font-extrabold text-primary mr-5">
-                  {data?.name}
+                  {report?.name}
                 </p>
-                <ReportTag statusCode={data.status.code} />
+                <ReportTag statusCode={report.status.code} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -161,7 +206,7 @@ export const ReportDetailRootPage: React.FC = () => {
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={"Term"}
             isFetching={isFetching}
-            value={data?.term.name}
+            value={report?.term.name}
             meteors
           />
         </motion.div>
@@ -217,6 +262,14 @@ export const ReportDetailRootPage: React.FC = () => {
           </motion.div>
         </div>
       </div>
+
+      <UploadReviewExpenseModal
+        reportId={reportId}
+        show={showReportReviewExpensesModal}
+        onClose={() => {
+          setShowReportReviewExpensesModal(false);
+        }}
+      />
     </motion.div>
   );
 };

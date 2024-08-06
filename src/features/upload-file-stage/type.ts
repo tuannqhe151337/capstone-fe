@@ -31,6 +31,7 @@ export interface ExpenseFieldError {
 export interface ExpenseError {
   // date: ExpenseFieldError;
   costType: ExpenseFieldError;
+  code: ExpenseFieldError;
   name: ExpenseFieldError;
   unitPrice: ExpenseFieldError;
   amount: ExpenseFieldError;

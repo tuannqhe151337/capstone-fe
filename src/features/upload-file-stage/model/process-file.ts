@@ -47,6 +47,7 @@ const ColumnNameIndexMappingConfig: Record<ColumnName, number> = {
 const datePattern = "dd/MM/yyyy";
 
 // Validation schema
+const ExpenseCodeSchema = z.string();
 const ExpenseNameSchema = z.string();
 const CostTypeSchema = z.string();
 const UnitPriceSchema = z.number().gt(0);
@@ -58,6 +59,7 @@ const StatusCodeSchema = z.string();
 
 export interface Options {
   validateExpenseCode?: boolean;
+  validateStatusCode?: boolean;
 }
 
 export const processFile = async (
@@ -114,7 +116,7 @@ export const processFile = async (
         if (index + 1 >= BeginLine) {
           // Get data from cell
           // const rawDate = row[ColumnNameIndexMappingConfig.date];
-          const expenseCode = row[ColumnNameIndexMappingConfig.expenseCode];
+          const rawExpenseCode = row[ColumnNameIndexMappingConfig.expenseCode];
           const rawExpenseName = row[ColumnNameIndexMappingConfig.expenseName];
           const rawCostType = row[ColumnNameIndexMappingConfig.costType];
           const rawUnitPrice = row[ColumnNameIndexMappingConfig.unitPrice];
@@ -131,6 +133,7 @@ export const processFile = async (
           const expenseError: ExpenseError = {
             // date: { value: "" },
             costType: { value: "" },
+            code: { value: "" },
             name: { value: "" },
             unitPrice: { value: "" },
             amount: { value: "" },
@@ -170,6 +173,20 @@ export const processFile = async (
           //   expenseError.date.value = rawDate;
           //   expenseError.date.errorMessage = dateErrorMessage;
           // }
+
+          // -- Expense code
+          let expenseCode =
+            typeof rawExpenseCode === "string" ? rawExpenseCode : "";
+          if (options && options.validateExpenseCode) {
+            const expenseCodeErrorMessage = getZodMessasges(
+              () => (expenseCode = ExpenseCodeSchema.parse(rawExpenseCode))
+            );
+
+            if (expenseCodeErrorMessage) {
+              isLineError = true;
+              expenseError.code.errorMessage = expenseCodeErrorMessage;
+            }
+          }
 
           // -- Expense name
           let expenseName = "";
@@ -289,6 +306,11 @@ export const processFile = async (
             isError = isLineError;
 
             // Fill in error's value
+            expenseError.code.value =
+              rawExpenseCode instanceof Date
+                ? format(rawExpenseCode, datePattern)
+                : rawExpenseCode;
+
             expenseError.name.value =
               rawExpenseName instanceof Date
                 ? format(rawExpenseName, datePattern)
@@ -322,7 +344,7 @@ export const processFile = async (
             expenseError.pic.value =
               rawPic instanceof Date ? format(rawPic, datePattern) : rawPic;
 
-            if (options && options.validateExpenseCode) {
+            if (options && options.validateStatusCode) {
               expenseError.status.value =
                 rawStatusCode instanceof Date
                   ? format(rawStatusCode, datePattern)
@@ -333,7 +355,7 @@ export const processFile = async (
           } else {
             if (costType) {
               expenses.push({
-                code: typeof expenseCode === "string" ? expenseCode : "",
+                code: expenseCode,
                 name: expenseName,
                 costType,
                 // date,
