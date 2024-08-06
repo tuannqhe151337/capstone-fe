@@ -7,7 +7,7 @@ interface Props {
 }
 
 export const ExpenseTag: React.FC<Props> = ({ statusCode, className }) => {
-  switch (statusCode.toLowerCase().replace("_", "")) {
+  switch (statusCode.toLowerCase().replace(/_/g, "")) {
     case "new":
       return (
         <Tag className={className} background="unfilled" variant="new">
