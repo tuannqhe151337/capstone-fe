@@ -22,9 +22,11 @@ import {
 import { ReportTag } from "../../entities/report-tag";
 import { UploadReviewExpenseModal } from "../../widgets/upload-review-expense-modal";
 import { Button } from "../../shared/button";
-import { FaUpload } from "react-icons/fa";
+import { FaDownload, FaUpload } from "react-icons/fa";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { useHotkeys } from "react-hotkeys-hook";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -160,20 +162,44 @@ export const ReportDetailRootPage: React.FC = () => {
           </p>
 
           {/* Right */}
-          {isAuthorizedAndTimeToReviewReport && (
-            <div className="ml-auto">
+          <div className="ml-auto">
+            <Button
+              variant={
+                isAuthorizedAndTimeToReviewReport ? "tertiary" : "primary"
+              }
+              onClick={() => {
+                const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+                if (token && report && reportId) {
+                  downloadFileFromServer(
+                    `${
+                      import.meta.env.VITE_BACKEND_HOST
+                    }report/download-xlsx?reportId=${reportId}`,
+                    token,
+                    `${report.name}.xlsx`
+                  );
+                }
+              }}
+            >
+              <div className="flex flex-row flex-wrap gap-3">
+                <FaDownload />
+                <p className="text-sm font-bold">Download report</p>
+              </div>
+            </Button>
+            {isAuthorizedAndTimeToReviewReport && (
               <Button
+                containerClassName="ml-3"
                 onClick={() => {
                   setShowReportReviewExpensesModal(true);
                 }}
               >
-                <div className="flex flex-row flex-wrap gap-3 ">
+                <div className="flex flex-row flex-wrap gap-3">
                   <FaUpload className="mt-0.5" />
                   <p className="text-sm font-semibold">Upload review file</p>
                 </div>
               </Button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </BubbleBanner>
 

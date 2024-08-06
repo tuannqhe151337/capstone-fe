@@ -45,7 +45,7 @@ export const Button: React.FC<Props> = ({
               variant === "primary",
             "font-semibold bg-primary-100 border-2 border-primary-100 dark:bg-primary-900/50 dark:border-primary-900/10 text-primary-500 hover:bg-primary-200/70 dark:hover:bg-primary-900/70 focus:bg-primary-200 dark:focus:bg-primary-900/70 active:bg-primary-200 hover:border-primary-200/10 dark:hover:border-primary-900/10 focus:border-primary-200 dark:focus:border-primary-900/10 active:border-primary-200 dark:active:border-primary-900/10":
               variant === "secondary",
-            "bg-white border-2 border-primary-300/70 text-primary-500 hover:bg-primary-50 active:bg-primary-100 dark:bg-neutral-800 dark:border-primary-800 dark:hover:bg-neutral-700/30":
+            "bg-white border-2 border-transparent text-primary-500 hover:bg-primary-50 active:bg-primary-100 dark:bg-neutral-800 dark:border-primary-800 dark:hover:bg-neutral-700/30":
               variant === "tertiary",
             "bg-white border-2 dark:bg-transparent text-neutral-400 disabled:text-neutral-300 border-neutral-200 disabled:hover:border-neutral-200 hover:border-neutral-300 dark:border-neutral-600 dark:disabled:hover:border-neutral-600 dark:hover:border-neutral-500 dark:text-neutral-400 dark:disabled:text-neutral-500":
               variant === "quaternary",
