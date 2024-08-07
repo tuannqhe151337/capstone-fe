@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Role, useGetListRoleQuery } from "../../providers/store/api/roleApi";
 import Select from "react-select";
+import { cn } from "../../shared/utils/cn";
 
 interface Option {
   value: number;
@@ -21,11 +22,13 @@ const convertRoleToOptions = (roles: Role[], excludeRoleId?: number) => {
 interface Props {
   defaultOption?: Option;
   onChange?: (option: Option | null | undefined) => any;
+  className?: string;
 }
 
 export const RoleFilter: React.FC<Props> = ({
   onChange,
   defaultOption = DefaultOption,
+  className,
 }) => {
   // Fetch initial data
   const { data } = useGetListRoleQuery();
@@ -37,7 +40,8 @@ export const RoleFilter: React.FC<Props> = ({
     <div>
       <Select
         classNamePrefix="custom-select"
-        className="w-[200px] cursor-pointer"
+        // className="w-full cursor-pointer"
+        className={cn("w-[200px] cursor-pointer", className)}
         isSearchable
         value={selectedOption}
         onChange={(value) => {
