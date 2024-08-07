@@ -193,197 +193,205 @@ export const UserCreate: React.FC = () => {
       </BubbleBanner>
 
       <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black ">
-        {/* Fullname */}
-        <div className="flex flex-row gap-6 pl-10 pt-10">
-          <div>
-            <FaUser className="text-2xl mt-2 opacity-30" />
+        <div className="flex flex-row justify-around">
+          {/* Fullname */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <FaUser className="text-2xl mt-2 opacity-30" />
+            </div>
+            <motion.div
+              variants={childrenAnimation}
+              className="w-[440px] custom-wrapper"
+            >
+              <TEInput
+                type="text"
+                label="Full name"
+                className="mb-4 bg-white dark:bg-neutral-900"
+                autoFocus
+                {...register("fullName", { required: true })}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.fullName || false}
+                validateFn={() => FullNameSchema.parse(watch("fullName"))}
+              />
+            </motion.div>
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
-          >
-            <TEInput
-              type="text"
-              label="Full name"
-              className="mb-4 bg-white dark:bg-neutral-900"
-              autoFocus
-              {...register("fullName", { required: true })}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.fullName || false}
-              validateFn={() => FullNameSchema.parse(watch("fullName"))}
-            />
-          </motion.div>
+
+          {/* Role */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+            </div>
+            <motion.div variants={childrenAnimation}>
+              <Controller
+                name="roleId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <RoleFilter
+                    defaultOption={{ value: 0, label: "Select role" }}
+                    onChange={(option) => option && onChange(option.value)}
+                    className="z-40 dark:z-40 w-[440px]"
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.roleId || false}
+                validateFn={() => RoleIdSchema.parse(watch("roleId"))}
+              />
+            </motion.div>
+          </div>
         </div>
 
-        {/* Role */}
-        <div className="flex flex-row gap-6 pl-10 mt-4">
-          <div>
-            <RiUserSettingsFill className="text-2xl mt-2 opacity-30" />
+        <div className="flex flex-row justify-around">
+          {/* Phone */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
+            </div>
+            <motion.div
+              variants={childrenAnimation}
+              className="w-[440px] custom-wrapper"
+            >
+              <Controller
+                name="phoneNumber"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <TEInput
+                    label="Phone"
+                    className="mb-4 w-full bg-white dark:bg-neutral-900"
+                    value={value}
+                    onChange={(e) => {
+                      onChange(allowOnlyNumber(e.currentTarget.value));
+                    }}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.phoneNumber || false}
+                validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
+              />
+            </motion.div>
           </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="roleId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <RoleFilter
-                  defaultOption={{ value: 0, label: "Select role" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.roleId || false}
-              validateFn={() => RoleIdSchema.parse(watch("roleId"))}
-            />
-          </motion.div>
+
+          {/* Department */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
+            </div>
+            <motion.div variants={childrenAnimation}>
+              <Controller
+                name="departmentId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DepartmentFilter
+                    className="z-30 dark:z-30 w-[440px]"
+                    defaultOption={{ value: 0, label: "Select department" }}
+                    onChange={(option) => option && onChange(option.value)}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.departmentId || false}
+                validateFn={() =>
+                  DepartmentIdSchema.parse(watch("departmentId"))
+                }
+              />
+            </motion.div>
+          </div>
         </div>
 
-        {/* Phone */}
-        <div className="flex flex-row gap-6 pl-10 mt-5">
-          <div>
-            <FaPhoneAlt className="text-2xl mt-2 opacity-30 " />
+        <div className="flex flex-row justify-around">
+          {/* Email */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <MdEmail className="text-2xl mt-1 opacity-30" />
+            </div>
+            <motion.div
+              variants={childrenAnimation}
+              className="w-[440px] custom-wrapper"
+            >
+              <TEInput
+                type="email"
+                label="Email"
+                className="mb-4 w-full bg-white dark:bg-neutral-900"
+                {...register("email", { required: true })}
+              />
+              <InputValidationMessage
+                className="-mt-3"
+                show={dirtyFields.email || false}
+                validateFn={() => EmailSchema.parse(watch("email"))}
+              />
+            </motion.div>
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
-          >
-            <Controller
-              name="phoneNumber"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <TEInput
-                  label="Phone"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
-                  value={value}
-                  onChange={(e) => {
-                    onChange(allowOnlyNumber(e.currentTarget.value));
-                  }}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.phoneNumber || false}
-              validateFn={() => PhoneNumberSchema.parse(watch("phoneNumber"))}
-            />
-          </motion.div>
+
+          {/* Position */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
+            </div>
+            <motion.div variants={childrenAnimation}>
+              <Controller
+                name="positionId"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <PositionFilter
+                    className="z-20 dark:z-20 w-[440px]"
+                    defaultOption={{ value: 0, label: "Select position" }}
+                    onChange={(option) => option && onChange(option.value)}
+                  />
+                )}
+              />
+              <InputValidationMessage
+                className="mt-1"
+                show={dirtyFields.positionId || false}
+                validateFn={() => PositionIdSchema.parse(watch("positionId"))}
+              />
+            </motion.div>
+          </div>
         </div>
 
-        {/* Email */}
-        <div className="flex flex-row gap-6 pl-10 mt-6">
-          <div>
-            <MdEmail className="text-2xl mt-1 opacity-30" />
+        <div className="flex flex-row justify-around">
+          {/* Address */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <FaLocationDot className="text-2xl mt-1 opacity-30" />
+            </div>
+            <motion.div
+              variants={childrenAnimation}
+              className="w-[440px] custom-wrapper"
+            >
+              <TEInput
+                type="text"
+                label="Address"
+                className="mb-4 w-full bg-white dark:bg-neutral-900"
+                {...register("address")}
+              />
+            </motion.div>
           </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
-          >
-            <TEInput
-              type="email"
-              label="Email"
-              className="mb-4 w-full bg-white dark:bg-neutral-900"
-              {...register("email", { required: true })}
-            />
-            <InputValidationMessage
-              className="-mt-3"
-              show={dirtyFields.email || false}
-              validateFn={() => EmailSchema.parse(watch("email"))}
-            />
-          </motion.div>
-        </div>
 
-        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10 "></div>
-
-        {/* Department */}
-        <div className="flex flex-row gap-6 pl-10 mt-10">
-          <div>
-            <PiTreeStructureFill className="text-2xl mt-2 opacity-30" />
+          {/* Birthdate */}
+          <div className="flex flex-row gap-6 pt-10">
+            <div>
+              <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
+            </div>
+            <motion.div variants={childrenAnimation} className="custom-wrapper">
+              <Controller
+                name="birthDate"
+                control={control}
+                render={({ field: { onChange } }) => (
+                  <DatePickerInput
+                    value={new Date()}
+                    onChange={(value) => onChange(value)}
+                    className="w-[440px]"
+                  />
+                )}
+              />
+            </motion.div>
           </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="departmentId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DepartmentFilter
-                  className="z-30 dark:z-30"
-                  defaultOption={{ value: 0, label: "Select department" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.departmentId || false}
-              validateFn={() => DepartmentIdSchema.parse(watch("departmentId"))}
-            />
-          </motion.div>
-        </div>
-
-        {/* Position */}
-        <div className="flex flex-row gap-6 pl-10 mt-6">
-          <div>
-            <PiBagSimpleFill className="text-2xl mt-2 opacity-30" />
-          </div>
-          <motion.div variants={childrenAnimation}>
-            <Controller
-              name="positionId"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <PositionFilter
-                  className="z-20 dark:z-20"
-                  defaultOption={{ value: 0, label: "Select position" }}
-                  onChange={(option) => option && onChange(option.value)}
-                />
-              )}
-            />
-            <InputValidationMessage
-              className="mt-1"
-              show={dirtyFields.positionId || false}
-              validateFn={() => PositionIdSchema.parse(watch("positionId"))}
-            />
-          </motion.div>
-        </div>
-
-        <div className="w-10/12 mx-auto border-t-[2px] mt-6 dark:opacity-10"></div>
-
-        {/* Birthdate */}
-        <div className="flex flex-row gap-6 pl-10 mt-10">
-          <div>
-            <FaBirthdayCake className="text-2xl mt-1 opacity-30" />
-          </div>
-          <motion.div variants={childrenAnimation} className="custom-wrapper">
-            <Controller
-              name="birthDate"
-              control={control}
-              render={({ field: { onChange } }) => (
-                <DatePickerInput
-                  value={new Date()}
-                  onChange={(value) => onChange(value)}
-                />
-              )}
-            />
-          </motion.div>
-        </div>
-
-        {/* Location */}
-        <div className="flex flex-row gap-6 pl-10 mt-10">
-          <div>
-            <FaLocationDot className="text-2xl mt-1 opacity-30" />
-          </div>
-          <motion.div
-            variants={childrenAnimation}
-            className="w-[500px] custom-wrapper"
-          >
-            <TEInput
-              type="text"
-              label="Address"
-              className="mb-4 w-full bg-white dark:bg-neutral-900"
-              {...register("address")}
-            />
-          </motion.div>
         </div>
 
         <ErrorNotificationCard
@@ -391,7 +399,7 @@ export const UserCreate: React.FC = () => {
           errorMessage={errorMessage}
         />
 
-        <div className="mx-7 flex justify-center mt-4">
+        <div className="mx-14 flex justify-center mt-8">
           <Button
             disabled={!isValid}
             containerClassName="w-full"
