@@ -10,6 +10,7 @@ import {
 } from "../../providers/store/api/annualsAPI";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyAnnual = (total: number): Row[] => {
   const annual: Row[] = [];
@@ -69,6 +70,9 @@ export const AnnualReportList: React.FC = () => {
 
   // i18n
   const { t } = useTranslation(["sidebar"]);
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Query
   const [fetchAnnual, { data, isFetching }] = useLazyFetchAnnualQuery();

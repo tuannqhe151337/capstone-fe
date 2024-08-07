@@ -15,6 +15,7 @@ import { DeleteDepartmentModal } from "../../widgets/delete-department-modal";
 import { DepartmentCreateModal } from "../../widgets/department-create-modal";
 import { DepartmentEditModal } from "../../widgets/department-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -70,6 +71,9 @@ export const DepartmentManagementList: React.FC = () => {
   // Query
   const [fetchDepartments, { data, isFetching }] =
     useLazyGetListDepartmentQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

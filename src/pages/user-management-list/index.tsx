@@ -12,6 +12,7 @@ import {
 } from "../../providers/store/api/usersApi";
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -81,6 +82,9 @@ const childrenAnimation: Variants = {
 export const UserManagementList: React.FC = () => {
   // Navigation
   const navigate = useNavigate();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Query
   const [fetchUser, { data, isFetching }] = useLazyFetchUsersQuery();

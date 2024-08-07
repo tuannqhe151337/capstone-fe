@@ -10,6 +10,7 @@ import {
 import _ from "lodash";
 import { ListReportFilter } from "../../widgets/list-report-filter";
 import { useDispatch } from "react-redux";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyReports = (total: number): Row[] => {
   const reports: Row[] = [];
@@ -79,6 +80,9 @@ const childrenAnimation: Variants = {
 export const ReportManagementList: React.FC = () => {
   // Query
   const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Clear previous cache
   const dispatch = useDispatch();

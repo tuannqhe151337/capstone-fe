@@ -15,12 +15,13 @@ import { DeleteSupplierModal } from "../../widgets/delete-supplier-modal";
 import { SupplierCreateModal } from "../../widgets/supplier-create-modal";
 import { SupplierEditModal } from "../../widgets/supplier-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptySuppliers = (total: number): Supplier[] => {
-  const Suppliers: Row[] = [];
+  const suppliers: Row[] = [];
 
   for (let i = 0; i < total; i++) {
-    Suppliers.push({
+    suppliers.push({
       supplierId: 0,
       name: "",
       createdAt: "",
@@ -29,7 +30,7 @@ const generateEmptySuppliers = (total: number): Supplier[] => {
     });
   }
 
-  return Suppliers;
+  return suppliers;
 };
 
 enum AnimationStage {
@@ -67,6 +68,9 @@ const childrenAnimation: Variants = {
 };
 
 export const SupplierManagementList: React.FC = () => {
+  // Scroll to top
+  useScrollToTopOnLoad();
+
   // Query
   const [fetchSuppliers, { data, isFetching }] = useLazyGetListSupplierQuery();
 

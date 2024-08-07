@@ -12,6 +12,7 @@ import {
 } from "../../providers/store/api/termApi";
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyTerms = (total: number): Row[] => {
   const terms: Row[] = [];
@@ -69,6 +70,9 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
+  // Scroll to top
+  useScrollToTopOnLoad();
+
   // Create modal
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 

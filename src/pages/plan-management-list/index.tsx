@@ -14,6 +14,7 @@ import {
 import _ from "lodash";
 import { useDispatch } from "react-redux";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyPlans = (total: number): Row[] => {
   const plans: Row[] = [];
@@ -86,6 +87,9 @@ const childrenAnimation: Variants = {
 export const PlanManagementList: React.FC = () => {
   // Query
   const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Clear previous cache
   const dispatch = useDispatch();
