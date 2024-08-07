@@ -15,6 +15,7 @@ import { DeleteCostTypeModal } from "../../widgets/delete-cost-type-modal";
 import { CostTypeCreateModal } from "../../widgets/cost-type-create-modal";
 import { CostTypeEditModal } from "../../widgets/cost-type-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyCostTypes = (total: number): CostType[] => {
   const costTypes: Row[] = [];
@@ -69,6 +70,9 @@ const childrenAnimation: Variants = {
 export const CostTypeManagementList: React.FC = () => {
   // Query
   const [fetchCostTypes, { data, isFetching }] = useLazyGetListCostTypeQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

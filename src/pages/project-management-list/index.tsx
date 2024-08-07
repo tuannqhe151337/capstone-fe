@@ -15,6 +15,7 @@ import { DeleteProjectModal } from "../../widgets/delete-project-modal";
 import { ProjectCreateModal } from "../../widgets/project-create-modal";
 import { ProjectEditModal } from "../../widgets/project-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const generateEmptyProjects = (total: number): Project[] => {
   const projects: Row[] = [];
@@ -69,6 +70,9 @@ const childrenAnimation: Variants = {
 export const ProjectManagementList: React.FC = () => {
   // Query
   const [fetchProjects, { data, isFetching }] = useLazyGetListProjectQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

@@ -106,9 +106,8 @@ const tablePlanDataList: TablePlanDataType[] = [
 ];
 
 export const TermDetailPlanPage: React.FC = () => {
-  const [listSelectedIndex, _] = useState<Set<number>>(
-    new Set()
-  );
+  // UI
+  const [listSelectedIndex, _] = useState<Set<number>>(new Set());
   const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
 
   const [_hoverRowIndex, _setHoverRowIndex] = useState<number>();

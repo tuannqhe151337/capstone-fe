@@ -64,6 +64,7 @@ export const PlanDetailVersionPage: React.FC = () => {
   // Get planId from param
   const { planId } = useParams<{ planId: string }>();
 
+  // Query
   const { data: plan } = useGetPlanDetailQuery({
     planId: planId ? parseInt(planId) : 0,
   });

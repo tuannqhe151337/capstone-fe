@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { ExpenseMonthByMonthChart } from "../../widgets/expense-month-by-month-chart";
 import { ExpenseByCostTypeChart } from "../../widgets/expense-by-cost-type-chart";
 import { lazy, useEffect, useState } from "react";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -50,8 +51,10 @@ export const HomePage: React.FC = () => {
   // i18n
   const { t } = useTranslation(["annual-report-detail"]);
 
-  // Use in view
+  // Scroll to top
+  useScrollToTopOnLoad();
 
+  // Use in view
   const { ref, inView } = useInView();
 
   return (

@@ -20,9 +20,6 @@ export const AnnualReportDetailChartPage: React.FC = () => {
     }
   }, [annualReportId]);
 
-  useEffect(() => {
-  }, [annual]);
-
   if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
 
   const chartOptions: ApexOptions = {

@@ -57,9 +57,18 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       },
       unitPrice: 0,
       amount: 0,
-      projectName: "",
-      supplierName: "",
-      pic: "",
+      project: {
+        projectId: 0,
+        name: "",
+      },
+      supplier: {
+        supplierId: 0,
+        name: "",
+      },
+      pic: {
+        picId: 0,
+        name: "",
+      },
       notes: "",
       isFetching: true,
     });
