@@ -1,10 +1,16 @@
 import { Link, useLocation } from "react-router-dom";
 import { ResizableBox } from "react-resizable";
 import { MdDashboard } from "react-icons/md";
-import { FaUserGroup } from "react-icons/fa6";
+import { FaTruck, FaUserGroup } from "react-icons/fa6";
 import { RiCalendarScheduleFill } from "react-icons/ri";
 import { HiDocumentReport } from "react-icons/hi";
-import { FaChartPie, FaChartLine, FaBars, FaCoins } from "react-icons/fa";
+import {
+  FaChartPie,
+  FaChartLine,
+  FaBars,
+  FaCoins,
+  FaProjectDiagram,
+} from "react-icons/fa";
 import { Tab } from "./ui/tab";
 import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -196,6 +202,34 @@ export const Sidebar = () => {
                 icon={<FaCoins className="text-2xl -ml-0.5" />}
                 text={t("Cost type")}
                 selected={location.pathname.startsWith("/cost-type-management")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Supplier management */}
+        {data?.role.code === Role.ACCOUNTANT && (
+          <div>
+            <Link to={`/supplier-management`}>
+              <Tab
+                icon={<FaTruck className="text-2xl -ml-0.5" />}
+                text={t("Supplier")}
+                selected={location.pathname.startsWith("/supplier-management")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
+        {/* Project management */}
+        {data?.role.code === Role.ACCOUNTANT && (
+          <div>
+            <Link to={`/project-management`}>
+              <Tab
+                icon={<FaProjectDiagram className="text-2xl -ml-0.5" />}
+                text={t("Project")}
+                selected={location.pathname.startsWith("/project-management")}
                 isExpanded={isExpanded}
               />
             </Link>

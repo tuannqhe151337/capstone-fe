@@ -8,25 +8,25 @@ import { z, ZodType } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputValidationMessage } from "../../shared/validation-input-message";
-import { useCreateCostTypeMutation } from "../../providers/store/api/costTypeAPI";
+import { useCreateSupplierMutation } from "../../providers/store/api/supplierApi";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
-import { ErrorData } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { ErrorData } from "../../providers/store/api/type";
 import clsx from "clsx";
 
 type FormData = {
-  costTypeName: string;
+  supplierName: string;
 };
 
-const CostTypeNameSchema = z
+const SupplierNameSchema = z
   .string()
-  .min(5, "Cost type name length must be at least 5 characters")
-  .max(50, "Cost type name length must be at most 50 characters");
+  .min(5, "Supplier name length must be at least 5 characters")
+  .max(50, "Supplier name length must be at most 50 characters");
 
-export const CreateCostTypeSchema: ZodType<FormData> = z.object({
-  costTypeName: CostTypeNameSchema,
+export const CreateSupplierSchema: ZodType<FormData> = z.object({
+  supplierName: SupplierNameSchema,
 });
 
 interface Props {
@@ -35,7 +35,7 @@ interface Props {
   onCreateSuccessfully?: () => any;
 }
 
-export const CostTypeCreateModal: React.FC<Props> = ({
+export const SupplierCreateModal: React.FC<Props> = ({
   show,
   onClose,
   onCreateSuccessfully,
@@ -48,7 +48,7 @@ export const CostTypeCreateModal: React.FC<Props> = ({
     handleSubmit,
     reset,
   } = useForm<FormData>({
-    resolver: zodResolver(CreateCostTypeSchema), // Apply the zodResolver
+    resolver: zodResolver(CreateSupplierSchema), // Apply the zodResolver
   });
 
   // Reset
@@ -56,18 +56,18 @@ export const CostTypeCreateModal: React.FC<Props> = ({
     reset();
   }, [show]);
 
-  // Create new CostType mutation
-  const [createCostType, { isSuccess, isLoading, isError, error }] =
-    useCreateCostTypeMutation();
+  // Create new supplier mutation
+  const [createSupplier, { isSuccess, isLoading, isError, error }] =
+    useCreateSupplierMutation();
 
   // On submit
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createCostType({ costTypeName: data.costTypeName });
+    createSupplier({ supplierName: data.supplierName });
   };
 
   useEffect(() => {
     if (!isLoading && isSuccess) {
-      toast("Create cost type successfully!", { type: "success" });
+      toast("Create supplier successfully!", { type: "success" });
 
       onCreateSuccessfully && onCreateSuccessfully();
     }
@@ -110,7 +110,7 @@ export const CostTypeCreateModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Create cost type
+              Create supplier
             </div>
 
             <ErrorNotificationCard
@@ -129,18 +129,18 @@ export const CostTypeCreateModal: React.FC<Props> = ({
               <TEInput
                 autoFocus
                 className="w-full"
-                label="Cost type name"
+                label="Supplier name"
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     e.currentTarget.blur();
                   }
                 }}
-                {...register("costTypeName", { required: true })}
+                {...register("supplierName", { required: true })}
               />
               <InputValidationMessage
-                show={dirtyFields.costTypeName || false}
+                show={dirtyFields.supplierName || false}
                 validateFn={() =>
-                  CostTypeNameSchema.parse(watch("costTypeName"))
+                  SupplierNameSchema.parse(watch("supplierName"))
                 }
               />
             </div>
@@ -165,7 +165,7 @@ export const CostTypeCreateModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Create new cost type"}
+              {!isLoading && "Create new Supplier"}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

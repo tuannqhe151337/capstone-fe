@@ -4,10 +4,10 @@ import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import clsx from "clsx";
-import { Department } from "../../providers/store/api/departmentApi";
+import { Supplier } from "../../providers/store/api/supplierApi";
 import { Skeleton } from "../../shared/skeleton";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
-import { DepartmentActionContextMenu } from "../../entities/department-action-context-menu";
+import { SupplierActionContextMenu } from "../../entities/supplier-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -34,33 +34,33 @@ const rowAnimation: Variants = {
   },
 };
 
-export interface Row extends Department {
+export interface Row extends Supplier {
   isFetching?: boolean;
 }
 
 interface Props {
   isFetching?: boolean;
-  departments?: Row[];
+  suppliers?: Row[];
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
-  onCreateDepartment?: () => any;
-  onDeleteDepartment?: (department: Department) => any;
-  onEditDepartment?: (department: Department) => any;
+  onCreateSupplier?: () => any;
+  onDeleteSupplier?: (Supplier: Supplier) => any;
+  onEditSupplier?: (Supplier: Supplier) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
 }
 
-export const TableDepartment: React.FC<Props> = ({
-  departments,
+export const TableSupplier: React.FC<Props> = ({
+  suppliers,
   isFetching,
   page,
   totalPage,
   isDataEmpty,
-  onCreateDepartment,
-  onDeleteDepartment,
-  onEditDepartment,
+  onCreateSupplier,
+  onDeleteSupplier,
+  onEditSupplier,
   onPageChange,
   onPrevious,
   onNext,
@@ -87,8 +87,8 @@ export const TableDepartment: React.FC<Props> = ({
     setShowContextMenu(false);
   });
 
-  // Chosen department
-  const [chosenDepartment, setChosenDepartment] = useState<Department>();
+  // Chosen Supplier
+  const [chosenSupplier, setChosenSupplier] = useState<Supplier>();
 
   return (
     <div>
@@ -122,9 +122,9 @@ export const TableDepartment: React.FC<Props> = ({
             <th scope="col">
               <IconButton
                 className="px-3"
-                tooltip="Add new department"
+                tooltip="Add new supplier"
                 onClick={() => {
-                  onCreateDepartment && onCreateDepartment();
+                  onCreateSupplier && onCreateSupplier();
                 }}
               >
                 <FaPlusCircle className="text-[21px] text-primary-500/60 hover:text-primary-500/80 my-0.5" />
@@ -133,8 +133,8 @@ export const TableDepartment: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {departments &&
-            departments.map((department, index) => (
+          {suppliers &&
+            suppliers.map((supplier, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -160,7 +160,7 @@ export const TableDepartment: React.FC<Props> = ({
                   setShowContextMenu(true);
                   setContextMenuLeft(e.pageX);
                   setContextMenuTop(e.pageY);
-                  setChosenDepartment(department);
+                  setChosenSupplier(supplier);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-center w-[100px]">
@@ -168,31 +168,31 @@ export const TableDepartment: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {department.departmentId}
+                      {supplier.supplierId}
                     </p>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-medium">
                   {isFetching ? (
-                    <Skeleton className="w-[200px]" />
+                    <Skeleton className="w-[400px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {department.name}
+                      {supplier.name}
                     </p>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
-                    <Skeleton className="w-[100px]" />
+                    <Skeleton className="w-[200px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(department.createdAt)}</div>
+                    <div>{formatISODateFromResponse(supplier.createdAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
-                    <Skeleton className="w-[100px]" />
+                    <Skeleton className="w-[200px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(department.updatedAt)}</div>
+                    <div>{formatISODateFromResponse(supplier.updatedAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
@@ -209,19 +209,19 @@ export const TableDepartment: React.FC<Props> = ({
                       variants={animation}
                     >
                       <IconButton
-                        tooltip="Edit department"
+                        tooltip="Edit supplier"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onEditDepartment && onEditDepartment(department);
+                          onEditSupplier && onEditSupplier(supplier);
                         }}
                       >
                         <AiFillEdit className="text-primary-600 text-2xl" />
                       </IconButton>
                       <IconButton
-                        tooltip="Delete department"
+                        tooltip="Delete supplier"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onDeleteDepartment && onDeleteDepartment(department);
+                          onDeleteSupplier && onDeleteSupplier(supplier);
                         }}
                       >
                         <FaTrash className="text-red-600 text-xl" />
@@ -255,22 +255,20 @@ export const TableDepartment: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <DepartmentActionContextMenu
+      <SupplierActionContextMenu
         show={showContextMenu}
         left={contextMenuLeft}
         top={contextMenuTop}
-        onCreateDepartment={() => {
-          onCreateDepartment && onCreateDepartment();
+        onCreateSupplier={() => {
+          onCreateSupplier && onCreateSupplier();
         }}
-        onEditDepartment={() => {
-          chosenDepartment &&
-            onEditDepartment &&
-            onEditDepartment(chosenDepartment);
+        onEditSupplier={() => {
+          chosenSupplier && onEditSupplier && onEditSupplier(chosenSupplier);
         }}
-        onDeleteDepartment={() => {
-          chosenDepartment &&
-            onDeleteDepartment &&
-            onDeleteDepartment(chosenDepartment);
+        onDeleteSupplier={() => {
+          chosenSupplier &&
+            onDeleteSupplier &&
+            onDeleteSupplier(chosenSupplier);
         }}
       />
     </div>

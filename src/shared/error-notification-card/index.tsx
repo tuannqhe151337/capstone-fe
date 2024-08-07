@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import React from "react";
 import { FaCircleExclamation } from "react-icons/fa6";
+import { cn } from "../utils/cn";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -20,16 +21,18 @@ const heightPlaceholderAnimation: Variants = {
 };
 
 interface Props {
+  className?: string;
   show?: boolean;
   errorMessage?: React.ReactNode;
 }
 
 export const ErrorNotificationCard: React.FC<Props> = ({
+  className,
   show,
   errorMessage,
 }) => {
   return (
-    <div className="relative w-full">
+    <div className={cn("relative w-full", className)}>
       <AnimatePresence>
         {show && (
           <div className="absolute w-full">

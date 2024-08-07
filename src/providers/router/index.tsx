@@ -481,6 +481,44 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // List project pages
+      {
+        path: "project-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProjectManagementListPage = (
+                await import("../../pages/project-management-list")
+              ).ProjectManagementList;
+
+              return {
+                element: <ProjectManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // List supplier pages
+      {
+        path: "supplier-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const SupplierManagementListPage = (
+                await import("../../pages/supplier-management-list")
+              ).SupplierManagementList;
+
+              return {
+                element: <SupplierManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);
