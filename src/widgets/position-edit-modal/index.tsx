@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "../../shared/modal";
 import { IconButton } from "../../shared/icon-button";
 import { IoClose } from "react-icons/io5";
@@ -15,6 +15,9 @@ import {
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
+import { ErrorData } from "../../providers/store/api/type";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import clsx from "clsx";
 
 type FormData = {
   positionName: string;
@@ -68,7 +71,7 @@ export const PositionEditModal: React.FC<Props> = ({
   }, [position]);
 
   // Update new Position mutation
-  const [updatePosition, { isSuccess, isLoading, isError }] =
+  const [updatePosition, { isSuccess, isLoading, isError, error }] =
     useUpdatePositionMutation();
 
   // On submit
@@ -86,6 +89,21 @@ export const PositionEditModal: React.FC<Props> = ({
       onUpdateSuccessfully && onUpdateSuccessfully();
     }
   }, [isLoading, isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
 
   return (
     <Modal
@@ -113,11 +131,18 @@ export const PositionEditModal: React.FC<Props> = ({
             </div>
 
             <ErrorNotificationCard
+              className="mt-3"
               show={!isLoading && isError}
-              errorMessage="Duplicate Position name"
+              errorMessage={errorMessage}
             />
 
-            <div className="w-full mt-10">
+            <div
+              className={clsx({
+                "w-full": true,
+                "mt-5": !isError,
+                "mt-1.5": isError,
+              })}
+            >
               <TEInput
                 autoFocus
                 className="w-full"

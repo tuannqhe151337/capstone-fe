@@ -174,7 +174,7 @@ export const TablePosition: React.FC<Props> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-medium">
                   {isFetching ? (
-                    <Skeleton className="w-[200px]" />
+                    <Skeleton className="w-[400px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
                       {Position.name}
@@ -183,49 +183,51 @@ export const TablePosition: React.FC<Props> = ({
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
-                    <Skeleton className="w-[100px]" />
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{formatISODateFromResponse(Position.createdAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
-                    <Skeleton className="w-[100px]" />
+                    <Skeleton className="w-[200px]" />
                   ) : (
                     <div>{formatISODateFromResponse(Position.updatedAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
-                  <motion.div
-                    className="flex flex-row flex-wrap items-center justify-center gap-2 w-max m-auto"
-                    initial={AnimationStage.HIDDEN}
-                    animate={
-                      hoverRowIndex === index
-                        ? AnimationStage.VISIBLE
-                        : AnimationStage.HIDDEN
-                    }
-                    exit={AnimationStage.HIDDEN}
-                    variants={animation}
-                  >
-                    <IconButton
-                      tooltip="Edit Position"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onEditPosition && onEditPosition(Position);
-                      }}
+                  {!isFetching && (
+                    <motion.div
+                      className="flex flex-row flex-wrap items-center justify-center gap-2 w-max m-auto"
+                      initial={AnimationStage.HIDDEN}
+                      animate={
+                        hoverRowIndex === index
+                          ? AnimationStage.VISIBLE
+                          : AnimationStage.HIDDEN
+                      }
+                      exit={AnimationStage.HIDDEN}
+                      variants={animation}
                     >
-                      <AiFillEdit className="text-primary-600 text-2xl" />
-                    </IconButton>
-                    <IconButton
-                      tooltip="Delete Position"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onDeletePosition && onDeletePosition(Position);
-                      }}
-                    >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
-                  </motion.div>
+                      <IconButton
+                        tooltip="Edit Position"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onEditPosition && onEditPosition(Position);
+                        }}
+                      >
+                        <AiFillEdit className="text-primary-600 text-2xl" />
+                      </IconButton>
+                      <IconButton
+                        tooltip="Delete Position"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onDeletePosition && onDeletePosition(Position);
+                        }}
+                      >
+                        <FaTrash className="text-red-600 text-xl" />
+                      </IconButton>
+                    </motion.div>
+                  )}
                 </td>
               </motion.tr>
             ))}
