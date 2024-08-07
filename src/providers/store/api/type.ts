@@ -46,9 +46,9 @@ export interface Expense {
   costType: CostType;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  project: Project;
+  supplier: Supplier;
+  pic: Pic;
   notes: string;
   status: ExpenseStatus;
 }
@@ -61,5 +61,20 @@ export interface ExpenseStatus {
 
 export interface CostType {
   costTypeId: number;
+  name: string;
+}
+
+export interface Project {
+  projectId: number;
+  name: string;
+}
+
+export interface Supplier {
+  supplierId: number;
+  name: string;
+}
+
+export interface Pic {
+  picId: number;
   name: string;
 }

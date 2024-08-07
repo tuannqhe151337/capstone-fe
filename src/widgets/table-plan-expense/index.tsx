@@ -236,21 +236,21 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {expense.projectName}</>
+                    <> {expense.project.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {expense.supplierName}</>
+                    <> {expense.supplier.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[80px]" />
                   ) : (
-                    <> {expense.pic}</>
+                    <> {expense.pic.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
