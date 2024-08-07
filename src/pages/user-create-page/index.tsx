@@ -76,7 +76,11 @@ type FormData = {
 
 const FullNameSchema = z
   .string()
-  .min(5, "Full name length must be at least 5 characters");
+  // .min(5, "Full name length must be at least 5 characters")
+  .regex(
+    /^[\p{L}\s]{5,}$/u,
+    "Full name should be at least 5 characters long and should not contain special characters"
+  );
 
 const PhoneNumberSchema = z
   .string()
@@ -192,7 +196,14 @@ export const UserCreate: React.FC = () => {
         </div>
       </BubbleBanner>
 
-      <div className="border pb-12 mt-10 rounded-lg dark:border-neutral-800 dark:shadow-black ">
+      <div className="mt-5">
+        <ErrorNotificationCard
+          show={!isLoading && isError}
+          errorMessage={errorMessage}
+        />
+      </div>
+
+      <div className="border pb-12 rounded-lg dark:border-neutral-800 dark:shadow-black ">
         {/* Fullname */}
         <div className="flex flex-row gap-6 pl-10 pt-10">
           <div>
@@ -358,7 +369,7 @@ export const UserCreate: React.FC = () => {
             <Controller
               name="birthDate"
               control={control}
-              render={({ field: { onChange } }) => (
+              render={({ field: { onChange } }) =>  (
                 <DatePickerInput
                   value={new Date()}
                   onChange={(value) => onChange(value)}
@@ -385,11 +396,6 @@ export const UserCreate: React.FC = () => {
             />
           </motion.div>
         </div>
-
-        <ErrorNotificationCard
-          show={!isLoading && isError}
-          errorMessage={errorMessage}
-        />
 
         <div className="mx-7 flex justify-center mt-4">
           <Button

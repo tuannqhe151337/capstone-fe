@@ -89,7 +89,10 @@ type FormData = {
 
 const FullNameSchema = z
   .string()
-  .min(5, "Full name length must be at least 5 characters");
+  .regex(
+    /^[\p{L}\s]{5,}$/u,
+    "Full name should be at least 5 characters long and should not contain special characters"
+  );
 
 const PhoneNumberSchema = z
   .string()
@@ -254,6 +257,7 @@ export const UserEditPage: React.FC = () => {
           </div>
           <motion.div variants={childrenAnimation}>
             <InputSkeleton
+              className="w-[500px]"
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
             >
@@ -312,6 +316,7 @@ export const UserEditPage: React.FC = () => {
           </div>
           <motion.div variants={childrenAnimation}>
             <InputSkeleton
+              className="w-[500px]"
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
             >
@@ -346,6 +351,7 @@ export const UserEditPage: React.FC = () => {
           </div>
           <motion.div variants={childrenAnimation}>
             <InputSkeleton
+              className="w-[500px]"
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
             >
@@ -468,6 +474,7 @@ export const UserEditPage: React.FC = () => {
           </div>
           <motion.div variants={childrenAnimation}>
             <InputSkeleton
+              className="w-[500px]"
               showSkeleton={isFetching}
               showInput={!isFetching && isFetchUserDetailSuccess}
             >
