@@ -3,8 +3,9 @@ import { IconButton } from "../../shared/icon-button";
 import { Variants, motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { TERipple } from "tw-elements-react";
+import { Link } from "react-router-dom";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -20,8 +21,12 @@ const animation: Variants = {
   },
 };
 
-export const AccountIcon: React.FC = () => {
-  const { t, i18n } = useTranslation(["header"]);
+interface Props {
+  onLogoutClick?: Function;
+}
+
+export const AccountIcon: React.FC<Props> = ({ onLogoutClick }) => {
+  const { t } = useTranslation(["header"]);
 
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
@@ -33,7 +38,7 @@ export const AccountIcon: React.FC = () => {
   });
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative z-30">
       <IconButton
         className="p-[6px]"
         onClick={() => {
@@ -52,12 +57,20 @@ export const AccountIcon: React.FC = () => {
             exit={AnimationStage.HIDDEN}
             variants={animation}
           >
-            <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
-              <div className="w-full min-w-max px-7 py-2.5 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
-                {t("profile")}
-              </div>
+            <TERipple rippleColor="light" className="w-full">
+              <Link to={`/profile`}>
+                <div className="w-full min-w-max px-7 py-2.5 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
+                  {t("profile")}
+                </div>
+              </Link>
             </TERipple>
-            <TERipple rippleColor="light" className="w-full" onClick={() => {}}>
+            <TERipple
+              rippleColor="light"
+              className="w-full"
+              onClick={() => {
+                onLogoutClick && onLogoutClick();
+              }}
+            >
               <div className="w-full min-w-max px-7 py-2.5 text-red-500 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
                 {t("logout")}
               </div>

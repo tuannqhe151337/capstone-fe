@@ -22,6 +22,7 @@
   }
 }
 
+/* react-resizable */
 .react-resizable {
   position: relative;
 }
@@ -76,4 +77,49 @@
   cursor: se-resize;
   width: 15px;
   height: 15px;
+}
+
+/* custom-select.css */
+.custom-select__option {
+  @apply py-2 px-4 dark:bg-black/90 dark:text-primary-600;
+}
+
+/* css placeholder khi chưa tương tác với ô select */
+.custom-select__single-value {
+  @apply text-black dark:text-neutral-400 opacity-60;
+}
+
+/* css cho trạng thái ban đầu của hộp select */
+.custom-select__control {
+  @apply !bg-transparent !cursor-pointer !p-0 !m-0 dark:border-neutral-700 dark:opacity-70 dark:border-2 duration-200;
+}
+
+.custom-select__menu-list {
+  @apply !p-0 !m-0;
+}
+
+.custom-select__option:hover {
+  @apply text-black bg-primary-100 dark:bg-primary-900 dark:text-white/80;
+  @apply cursor-pointer;
+}
+
+.custom-select__option--is-focused {
+  /* Màu nền khi option được chọn */
+  @apply !text-black !bg-primary-100 dark:!bg-primary-900 dark:!text-white/80;
+}
+
+/* Ẩn mũi tên trên thanh cuộn  */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Thiết lập chiều rộng của thanh cuộn */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* CSS CHO CÁC LABEL TRONG Ô INPUT */
+.custom-wrapper label {
+  /* color: red;  */
+  @apply dark:text-neutral-400 opacity-60
 }

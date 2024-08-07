@@ -3,22 +3,13 @@ import { FaPalette } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { useEffect, useState } from "react";
 import { Variants, motion, AnimatePresence } from "framer-motion";
-import { useCloseOutside } from "../../shared/hooks/useClosePopup";
-
-interface Theme {
-  themeClasses: string;
-  name: string;
-}
-
-const themes: Theme[] = [
-  { themeClasses: "blue blue-flatten", name: "Blue" },
-  { themeClasses: "emerald emerald-flatten", name: "Emerald" },
-  { themeClasses: "teal teal-flatten", name: "Teal" },
-  { themeClasses: "cyan cyan-flatten", name: "Cyan" },
-  { themeClasses: "purple purple-flatten", name: "Purple" },
-  { themeClasses: "orange orange-flatten", name: "Orange" },
-  { themeClasses: "rose rose-flatten", name: "Rose" },
-];
+import { useCloseOutside } from "../../shared/hooks/use-close-popup";
+import { ThemeCode, ThemeCodes, themes } from "../../type";
+import { changeTheme } from "./utils/change-theme";
+import {
+  useMeQuery,
+  useUserSettingMutation,
+} from "../../providers/store/api/authApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -36,7 +27,13 @@ const animation: Variants = {
 
 export const ThemeChanger = () => {
   // Selected theme
-  const [selectedThemeIndex, setSelectedThemeIndex] = useState<number>(0);
+  const [selectedThemeCode, setSelectedThemeCode] = useState<ThemeCode>("blue");
+
+  // Get data
+  const { data } = useMeQuery();
+
+  // Mutation
+  const [updateUserSetting] = useUserSettingMutation();
 
   // UI
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -50,11 +47,29 @@ export const ThemeChanger = () => {
 
   // Change theme (by changing classes in the body)
   useEffect(() => {
-    document.body.className = `${themes[selectedThemeIndex].themeClasses} font-nunito dark:bg-neutral-900 min-h-screen`;
-  }, [selectedThemeIndex]);
+    changeTheme(selectedThemeCode);
+    if (data) {
+      updateUserSetting({
+        theme: selectedThemeCode,
+        language: data.settings.language,
+        darkMode: data.settings.darkMode,
+      });
+    }
+  }, [selectedThemeCode]);
+
+  useEffect(() => {
+    let typedSelectedThemeCode: ThemeCode = "blue";
+
+    try {
+      typedSelectedThemeCode = ThemeCodes.check(selectedThemeCode);
+    } catch (_) {
+    } finally {
+      setSelectedThemeCode(typedSelectedThemeCode);
+    }
+  }, [data?.settings.theme]);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative z-30">
       <IconButton
         tooltip="Change theme"
         showTooltip={!isDropdownOpen}
@@ -68,19 +83,19 @@ export const ThemeChanger = () => {
       <AnimatePresence>
         {isDropdownOpen && (
           <motion.div
-            className="absolute shadow bg-white dark:bg-neutral-800 z-20 rounded-lg mt-2 overflow-hidden"
+            className="absolute z-20 shadow bg-white dark:bg-neutral-800 rounded-lg mt-2 overflow-hidden"
             initial={AnimationStage.HIDDEN}
             animate={AnimationStage.VISIBLE}
             exit={AnimationStage.HIDDEN}
             variants={animation}
           >
-            {themes.map(({ name }, index) => (
+            {Object.values(themes).map(({ code, name }) => (
               <TERipple
                 key={name}
                 rippleColor="light"
                 className="w-full"
                 onClick={() => {
-                  setSelectedThemeIndex(index);
+                  setSelectedThemeCode(code);
                 }}
               >
                 <div className="px-5 py-3 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">

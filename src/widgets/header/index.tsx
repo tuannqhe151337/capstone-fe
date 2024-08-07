@@ -4,10 +4,14 @@ import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { AccountIcon } from "../../entities/account-icon";
 
-export const Header: React.FC = () => {
+interface Props {
+  onLogoutClick?: Function;
+}
+
+export const Header: React.FC<Props> = ({ onLogoutClick }) => {
   return (
     <div className="flex items-center h-[100px]">
-      <div className="ml-6">
+      <div className="ml-10">
         <Link to={`/`}>
           <p className="text-primary">
             <span className="text-4xl font-black">F</span>
@@ -21,7 +25,7 @@ export const Header: React.FC = () => {
         <LanguageChanger />
         <ThemeChanger />
         <DarkmodeChanger />
-        <AccountIcon />
+        <AccountIcon onLogoutClick={onLogoutClick} />
       </div>
     </div>
   );
