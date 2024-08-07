@@ -1,437 +1,110 @@
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { GlobeConfig, World } from "../../shared/globe";
-import { Meteors } from "../../shared/meteors";
-import { Stars } from "../../shared/stars";
+import CountUp from "react-countup";
+import { Variants, motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { OverviewCard } from "../../entities/overview-card";
+import { RiCalendarScheduleFill } from "react-icons/ri";
+import { PiTreeStructureFill } from "react-icons/pi";
+import { FaPiggyBank } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { ExpenseMonthByMonthChart } from "../../widgets/expense-month-by-month-chart";
+import { ExpenseByCostTypeChart } from "../../widgets/expense-by-cost-type-chart";
+import { lazy, useEffect, useState } from "react";
+
+const GlobeSection = lazy(() => import("../../widgets/globe-section"));
+
+enum AnimationStage {
+  HIDDEN = "hidden",
+  VISIBLE = "visible",
+}
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.05,
+      staggerDirection: -1,
+      delayChildren: 0.15,
+      duration: 0.15,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.15,
+      duration: 0.15,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+    y: 5,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
 
 export const HomePage: React.FC = () => {
-  const globeConfig: GlobeConfig = {
-    pointSize: 4,
-    globeColor: "#062056",
-    showAtmosphere: true,
-    atmosphereColor: "#FFFFFF",
-    atmosphereAltitude: 0.1,
-    emissive: "#062056",
-    emissiveIntensity: 0.1,
-    shininess: 0.9,
-    polygonColor: "rgba(255,255,255,0.7)",
-    ambientLight: "#38bdf8",
-    directionalLeftLight: "#ffffff",
-    directionalTopLight: "#ffffff",
-    pointLight: "#ffffff",
-    arcTime: 1000,
-    arcLength: 0.9,
-    rings: 1,
-    maxRings: 3,
-    initialPosition: { lat: 22.3193, lng: 114.1694 },
-    autoRotate: true,
-    autoRotateSpeed: 0.5,
-  };
-  const colors = ["#06b6d4", "#3b82f6", "#6366f1"];
-  const sampleArcs = [
-    {
-      order: 1,
-      startLat: -19.885592,
-      startLng: -43.951191,
-      endLat: -22.9068,
-      endLng: -43.1729,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 1,
-      startLat: 28.6139,
-      startLng: 77.209,
-      endLat: 3.139,
-      endLng: 101.6869,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 1,
-      startLat: -19.885592,
-      startLng: -43.951191,
-      endLat: -1.303396,
-      endLng: 36.852443,
-      arcAlt: 0.5,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 2,
-      startLat: 1.3521,
-      startLng: 103.8198,
-      endLat: 35.6762,
-      endLng: 139.6503,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 2,
-      startLat: 51.5072,
-      startLng: -0.1276,
-      endLat: 3.139,
-      endLng: 101.6869,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 2,
-      startLat: -15.785493,
-      startLng: -47.909029,
-      endLat: 36.162809,
-      endLng: -115.119411,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 3,
-      startLat: -33.8688,
-      startLng: 151.2093,
-      endLat: 22.3193,
-      endLng: 114.1694,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 3,
-      startLat: 21.3099,
-      startLng: -157.8581,
-      endLat: 40.7128,
-      endLng: -74.006,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 3,
-      startLat: -6.2088,
-      startLng: 106.8456,
-      endLat: 51.5072,
-      endLng: -0.1276,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 4,
-      startLat: 11.986597,
-      startLng: 8.571831,
-      endLat: -15.595412,
-      endLng: -56.05918,
-      arcAlt: 0.5,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 4,
-      startLat: -34.6037,
-      startLng: -58.3816,
-      endLat: 22.3193,
-      endLng: 114.1694,
-      arcAlt: 0.7,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 4,
-      startLat: 51.5072,
-      startLng: -0.1276,
-      endLat: 48.8566,
-      endLng: -2.3522,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 5,
-      startLat: 14.5995,
-      startLng: 120.9842,
-      endLat: 51.5072,
-      endLng: -0.1276,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 5,
-      startLat: 1.3521,
-      startLng: 103.8198,
-      endLat: -33.8688,
-      endLng: 151.2093,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 5,
-      startLat: 34.0522,
-      startLng: -118.2437,
-      endLat: 48.8566,
-      endLng: -2.3522,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 6,
-      startLat: -15.432563,
-      startLng: 28.315853,
-      endLat: 1.094136,
-      endLng: -63.34546,
-      arcAlt: 0.7,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 6,
-      startLat: 37.5665,
-      startLng: 126.978,
-      endLat: 35.6762,
-      endLng: 139.6503,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 6,
-      startLat: 22.3193,
-      startLng: 114.1694,
-      endLat: 51.5072,
-      endLng: -0.1276,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 7,
-      startLat: -19.885592,
-      startLng: -43.951191,
-      endLat: -15.595412,
-      endLng: -56.05918,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 7,
-      startLat: 48.8566,
-      startLng: -2.3522,
-      endLat: 52.52,
-      endLng: 13.405,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 7,
-      startLat: 52.52,
-      startLng: 13.405,
-      endLat: 34.0522,
-      endLng: -118.2437,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 8,
-      startLat: -8.833221,
-      startLng: 13.264837,
-      endLat: -33.936138,
-      endLng: 18.436529,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 8,
-      startLat: 49.2827,
-      startLng: -123.1207,
-      endLat: 52.3676,
-      endLng: 4.9041,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 8,
-      startLat: 1.3521,
-      startLng: 103.8198,
-      endLat: 40.7128,
-      endLng: -74.006,
-      arcAlt: 0.5,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 9,
-      startLat: 51.5072,
-      startLng: -0.1276,
-      endLat: 34.0522,
-      endLng: -118.2437,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 9,
-      startLat: 22.3193,
-      startLng: 114.1694,
-      endLat: -22.9068,
-      endLng: -43.1729,
-      arcAlt: 0.7,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 9,
-      startLat: 1.3521,
-      startLng: 103.8198,
-      endLat: -34.6037,
-      endLng: -58.3816,
-      arcAlt: 0.5,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 10,
-      startLat: -22.9068,
-      startLng: -43.1729,
-      endLat: 28.6139,
-      endLng: 77.209,
-      arcAlt: 0.7,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 10,
-      startLat: 34.0522,
-      startLng: -118.2437,
-      endLat: 31.2304,
-      endLng: 121.4737,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 10,
-      startLat: -6.2088,
-      startLng: 106.8456,
-      endLat: 52.3676,
-      endLng: 4.9041,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 11,
-      startLat: 41.9028,
-      startLng: 12.4964,
-      endLat: 34.0522,
-      endLng: -118.2437,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 11,
-      startLat: -6.2088,
-      startLng: 106.8456,
-      endLat: 31.2304,
-      endLng: 121.4737,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 11,
-      startLat: 22.3193,
-      startLng: 114.1694,
-      endLat: 1.3521,
-      endLng: 103.8198,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 12,
-      startLat: 34.0522,
-      startLng: -118.2437,
-      endLat: 37.7749,
-      endLng: -122.4194,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 12,
-      startLat: 35.6762,
-      startLng: 139.6503,
-      endLat: 22.3193,
-      endLng: 114.1694,
-      arcAlt: 0.2,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 12,
-      startLat: 22.3193,
-      startLng: 114.1694,
-      endLat: 34.0522,
-      endLng: -118.2437,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 13,
-      startLat: 52.52,
-      startLng: 13.405,
-      endLat: 22.3193,
-      endLng: 114.1694,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 13,
-      startLat: 11.986597,
-      startLng: 8.571831,
-      endLat: 35.6762,
-      endLng: 139.6503,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 13,
-      startLat: -22.9068,
-      startLng: -43.1729,
-      endLat: -34.6037,
-      endLng: -58.3816,
-      arcAlt: 0.1,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-    {
-      order: 14,
-      startLat: -33.936138,
-      startLng: 18.436529,
-      endLat: 21.395643,
-      endLng: 39.883798,
-      arcAlt: 0.3,
-      color: colors[Math.floor(Math.random() * (colors.length - 1))],
-    },
-  ];
+  // i18n
+  const { t } = useTranslation(["annual-report-detail"]);
 
-  // Ref
-  const ref = useRef<HTMLDivElement>(null);
+  // Use in view
 
-  // https://stackoverflow.com/questions/68175873/detect-element-reference-height-change
-  const [width, setWidth] = useState<number>();
-  const [height, setHeight] = useState<number>();
-
-  useEffect(() => {
-    if (!ref.current) return;
-    const resizeObserver = new ResizeObserver(() => {
-      if (ref.current) {
-        setWidth(ref.current.offsetWidth);
-        setHeight(ref.current.offsetHeight);
-      }
-    });
-    resizeObserver.observe(ref.current);
-    return () => resizeObserver.disconnect(); // clean up
-  }, []);
+  const { ref, inView } = useInView();
 
   return (
-    <div ref={ref} className="relative overflow-hidden">
-      <div className="flex flex-row items-center justify-left relative">
-        <div className="pl-12 w-[40rem] h-[40rem] -mt-[130px] relative overflow-hidden">
-          <div className="absolute w-full -bottom-20 md:h-full z-20 overflow-hidden">
-            <World data={sampleArcs} globeConfig={globeConfig} />
-          </div>
-        </div>
+    <motion.div
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+      exit={AnimationStage.HIDDEN}
+      variants={staggerChildrenAnimation}
+    >
+      <div className="flex flex-row flex-wrap justify-between gap-5 px-10 w-full">
+        <motion.div className="flex-1" variants={childrenAnimation}>
+          <OverviewCard
+            icon={<RiCalendarScheduleFill className="text-4xl" />}
+            label={t("Total terms")}
+            // isFetching={isFetching}
+            value={<CountUp start={0} end={6} duration={4} />}
+            meteors
+          />
+        </motion.div>
 
-        <motion.div className="flex-1">
-          <h2 className="text-center text-5xl font-bold text-neutral-600 dark:text-neutral-300">
-            Wherever you are
-          </h2>
-          <p className="text-center text-lg font-bold text-neutral-500 dark:text-neutral-400 max-w-md mt-2 mx-auto">
-            we'll manage the expenses for you
-          </p>
+        <motion.div className="flex-1" variants={childrenAnimation}>
+          <OverviewCard
+            icon={<PiTreeStructureFill className="text-4xl" />}
+            label={t("Total departments")}
+            // isFetching={isFetching}
+            value={<CountUp start={0} end={12} duration={4} />}
+          />
+        </motion.div>
+
+        <motion.div className="flex-1" variants={childrenAnimation}>
+          <OverviewCard
+            icon={<FaPiggyBank className="text-4xl" />}
+            label={t("Total expenses")}
+            // isFetching={isFetching}
+            value={
+              <CountUp start={0} end={126643732} duration={4} suffix=" VNĐ" />
+            }
+          />
         </motion.div>
       </div>
 
-      <Meteors className="before:dark:from-neutral-500 z-10" />
+      <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
+        <motion.div className="flex-[2]" variants={childrenAnimation}>
+          <ExpenseMonthByMonthChart />
+        </motion.div>
+        <motion.div className="flex-1" variants={childrenAnimation}>
+          <ExpenseByCostTypeChart />
+        </motion.div>
+      </div>
 
-      {width && height && <Stars number={200} width={width} height={height} />}
-    </div>
+      <div ref={ref} className="mt-20 mb-20">
+        <div className="h-[510px]">{inView && <GlobeSection />}</div>
+      </div>
+    </motion.div>
   );
 };
