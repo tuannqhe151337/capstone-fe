@@ -6,6 +6,7 @@ import clsx from "clsx";
 import { Expense } from "../../providers/store/api/type";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { Skeleton } from "../../shared/skeleton";
+import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -113,6 +114,9 @@ export const TablePlanExpenses: React.FC<Props> = ({
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
+            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
+              Code
+            </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Cost type
             </th>
@@ -193,6 +197,17 @@ export const TablePlanExpenses: React.FC<Props> = ({
                     <Skeleton className="w-[80px]" />
                   ) : (
                     <> {expense.name}</>
+                  )}
+                </td>
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
+                  {isFetching ? (
+                    <Skeleton className="w-[80px]" />
+                  ) : expense.expenseCode ? (
+                    <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
+                  ) : (
+                    <div className="opacity-40 font-semibold italic select-none">
+                      Empty
+                    </div>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
