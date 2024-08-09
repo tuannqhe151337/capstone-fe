@@ -7,10 +7,10 @@ import { TEInput } from "tw-elements-react";
 import { NumericFormat } from "react-number-format";
 import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
 import { useEffect, useState } from "react";
-import { MoneyRateCreateModal } from "../money-rate-create-modal";
+import { ExchangeRateCreateModal } from "../exchange-rate-create-modal";
 import { useHotkeys } from "react-hotkeys-hook";
-import { DeleteMoneyRateModal } from "../delete-money-rate-modal";
-import { MoneyRateActionContextMenu } from "../../entities/money-rate-action-context-menu";
+import { DeleteExchangeRateModal } from "../delete-exchange-rate-modal";
+import { ExchangeRateActionContextMenu } from "../../entities/exchange-rate-action-context-menu";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -48,7 +48,7 @@ interface Props {
   onNext?: () => any;
 }
 
-export const TableMoneyRate: React.FC<Props> = ({ isFetching }) => {
+export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
   // Infinite scroll
   useInfiteLoaderWholePage(() => {});
 
@@ -285,26 +285,26 @@ export const TableMoneyRate: React.FC<Props> = ({ isFetching }) => {
         </tbody>
       </table>
 
-      <MoneyRateActionContextMenu
+      <ExchangeRateActionContextMenu
         show={showContextMenu}
         top={contextMenuTop}
         left={contextMenuLeft}
-        onCreateMoneyRateAction={() => {
+        onCreateExchangeRateAction={() => {
           setShowCreateModal(true);
         }}
-        onDeleteMoneyRateAction={() => {
+        onDeleteExchangeRateAction={() => {
           setShowDeleteModal(true);
         }}
       />
 
-      <MoneyRateCreateModal
+      <ExchangeRateCreateModal
         show={showCreateModal}
         onClose={() => {
           setShowCreateModal(false);
         }}
       />
 
-      <DeleteMoneyRateModal
+      <DeleteExchangeRateModal
         show={showDeleteModal}
         onClose={() => {
           setShowDeleteModal(false);

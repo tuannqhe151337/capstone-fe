@@ -19,7 +19,7 @@ interface Props {
   onCreateSuccessfully?: () => any;
 }
 
-export const MoneyRateCreateModal: React.FC<Props> = ({
+export const ExchangeRateCreateModal: React.FC<Props> = ({
   show,
   onClose,
   onCreateSuccessfully,

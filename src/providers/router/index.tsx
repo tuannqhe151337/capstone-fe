@@ -520,16 +520,16 @@ const router = createBrowserRouter([
         ],
       },
 
-      // Money conversion pages
+      // Exchange rate pages
       {
-        path: "money-conversion",
+        path: "exchange-rate",
         lazy: async () => {
-          const MoneyConversionRootPage = (
-            await import("../../pages/money-conversion-root-page")
-          ).MoneyConversionRootPage;
+          const ExchangeRateRootPage = (
+            await import("../../pages/exchange-rate-root-page")
+          ).ExchangeRateRootPage;
 
           return {
-            element: <MoneyConversionRootPage />,
+            element: <ExchangeRateRootPage />,
           };
         },
         children: [
@@ -537,8 +537,8 @@ const router = createBrowserRouter([
             path: "",
             lazy: async () => {
               const MoneyRatePage = (
-                await import("../../pages/money-rate-page")
-              ).MoneyRatePage;
+                await import("../../pages/exchange-rate-page")
+              ).ExchangeRatePage;
 
               return {
                 element: <MoneyRatePage />,

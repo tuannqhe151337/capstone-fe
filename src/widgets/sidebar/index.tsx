@@ -170,16 +170,16 @@ export const Sidebar = () => {
           </div>
         )}
 
-        {/* Money conversion */}
+        {/* Exchange reate */}
         {data?.role.code === Role.ACCOUNTANT && (
           <div>
-            <Link to={`/money-conversion`}>
+            <Link to={`/exchange-rate`}>
               <Tab
                 icon={
                   <CurrencyConversionIcon className="w-[27px] fill-primary-500 -mr-1 -mt-1 -mb-2" />
                 }
-                text={t("Money conversion")}
-                selected={location.pathname.startsWith("/money-conversion")}
+                text={t("Exchange rate")}
+                selected={location.pathname.startsWith("/exchange-rate")}
                 isExpanded={isExpanded}
               />
             </Link>

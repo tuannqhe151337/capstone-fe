@@ -13,7 +13,7 @@ interface Props {
   onDeleteSuccessfully?: () => any;
 }
 
-export const DeleteMoneyRateModal: React.FC<Props> = ({
+export const DeleteExchangeRateModal: React.FC<Props> = ({
   show,
   onClose,
   onDeleteSuccessfully,
