@@ -42,6 +42,7 @@ export type ExpenseStatusCode = typeof ExpenseStatusCodes.type;
 
 export interface Expense {
   expenseId: number;
+  expenseCode?: string;
   name: string;
   costType: CostType;
   unitPrice: number;
