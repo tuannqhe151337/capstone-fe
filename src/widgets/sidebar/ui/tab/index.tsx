@@ -34,7 +34,7 @@ export const Tab: React.FC<Props> = ({
       >
         <div className="opacity-80">{icon}</div>
         {isExpanded && (
-          <div className="text-sm font-bold select-none">{text}</div>
+          <div className="text-sm font-bold text-left select-none">{text}</div>
         )}
       </TETooltip>
     </TERipple>

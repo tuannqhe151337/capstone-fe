@@ -5,33 +5,39 @@ import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import {
-  CostType,
-  useDeleteCostTypeMutation,
-} from "../../providers/store/api/costTypeAPI";
+import { useDeleteCostTypeMutation } from "../../providers/store/api/costTypeAPI";
+// import {
+//   Currency,
+//   useDeleteCurrencyMutation,
+// } from "../../providers/store/api/currencyAPI";
+
+interface Currency {}
 
 interface Props {
-  costType: CostType;
+  currency: Currency;
   show: boolean;
   onClose: () => any;
-  onDeleteSuccessfully?: (costType: CostType) => any;
+  onDeleteSuccessfully?: (Currency: Currency) => any;
 }
 
-export const DeleteCostTypeModal: React.FC<Props> = ({
-  costType,
+export const DeleteCurrencyModal: React.FC<Props> = ({
+  currency,
   show,
   onClose,
   onDeleteSuccessfully,
 }) => {
   // Mutation
+  //   const [deleteCurrency, { isError, isLoading, isSuccess }] =
+  //     useDeleteCurrencyMutation();
+
   const [deleteCostType, { isError, isLoading, isSuccess }] =
     useDeleteCostTypeMutation();
 
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {
-      toast("Delete cost type successfully!", { type: "success" });
+      toast("Delete currency successfully!", { type: "success" });
       onClose && onClose();
-      onDeleteSuccessfully && onDeleteSuccessfully(costType);
+      onDeleteSuccessfully && onDeleteSuccessfully(currency);
     }
   }, [isError, isLoading, isSuccess]);
 
@@ -59,12 +65,12 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete cost type
+            Delete currency
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the cost type{" "}
+            You're going to delete the currency{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{costType.name}"
+              "VNĐ"
             </span>
             .
           </div>
@@ -92,7 +98,7 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
             variant="error"
             buttonType="outlined"
             onClick={() => {
-              deleteCostType({ costTypeId: costType.costTypeId });
+              //   deleteCurrency({ currency: currency.currencyId });
             }}
           >
             Yes, delete

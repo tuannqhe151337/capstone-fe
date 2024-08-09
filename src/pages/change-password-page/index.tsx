@@ -208,7 +208,6 @@ export const ChangePasswordPage: React.FC = () => {
                   label={t("newPassword")}
                   className=" w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  autoFocus
                   {...register("newPassword", { required: true })}
                 />
                 <InputValidationMessage
@@ -225,7 +224,6 @@ export const ChangePasswordPage: React.FC = () => {
                   label={t("confirmNewPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  autoFocus
                   {...register("confirmNewPassword", { required: true })}
                 />
                 <InputValidationMessage

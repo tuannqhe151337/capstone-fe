@@ -20,6 +20,7 @@ import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
 import { HiOfficeBuilding } from "react-icons/hi";
 import { PiOfficeChairFill } from "react-icons/pi";
+import { CurrencyConversionIcon } from "../../shared/icons/currency-conversion-icon";
 
 export const Sidebar = () => {
   // i18n
@@ -169,6 +170,22 @@ export const Sidebar = () => {
           </div>
         )}
 
+        {/* Money conversion */}
+        {data?.role.code === Role.ACCOUNTANT && (
+          <div>
+            <Link to={`/money-conversion`}>
+              <Tab
+                icon={
+                  <CurrencyConversionIcon className="w-[27px] fill-primary-500 -mr-1 -mt-1 -mb-2" />
+                }
+                text={t("Money conversion")}
+                selected={location.pathname.startsWith("/money-conversion")}
+                isExpanded={isExpanded}
+              />
+            </Link>
+          </div>
+        )}
+
         {/* Masterdata divider */}
         {data?.role.code === Role.ACCOUNTANT ? (
           isExpanded ? (
@@ -185,7 +202,7 @@ export const Sidebar = () => {
           <div>
             <Link to={`/position-management`}>
               <Tab
-                icon={<PiOfficeChairFill className="text-2xl -ml-0.5" />}
+                icon={<PiOfficeChairFill className="text-2xl" />}
                 text={t("Position")}
                 selected={location.pathname.startsWith("/position-management")}
                 isExpanded={isExpanded}
@@ -199,7 +216,7 @@ export const Sidebar = () => {
           <div>
             <Link to={`/cost-type-management`}>
               <Tab
-                icon={<FaCoins className="text-2xl -ml-0.5" />}
+                icon={<FaCoins className="text-2xl" />}
                 text={t("Cost type")}
                 selected={location.pathname.startsWith("/cost-type-management")}
                 isExpanded={isExpanded}
@@ -213,7 +230,7 @@ export const Sidebar = () => {
           <div>
             <Link to={`/supplier-management`}>
               <Tab
-                icon={<FaTruck className="text-2xl -ml-0.5" />}
+                icon={<FaTruck className="text-2xl" />}
                 text={t("Supplier")}
                 selected={location.pathname.startsWith("/supplier-management")}
                 isExpanded={isExpanded}
@@ -227,7 +244,7 @@ export const Sidebar = () => {
           <div>
             <Link to={`/project-management`}>
               <Tab
-                icon={<FaProjectDiagram className="text-2xl -ml-0.5" />}
+                icon={<FaProjectDiagram className="text-2xl" />}
                 text={t("Project")}
                 selected={location.pathname.startsWith("/project-management")}
                 isExpanded={isExpanded}

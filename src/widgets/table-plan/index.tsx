@@ -18,7 +18,7 @@ import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-r
 import { TermPreviewer } from "../../entities/term-previewer";
 import { PlanPreviewer } from "../../entities/plan-previewer";
 import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
-import { ReloadCloudIcon } from "../../shared/reload-cloud-icon";
+import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
 
 enum AnimationStage {
   HIDDEN = "hidden",
