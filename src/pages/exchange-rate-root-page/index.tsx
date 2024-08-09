@@ -41,7 +41,7 @@ const childrenAnimation: Variants = {
 
 type TabId = "rate" | "currency";
 
-export const MoneyConversionRootPage: React.FC = () => {
+export const ExchangeRateRootPage: React.FC = () => {
   // Navigate
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,7 +54,7 @@ export const MoneyConversionRootPage: React.FC = () => {
 
   useEffect(() => {
     const currentTabUrl = location.pathname
-      .replace("/money-conversion/", "")
+      .replace("/exchange-rate/", "")
       .split("/")[0];
 
     switch (currentTabUrl) {
@@ -81,7 +81,7 @@ export const MoneyConversionRootPage: React.FC = () => {
             className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7"
             variants={childrenAnimation}
           >
-            Money conversion
+            Exchange rate
           </motion.p>
         </div>
       </BubbleBanner>
@@ -94,17 +94,17 @@ export const MoneyConversionRootPage: React.FC = () => {
           className="-mb-0.5"
           selectedItemId={selectedTabId}
           items={[
-            { id: "rate", name: "Rate" },
+            { id: "rate", name: "Monthly rate" },
             { id: "currency", name: "Currency" },
           ]}
           onItemChangeHandler={({ id }) => {
             switch (id) {
               case "rate":
-                navigate(`/money-conversion`);
+                navigate(`/exchange-rate`);
                 break;
 
               case "currency":
-                navigate(`/money-conversion/currency`);
+                navigate(`/exchange-rate/currency`);
                 break;
 
               default:

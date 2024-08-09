@@ -11,29 +11,29 @@ interface Props {
   left?: number;
   bottom?: number;
   right?: number;
-  onCreateMoneyRateAction?: () => any;
-  onDeleteMoneyRateAction?: () => any;
+  onCreateExchangeRateAction?: () => any;
+  onDeleteExchangeRateAction?: () => any;
 }
 
-export const MoneyRateActionContextMenu: React.FC<Props> = ({
+export const ExchangeRateActionContextMenu: React.FC<Props> = ({
   className,
   show,
   top,
   left,
   bottom,
   right,
-  onCreateMoneyRateAction,
-  onDeleteMoneyRateAction,
+  onCreateExchangeRateAction,
+  onDeleteExchangeRateAction,
 }) => {
   useHotkeys("c", () => {
     if (show) {
-      onCreateMoneyRateAction && onCreateMoneyRateAction();
+      onCreateExchangeRateAction && onCreateExchangeRateAction();
     }
   });
 
   useHotkeys("d", () => {
     if (show) {
-      onDeleteMoneyRateAction && onDeleteMoneyRateAction();
+      onDeleteExchangeRateAction && onDeleteExchangeRateAction();
     }
   });
 
@@ -55,7 +55,7 @@ export const MoneyRateActionContextMenu: React.FC<Props> = ({
               <span>reate monthly rate conversion</span>
             </>
           }
-          onClick={onCreateMoneyRateAction}
+          onClick={onCreateExchangeRateAction}
         />
         <ContextMenuItem
           className="group-hover:text-red-600 dark:group-hover:text-red-600"
@@ -66,7 +66,7 @@ export const MoneyRateActionContextMenu: React.FC<Props> = ({
               <span>elete monthly rate conversion</span>
             </>
           }
-          onClick={onDeleteMoneyRateAction}
+          onClick={onDeleteExchangeRateAction}
         />
       </div>
     </ContextMenu>
