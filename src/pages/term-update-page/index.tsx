@@ -16,7 +16,7 @@ import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-char
 import { ErrorData } from "../../providers/store/api/type";
 import { TEInput } from "tw-elements-react";
 import { InputValidationMessage } from "../../shared/validation-input-message";
-import DurationRadioOption from "../../entities/duration-radio-option";
+import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
 import { CgSpinner } from "react-icons/cg";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
@@ -363,7 +363,7 @@ export const TermUpdate: React.FC = () => {
           className="flex flex-row gap-6 pt-10 w-full"
           variants={childrenAnimation}
         >
-          <DurationRadioOption
+          <RadioCardOption
             radioInput={
               <RadioInput
                 value={Duration.MONTHLY}
@@ -374,7 +374,7 @@ export const TermUpdate: React.FC = () => {
             onClick={() => handleOnClickRadio(Duration.MONTHLY)}
             isSelected={selectedOption === Duration.MONTHLY}
             label={"Monthly"}
-            fromToDate={
+            description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
                 {formatDate(addDate(watch("startDate"), { months: 1 }))}
@@ -382,7 +382,7 @@ export const TermUpdate: React.FC = () => {
             }
           />
 
-          <DurationRadioOption
+          <RadioCardOption
             disabled
             radioInput={
               <RadioInput
@@ -396,7 +396,7 @@ export const TermUpdate: React.FC = () => {
             // isSelected={selectedOption === Duration.QUARTERLY}
             tooltip="We'll complete this feature in the future"
             label={"Quarterly"}
-            fromToDate={
+            description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
                 {formatDate(addDate(watch("startDate"), { months: 3 }))}
@@ -404,7 +404,7 @@ export const TermUpdate: React.FC = () => {
             }
           />
 
-          <DurationRadioOption
+          <RadioCardOption
             disabled
             radioInput={
               <RadioInput
@@ -418,7 +418,7 @@ export const TermUpdate: React.FC = () => {
             // isSelected={selectedOption === Duration.HALF_YEARLY}
             tooltip="We'll complete this feature in the future"
             label={"Half year"}
-            fromToDate={
+            description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
                 {formatDate(addDate(watch("startDate"), { months: 6 }))}

@@ -18,7 +18,7 @@ import { ErrorData } from "../../providers/store/api/type";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { CgSpinner } from "react-icons/cg";
 import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
-import DurationRadioOption from "../../entities/duration-radio-option";
+import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
 import { DatePickerInputWithErrorAndLabel } from "../../entities/date-picker-input-with-error-and-label";
 import { formatDate } from "../../shared/utils/format-date";
@@ -283,7 +283,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
             className="flex flex-row gap-6 pt-3 w-full"
             variants={childrenAnimation}
           >
-            <DurationRadioOption
+            <RadioCardOption
               radioInput={
                 <RadioInput
                   value={Duration.MONTHLY}
@@ -294,7 +294,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               onClick={() => handleOnClickRadio(Duration.MONTHLY)}
               isSelected={selectedOption === Duration.MONTHLY}
               label={"Monthly"}
-              fromToDate={
+              description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
                   {formatDate(addDate(watch("startDate"), { months: 1 }))}
@@ -302,7 +302,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               }
             />
 
-            <DurationRadioOption
+            <RadioCardOption
               disabled
               radioInput={
                 <RadioInput
@@ -316,7 +316,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               // isSelected={selectedOption === Duration.QUARTERLY}
               tooltip="We'll complete this feature in the future"
               label={"Quarterly"}
-              fromToDate={
+              description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
                   {formatDate(addDate(watch("startDate"), { months: 3 }))}
@@ -324,7 +324,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               }
             />
 
-            <DurationRadioOption
+            <RadioCardOption
               disabled
               radioInput={
                 <RadioInput
@@ -338,7 +338,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               // isSelected={selectedOption === Duration.HALF_YEARLY}
               tooltip="We'll complete this feature in the future"
               label={"Half year"}
-              fromToDate={
+              description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
                   {formatDate(addDate(watch("startDate"), { months: 6 }))}

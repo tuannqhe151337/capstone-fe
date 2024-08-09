@@ -133,7 +133,7 @@ export const PositionManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
             Position management
           </p>
           <div className="ml-auto">

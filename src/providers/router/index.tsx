@@ -519,6 +519,46 @@ const router = createBrowserRouter([
           },
         ],
       },
+
+      // Money conversion pages
+      {
+        path: "money-conversion",
+        lazy: async () => {
+          const MoneyConversionRootPage = (
+            await import("../../pages/money-conversion-root-page")
+          ).MoneyConversionRootPage;
+
+          return {
+            element: <MoneyConversionRootPage />,
+          };
+        },
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const MoneyRatePage = (
+                await import("../../pages/money-rate-page")
+              ).MoneyRatePage;
+
+              return {
+                element: <MoneyRatePage />,
+              };
+            },
+          },
+          {
+            path: "currency",
+            lazy: async () => {
+              const CurrencyManagementListPage = (
+                await import("../../pages/currency-management-list-page")
+              ).CurrencyManagementListPage;
+
+              return {
+                element: <CurrencyManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
     ],
   },
 ]);

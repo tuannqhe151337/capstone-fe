@@ -3,35 +3,30 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
+import { useDeletePlanMutation } from "../../providers/store/api/plansApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import {
-  CostType,
-  useDeleteCostTypeMutation,
-} from "../../providers/store/api/costTypeAPI";
 
 interface Props {
-  costType: CostType;
   show: boolean;
   onClose: () => any;
-  onDeleteSuccessfully?: (costType: CostType) => any;
+  onDeleteSuccessfully?: () => any;
 }
 
-export const DeleteCostTypeModal: React.FC<Props> = ({
-  costType,
+export const DeleteMoneyRateModal: React.FC<Props> = ({
   show,
   onClose,
   onDeleteSuccessfully,
 }) => {
   // Mutation
-  const [deleteCostType, { isError, isLoading, isSuccess }] =
-    useDeleteCostTypeMutation();
+  const [deletePlan, { isError, isLoading, isSuccess }] =
+    useDeletePlanMutation();
 
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {
-      toast("Delete cost type successfully!", { type: "success" });
+      toast("Delete monthly money rate successfully!", { type: "success" });
       onClose && onClose();
-      onDeleteSuccessfully && onDeleteSuccessfully(costType);
+      onDeleteSuccessfully && onDeleteSuccessfully();
     }
   }, [isError, isLoading, isSuccess]);
 
@@ -58,13 +53,13 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
           <div className="flex flex-row flex-wrap items-center justify-center size-[100px] bg-red-100 dark:bg-red-900/50 rounded-full">
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
-          <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete cost type
+          <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
+            Delete monthly currency rate
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the cost type{" "}
+            You're going to delete money conversion rate of{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{costType.name}"
+              "01/2024"
             </span>
             .
           </div>
@@ -92,7 +87,7 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
             variant="error"
             buttonType="outlined"
             onClick={() => {
-              deleteCostType({ costTypeId: costType.costTypeId });
+              deletePlan({ planId: 0 });
             }}
           >
             Yes, delete
