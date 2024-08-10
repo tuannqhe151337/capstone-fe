@@ -536,12 +536,14 @@ const router = createBrowserRouter([
           {
             path: "",
             lazy: async () => {
-              const MoneyRatePage = (
-                await import("../../pages/exchange-rate-page")
-              ).ExchangeRatePage;
+              const ExchangeRateManagementList = (
+                await import(
+                  "../../pages/monthly-exchange-rate-management-list"
+                )
+              ).ExchangeRateManagementList;
 
               return {
-                element: <MoneyRatePage />,
+                element: <ExchangeRateManagementList />,
               };
             },
           },

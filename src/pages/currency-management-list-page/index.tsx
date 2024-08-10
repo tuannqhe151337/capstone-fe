@@ -1,10 +1,10 @@
 import { Variants, motion } from "framer-motion";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { TableCurrency } from "../../widgets/table-currency";
 import { CurrencyCreateModal } from "../../widgets/currency-create-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -30,8 +30,8 @@ const staggerChildrenAnimation: Variants = {
 };
 
 export const CurrencyManagementListPage: React.FC = () => {
-  // Navigate
-  const navigate = useNavigate();
+  // Get all currencies
+  const { data: currencies, isFetching } = useGetAllCurrencyQuery();
 
   // Scroll to top
   useScrollToTopOnLoad();
@@ -52,6 +52,8 @@ export const CurrencyManagementListPage: React.FC = () => {
       variants={staggerChildrenAnimation}
     >
       <TableCurrency
+        currencies={currencies?.data}
+        isFetching={isFetching}
         onCreateCurrency={() => {
           setShowCreateCurrencyModal(true);
         }}
@@ -60,6 +62,9 @@ export const CurrencyManagementListPage: React.FC = () => {
       <CurrencyCreateModal
         show={showCreateCurrencyModal}
         onClose={() => {
+          setShowCreateCurrencyModal(false);
+        }}
+        onCreateSuccessfully={() => {
           setShowCreateCurrencyModal(false);
         }}
       />

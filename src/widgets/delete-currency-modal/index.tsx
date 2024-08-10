@@ -5,13 +5,10 @@ import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useDeleteCostTypeMutation } from "../../providers/store/api/costTypeAPI";
-// import {
-//   Currency,
-//   useDeleteCurrencyMutation,
-// } from "../../providers/store/api/currencyAPI";
-
-interface Currency {}
+import {
+  Currency,
+  useDeleteCurrencyMutation,
+} from "../../providers/store/api/currencyApi";
 
 interface Props {
   currency: Currency;
@@ -27,12 +24,10 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
   onDeleteSuccessfully,
 }) => {
   // Mutation
-  //   const [deleteCurrency, { isError, isLoading, isSuccess }] =
-  //     useDeleteCurrencyMutation();
+  const [deleteCurrency, { isError, isLoading, isSuccess }] =
+    useDeleteCurrencyMutation();
 
-  const [deleteCostType, { isError, isLoading, isSuccess }] =
-    useDeleteCostTypeMutation();
-
+  // On success
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {
       toast("Delete currency successfully!", { type: "success" });
@@ -70,7 +65,7 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
             You're going to delete the currency{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "VNĐ"
+              "{currency.name}"
             </span>
             .
           </div>
@@ -98,7 +93,7 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
             variant="error"
             buttonType="outlined"
             onClick={() => {
-              //   deleteCurrency({ currency: currency.currencyId });
+              deleteCurrency({ currencyId: currency.currencyId });
             }}
           >
             Yes, delete
