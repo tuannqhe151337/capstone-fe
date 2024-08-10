@@ -89,7 +89,7 @@ export const ExpenseCodePreviewer: React.FC<Props> = ({
             <div className="py-4 px-6 w-max">
               <div className="flex flex-row flex-wrap items-center gap-3 w-max">
                 <div
-                  className="cursor-pointer "
+                  className="cursor-pointer"
                   onClick={() => {
                     setOnCopied(true);
                   }}
@@ -97,7 +97,7 @@ export const ExpenseCodePreviewer: React.FC<Props> = ({
                   {onCopied ? (
                     <FaCheck className="text-lg text-green-500" />
                   ) : (
-                    <FaCopy className="text-xl -mt-1 -ml-1 hover:text-primary-400 duration-200" />
+                    <FaCopy className="text-xl -mt-1 -ml-1 text-neutral-400 hover:text-primary-300 duration-200" />
                   )}
                 </div>
                 <div>{expenseCode}</div>

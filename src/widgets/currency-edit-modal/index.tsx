@@ -8,7 +8,6 @@ import { z, ZodType } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputValidationMessage } from "../../shared/validation-input-message";
-import { useCreateDepartmentMutation } from "../../providers/store/api/departmentApi";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
@@ -17,18 +16,16 @@ import { ErrorData } from "../../providers/store/api/type";
 import clsx from "clsx";
 import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
-
-interface Currency {}
-
-export enum Affix {
-  PREFIX = "prefix",
-  SUFFIX = "suffix",
-}
+import {
+  AFFIX,
+  Currency,
+  useUpdateCurrencyMutation,
+} from "../../providers/store/api/currencyApi";
 
 type FormData = {
   currencyName: string;
   currencySymbol?: string;
-  affix?: Affix;
+  affix?: AFFIX;
 };
 
 const CurrencyNameSchema = z
@@ -36,8 +33,14 @@ const CurrencyNameSchema = z
   .min(1, "Currency name length can not be null")
   .max(50, "Currency name length must be at most 50 characters");
 
-export const CreateCurrencySchema: ZodType<FormData> = z.object({
+const CurrencySymbolSchema = z.optional(z.string());
+
+const AffixSchema = z.optional(z.nativeEnum(AFFIX));
+
+export const UpdateCurrencySchema: ZodType<FormData> = z.object({
   currencyName: CurrencyNameSchema,
+  currencySymbol: CurrencySymbolSchema,
+  affix: AffixSchema,
 });
 
 interface Props {
@@ -62,10 +65,11 @@ export const CurrencyEditModal: React.FC<Props> = ({
     reset,
     setValue,
   } = useForm<FormData>({
-    resolver: zodResolver(CreateCurrencySchema), // Apply the zodResolver
+    resolver: zodResolver(UpdateCurrencySchema), // Apply the zodResolver
     values: {
-      currencyName: "",
-      affix: Affix.PREFIX,
+      currencyName: currency.name,
+      currencySymbol: currency.symbol,
+      affix: AFFIX.PREFIX,
     },
   });
 
@@ -75,12 +79,17 @@ export const CurrencyEditModal: React.FC<Props> = ({
   }, [show]);
 
   // Create new department mutation
-  const [createDepartment, { isSuccess, isLoading, isError, error }] =
-    useCreateDepartmentMutation();
+  const [updateCurrency, { isSuccess, isLoading, isError, error }] =
+    useUpdateCurrencyMutation();
 
   // On submit
   const onSubmit: SubmitHandler<FormData> = (data) => {
-    createDepartment({ departmentName: data.currencyName });
+    updateCurrency({
+      currencyId: currency.currencyId,
+      currencyName: data.currencyName,
+      currencySymbol: data.currencySymbol,
+      currencyAffix: data.affix,
+    });
   };
 
   useEffect(() => {
@@ -182,25 +191,29 @@ export const CurrencyEditModal: React.FC<Props> = ({
               {/* Currency prefix suffix */}
               <div className="flex flex-row gap-5 mt-5">
                 <RadioCardOption
-                  isSelected={watch("affix") === Affix.PREFIX}
+                  isSelected={watch("affix") === AFFIX.PREFIX}
                   radioInput={
-                    <RadioInput value={Affix.PREFIX} {...register("affix")} />
+                    <RadioInput value={AFFIX.PREFIX} {...register("affix")} />
                   }
                   label={"Prefix"}
-                  description="Eg: $40"
+                  description={`Eg: ${
+                    watch("currencySymbol") ? watch("currencySymbol") : "$"
+                  }40`}
                   onClick={() => {
-                    setValue("affix", Affix.PREFIX);
+                    setValue("affix", AFFIX.PREFIX);
                   }}
                 />
                 <RadioCardOption
-                  isSelected={watch("affix") === Affix.SUFFIX}
+                  isSelected={watch("affix") === AFFIX.SUFFIX}
                   radioInput={
-                    <RadioInput value={Affix.SUFFIX} {...register("affix")} />
+                    <RadioInput value={AFFIX.SUFFIX} {...register("affix")} />
                   }
                   label={"Suffix"}
-                  description="Eg: 40.000đ"
+                  description={`Eg: 40.000${
+                    watch("currencySymbol") ? watch("currencySymbol") : "đ"
+                  }`}
                   onClick={() => {
-                    setValue("affix", Affix.SUFFIX);
+                    setValue("affix", AFFIX.SUFFIX);
                   }}
                 />
               </div>

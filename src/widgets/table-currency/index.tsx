@@ -10,6 +10,8 @@ import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
 import { CurrencyEditModal } from "../currency-edit-modal";
 import { DeleteCurrencyModal } from "../delete-currency-modal";
+import { Currency } from "../../providers/store/api/currencyApi";
+import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -44,8 +46,6 @@ const rowAnimation: Variants = {
     opacity: 1,
   },
 };
-
-interface Currency {}
 
 export interface Row extends Currency {
   isFetching?: boolean;
@@ -156,7 +156,7 @@ export const TableCurrency: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {new Array(5).fill(true).map((currency, index) => (
+          {currencies?.map((currency, index) => (
             <motion.tr
               key={index}
               variants={rowAnimation}
@@ -189,21 +189,33 @@ export const TableCurrency: React.FC<Props> = ({
                 {isFetching ? (
                   <Skeleton className="w-[100px]" />
                 ) : (
-                  <p className="font-extrabold py-2 duration-200">1</p>
+                  <p className="font-extrabold py-2 duration-200">
+                    {currency.currencyId}
+                  </p>
                 )}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-medium">
                 {isFetching ? (
                   <Skeleton className="w-[200px]" />
                 ) : (
-                  <p className="font-extrabold py-2 duration-200">JPY (¥)</p>
+                  <p className="font-extrabold py-2 duration-200">
+                    {currency.name} ({currency.symbol})
+                  </p>
                 )}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
-                {isFetching ? <Skeleton className="w-[100px]" /> : <div></div>}
+                {isFetching ? (
+                  <Skeleton className="w-[100px]" />
+                ) : (
+                  <div>{formatISODateFromResponse(currency.createdAt)}</div>
+                )}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
-                {isFetching ? <Skeleton className="w-[100px]" /> : <div></div>}
+                {isFetching ? (
+                  <Skeleton className="w-[100px]" />
+                ) : (
+                  <div>{formatISODateFromResponse(currency.updatedAt)}</div>
+                )}
               </td>
               <td className="whitespace-nowrap px-6 py-4 w-[100px]">
                 {!isFetching && (
@@ -223,6 +235,7 @@ export const TableCurrency: React.FC<Props> = ({
                       onClick={(event) => {
                         event.stopPropagation();
                         setShowEditCurrencyModal(true);
+                        setChosenCurrency(currency);
                       }}
                     >
                       <AiFillEdit className="text-primary-600 text-2xl" />
@@ -232,6 +245,7 @@ export const TableCurrency: React.FC<Props> = ({
                       onClick={(event) => {
                         event.stopPropagation();
                         setShowDeleteCurrencyModal(true);
+                        setChosenCurrency(currency);
                       }}
                     >
                       <FaTrash className="text-red-600 text-xl" />
@@ -265,21 +279,28 @@ export const TableCurrency: React.FC<Props> = ({
         </motion.div>
       )}
 
-      <CurrencyEditModal
-        currency={{}}
-        show={showEditCurrencyModal}
-        onClose={() => {
-          setShowEditCurrencyModal(false);
-        }}
-      />
+      {chosenCurrency && (
+        <CurrencyEditModal
+          currency={chosenCurrency}
+          show={showEditCurrencyModal}
+          onClose={() => {
+            setShowEditCurrencyModal(false);
+          }}
+          onEditSuccessfully={() => {
+            setShowEditCurrencyModal(false);
+          }}
+        />
+      )}
 
-      <DeleteCurrencyModal
-        currency={{}}
-        show={showDeleteCurrencyModal}
-        onClose={() => {
-          setShowDeleteCurrencyModal(false);
-        }}
-      />
+      {chosenCurrency && (
+        <DeleteCurrencyModal
+          currency={chosenCurrency}
+          show={showDeleteCurrencyModal}
+          onClose={() => {
+            setShowDeleteCurrencyModal(false);
+          }}
+        />
+      )}
 
       <CurrencyActionContextMenu
         show={showContextMenu}

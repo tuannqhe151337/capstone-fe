@@ -3,19 +3,51 @@ import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Skeleton } from "../../shared/skeleton";
 import clsx from "clsx";
-import { TEInput } from "tw-elements-react";
-import { NumericFormat } from "react-number-format";
-import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ExchangeRateCreateModal } from "../exchange-rate-create-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { DeleteExchangeRateModal } from "../delete-exchange-rate-modal";
 import { ExchangeRateActionContextMenu } from "../../entities/exchange-rate-action-context-menu";
+import {
+  ExchangeRate,
+  MonthlyExchangeRate,
+} from "../../providers/store/api/exchangeRateApi";
+import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
+import { UpdatableMoneyAmountInput } from "./component/updatable-money-amount-input";
 
 enum AnimationStage {
   HIDDEN = "hidden",
   VISIBLE = "visible",
 }
+
+const staggerChildrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    transition: {
+      staggerChildren: 0.05,
+      staggerDirection: -1,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+  [AnimationStage.VISIBLE]: {
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.2,
+      duration: 0.2,
+    },
+  },
+};
+
+const childrenAnimation: Variants = {
+  [AnimationStage.HIDDEN]: {
+    opacity: 0,
+    y: 5,
+  },
+  [AnimationStage.VISIBLE]: {
+    opacity: 1,
+    y: 0,
+  },
+};
 
 const tableAnimation: Variants = {
   [AnimationStage.HIDDEN]: {
@@ -37,27 +69,34 @@ const deleteIconAnimation: Variants = {
   },
 };
 
-interface Props {
-  onCreatePlanClick?: () => any;
+export interface Row extends MonthlyExchangeRate {
   isFetching?: boolean;
-  page?: number | undefined | null;
-  totalPage?: number;
-  isDataEmpty?: boolean;
-  onPageChange?: (page: number | undefined | null) => any;
-  onPrevious?: () => any;
-  onNext?: () => any;
 }
 
-export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
-  // Infinite scroll
-  useInfiteLoaderWholePage(() => {});
+export interface MonthlyExchangeRateMap {
+  month: string;
+  exchangeRateMap: Record<number, ExchangeRate>;
+}
+
+interface Props {
+  isFetching?: boolean;
+  listMonthlyExchangeRate?: MonthlyExchangeRate[];
+}
+
+export const TableExchangeRate: React.FC<Props> = ({
+  isFetching,
+  listMonthlyExchangeRate,
+}) => {
+  // Get all currencies
+  const { data: currencies } = useGetAllCurrencyQuery();
 
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
+  // UI: show delete modal
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
-  // New money rate
+  // UI: new money rate modal
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   useHotkeys("ctrl + =", (e) => {
@@ -69,6 +108,8 @@ export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
   const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
   const [contextMenuTop, setContextMenuTop] = useState<number>(0);
   const [contextMenuLeft, setContextMenuLeft] = useState<number>(0);
+  const [chosenMonthlyExchangeRate, setChosenMonthlyExchangeRate] =
+    useState<MonthlyExchangeRateMap>();
 
   useEffect(() => {
     const clickHandler = () => {
@@ -83,6 +124,28 @@ export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
   useHotkeys("esc", () => {
     setShowContextMenu(false);
   });
+
+  // Map exchange rate to currency
+  const monthlyExchangeRateMap: MonthlyExchangeRateMap[] = useMemo(() => {
+    if (listMonthlyExchangeRate) {
+      return listMonthlyExchangeRate.map(({ month, exchangeRates }) => {
+        const monthlyExchangeRateCurrencyMap: MonthlyExchangeRateMap = {
+          month,
+          exchangeRateMap: {},
+        };
+
+        for (const exchangeRate of exchangeRates) {
+          monthlyExchangeRateCurrencyMap.exchangeRateMap[
+            exchangeRate.currency.currencyId
+          ] = exchangeRate;
+        }
+
+        return monthlyExchangeRateCurrencyMap;
+      });
+    }
+
+    return [];
+  }, [listMonthlyExchangeRate]);
 
   return (
     <motion.div
@@ -100,30 +163,15 @@ export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
             >
               Month
             </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
-            >
-              USD
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
-            >
-              VNĐ
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
-            >
-              JPY
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
-            >
-              KRW
-            </th>
+            {currencies?.data.map(({ currencyId, name }) => (
+              <th
+                key={currencyId}
+                scope="col"
+                className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
+              >
+                {name}
+              </th>
+            ))}
             <th scope="col" className="px-5 rounded-tr-lg">
               <IconButton
                 className="px-3"
@@ -137,152 +185,116 @@ export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
             </th>
           </tr>
         </thead>
-        <tbody>
-          {Array(5)
-            .fill(true)
-            .map((plan, index) => (
-              <tr
-                key={index}
+        <motion.tbody
+          initial={AnimationStage.HIDDEN}
+          animate={AnimationStage.VISIBLE}
+          exit={AnimationStage.HIDDEN}
+          variants={staggerChildrenAnimation}
+        >
+          {monthlyExchangeRateMap.map((monthlyExchangeRate, index) => (
+            <tr
+              key={index}
+              className={clsx({
+                "group text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400 duration-200":
+                  true,
+                "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                  index % 2 === 0,
+                "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                  index % 2 === 1,
+              })}
+              onMouseEnter={() => {
+                setHoverRowIndex(index);
+              }}
+              onMouseLeave={() => {
+                setHoverRowIndex(undefined);
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setShowContextMenu(true);
+                setContextMenuLeft(e.pageX);
+                setContextMenuTop(e.pageY);
+                setChosenMonthlyExchangeRate(monthlyExchangeRate);
+              }}
+            >
+              <td
                 className={clsx({
-                  "group text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400 duration-200":
-                    true,
-                  "bg-white hover:bg-primary-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
-                    index % 2 === 0,
-                  "bg-primary-50 hover:bg-primary-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
-                    index % 2 === 1,
+                  "whitespace-nowrap px-10 py-5 font-extrabold w-[250px]": true,
+                  "rounded-bl-lg": index === 4,
                 })}
-                onMouseEnter={() => {
-                  setHoverRowIndex(index);
-                }}
-                onMouseLeave={() => {
-                  setHoverRowIndex(undefined);
-                }}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  setShowContextMenu(true);
-                  setContextMenuLeft(e.pageX);
-                  setContextMenuTop(e.pageY);
-                }}
               >
+                {monthlyExchangeRate.month}
+              </td>
+              {currencies?.data.map(({ currencyId, symbol, affix }) => (
                 <td
-                  className={clsx({
-                    "whitespace-nowrap px-10 py-5 font-bold w-[250px]": true,
-                    "rounded-bl-lg": index === 4,
-                  })}
-                >
-                  {isFetching ? (
-                    <Skeleton className="w-[200px]" />
-                  ) : (
-                    <div>
-                      <TEInput
-                        className="!text-neutral-500 text-center"
-                        value={"01/2024"}
-                      />
-                    </div>
-                  )}
-                </td>
-                <td
-                  className="whitespace-nowrap px-6 py-5 font-bold"
+                  key={currencyId}
+                  className="whitespace-nowrap px-2 py-5 font-bold"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {isFetching ? (
-                    <Skeleton className="w-[200px]" />
-                  ) : (
-                    <div>
-                      <NumericFormat
-                        className="!text-neutral-500/80"
-                        customInput={TEInput}
-                        value={1}
-                        allowNegative={false}
-                        prefix="$"
-                        thousandSeparator="."
-                        decimalSeparator=","
-                      />
-                    </div>
-                  )}
-                </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
-                  {isFetching ? (
-                    <Skeleton className="w-[200px]" />
-                  ) : (
-                    <div>
-                      <NumericFormat
-                        className="!text-neutral-500/80"
-                        customInput={TEInput}
-                        value={20000}
-                        suffix=" đ"
-                        allowNegative={false}
-                        thousandSeparator="."
-                        decimalSeparator=","
-                      />
-                    </div>
-                  )}
-                </td>
-                <td
-                  className={clsx({
-                    "whitespace-nowrap px-6 py-5 font-bold": true,
-                    "rounded-br-lg": index === 4,
-                  })}
-                >
-                  {isFetching ? (
-                    <Skeleton className="w-[100px]" />
-                  ) : (
-                    <NumericFormat
-                      className="!text-neutral-500/80"
-                      customInput={TEInput}
-                      value={147}
-                      allowNegative={false}
-                      prefix="¥"
-                      thousandSeparator="."
-                      decimalSeparator=","
-                    />
-                  )}
-                </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
-                  {isFetching ? (
-                    <Skeleton className="w-[100px]" />
-                  ) : (
-                    <NumericFormat
-                      className="!text-neutral-500/80"
-                      customInput={TEInput}
-                      value={1.374}
-                      allowNegative={false}
-                      prefix="₩"
-                      thousandSeparator="."
-                      decimalSeparator=","
-                    />
-                  )}
-                </td>
-                <td
-                  className={clsx({
-                    "whitespace-nowrap px-6 py-5 font-bold": true,
-                    "rounded-br-lg": index === 4,
-                  })}
-                >
-                  <motion.div
-                    initial={AnimationStage.HIDDEN}
-                    animate={
-                      hoverRowIndex === index
-                        ? AnimationStage.VISIBLE
-                        : AnimationStage.HIDDEN
+                  <UpdatableMoneyAmountInput
+                    exchangeId={
+                      monthlyExchangeRate.exchangeRateMap[currencyId]
+                        ?.exchangeRateId
                     }
-                    exit={AnimationStage.HIDDEN}
-                    variants={deleteIconAnimation}
-                  >
-                    <IconButton
-                      tooltip="Delete monthly rate"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setShowDeleteModal(true);
-                      }}
-                    >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
-                  </motion.div>
+                    initialValue={
+                      monthlyExchangeRate.exchangeRateMap[currencyId]?.amount ||
+                      0
+                    }
+                    symbol={symbol}
+                    affix={affix}
+                  />
                 </td>
-              </tr>
+              ))}
+
+              <td
+                className={clsx({
+                  "whitespace-nowrap px-6 py-5 font-bold": true,
+                  "rounded-br-lg": index === 4,
+                })}
+              >
+                <motion.div
+                  initial={AnimationStage.HIDDEN}
+                  animate={
+                    hoverRowIndex === index
+                      ? AnimationStage.VISIBLE
+                      : AnimationStage.HIDDEN
+                  }
+                  exit={AnimationStage.HIDDEN}
+                  variants={deleteIconAnimation}
+                >
+                  <IconButton
+                    tooltip="Delete monthly rate"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setShowDeleteModal(true);
+                      setChosenMonthlyExchangeRate(monthlyExchangeRate);
+                    }}
+                  >
+                    <FaTrash className="text-red-600 text-xl" />
+                  </IconButton>
+                </motion.div>
+              </td>
+            </tr>
+          ))}
+
+          {isFetching &&
+            new Array(2).fill(true).map((_, index) => (
+              <motion.tr
+                key={-index}
+                className="border-b-2 border-neutral-100"
+                variants={childrenAnimation}
+              >
+                <td className="py-2 pl-10 pr-1 w-[250px]">
+                  <Skeleton className="w-full" />
+                </td>
+                {currencies?.data.map(({ currencyId }) => (
+                  <td key={currencyId} className="py-2 px-1">
+                    <Skeleton className="w-full" />
+                  </td>
+                ))}
+                <td className="py-2"></td>
+              </motion.tr>
             ))}
-        </tbody>
+        </motion.tbody>
       </table>
 
       <ExchangeRateActionContextMenu
@@ -302,17 +314,23 @@ export const TableExchangeRate: React.FC<Props> = ({ isFetching }) => {
         onClose={() => {
           setShowCreateModal(false);
         }}
+        onCreateSuccessfully={() => {
+          setShowCreateModal(false);
+        }}
       />
 
-      <DeleteExchangeRateModal
-        show={showDeleteModal}
-        onClose={() => {
-          setShowDeleteModal(false);
-        }}
-        onDeleteSuccessfully={() => {
-          setShowDeleteModal(false);
-        }}
-      />
+      {chosenMonthlyExchangeRate && (
+        <DeleteExchangeRateModal
+          month={chosenMonthlyExchangeRate.month}
+          show={showDeleteModal}
+          onClose={() => {
+            setShowDeleteModal(false);
+          }}
+          onDeleteSuccessfully={() => {
+            setShowDeleteModal(false);
+          }}
+        />
+      )}
     </motion.div>
   );
 };

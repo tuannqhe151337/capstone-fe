@@ -3,24 +3,26 @@ import { Modal } from "../../shared/modal";
 import { IoClose } from "react-icons/io5";
 import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
-import { useDeletePlanMutation } from "../../providers/store/api/plansApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useDeleteExchangeRateMutation } from "../../providers/store/api/exchangeRateApi";
 
 interface Props {
+  month: string;
   show: boolean;
   onClose: () => any;
   onDeleteSuccessfully?: () => any;
 }
 
 export const DeleteExchangeRateModal: React.FC<Props> = ({
+  month,
   show,
   onClose,
   onDeleteSuccessfully,
 }) => {
   // Mutation
-  const [deletePlan, { isError, isLoading, isSuccess }] =
-    useDeletePlanMutation();
+  const [deleteExchangeRate, { isError, isLoading, isSuccess }] =
+    useDeleteExchangeRateMutation();
 
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {
@@ -54,12 +56,12 @@ export const DeleteExchangeRateModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete monthly currency rate
+            Delete monthly exchange rate
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete money conversion rate of{" "}
+            You're going to delete exchange rate of month{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "01/2024"
+              "{month}"
             </span>
             .
           </div>
@@ -87,7 +89,7 @@ export const DeleteExchangeRateModal: React.FC<Props> = ({
             variant="error"
             buttonType="outlined"
             onClick={() => {
-              deletePlan({ planId: 0 });
+              deleteExchangeRate({ month });
             }}
           >
             Yes, delete

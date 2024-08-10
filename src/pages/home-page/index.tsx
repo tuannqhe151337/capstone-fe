@@ -8,7 +8,7 @@ import { FaPiggyBank } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { ExpenseMonthByMonthChart } from "../../widgets/expense-month-by-month-chart";
 import { ExpenseByCostTypeChart } from "../../widgets/expense-by-cost-type-chart";
-import { lazy, useEffect, useState } from "react";
+import { lazy } from "react";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
