@@ -17,6 +17,7 @@ import { produce } from "immer";
 import { useAppDispatch } from "../../providers/store/hook";
 import { toast } from "react-toastify";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useReportDetailContext } from "../report-detail-root-page";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -88,6 +89,9 @@ const pageSize = 10;
 export const ReportDetailExpensePage: React.FC = () => {
   // Params
   const { reportId } = useParams<{ reportId: string }>();
+
+  // Get show upload modal method
+  const { setShowReportReviewExpensesModal } = useReportDetailContext();
 
   // Dispatch
   const dispatch = useAppDispatch();
@@ -301,6 +305,9 @@ export const ReportDetailExpensePage: React.FC = () => {
         }}
         onDenyExpensesClick={() => {
           denyExpensesAndUpdateCache(Array.from(listSelectedId));
+        }}
+        onUploadReviewReportClick={() => {
+          setShowReportReviewExpensesModal(true);
         }}
         onDownloadClick={() => {
           const token = localStorage.getItem(LocalStorageItemKey.TOKEN);

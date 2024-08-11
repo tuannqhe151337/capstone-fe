@@ -87,7 +87,7 @@ export const ExchangeRateRootPage: React.FC = () => {
       </BubbleBanner>
 
       <motion.div
-        className="pt-7 mb-3 mx-7 border-b-2"
+        className="pt-7 mb-3 mx-7 border-b-2 dark:border-b-neutral-700"
         variants={childrenAnimation}
       >
         <TabList

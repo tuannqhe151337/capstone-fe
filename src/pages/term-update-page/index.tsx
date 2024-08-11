@@ -155,6 +155,7 @@ export const TermUpdate: React.FC = () => {
       fetchTermDetail(parseInt(termId, 10), true);
     }
   }, [termId]);
+
   // Form
   const {
     register,
@@ -524,7 +525,7 @@ export const TermUpdate: React.FC = () => {
         >
           <Button
             variant="tertiary"
-            className="w-[300px] p-3"
+            className="w-[300px] p-3 font-bold border-primary-200"
             onClick={() => {
               navigate(`/term-management/detail/information/${term?.id}`);
             }}
