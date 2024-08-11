@@ -6,6 +6,7 @@ import {
 import { NumericFormat } from "react-number-format";
 import { TEInput } from "tw-elements-react";
 import { toast } from "react-toastify";
+import { useDetectDarkmode } from "../../../shared/hooks/use-detect-darkmode";
 
 interface Props {
   exchangeId: number;
@@ -24,19 +25,25 @@ export const UpdatableMoneyAmountInput: React.FC<Props> = ({
   const [value, setValue] = useState<number | null | undefined>(initialValue);
   const [isDirty, setIsDirty] = useState<boolean>(false);
 
+  // Check is dark mode
+  const isDarkmode = useDetectDarkmode();
+
   // Update
   const [updateExchangeRate, { isSuccess }] = useUpdateExchangeRateMutation();
 
   useEffect(() => {
     if (isSuccess) {
-      toast("Update successfully!", { type: "success" });
+      toast("Update successfully!", {
+        type: "success",
+        theme: isDarkmode ? "dark" : "light",
+      });
       setIsDirty(false);
     }
   }, [isSuccess]);
 
   return (
     <NumericFormat
-      className="!text-neutral-500/80"
+      className="!text-neutral-500/80 dark:!text-neutral-400"
       customInput={TEInput}
       value={value}
       allowNegative={false}

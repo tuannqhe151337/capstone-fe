@@ -8,13 +8,15 @@ import {
   Outlet,
   useLocation,
   useNavigate,
+  useOutletContext,
   useParams,
 } from "react-router-dom";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
 import {
+  ReportDetail,
   useGetReportActualCostQuery,
   useGetReportDetailQuery,
   useGetReportExpectedCostQuery,
@@ -74,6 +76,12 @@ const animation: Variants = {
 };
 
 type TabId = "expenses" | "detail";
+
+type ContextType = {
+  setShowReportReviewExpensesModal: Dispatch<SetStateAction<boolean>>;
+  showReportReviewExpensesModal: boolean;
+  report?: ReportDetail;
+};
 
 export const ReportDetailRootPage: React.FC = () => {
   // Location
@@ -284,7 +292,13 @@ export const ReportDetailRootPage: React.FC = () => {
           </div>
 
           <motion.div layout>
-            <Outlet />
+            <Outlet
+              context={{
+                setShowReportReviewExpensesModal,
+                showReportReviewExpensesModal,
+                report,
+              }}
+            />
           </motion.div>
         </div>
       </div>
@@ -298,4 +312,8 @@ export const ReportDetailRootPage: React.FC = () => {
       />
     </motion.div>
   );
+};
+
+export const useReportDetailContext = () => {
+  return useOutletContext<ContextType>();
 };
