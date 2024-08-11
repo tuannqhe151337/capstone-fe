@@ -11,6 +11,7 @@ import { StatusTermFilter } from "../../entities/status-term-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { Button } from "../../shared/button";
 import { RiDeleteRow } from "react-icons/ri";
+import { CurrencyChanger } from "../../entities/currency-changer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -200,6 +201,11 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
               variants={widthPlaceholderAnimation}
             />
           </div>
+
+          {/* Currency changer */}
+          <motion.div variants={childrenAnimation}>
+            <CurrencyChanger className="-mb-1.5" />
+          </motion.div>
 
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>

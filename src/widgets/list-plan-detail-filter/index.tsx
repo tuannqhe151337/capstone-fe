@@ -13,6 +13,7 @@ import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { StatusPlanFilter } from "../../entities/status-plan-filter";
 import clsx from "clsx";
+import { CurrencyChanger } from "../../entities/currency-changer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -204,6 +205,9 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
               variants={widthPlaceholderAnimation}
             />
           </div>
+
+          {/* Currency changer */}
+          <CurrencyChanger />
 
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>
