@@ -10,6 +10,7 @@ import {
   useMeQuery,
   useUserSettingMutation,
 } from "../../providers/store/api/authApi";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -89,7 +90,7 @@ export const ThemeChanger = () => {
             exit={AnimationStage.HIDDEN}
             variants={animation}
           >
-            {Object.values(themes).map(({ code, name }) => (
+            {Object.values(themes).map(({ code, name }, index) => (
               <TERipple
                 key={name}
                 rippleColor="light"
@@ -98,7 +99,14 @@ export const ThemeChanger = () => {
                   setSelectedThemeCode(code);
                 }}
               >
-                <div className="px-5 py-3 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
+                <div
+                  className={clsx({
+                    "px-5 py-3 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200":
+                      true,
+                    "border-b-2 border-b-neutral-100 dark:border-b-neutral-700/50":
+                      index !== Object.values(themes).length - 1,
+                  })}
+                >
                   {name}
                 </div>
               </TERipple>

@@ -63,7 +63,7 @@ export const ListReportFilter: React.FC<Props> = ({
   onTermIdChange,
 }) => {
   // UI: show 3 select box
-  const [showFillterBtn, setShowFillterBtn] = useState(false);
+  const [showFilterBtn, setShowFilterBtn] = useState(false);
 
   const filterBtnGroup = (
     <motion.div
@@ -96,12 +96,12 @@ export const ListReportFilter: React.FC<Props> = ({
             }
           />
         </div>
-        <div className="pl-3">
+        <div className="pl-3 flex flex-row flex-wrap items-center">
           <div className="relative z-10 mr-3">
             <IconButton
               className="px-3"
               onClick={() => {
-                setShowFillterBtn((prevState) => !prevState);
+                setShowFilterBtn((prevState) => !prevState);
               }}
             >
               <FaFilter className="text-xl text-primary-500/80 hover:text-primary-500/80 mt-1" />
@@ -111,12 +111,12 @@ export const ListReportFilter: React.FC<Props> = ({
       </div>
 
       <div className="relative w-full">
-        <AnimatePresence>{showFillterBtn && filterBtnGroup}</AnimatePresence>
+        <AnimatePresence>{showFilterBtn && filterBtnGroup}</AnimatePresence>
 
         <motion.div
           initial={AnimationStage.HIDDEN}
           animate={
-            showFillterBtn ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
+            showFilterBtn ? AnimationStage.VISIBLE : AnimationStage.HIDDEN
           }
           variants={heightPlaceholderAnimation}
         />

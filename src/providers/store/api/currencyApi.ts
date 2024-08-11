@@ -11,6 +11,7 @@ export interface Currency {
   name: string;
   symbol: string;
   affix: AFFIX;
+  default: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -95,7 +95,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
     <div>
       <table className="table-auto w-full sm:mt-3 lg:mt-7 xl:mx-auto">
         <motion.thead
-          className="border-b-2 border-primary-100 dark:border-neutral-700/60 xl:text-base lg:text-sm md:text-sm sm:text-sm"
+          className="border-b-2 border-primary-100 dark:border-neutral-700/60 text-sm"
           initial={AnimationStage.HIDDEN}
           animate={AnimationStage.VISIBLE}
           variants={rowAnimation}
@@ -194,14 +194,14 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : expense.expenseCode ? (
                     <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
                   ) : (
@@ -212,14 +212,14 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.costType.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
@@ -231,14 +231,14 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.amount}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
@@ -249,35 +249,35 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.project.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.supplier.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.pic.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.notes}</>
                   )}
                 </td>
                 <td className="px-2 py-3">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <ExpenseTag
                       className="m-auto"

@@ -26,7 +26,6 @@ export interface Currency {
 
 export interface ListExchangeRateParameters {
   year?: number;
-  query?: string;
   page: number;
   pageSize: number;
   sortBy?: string;
@@ -78,11 +77,11 @@ export const exchangeRateAPI = createApi({
       PaginationResponse<MonthlyExchangeRate[]>,
       ListExchangeRateParameters
     >({
-      query: ({ page, pageSize, query, sortBy, sortType }) => {
+      query: ({ year, page, pageSize, sortBy, sortType }) => {
         let url = `/exchange/list-paginate?page=${page}&size=${pageSize}`;
 
-        if (query) {
-          url += `&query=${query}`;
+        if (year) {
+          url += `&year=${year}`;
         }
 
         if (sortBy) {

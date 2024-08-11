@@ -26,7 +26,11 @@ export const ExpenseMonthByMonthChart: React.FC<Props> = ({ className }) => {
       </div>
       <Chart
         options={{
-          chart: { id: "finance-chart", toolbar: { show: false } },
+          chart: {
+            id: "finance-chart",
+            toolbar: { show: false },
+            animations: { enabled: true },
+          },
           dataLabels: { enabled: false },
           stroke: { curve: "smooth" },
           fill: {

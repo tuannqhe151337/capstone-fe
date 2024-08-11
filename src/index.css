@@ -81,17 +81,21 @@
 
 /* custom-select.css */
 .custom-select__option {
-  @apply py-2 px-4 dark:bg-black/90 dark:text-primary-600;
+  @apply !text-sm !font-bold dark:!font-bold !py-3 px-4 !text-neutral-500 dark:bg-black/90 dark:text-neutral-500 duration-200;
+}
+
+.custom-select__input {
+  @apply text-sm font-bold !text-neutral-500 dark:!text-neutral-300;
 }
 
 /* css placeholder khi chưa tương tác với ô select */
 .custom-select__single-value {
-  @apply text-black dark:text-neutral-400 opacity-60;
+  @apply text-sm text-neutral-500 !font-bold dark:text-white opacity-60 duration-200;
 }
 
 /* css cho trạng thái ban đầu của hộp select */
 .custom-select__control {
-  @apply !bg-transparent !cursor-pointer !p-0 !m-0 dark:border-neutral-700 dark:opacity-70 dark:border-2 duration-200;
+  @apply !bg-transparent !cursor-pointer !p-0 !m-0 !text-sm text-neutral-500 font-semibold dark:border-neutral-700 dark:border-2 duration-200;
 }
 
 .custom-select__menu-list {
@@ -99,13 +103,13 @@
 }
 
 .custom-select__option:hover {
-  @apply text-black bg-primary-100 dark:bg-primary-900 dark:text-white/80;
+  @apply font-semibold dark:bg-primary-900 dark:text-white/80;
   @apply cursor-pointer;
 }
 
-.custom-select__option--is-focused {
+.custom-select__option--is-selected {
   /* Màu nền khi option được chọn */
-  @apply !text-black !bg-primary-100 dark:!bg-primary-900 dark:!text-white/80;
+  @apply font-semibold bg-primary-100 !text-white dark:bg-primary-900 dark:text-white/80;
 }
 
 /* Ẩn mũi tên trên thanh cuộn  */
@@ -121,5 +125,5 @@
 /* CSS CHO CÁC LABEL TRONG Ô INPUT */
 .custom-wrapper label {
   /* color: red;  */
-  @apply dark:text-neutral-400 opacity-60
+  @apply dark:text-neutral-400 opacity-60;
 }

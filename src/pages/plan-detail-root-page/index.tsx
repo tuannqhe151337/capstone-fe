@@ -21,9 +21,11 @@ import { Skeleton } from "../../shared/skeleton";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
 import { Button } from "../../shared/button";
-import { FaUpload } from "react-icons/fa";
+import { FaDownload, FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
+import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -142,6 +144,7 @@ export const PlanDetailRootPage: React.FC = () => {
     >
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
+          {/* Left */}
           <p className="text-primary dark:text-primary/70 font-extrabold text-lg w-fit ml-7 space-x-2">
             <Link
               to={`/plan-management`}
@@ -152,9 +155,33 @@ export const PlanDetailRootPage: React.FC = () => {
             <span className="ml-3 text-base opacity-40">&gt;</span>
             <span>Plan detail</span>
           </p>
+
+          {/* Right */}
           <div className="ml-auto">
+            <Button
+              variant={isAuthorizedToReupload ? "tertiary" : "primary"}
+              onClick={() => {
+                const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
+
+                if (token && plan && planId) {
+                  downloadFileFromServer(
+                    `${
+                      import.meta.env.VITE_BACKEND_HOST
+                    }plan/download-xlsx?planId=${planId}`,
+                    token,
+                    `${plan.name}.xlsx`
+                  );
+                }
+              }}
+            >
+              <div className="flex flex-row flex-wrap gap-3">
+                <FaDownload />
+                <p className="text-sm font-bold">Download plan</p>
+              </div>
+            </Button>
             {isAuthorizedToReupload && (
               <Button
+                containerClassName="ml-3"
                 onClick={() => {
                   setShowReuploadModal(true);
                 }}
