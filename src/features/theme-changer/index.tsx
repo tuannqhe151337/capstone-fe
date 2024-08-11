@@ -31,7 +31,7 @@ export const ThemeChanger = () => {
   const [selectedThemeCode, setSelectedThemeCode] = useState<ThemeCode>("blue");
 
   // Get data
-  const { data } = useMeQuery();
+  const { data: me } = useMeQuery();
 
   // Mutation
   const [updateUserSetting] = useUserSettingMutation();
@@ -49,13 +49,6 @@ export const ThemeChanger = () => {
   // Change theme (by changing classes in the body)
   useEffect(() => {
     changeTheme(selectedThemeCode);
-    if (data) {
-      updateUserSetting({
-        theme: selectedThemeCode,
-        language: data.settings.language,
-        darkMode: data.settings.darkMode,
-      });
-    }
   }, [selectedThemeCode]);
 
   useEffect(() => {
@@ -67,7 +60,7 @@ export const ThemeChanger = () => {
     } finally {
       setSelectedThemeCode(typedSelectedThemeCode);
     }
-  }, [data?.settings.theme]);
+  }, [me?.settings.theme]);
 
   return (
     <div ref={ref} className="relative z-30">
@@ -97,6 +90,14 @@ export const ThemeChanger = () => {
                 className="w-full"
                 onClick={() => {
                   setSelectedThemeCode(code);
+
+                  if (me) {
+                    updateUserSetting({
+                      theme: code,
+                      language: me.settings.language,
+                      darkMode: me.settings.darkMode,
+                    });
+                  }
                 }}
               >
                 <div
