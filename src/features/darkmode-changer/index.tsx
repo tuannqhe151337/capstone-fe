@@ -1,6 +1,6 @@
 import { MdDarkMode } from "react-icons/md";
 import { IconButton } from "../../shared/icon-button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { changeDarkmode } from "./utils/change-darkmode";
 import {
   useMeQuery,
@@ -8,30 +8,37 @@ import {
 } from "../../providers/store/api/authApi";
 
 export const DarkmodeChanger: React.FC = () => {
+  // Darkmode state (detach from me because there's a case when user not logged in)
+  const [isDarkmode, setIsDarkmode] = useState<boolean>(false);
+
   // Get data
-  const { data } = useMeQuery();
+  const { data: me } = useMeQuery();
 
   // Mutation
   const [updateUserSetting] = useUserSettingMutation();
 
   useEffect(() => {
-    if (data) {
-      changeDarkmode(data.settings.darkMode);
-    }
-  }, [data?.settings.darkMode]);
+    setIsDarkmode(me?.settings.darkMode || false);
+  }, [me]);
+
+  useEffect(() => {
+    changeDarkmode(isDarkmode);
+  }, [isDarkmode]);
 
   return (
     <IconButton
       containerClassName="z-30"
       tooltip="Dark/Light mode"
       onClick={() => {
-        if (data) {
+        if (me) {
           updateUserSetting({
-            theme: data.settings.theme,
-            language: data.settings.language,
-            darkMode: !data.settings.darkMode,
+            theme: me.settings.theme,
+            language: me.settings.language,
+            darkMode: !isDarkmode,
           });
         }
+
+        setIsDarkmode((prevState) => !prevState);
       }}
     >
       <MdDarkMode className="z-30 text-2xl text-primary-500 dark:text-primary-600" />

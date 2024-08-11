@@ -44,37 +44,35 @@ export const LanguageChanger: React.FC = () => {
   };
 
   // Get data
-  const { data } = useMeQuery();
+  const { data: me } = useMeQuery();
+
+  useEffect(() => {
+    try {
+      const language = LanguageCodes.check(me?.settings.language || "en");
+      setSelectedLanguageCode(language);
+    } catch {}
+  }, [me]);
 
   // Mutation
   const [updateUserSetting] = useUserSettingMutation();
 
-  // Change language (by changing classes in the body)
+  // Change language
   useEffect(() => {
     changeLanguage(selectedLanguageCode);
-    if (data) {
-      updateUserSetting({
-        theme: data.settings.theme,
-        language: selectedLanguageCode,
-        darkMode: data.settings.darkMode,
-      });
-    }
   }, [selectedLanguageCode]);
 
   useEffect(() => {
-    if (data) {
+    if (me) {
       let typedSelectedLanguageCode: LanguageCode = "en";
 
       try {
-        typedSelectedLanguageCode = LanguageCodes.check(
-          data?.settings.language
-        );
+        typedSelectedLanguageCode = LanguageCodes.check(me?.settings.language);
       } catch (_) {
       } finally {
         setSelectedLanguageCode(typedSelectedLanguageCode);
       }
     }
-  }, [data?.settings.language]);
+  }, [me?.settings.language]);
 
   let modalLanguage;
 
@@ -95,6 +93,14 @@ export const LanguageChanger: React.FC = () => {
               className="w-full"
               onClick={() => {
                 setSelectedLanguageCode(code);
+
+                if (me) {
+                  updateUserSetting({
+                    theme: me.settings.theme,
+                    language: code,
+                    darkMode: me.settings.darkMode,
+                  });
+                }
               }}
             >
               <div
