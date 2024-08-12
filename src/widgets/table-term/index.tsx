@@ -3,7 +3,6 @@ import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
@@ -16,31 +15,7 @@ import { TermActionContextMenu } from "../../entities/term-action-context-menu";
 import { DeleteTermModal } from "../delete-term-modal";
 import { Skeleton } from "../../shared/skeleton";
 import { TermPreviewer } from "../../entities/term-previewer";
-
-const renderButton = (status: string) => {
-  switch (status) {
-    case "NEW":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "IN_PROGRESS":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
-          In progess
-        </Tag>
-      );
-    case "CLOSED":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Closed
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { TermTag } from "../../entities/term-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -208,7 +183,9 @@ export const TableTermManagement: React.FC<Props> = ({
                           {term.name}
                         </p>
                       </TermPreviewer>
-                      <div>{renderButton(term.status.code)}</div>
+                      <div>
+                        <TermTag status={term.status.code} />
+                      </div>
                     </div>
                   )}
                 </td>

@@ -1,6 +1,5 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { Tag } from "../../shared/tag";
 // import { OverviewCard } from "./ui/overview-card";
 import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
@@ -24,31 +23,7 @@ import { Skeleton } from "../../shared/skeleton";
 import { StartTermModal } from "../../widgets/start-term-modal";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
-
-const renderButton = (status: string) => {
-  switch (status) {
-    case "NEW":
-      return (
-        <Tag background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "IN_PROGRESS":
-      return (
-        <Tag background="filled" variant="inProgress">
-          In progess
-        </Tag>
-      );
-    case "CLOSED":
-      return (
-        <Tag background="unfilled" variant="denied">
-          Closed
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { TermTag } from "../../entities/term-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -219,7 +194,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
             </p>
 
             <div className="flex flex-row flex-wrap gap-3">
-              {renderButton(term.status.code)}
+              <TermTag status={term.status.code} />
             </div>
 
             <div className="flex flex-row flex-wrap gap-3 ml-auto">
