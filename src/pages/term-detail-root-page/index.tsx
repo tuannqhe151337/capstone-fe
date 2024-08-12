@@ -22,6 +22,8 @@ import { DeleteTermModal } from "../../widgets/delete-term-modal";
 import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
 import { StartTermModal } from "../../widgets/start-term-modal";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const renderButton = (status: string) => {
   switch (status) {
@@ -100,6 +102,9 @@ interface Props {
 export const TermDetailRootPage: React.FC<Props> = ({
   onDeleteSuccessFully,
 }) => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Location
   const location = useLocation();
 

@@ -11,6 +11,8 @@ import {
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyAnnual = (total: number): Row[] => {
   const annual: Row[] = [];
@@ -65,6 +67,10 @@ const childrenAnimation: Variants = {
 };
 
 export const AnnualReportList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.FINANCIAL_STAFF]);
+
+  // UI: reupload modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 

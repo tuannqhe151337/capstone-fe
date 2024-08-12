@@ -13,6 +13,8 @@ import {
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -80,6 +82,9 @@ const childrenAnimation: Variants = {
 };
 
 export const UserManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Navigation
   const navigate = useNavigate();
 

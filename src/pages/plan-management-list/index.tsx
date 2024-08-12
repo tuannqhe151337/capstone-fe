@@ -15,6 +15,8 @@ import _ from "lodash";
 import { useDispatch } from "react-redux";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyPlans = (total: number): Row[] => {
   const plans: Row[] = [];
@@ -85,6 +87,9 @@ const childrenAnimation: Variants = {
 };
 
 export const PlanManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   // Query
   const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
 
