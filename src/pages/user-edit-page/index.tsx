@@ -283,7 +283,7 @@ export const UserEditPage: React.FC = () => {
                 <TEInput
                   type="text"
                   label="Full name"
-                  className="mb-4 bg-white dark:bg-neutral-900"
+                  className="mb-4 font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   autoFocus
                   {...register("fullName", { required: true })}
                 />
@@ -350,7 +350,7 @@ export const UserEditPage: React.FC = () => {
                   render={({ field: { onChange, ...props } }) => (
                     <TEInput
                       label="Phone"
-                      className="mb-4 w-full bg-white dark:bg-neutral-900"
+                      className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                       onChange={(e) => {
                         onChange(allowOnlyNumber(e.currentTarget.value));
                       }}
@@ -420,7 +420,7 @@ export const UserEditPage: React.FC = () => {
                 <TEInput
                   type="email"
                   label="Email"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   {...register("email", { required: true })}
                 />
                 <InputValidationMessage
@@ -482,7 +482,7 @@ export const UserEditPage: React.FC = () => {
                 <TEInput
                   type="text"
                   label="Address"
-                  className="mb-4 w-full bg-white dark:bg-neutral-900"
+                  className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   {...register("address")}
                 />
               </InputSkeleton>

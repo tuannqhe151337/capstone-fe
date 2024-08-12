@@ -12,6 +12,7 @@ import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { Button } from "../../shared/button";
 import { RiDeleteRow } from "react-icons/ri";
 import { CurrencyChanger } from "../../entities/currency-changer";
+import { Currency } from "../../providers/store/api/currencyApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -88,9 +89,11 @@ interface Props {
   className?: string;
   showReviewExpense?: boolean;
   searchboxValue?: string;
+  currencyId?: number;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
+  onCurrencyChoose?: (currency?: Currency) => any;
   onApproveExpensesClick?: () => any;
   onDenyExpensesClick?: () => any;
   onDownloadClick?: () => any;
@@ -101,9 +104,11 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   className,
   showReviewExpense,
   searchboxValue,
+  currencyId,
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onCurrencyChoose,
   onApproveExpensesClick,
   onDenyExpensesClick,
   onDownloadClick,
@@ -204,12 +209,17 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
 
           {/* Currency changer */}
           <motion.div variants={childrenAnimation}>
-            <CurrencyChanger className="-mb-1.5" />
+            <CurrencyChanger
+              chosenCurrencyId={currencyId}
+              className="-mb-1.5"
+              onCurrencyChoose={onCurrencyChoose}
+            />
           </motion.div>
 
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>
             <IconButton
+              tooltip="Filter"
               onClick={() => {
                 setShowFillterBtn((prevState) => !prevState);
               }}
@@ -222,6 +232,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
           <motion.div variants={childrenAnimation}>
             <div className="relative" ref={ref}>
               <IconButton
+                tooltip="More"
                 onClick={() => {
                   setShowOptions((prevState) => !prevState);
                 }}

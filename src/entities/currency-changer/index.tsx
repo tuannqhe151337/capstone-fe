@@ -1,5 +1,5 @@
 import { FaChevronDown } from "react-icons/fa6";
-import { TERipple } from "tw-elements-react";
+import { TERipple, TETooltip } from "tw-elements-react";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
@@ -11,6 +11,7 @@ import clsx from "clsx";
 import { SearchBox } from "../../shared/search-box";
 import { cn } from "../../shared/utils/cn";
 import { useHotkeys } from "react-hotkeys-hook";
+import { RiCoinsFill } from "react-icons/ri";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -28,13 +29,13 @@ const dropDownAnimation: Variants = {
 
 interface Props {
   className?: string;
-  currencyName?: string;
-  onCurrencyChoose?: (currency: Currency) => any;
+  chosenCurrencyId?: number;
+  onCurrencyChoose?: (currency?: Currency) => any;
 }
 
 export const CurrencyChanger: React.FC<Props> = ({
   className,
-  currencyName,
+  chosenCurrencyId: currencyId,
   onCurrencyChoose,
 }) => {
   // UI: open dropdown
@@ -70,7 +71,7 @@ export const CurrencyChanger: React.FC<Props> = ({
           return 0;
         }
 
-        if (prevState === currencies.length - 1) {
+        if (prevState === currencies.length) {
           return null;
         }
 
@@ -85,7 +86,7 @@ export const CurrencyChanger: React.FC<Props> = ({
     () => {
       setFocusIndex((prevState) => {
         if (prevState === null || prevState === undefined) {
-          return currencies.length - 1;
+          return currencies.length;
         }
 
         if (prevState === 0) {
@@ -107,10 +108,8 @@ export const CurrencyChanger: React.FC<Props> = ({
   }, [isOpened]);
 
   useHotkeys("enter", () => {
-    if (focusIndex && focusIndex < currencies.length) {
-      onCurrencyChoose && onCurrencyChoose(currencies[focusIndex]);
-      setIsOpened(false);
-    }
+    onCurrencyChoose && onCurrencyChoose(currentFocusCurrency);
+    setIsOpened(false);
   });
 
   // Click outside handler
@@ -121,30 +120,52 @@ export const CurrencyChanger: React.FC<Props> = ({
     },
   });
 
-  const handleOnClick = () => {
-    setIsOpened((prevState) => !prevState);
-  };
+  // Current focus currency
+  const currentFocusCurrency: Currency | undefined = useMemo(() => {
+    if (!keyword) {
+      if (focusIndex === 0) {
+        return undefined;
+      }
 
-  // Find default currency
-  const currency: Currency | null | undefined = useMemo(() => {
-    const index = data?.data.findIndex((currency) => currency.default === true);
-
-    if (index && index >= 0) {
-      return data?.data[index];
+      if (focusIndex && focusIndex <= currencies.length) {
+        return currencies[focusIndex - 1];
+      }
+    } else if (keyword && focusIndex !== null && focusIndex !== undefined) {
+      if (focusIndex < currencies.length) {
+        return currencies[focusIndex];
+      }
     }
-  }, [data]);
+  }, [keyword, currencies, focusIndex]);
+
+  // Current chosen currency
+  const currentChosenCurrency: Currency | undefined = useMemo(() => {
+    return data?.data.find((currency) => currency.currencyId === currencyId);
+  }, [data?.data, currencyId]);
 
   return (
     <div ref={ref} className={cn("relative z-20 rounded-lg", className)}>
-      <TERipple
-        className="flex flex-row flex-wrap items-center overflow-hidden rounded-xl px-3 py-2 group gap-2 mb-1 cursor-pointer"
-        onClick={handleOnClick}
+      <TETooltip
+        tag="div"
+        title={
+          currentFocusCurrency ? currentFocusCurrency.name : "Convert currency"
+        }
       >
-        <span className="text-sm mt-0.5 font-extrabold text-primary-500/60 group-hover:text-primary-500/80 dark:text-primary-600/80 select-none duration-200">
-          {!currencyName ? currency?.name : currencyName}
-        </span>{" "}
-        <FaChevronDown className="text-xs text-primary-500/60 group-hover:text-primary-500/80 duration-200" />
-      </TERipple>
+        <TERipple
+          className="flex flex-row flex-wrap items-center overflow-hidden rounded-xl px-3 py-2 group gap-1 mb-1 cursor-pointer"
+          onClick={() => {
+            setIsOpened(true);
+          }}
+        >
+          <span className="text-sm mt-0.5 font-extrabold text-primary-500/70 group-hover:text-primary-500/80 dark:text-primary-500/80 select-none duration-200">
+            {!currentChosenCurrency ? (
+              <RiCoinsFill className="text-3xl" />
+            ) : (
+              currentChosenCurrency.name
+            )}
+          </span>{" "}
+          <FaChevronDown className="text-xs text-primary-500/60 group-hover:text-primary-500/80 duration-200" />
+        </TERipple>
+      </TETooltip>
 
       <AnimatePresence>
         {isOpened && (
@@ -169,6 +190,38 @@ export const CurrencyChanger: React.FC<Props> = ({
                 />
               </div>
               <div>
+                {!keyword && (
+                  <TERipple
+                    rippleColor="light"
+                    className="w-full"
+                    onClick={() => {
+                      onCurrencyChoose && onCurrencyChoose(undefined);
+                      setIsOpened(false);
+                    }}
+                  >
+                    <div
+                      className={clsx({
+                        "group select-none text-sm w-full py-3 px-6 cursor-pointer font-bold hover:bg-primary-400 duration-200 dark:hover:bg-primary-900":
+                          true,
+                        "border-b-2 border-b-neutral-100 dark:border-b-neutral-700/50":
+                          currencies.length !== 0,
+                        "bg-primary-400 dark:bg-primary-900": focusIndex === 0,
+                      })}
+                    >
+                      <span
+                        className={clsx({
+                          "group-hover:text-white mr-1": true,
+                          "text-neutral-500/80 dark:text-neutral-400/80":
+                            focusIndex !== 0,
+                          "text-white": focusIndex === 0,
+                        })}
+                      >
+                        Original
+                      </span>
+                    </div>
+                  </TERipple>
+                )}
+
                 {currencies.map((currency, index) => (
                   <TERipple
                     key={currency.currencyId}
@@ -186,15 +239,19 @@ export const CurrencyChanger: React.FC<Props> = ({
                         "border-b-2 border-b-neutral-100 dark:border-b-neutral-700/50":
                           index !== currencies.length - 1,
                         "bg-primary-400 dark:bg-primary-900":
-                          index === focusIndex,
+                          currency.currencyId ===
+                          currentFocusCurrency?.currencyId,
                       })}
                     >
                       <span
                         className={clsx({
                           "group-hover:text-white mr-1": true,
-                          "text-neutral-500/60 dark:text-neutral-400/80":
-                            index !== focusIndex,
-                          "text-white": index === focusIndex,
+                          "text-neutral-500/80 dark:text-neutral-400/80":
+                            currency.currencyId !==
+                            currentFocusCurrency?.currencyId,
+                          "text-white":
+                            currency.currencyId ===
+                            currentFocusCurrency?.currencyId,
                         })}
                       >
                         {currency.name}
@@ -202,9 +259,12 @@ export const CurrencyChanger: React.FC<Props> = ({
                       <span
                         className={clsx({
                           "group-hover:text-white": true,
-                          "text-neutral-500/80 dark:text-neutral-400":
-                            index !== focusIndex,
-                          "text-white": index === focusIndex,
+                          "text-neutral-500 dark:text-neutral-400":
+                            currency.currencyId !==
+                            currentFocusCurrency?.currencyId,
+                          "text-white":
+                            currency.currencyId ===
+                            currentFocusCurrency?.currencyId,
                         })}
                       >
                         ({currency.symbol})

@@ -12,14 +12,11 @@ import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData } from "../../providers/store/api/type";
+import { AFFIX, ErrorData } from "../../providers/store/api/type";
 import clsx from "clsx";
 import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
-import {
-  AFFIX,
-  useCreateCurrencyMutation,
-} from "../../providers/store/api/currencyApi";
+import { useCreateCurrencyMutation } from "../../providers/store/api/currencyApi";
 
 type FormData = {
   currencyName: string;

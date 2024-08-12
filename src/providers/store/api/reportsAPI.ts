@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  AFFIX,
+  Expense,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListReportParameters {
   query?: string | null;
@@ -11,6 +16,7 @@ export interface ListReportParameters {
 
 export interface ListReportExpenseParameters {
   query?: string | null;
+  currencyId?: number | null;
   reportId: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
@@ -97,11 +103,20 @@ export interface Position {
 }
 
 export interface ReportExpectedCostResponse {
-  expectedCost: number;
+  cost: number;
+  currency: Currency;
 }
 
 export interface ReportActualCostResponse {
-  actualCost: number;
+  cost: number;
+  currency: Currency;
+}
+
+export interface Currency {
+  currencyId: number;
+  name: string;
+  symbol: string;
+  affix: AFFIX;
 }
 
 export interface ReviewExpensesBody {
@@ -200,8 +215,20 @@ const reportsAPI = createApi({
         PaginationResponse<Expense[]>,
         ListReportExpenseParameters
       >({
-        query: ({ query, reportId, costTypeId, statusId, page, pageSize }) => {
+        query: ({
+          query,
+          reportId,
+          currencyId,
+          costTypeId,
+          statusId,
+          page,
+          pageSize,
+        }) => {
           let endpoint = `report/expenses?reportId=${reportId}&page=${page}&size=${pageSize}`;
+
+          if (currencyId) {
+            endpoint += `&currencyId=${currencyId}`;
+          }
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
@@ -257,7 +284,6 @@ export const {
   useLazyFetchReportsQuery,
   useGetReportDetailQuery,
   useLazyGetReportDetailQuery,
-  useFetchReportExpensesQuery,
   useLazyFetchReportExpensesQuery,
   useApproveExpensesMutation,
   useDenyExpensesMutation,

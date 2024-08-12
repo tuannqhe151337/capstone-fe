@@ -47,11 +47,19 @@ export interface Expense {
   costType: CostType;
   unitPrice: number;
   amount: number;
+  currency: Currency;
   project: Project;
   supplier: Supplier;
   pic: Pic;
   notes: string;
   status: ExpenseStatus;
+}
+
+export interface Currency {
+  currencyId: number;
+  name: string;
+  symbol: string;
+  affix: AFFIX;
 }
 
 export interface ExpenseStatus {
@@ -78,4 +86,9 @@ export interface Supplier {
 export interface Pic {
   picId: number;
   name: string;
+}
+
+export enum AFFIX {
+  PREFIX = "PREFIX",
+  SUFFIX = "SUFFIX",
 }

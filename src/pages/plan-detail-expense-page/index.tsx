@@ -7,7 +7,11 @@ import {
   useLazyFetchPlanExpensesQuery,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
-import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  LocalStorageItemKey,
+} from "../../providers/store/api/type";
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
@@ -68,6 +72,12 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       pic: {
         picId: 0,
         name: "",
+      },
+      currency: {
+        currencyId: 0,
+        name: "",
+        affix: AFFIX.PREFIX,
+        symbol: "",
       },
       notes: "",
       isFetching: true,

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
-  AFFIX,
   useCreateExchangeRateMutation,
   useUpdateMonthlyExchangeRateMutation,
 } from "../../../providers/store/api/exchangeRateApi";
@@ -8,6 +7,7 @@ import { NumericFormat } from "react-number-format";
 import { TEInput } from "tw-elements-react";
 import { toast } from "react-toastify";
 import { useDetectDarkmode } from "../../../shared/hooks/use-detect-darkmode";
+import { AFFIX } from "../../../providers/store/api/type";
 
 interface Props {
   exchangeId?: number;

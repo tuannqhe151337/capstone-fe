@@ -36,14 +36,31 @@ export interface PlanDetailParameters {
 export interface PlanDetail {
   id: string | number;
   name: string;
-  biggestExpenditure: number;
-  totalPlan: number;
+  actualCost: ActualCost;
+  expectedCost: ExpectedCost;
   term: Term;
   planDueDate: string;
   createdAt: string;
   department: PlanDepartment;
   user: User;
   version: number;
+}
+
+export interface ExpectedCost {
+  cost: number;
+  currency: Currency;
+}
+
+export interface ActualCost {
+  cost: number;
+  currency: Currency;
+}
+
+export interface Currency {
+  currencyId: 1;
+  name: string;
+  symbol: string;
+  affix: string;
 }
 
 export interface CostType {

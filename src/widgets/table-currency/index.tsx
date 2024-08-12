@@ -12,6 +12,7 @@ import { CurrencyEditModal } from "../currency-edit-modal";
 import { DeleteCurrencyModal } from "../delete-currency-modal";
 import { Currency } from "../../providers/store/api/currencyApi";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
+import { Tag } from "../../shared/tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -126,9 +127,9 @@ export const TableCurrency: React.FC<Props> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+              className="pl-12 pr-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Name
+              <p className="text-left">Name</p>
             </th>
             <th
               scope="col"
@@ -194,13 +195,20 @@ export const TableCurrency: React.FC<Props> = ({
                   </p>
                 )}
               </td>
-              <td className="whitespace-nowrap px-6 py-4 font-medium">
+              <td className="whitespace-nowrap pl-12 pr-6 py-4 font-medium">
                 {isFetching ? (
                   <Skeleton className="w-[200px]" />
                 ) : (
-                  <p className="font-extrabold py-2 duration-200">
-                    {currency.name} ({currency.symbol})
-                  </p>
+                  <div className="flex flex-row flex-wrap items-center gap-4">
+                    <p className="font-extrabold py-2 duration-200">
+                      {currency.name} ({currency.symbol}){" "}
+                    </p>
+                    {currency.default && (
+                      <Tag background="filled" variant="inProgress">
+                        Default
+                      </Tag>
+                    )}
+                  </div>
                 )}
               </td>
               <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
@@ -240,16 +248,18 @@ export const TableCurrency: React.FC<Props> = ({
                     >
                       <AiFillEdit className="text-primary-600 text-2xl" />
                     </IconButton>
-                    <IconButton
-                      tooltip="Delete Currency"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setShowDeleteCurrencyModal(true);
-                        setChosenCurrency(currency);
-                      }}
-                    >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
+                    {!currency.default && (
+                      <IconButton
+                        tooltip="Delete Currency"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setShowDeleteCurrencyModal(true);
+                          setChosenCurrency(currency);
+                        }}
+                      >
+                        <FaTrash className="text-red-600 text-xl" />
+                      </IconButton>
+                    )}
                   </motion.div>
                 )}
               </td>
