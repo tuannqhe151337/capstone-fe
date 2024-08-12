@@ -16,7 +16,6 @@ import {
   PlanDetail,
   useGetPlanDetailQuery,
 } from "../../providers/store/api/plansApi";
-import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
@@ -24,9 +23,14 @@ import { Button } from "../../shared/button";
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
-import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  LocalStorageItemKey,
+  Role,
+} from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { NumericFormat } from "react-number-format";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -241,19 +245,51 @@ export const PlanDetailRootPage: React.FC = () => {
 
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
-            icon={<FaMoneyBillTrendUp className="text-4xl" />}
-            label={"Biggest expenditure"}
+            icon={<FaCoins className="text-4xl" />}
+            label={"Expected cost"}
             isFetching={isFetching}
-            value={formatViMoney(plan?.biggestExpenditure || 0)}
+            value={
+              <NumericFormat
+                displayType="text"
+                value={plan?.expectedCost.cost}
+                prefix={
+                  plan?.expectedCost.currency.affix === AFFIX.PREFIX
+                    ? ` ${plan?.expectedCost.currency.name}`
+                    : undefined
+                }
+                suffix={
+                  plan?.expectedCost.currency.affix === AFFIX.SUFFIX
+                    ? ` ${plan?.expectedCost.currency.name}`
+                    : undefined
+                }
+                thousandSeparator
+              />
+            }
           />
         </motion.div>
 
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
-            icon={<FaCoins className="text-4xl" />}
-            label={"Total plan"}
+            icon={<FaMoneyBillTrendUp className="text-4xl" />}
+            label={"Actual cost"}
             isFetching={isFetching}
-            value={formatViMoney(plan?.totalPlan || 0)}
+            value={
+              <NumericFormat
+                displayType="text"
+                value={plan?.actualCost.cost}
+                prefix={
+                  plan?.actualCost.currency.affix === AFFIX.PREFIX
+                    ? ` ${plan?.actualCost.currency.name}`
+                    : undefined
+                }
+                suffix={
+                  plan?.actualCost.currency.affix === AFFIX.SUFFIX
+                    ? ` ${plan?.actualCost.currency.name}`
+                    : undefined
+                }
+                thousandSeparator
+              />
+            }
           />
         </motion.div>
       </div>

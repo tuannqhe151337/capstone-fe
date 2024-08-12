@@ -12,12 +12,11 @@ import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData } from "../../providers/store/api/type";
+import { AFFIX, ErrorData } from "../../providers/store/api/type";
 import clsx from "clsx";
 import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
 import {
-  AFFIX,
   Currency,
   useUpdateCurrencyMutation,
 } from "../../providers/store/api/currencyApi";
@@ -69,7 +68,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
     values: {
       currencyName: currency.name,
       currencySymbol: currency.symbol,
-      affix: AFFIX.PREFIX,
+      affix: currency.affix,
     },
   });
 

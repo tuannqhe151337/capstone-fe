@@ -3,7 +3,7 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
-import { Expense } from "../../providers/store/api/type";
+import { AFFIX, Expense } from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { useEffect, useState } from "react";
@@ -150,13 +150,13 @@ export const TableReportExpenses: React.FC<Props> = ({
               Cost type
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Unit price (VND)
+              Unit price
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Amount
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Total (VND)
+              Total
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Project name
@@ -259,7 +259,16 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
-                      disabled
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
@@ -278,6 +287,16 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice * expense.amount}
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}

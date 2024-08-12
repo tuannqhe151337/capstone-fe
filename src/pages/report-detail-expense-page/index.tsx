@@ -11,7 +11,11 @@ import {
   useLazyFetchReportExpensesQuery,
 } from "../../providers/store/api/reportsAPI";
 import { useParams } from "react-router-dom";
-import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  LocalStorageItemKey,
+} from "../../providers/store/api/type";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { produce } from "immer";
 import { useAppDispatch } from "../../providers/store/hook";
@@ -77,6 +81,12 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
         code: "WAITING_FOR_APPROVAL",
         name: "",
       },
+      currency: {
+        currencyId: 0,
+        affix: AFFIX.PREFIX,
+        name: "",
+        symbol: "",
+      },
       isFetching: true,
     });
   }
@@ -110,6 +120,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
   const [costTypeId, setCostTypeId] = useState<number | null>();
+  const [currencyId, setCurrencyId] = useState<number>();
   const [statusId, setStatusId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
@@ -143,6 +154,10 @@ export const ReportDetailExpensePage: React.FC = () => {
           pageSize: 10,
         };
 
+        if (currencyId) {
+          paramters.currencyId = currencyId;
+        }
+
         if (costTypeId) {
           paramters.costTypeId = costTypeId;
         }
@@ -156,7 +171,7 @@ export const ReportDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId]);
+  }, [searchboxValue, page, costTypeId, statusId, currencyId]);
 
   // Show checkboxes for review
   const isAuthorizedAndTimeToReviewReport =
@@ -291,6 +306,7 @@ export const ReportDetailExpensePage: React.FC = () => {
         className="pl-3 mt-7"
         showReviewExpense={listSelectedId.size > 0}
         searchboxValue={searchboxValue}
+        currencyId={currencyId}
         onSearchboxChange={(value) => {
           setSearchboxValue(value);
         }}
@@ -299,6 +315,9 @@ export const ReportDetailExpensePage: React.FC = () => {
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
+        }}
+        onCurrencyChoose={(currency) => {
+          setCurrencyId(currency?.currencyId);
         }}
         onApproveExpensesClick={() => {
           approveExpenseAndUpdateCache(Array.from(listSelectedId));

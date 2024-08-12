@@ -1,10 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
-
-export enum AFFIX {
-  PREFIX = "PREFIX",
-  SUFFIX = "SUFFIX",
-}
+import { AFFIX, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface MonthlyExchangeRate {
   month: string;

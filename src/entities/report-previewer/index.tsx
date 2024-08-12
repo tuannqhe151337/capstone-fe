@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cn } from "../../shared/utils/cn";
-import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import {
   useLazyGetReportActualCostQuery,
@@ -11,6 +10,8 @@ import {
   useLazyGetReportExpectedCostQuery,
 } from "../../providers/store/api/reportsAPI";
 import { ReportTag } from "../report-tag";
+import { NumericFormat } from "react-number-format";
+import { AFFIX } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,7 +43,7 @@ export const ReportPreviewer: React.FC<Props> = ({
     useLazyGetReportDetailQuery();
   const [fetchActualCost, { data: actualCostData }] =
     useLazyGetReportActualCostQuery();
-  const [fetchExpectedCost, { data: expcetedCostData }] =
+  const [fetchExpectedCost, { data: expectedCostData }] =
     useLazyGetReportExpectedCostQuery();
 
   // Hover state
@@ -78,7 +79,7 @@ export const ReportPreviewer: React.FC<Props> = ({
         {isHover &&
           isSuccess &&
           report &&
-          expcetedCostData &&
+          expectedCostData &&
           actualCostData && (
             <motion.div
               className="absolute z-10 left-[100%] -top-3 bg-white dark:bg-neutral-800 border dark:border-neutral-800 rounded-lg shadow dark:shadow-lg cursor-auto"
@@ -109,7 +110,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                 <div className="mt-3.5 mb-0.5  px-2">
                   <div className="flex flex-row flex-wrap gap-10 w-max">
                     <div className="space-y-5">
-                      {/* Biggest expenditure */}
+                      {/* Actual cost */}
                       <div className="flex flex-row flex-wrap items-center gap-3 w-max">
                         <FaMoneyBillTrendUp className="text-lg text-neutral-400/30" />
                         <div className="space-y-1">
@@ -117,12 +118,28 @@ export const ReportPreviewer: React.FC<Props> = ({
                             Actual cost
                           </p>
                           <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
-                            {formatViMoney(actualCostData.actualCost)}
+                            <NumericFormat
+                              displayType="text"
+                              value={expectedCostData?.cost}
+                              prefix={
+                                expectedCostData?.currency.affix ===
+                                AFFIX.PREFIX
+                                  ? ` ${expectedCostData?.currency.name}`
+                                  : undefined
+                              }
+                              suffix={
+                                expectedCostData?.currency.affix ===
+                                AFFIX.SUFFIX
+                                  ? ` ${expectedCostData?.currency.name}`
+                                  : undefined
+                              }
+                              thousandSeparator
+                            />
                           </p>
                         </div>
                       </div>
 
-                      {/* Total plan */}
+                      {/* Expected cost */}
                       <div className="flex flex-row flex-wrap items-center gap-3 w-max">
                         <FaCoins className="text-lg text-neutral-400/30" />
                         <div className="space-y-1">
@@ -130,7 +147,23 @@ export const ReportPreviewer: React.FC<Props> = ({
                             Expected cost
                           </p>
                           <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
-                            {formatViMoney(expcetedCostData.expectedCost)}
+                            <NumericFormat
+                              displayType="text"
+                              value={expectedCostData?.cost}
+                              prefix={
+                                expectedCostData?.currency.affix ===
+                                AFFIX.PREFIX
+                                  ? ` ${expectedCostData?.currency.name}`
+                                  : undefined
+                              }
+                              suffix={
+                                expectedCostData?.currency.affix ===
+                                AFFIX.SUFFIX
+                                  ? ` ${expectedCostData?.currency.name}`
+                                  : undefined
+                              }
+                              thousandSeparator
+                            />
                           </p>
                         </div>
                       </div>

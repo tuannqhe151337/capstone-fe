@@ -1,10 +1,10 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
-
-export enum AFFIX {
-  PREFIX = "PREFIX",
-  SUFFIX = "SUFFIX",
-}
+import {
+  AFFIX,
+  ListResponse,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface Currency {
   currencyId: number;

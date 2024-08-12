@@ -11,7 +11,6 @@ import {
   useOutletContext,
   useParams,
 } from "react-router-dom";
-import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Skeleton } from "../../shared/skeleton";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { OverviewCard } from "../../entities/overview-card";
@@ -27,9 +26,14 @@ import { Button } from "../../shared/button";
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { useHotkeys } from "react-hotkeys-hook";
-import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  LocalStorageItemKey,
+  Role,
+} from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { NumericFormat } from "react-number-format";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -254,7 +258,23 @@ export const ReportDetailRootPage: React.FC = () => {
             icon={<FaMoneyBillTrendUp className="text-4xl" />}
             label={"Expected cost"}
             isFetching={isFetching}
-            value={formatViMoney(expectedCostData?.expectedCost || 0)}
+            value={
+              <NumericFormat
+                displayType="text"
+                value={expectedCostData?.cost}
+                prefix={
+                  expectedCostData?.currency.affix === AFFIX.PREFIX
+                    ? ` ${expectedCostData?.currency.name}`
+                    : undefined
+                }
+                suffix={
+                  expectedCostData?.currency.affix === AFFIX.SUFFIX
+                    ? ` ${expectedCostData?.currency.name}`
+                    : undefined
+                }
+                thousandSeparator
+              />
+            }
           />
         </motion.div>
 
@@ -263,12 +283,28 @@ export const ReportDetailRootPage: React.FC = () => {
             icon={<FaCoins className="text-4xl" />}
             label={"Actual cost"}
             isFetching={isFetching}
-            value={formatViMoney(actualCostData?.actualCost || 0)}
+            value={
+              <NumericFormat
+                displayType="text"
+                value={actualCostData?.cost}
+                prefix={
+                  actualCostData?.currency.affix === AFFIX.PREFIX
+                    ? ` ${actualCostData?.currency.name}`
+                    : undefined
+                }
+                suffix={
+                  actualCostData?.currency.affix === AFFIX.SUFFIX
+                    ? ` ${actualCostData?.currency.name}`
+                    : undefined
+                }
+                thousandSeparator
+              />
+            }
           />
         </motion.div>
       </div>
 
-      <div className="mt-7 px-5">
+      <div className="mt-7 px-5 pb-32">
         <div className="relative w-full h-full border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl py-7 px-8">
           <div className="border-b-2 border-b-neutral-200 dark:border-b-neutral-700">
             <TabList

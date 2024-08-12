@@ -10,11 +10,10 @@ import { Button } from "../../shared/button";
 import { InputRate } from "./ui/input-rate";
 import { useEffect, useState } from "react";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData } from "../../providers/store/api/type";
+import { AFFIX, ErrorData } from "../../providers/store/api/type";
 import {
-  AFFIX,
   CreateMonthlyExchangeRateBody,
-  useCreateExchangeRateMutation,
+  useCreateMonthlyExchangeRateMutation,
 } from "../../providers/store/api/exchangeRateApi";
 import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
 import { z } from "zod";
@@ -77,15 +76,15 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
   });
 
   const onSubmit: SubmitHandler<CreateMonthlyExchangeRateBody> = (data) => {
-    createExchangeRate(data);
+    createMonthlyExchangeRate(data);
   };
 
   // Get all currencies
   const { data: currencies } = useGetAllCurrencyQuery();
 
   // Mutation
-  const [createExchangeRate, { isLoading, isSuccess, isError, error }] =
-    useCreateExchangeRateMutation();
+  const [createMonthlyExchangeRate, { isLoading, isSuccess, isError, error }] =
+    useCreateMonthlyExchangeRateMutation();
 
   // Reset value on open modal
   useEffect(() => {
