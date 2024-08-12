@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
-  ListExchangeRateParameters,
-  useLazyGetListExchangeRateQuery,
+  ListMonthlyExchangeRateParameters,
+  useLazyGetListMonthlyExchangeRateQuery,
 } from "../../providers/store/api/exchangeRateApi";
 import { TableExchangeRate } from "../../widgets/table-exchange-rate";
 import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
@@ -15,10 +15,10 @@ export const ExchangeRateManagementList: React.FC = () => {
 
   // Fetch data
   const [getListExchangeRate, { data, isFetching }] =
-    useLazyGetListExchangeRateQuery();
+    useLazyGetListMonthlyExchangeRateQuery();
 
   useEffect(() => {
-    const listExchangRateParam: ListExchangeRateParameters = {
+    const listExchangRateParam: ListMonthlyExchangeRateParameters = {
       page: 1,
       pageSize,
     };
@@ -33,7 +33,7 @@ export const ExchangeRateManagementList: React.FC = () => {
   // Infinite scroll
   useInfiteLoaderWholePage(() => {
     if (data && data.data.length < data.pagination.totalRecords) {
-      const listExchangRateParam: ListExchangeRateParameters = {
+      const listExchangRateParam: ListMonthlyExchangeRateParameters = {
         page: data.pagination.page + 1,
         pageSize,
       };

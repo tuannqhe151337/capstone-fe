@@ -5,7 +5,7 @@ import { Button } from "../../shared/button";
 import { IoIosWarning } from "react-icons/io";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { useDeleteExchangeRateMutation } from "../../providers/store/api/exchangeRateApi";
+import { useDeleteMonthlyExchangeRateMutation } from "../../providers/store/api/exchangeRateApi";
 
 interface Props {
   month: string;
@@ -22,7 +22,7 @@ export const DeleteExchangeRateModal: React.FC<Props> = ({
 }) => {
   // Mutation
   const [deleteExchangeRate, { isError, isLoading, isSuccess }] =
-    useDeleteExchangeRateMutation();
+    useDeleteMonthlyExchangeRateMutation();
 
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {

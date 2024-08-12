@@ -24,7 +24,7 @@ export interface Currency {
   affix: AFFIX;
 }
 
-export interface ListExchangeRateParameters {
+export interface ListMonthlyExchangeRateParameters {
   year?: number;
   page: number;
   pageSize: number;
@@ -32,17 +32,23 @@ export interface ListExchangeRateParameters {
   sortType?: string;
 }
 
-export interface DeleteExchangeRateBody {
+export interface DeleteMonthlyExchangeRateBody {
   month: string;
 }
 
-export interface CreateExchangeRateBody {
+export interface CreateMonthlyExchangeRateBody {
   month: string;
   exchangeRates: ExchangeRateBody[];
 }
 
-export interface UpdateExchangeRateBody {
+export interface UpdateMonthlyExchangeRateBody {
   exchangeId: number;
+  amount: number;
+}
+
+export interface CreateExchangeRateBody {
+  month: string;
+  currencyId: number;
   amount: number;
 }
 
@@ -73,9 +79,9 @@ export const exchangeRateAPI = createApi({
   baseQuery: staggeredBaseQuery,
   tagTypes: ["exchange-rate"],
   endpoints: (builder) => ({
-    getListExchangeRate: builder.query<
+    getListMonthlyExchangeRate: builder.query<
       PaginationResponse<MonthlyExchangeRate[]>,
-      ListExchangeRateParameters
+      ListMonthlyExchangeRateParameters
     >({
       query: ({ year, page, pageSize, sortBy, sortType }) => {
         let url = `/exchange/list-paginate?page=${page}&size=${pageSize}`;
@@ -118,7 +124,10 @@ export const exchangeRateAPI = createApi({
       },
     }),
 
-    createExchangeRate: builder.mutation<any, CreateExchangeRateBody>({
+    createMonthlyExchangeRate: builder.mutation<
+      any,
+      CreateMonthlyExchangeRateBody
+    >({
       query: (createExchangeRateBody) => ({
         url: `/exchange/create`,
         method: "POST",
@@ -126,7 +135,11 @@ export const exchangeRateAPI = createApi({
       }),
       invalidatesTags: ["exchange-rate"],
     }),
-    updateExchangeRate: builder.mutation<any, UpdateExchangeRateBody>({
+
+    updateMonthlyExchangeRate: builder.mutation<
+      any,
+      UpdateMonthlyExchangeRateBody
+    >({
       query: (updateExchangeRateBody) => ({
         url: `/exchange/update`,
         method: "PUT",
@@ -134,7 +147,20 @@ export const exchangeRateAPI = createApi({
       }),
       invalidatesTags: ["exchange-rate"],
     }),
-    deleteExchangeRate: builder.mutation<any, DeleteExchangeRateBody>({
+
+    createExchangeRate: builder.mutation<any, CreateExchangeRateBody>({
+      query: (createExchangeRateBody) => ({
+        url: `/exchange/update/new-exchange-rate`,
+        method: "POST",
+        body: createExchangeRateBody,
+      }),
+      invalidatesTags: ["exchange-rate"],
+    }),
+
+    deleteMonthlyExchangeRate: builder.mutation<
+      any,
+      DeleteMonthlyExchangeRateBody
+    >({
       query: (deleteExchangeRateBody) => ({
         url: `/exchange`,
         method: "DELETE",
@@ -146,8 +172,9 @@ export const exchangeRateAPI = createApi({
 });
 
 export const {
-  useLazyGetListExchangeRateQuery,
-  useDeleteExchangeRateMutation,
+  useLazyGetListMonthlyExchangeRateQuery,
+  useDeleteMonthlyExchangeRateMutation,
+  useCreateMonthlyExchangeRateMutation,
+  useUpdateMonthlyExchangeRateMutation,
   useCreateExchangeRateMutation,
-  useUpdateExchangeRateMutation,
 } = exchangeRateAPI;
