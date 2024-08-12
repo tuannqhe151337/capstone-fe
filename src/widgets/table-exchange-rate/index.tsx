@@ -239,6 +239,8 @@ export const TableExchangeRate: React.FC<Props> = ({
                       monthlyExchangeRate.exchangeRateMap[currencyId]?.amount ||
                       0
                     }
+                    month={monthlyExchangeRate.month}
+                    currencyId={currencyId}
                     symbol={symbol}
                     affix={affix}
                   />

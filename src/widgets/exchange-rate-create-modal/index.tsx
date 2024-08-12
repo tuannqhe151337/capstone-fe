@@ -13,7 +13,7 @@ import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-char
 import { ErrorData } from "../../providers/store/api/type";
 import {
   AFFIX,
-  CreateExchangeRateBody,
+  CreateMonthlyExchangeRateBody,
   useCreateExchangeRateMutation,
 } from "../../providers/store/api/exchangeRateApi";
 import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
@@ -72,11 +72,11 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
     handleSubmit,
     reset,
     watch,
-  } = useForm<CreateExchangeRateBody>({
+  } = useForm<CreateMonthlyExchangeRateBody>({
     resolver: zodResolver(MonthlyExchangeRateCreateSchema),
   });
 
-  const onSubmit: SubmitHandler<CreateExchangeRateBody> = (data) => {
+  const onSubmit: SubmitHandler<CreateMonthlyExchangeRateBody> = (data) => {
     createExchangeRate(data);
   };
 
