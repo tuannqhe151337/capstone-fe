@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 import { FaFileImport } from "react-icons/fa6";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
+import { RiCalendarScheduleFill, RiProgress3Fill } from "react-icons/ri";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -64,6 +66,16 @@ export const TermDetailInformationPage: React.FC = () => {
       variants={staggerChildrenAnimation}
     >
       <div className="flex flex-col flex-wrap flex-1 gap-9">
+        {/* Term name */}
+        <motion.div variants={childrenAnimation}>
+          <DetailPropertyItem
+            isFetching={isFetching}
+            icon={<RiCalendarScheduleFill className="text-3xl" />}
+            title="Term"
+            value={term?.name}
+          />
+        </motion.div>
+
         {/* Start-end date */}
         <motion.div variants={childrenAnimation}>
           <DetailPropertyItem
@@ -94,6 +106,45 @@ export const TermDetailInformationPage: React.FC = () => {
             />
           </motion.div>
         )}
+      </div>
+
+      <div className="flex flex-col flex-wrap flex-1 gap-9">
+        {/* Status */}
+        <motion.div variants={childrenAnimation}>
+          <DetailPropertyItem
+            isFetching={isFetching}
+            icon={
+              <RiProgress3Fill
+                className={clsx({
+                  "text-3xl": true,
+                  "text-green-600": term?.status.code === "APPROVED",
+                  "text-primary-400 dark:text-primary-600":
+                    term?.status.code === "REVIEWED",
+                })}
+              />
+            }
+            title="Status"
+            value={
+              <div
+                className={clsx({
+                  "flex flex-row flex-wrap items-center gap-2": true,
+                  "text-neutral-500": term?.status.code === "CLOSED",
+                  "text-primary-500": term?.status.code === "IN_PROGRESS",
+                  "text-green-500 dark:text-green-600":
+                    term?.status.code === "NEW",
+                })}
+              >
+                <p
+                  className={clsx({
+                    "font-extrabold": true,
+                  })}
+                >
+                  {term?.status.name}
+                </p>
+              </div>
+            }
+          />
+        </motion.div>
       </div>
     </motion.div>
   );
