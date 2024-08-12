@@ -25,6 +25,7 @@ export interface UpdateTermBody {
   duration: Duration;
   startDate: string;
   endDate: string;
+  allowReupload: boolean;
   reuploadStartDate?: string;
   reuploadEndDate?: string;
 }
@@ -72,6 +73,7 @@ export interface TermDetail {
   duration: Duration;
   startDate: string;
   endDate: string;
+  allowReupload: boolean;
   reuploadStartDate: string;
   reuploadEndDate: string;
   finalEndTermDate: string;
