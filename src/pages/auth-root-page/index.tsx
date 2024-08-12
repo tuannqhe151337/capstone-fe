@@ -4,6 +4,8 @@ import { ThemeChanger } from "../../features/theme-changer";
 import { LanguageChanger } from "../../features/language-changer";
 import { DarkmodeChanger } from "../../features/darkmode-changer";
 import { BubbleBackground } from "../../entities/bubble-background";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -26,6 +28,9 @@ const imageAnimation: Variants = {
 };
 
 export const AuthRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">

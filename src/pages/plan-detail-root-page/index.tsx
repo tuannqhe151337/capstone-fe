@@ -24,8 +24,9 @@ import { Button } from "../../shared/button";
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { ReuploadPlanModal } from "../../widgets/reupload-plan-modal";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -81,6 +82,9 @@ type ContextType = {
 };
 
 export const PlanDetailRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   // Location
   const location = useLocation();
 

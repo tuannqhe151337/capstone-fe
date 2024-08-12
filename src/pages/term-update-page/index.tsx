@@ -15,7 +15,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData } from "../../providers/store/api/type";
+import { ErrorData, Role } from "../../providers/store/api/type";
 import { TEInput } from "tw-elements-react";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import RadioCardOption from "../../entities/radio-card-option";
@@ -30,6 +30,7 @@ import { addDate } from "../../shared/utils/add-date";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 import clsx from "clsx";
 import { Switch } from "../../shared/switch";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -105,6 +106,9 @@ const ReuploadEndDateSchema = z.optional(
 );
 
 export const TermUpdate: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Navigate
   const navigate = useNavigate();
 

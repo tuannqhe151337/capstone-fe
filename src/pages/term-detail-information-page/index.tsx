@@ -78,20 +78,22 @@ export const TermDetailInformationPage: React.FC = () => {
         </motion.div>
 
         {/* Reupload period */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={<FaFileImport className="text-2xl -ml-1 mr-1" />}
-            title="Reupload plan period"
-            value={`${format(
-              parseISOInResponse(term?.reuploadStartDate),
-              "dd/MM/yyyy"
-            )} - ${format(
-              parseISOInResponse(term?.reuploadEndDate),
-              "dd/MM/yyyy"
-            )}`}
-          />
-        </motion.div>
+        {term?.allowReupload && (
+          <motion.div variants={childrenAnimation}>
+            <DetailPropertyItem
+              isFetching={isFetching}
+              icon={<FaFileImport className="text-2xl -ml-1 mr-1" />}
+              title="Reupload plan period"
+              value={`${format(
+                parseISOInResponse(term?.reuploadStartDate),
+                "dd/MM/yyyy"
+              )} - ${format(
+                parseISOInResponse(term?.reuploadEndDate),
+                "dd/MM/yyyy"
+              )}`}
+            />
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

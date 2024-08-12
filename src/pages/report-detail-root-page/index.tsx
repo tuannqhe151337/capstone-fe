@@ -27,8 +27,9 @@ import { Button } from "../../shared/button";
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { useHotkeys } from "react-hotkeys-hook";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -84,6 +85,9 @@ type ContextType = {
 };
 
 export const ReportDetailRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Location
   const location = useLocation();
 

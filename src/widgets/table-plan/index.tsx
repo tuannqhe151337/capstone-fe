@@ -12,7 +12,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { PlanActionContextMenu } from "../../entities/plan-action-context-menu";
 import { ReuploadPlanModal } from "../reupload-plan-modal";
 import { Skeleton } from "../../shared/skeleton";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 import { TermPreviewer } from "../../entities/term-previewer";
@@ -213,12 +213,16 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <TermPreviewer termId={plan.term.termId}>
-                      <Link
-                        to={`/term-management/detail/information/${plan.term.termId}`}
-                        className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
-                      >
-                        {plan.term.name}
-                      </Link>
+                      {me?.role.code === Role.ACCOUNTANT ? (
+                        <Link
+                          to={`/term-management/detail/information/${plan.term.termId}`}
+                          className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
+                        >
+                          {plan.term.name}
+                        </Link>
+                      ) : (
+                        <>{plan.term.name}</>
+                      )}
                     </TermPreviewer>
                   )}
                 </td>

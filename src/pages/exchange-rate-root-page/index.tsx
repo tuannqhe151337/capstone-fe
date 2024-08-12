@@ -4,6 +4,8 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import TabList from "../../shared/tab-list";
 import { useEffect, useState } from "react";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,6 +44,9 @@ const childrenAnimation: Variants = {
 type TabId = "rate" | "currency";
 
 export const ExchangeRateRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Navigate
   const navigate = useNavigate();
   const location = useLocation();

@@ -16,6 +16,8 @@ import { CostTypeCreateModal } from "../../widgets/cost-type-create-modal";
 import { CostTypeEditModal } from "../../widgets/cost-type-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyCostTypes = (total: number): CostType[] => {
   const costTypes: Row[] = [];
@@ -68,6 +70,9 @@ const childrenAnimation: Variants = {
 };
 
 export const CostTypeManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Query
   const [fetchCostTypes, { data, isFetching }] = useLazyGetListCostTypeQuery();
 

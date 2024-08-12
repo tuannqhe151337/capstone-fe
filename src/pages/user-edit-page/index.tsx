@@ -26,8 +26,9 @@ import { PositionFilter } from "../../entities/position-filter";
 import { CgSpinner } from "react-icons/cg";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
-import { ErrorData } from "../../providers/store/api/type";
+import { ErrorData, Role } from "../../providers/store/api/type";
 import { InputSkeleton } from "../../shared/input-skeleton";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -124,6 +125,9 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
 });
 
 export const UserEditPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Navigate
   const navigate = useNavigate();
 
@@ -249,21 +253,19 @@ export const UserEditPage: React.FC = () => {
         </div>
       </BubbleBanner>
 
-
       <motion.div
-          className="mt-5 mb-5"
-          initial={AnimationStage.HIDDEN}
-          animate={isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
-          variants={errorAnimation}
-        >
-          <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
-            <FaCircleExclamation className="text-red-500 dark:text-red-600" />
-            <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
-              {errorMessage}
-            </p>
-          </div>
-        </motion.div>
-
+        className="mt-5 mb-5"
+        initial={AnimationStage.HIDDEN}
+        animate={isError ? AnimationStage.VISIBLE : AnimationStage.HIDDEN}
+        variants={errorAnimation}
+      >
+        <div className="flex flex-row flex-wrap items-center p-3 gap-3 bg-red-400/30 dark:bg-red-800/30 rounded-lg w-full">
+          <FaCircleExclamation className="text-red-500 dark:text-red-600" />
+          <p className="text-sm text-red-600 dark:text-red-500 font-semibold">
+            {errorMessage}
+          </p>
+        </div>
+      </motion.div>
 
       <div className="border pb-12 rounded-lg dark:border-neutral-800 dark:shadow-black ">
         <div className="flex flex-row justify-around">
@@ -513,7 +515,6 @@ export const UserEditPage: React.FC = () => {
             </motion.div>
           </div>
         </div>
-
 
         <div className="mx-14 flex justify-center mt-8">
           <Button

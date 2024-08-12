@@ -13,6 +13,8 @@ import {
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyTerms = (total: number): Row[] => {
   const terms: Row[] = [];
@@ -70,6 +72,9 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Scroll to top
   useScrollToTopOnLoad();
 

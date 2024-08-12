@@ -16,6 +16,8 @@ import { DepartmentCreateModal } from "../../widgets/department-create-modal";
 import { DepartmentEditModal } from "../../widgets/department-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -68,6 +70,9 @@ const childrenAnimation: Variants = {
 };
 
 export const DepartmentManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Query
   const [fetchDepartments, { data, isFetching }] =
     useLazyGetListDepartmentQuery();

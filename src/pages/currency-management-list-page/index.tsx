@@ -5,6 +5,8 @@ import { TableCurrency } from "../../widgets/table-currency";
 import { CurrencyCreateModal } from "../../widgets/currency-create-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -30,6 +32,9 @@ const staggerChildrenAnimation: Variants = {
 };
 
 export const CurrencyManagementListPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Get all currencies
   const { data: currencies, isFetching } = useGetAllCurrencyQuery();
 

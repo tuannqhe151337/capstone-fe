@@ -20,8 +20,9 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { OverviewCard } from "../../entities/overview-card";
 import { useTranslation } from "react-i18next";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -60,6 +61,9 @@ const childrenAnimation: Variants = {
 type TabId = "overview" | "detail";
 
 export const AnnualReportDetailRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   // i18n
   const { t } = useTranslation(["annual-report-detail"]);
 

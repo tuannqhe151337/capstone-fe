@@ -20,12 +20,13 @@ import { PiBagSimpleFill } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
 import { useCreateUserMutation } from "../../providers/store/api/usersApi";
 import { CgSpinner } from "react-icons/cg";
-import { ErrorData } from "../../providers/store/api/type";
+import { ErrorData, Role } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
 import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -112,6 +113,9 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
 });
 
 export const UserCreate: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Navigate
   const navigate = useNavigate();
 
