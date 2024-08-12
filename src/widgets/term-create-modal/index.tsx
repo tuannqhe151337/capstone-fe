@@ -84,7 +84,7 @@ const ReuploadEndDateSchema = z.optional(
 );
 
 export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
-  // Navigate
+  // Select term duration state
   const [selectedOption, setSelectedOption] = useState<Duration>(
     Duration.MONTHLY
   );
@@ -92,6 +92,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
   // Get term interval
   const { data: termInterval } = useGetListTermIntervalQuery();
 
+  // Schema
   const CreateTermSchema: ZodType<FormData> = useMemo(() => {
     return z
       .object({
