@@ -205,7 +205,7 @@ export const TableCurrency: React.FC<Props> = ({
                     </p>
                     {currency.default && (
                       <Tag background="filled" variant="inProgress">
-                        Default
+                        Base currency
                       </Tag>
                     )}
                   </div>
