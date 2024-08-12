@@ -68,7 +68,7 @@ const childrenAnimation: Variants = {
 
 export const AnnualReportList: React.FC = () => {
   // Authorized
-  usePageAuthorizedForRole([Role.FINANCIAL_STAFF]);
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
 
   // UI: reupload modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
