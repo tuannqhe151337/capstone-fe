@@ -6,10 +6,13 @@ import { RiCalendarScheduleFill } from "react-icons/ri";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaPiggyBank } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { ExpenseMonthByMonthChart } from "../../widgets/expense-month-by-month-chart";
-import { ExpenseByCostTypeChart } from "../../widgets/expense-by-cost-type-chart";
+import { MonthlyCostTypeExpenseChart } from "../../widgets/monthly-cost-type-expense-chart";
+import { YearlyCostTypeExpenseChart } from "../../widgets/yearly-cost-type-expense-chart";
 import { lazy } from "react";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { MonthlyExpectedActualCostChart } from "../../widgets/monthly-expected-actual-cost-chart";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { Role } from "../../providers/store/api/type";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -54,6 +57,9 @@ export const HomePage: React.FC = () => {
   // Scroll to top
   useScrollToTopOnLoad();
 
+  // Me query
+  const { data: me } = useMeQuery();
+
   // Use in view
   const { ref, inView } = useInView();
 
@@ -97,13 +103,25 @@ export const HomePage: React.FC = () => {
       </div>
 
       <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
-        <motion.div className="flex-[2]" variants={childrenAnimation}>
-          <ExpenseMonthByMonthChart />
-        </motion.div>
-        <motion.div className="flex-1" variants={childrenAnimation}>
-          <ExpenseByCostTypeChart />
-        </motion.div>
+        {(me?.role.code === Role.ACCOUNTANT ||
+          me?.role.code === Role.FINANCIAL_STAFF) && (
+          <motion.div className="flex-[2]" variants={childrenAnimation}>
+            <MonthlyCostTypeExpenseChart />
+          </motion.div>
+        )}
+        {(me?.role.code === Role.ACCOUNTANT ||
+          me?.role.code === Role.FINANCIAL_STAFF) && (
+          <motion.div className="flex-1" variants={childrenAnimation}>
+            <YearlyCostTypeExpenseChart />
+          </motion.div>
+        )}
       </div>
+
+      {me?.role.code === Role.ACCOUNTANT && (
+        <motion.div className="mt-10 px-10">
+          <MonthlyExpectedActualCostChart />
+        </motion.div>
+      )}
 
       <div ref={ref} className="mt-20 mb-20">
         <div className="h-[510px]">{inView && <GlobeSection />}</div>

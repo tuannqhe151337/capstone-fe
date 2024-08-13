@@ -31,7 +31,9 @@ export const YearFilter: React.FC<Props> = ({
     const currentYear = new Date().getFullYear();
     const years = [];
     for (let year = currentYear; year >= 1980; year--) {
-      years.push({ value: year, label: year.toString() });
+      if (year !== defaultOption.value) {
+        years.push({ value: year, label: year.toString() });
+      }
     }
     return years;
   }, []);
