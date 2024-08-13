@@ -270,7 +270,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                           "text-sm": showExpenseCodeColumn || showStatusColumn,
                         })}
                       >
-                        {expense.projectName}
+                        {expense.project.name}
                       </div>
                     </td>
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center">
@@ -279,7 +279,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                           "text-sm": showExpenseCodeColumn || showStatusColumn,
                         })}
                       >
-                        {expense.supplierName}
+                        {expense.supplier.name}
                       </div>
                     </td>
                     <td className="px-4 py-4 xl:w-min font-bold text-center">
@@ -288,7 +288,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                           "text-sm": showExpenseCodeColumn || showStatusColumn,
                         })}
                       >
-                        {expense.pic}
+                        {expense.pic.username}
                       </div>
                     </td>
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center text-neutral-400 dark:text-neutral-500">

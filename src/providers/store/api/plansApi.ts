@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  Expense,
+  ListResponse,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListPlanParameters {
   query?: string | null;
@@ -15,6 +20,7 @@ export interface ListPlanExpenseParameters {
   planId: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
+  currencyId?: number | null;
   page: number;
   pageSize: number;
 }
@@ -141,10 +147,11 @@ export interface ExpenseBody {
   costTypeId: number;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  projectId: number;
+  supplierId: number;
+  picId: number;
   notes?: string | number;
+  currencyId: number;
 }
 
 export interface ReuploadPlanBody {
@@ -153,15 +160,17 @@ export interface ReuploadPlanBody {
 }
 
 export interface ReuploadExpenseBody {
-  expenseCode: string;
+  expenseId: number;
+  // expenseCode: string;
   expenseName: string;
   costTypeId: number;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  projectId: number;
+  supplierId: number;
+  picId: number;
   notes?: string | number;
+  currencyId: number;
 }
 
 export interface ReviewExpensesBody {
@@ -171,6 +180,15 @@ export interface ReviewExpensesBody {
 
 export interface SubmitPlanBody {
   planId: number;
+}
+
+export interface CheckUserExistBody {
+  usernameList: string[];
+}
+
+export interface UserResponse {
+  userId: number;
+  username: string;
 }
 
 // DEV ONLY!!!
@@ -227,10 +245,12 @@ const plansApi = createApi({
         },
         providesTags: ["plans"],
       }),
+
       getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
         query: ({ planId }) => `/plan/detail?planId=${planId}`,
         providesTags: ["plan-detail"],
       }),
+
       deletePlan: builder.mutation<any, PlanDeleteParameters>({
         query: ({ planId }) => ({
           url: `/plan/delete`,
@@ -239,6 +259,7 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plans"],
       }),
+
       getPlanVersion: builder.query<
         PaginationResponse<PlanVersion[]>,
         PlanVersionParameters
@@ -268,6 +289,7 @@ const plansApi = createApi({
           return currentArg !== previousArg;
         },
       }),
+
       createPlan: builder.mutation<any, CreatePlanBody>({
         query: (createPlanBody) => ({
           url: `plan/create`,
@@ -277,15 +299,38 @@ const plansApi = createApi({
         invalidatesTags: ["plans"],
       }),
 
+      checkUserExist: builder.mutation<
+        ListResponse<UserResponse[]>,
+        CheckUserExistBody
+      >({
+        query: (checkUserExistBody) => ({
+          url: `plan/check-user-exist`,
+          method: "POST",
+          body: checkUserExistBody,
+        }),
+      }),
+
       fetchPlanExpenses: builder.query<
         PaginationResponse<Expense[]>,
         ListPlanExpenseParameters
       >({
-        query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
+        query: ({
+          query,
+          planId,
+          costTypeId,
+          statusId,
+          currencyId,
+          page,
+          pageSize,
+        }) => {
           let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
+          }
+
+          if (currencyId) {
+            endpoint += `&currencyId=${currencyId}`;
           }
 
           if (costTypeId) {
@@ -300,6 +345,7 @@ const plansApi = createApi({
         },
         providesTags: ["plan-detail", "plan-expenses"],
       }),
+
       reuploadPlan: builder.mutation<any, ReuploadPlanBody>({
         query: (reuploadPlanBody) => ({
           url: "plan/re-upload",
@@ -308,6 +354,7 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plan-detail"],
       }),
+
       // approveExpenses: builder.mutation<any, ReviewExpensesBody>({
       //   query: (reviewExpenseBody) => ({
       //     url: "plan/expense-approval",
@@ -345,6 +392,7 @@ export const {
   useFetchPlanExpensesQuery,
   useLazyFetchPlanExpensesQuery,
   useReuploadPlanMutation,
+  useCheckUserExistMutation,
   // useApproveExpensesMutation,
   // useDenyExpensesMutation,
   // useSubmitPlanForReviewMutation,

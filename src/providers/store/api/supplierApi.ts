@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { LocalStorageItemKey, PaginationResponse } from "./type";
+import { ListResponse, LocalStorageItemKey, PaginationResponse } from "./type";
 
 export interface Supplier {
   supplierId: number;
@@ -60,6 +60,11 @@ export const supplierAPI = createApi({
       },
       providesTags: ["suppliers"],
     }),
+
+    getAllSupplier: builder.query<ListResponse<Supplier[]>, void>({
+      query: () => `/supplier/list`,
+    }),
+
     createSupplier: builder.mutation<any, CreateSupplierBody>({
       query: (createSupplierBody) => ({
         url: `/supplier/create`,
@@ -68,6 +73,7 @@ export const supplierAPI = createApi({
       }),
       invalidatesTags: ["suppliers"],
     }),
+
     updateSupplier: builder.mutation<any, UpdateSupplierBody>({
       query: (updateSupplierBody) => ({
         url: `/supplier/update`,
@@ -76,6 +82,7 @@ export const supplierAPI = createApi({
       }),
       invalidatesTags: ["suppliers"],
     }),
+
     deleteSupplier: builder.mutation<any, DeleteSupplierBody>({
       query: (deleteSupplierBody) => ({
         url: `/supplier`,
@@ -89,6 +96,7 @@ export const supplierAPI = createApi({
 
 export const {
   useLazyGetListSupplierQuery,
+  useGetAllSupplierQuery,
   useCreateSupplierMutation,
   useUpdateSupplierMutation,
   useDeleteSupplierMutation,

@@ -13,6 +13,10 @@ import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
 import { ErrorExpensesTable } from "./components/error-expenses-table";
 import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
 import { getFileExtension } from "./util/get-file-extension";
+import { useGetAllProjectQuery } from "../../providers/store/api/projectsApi";
+import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
+import { useGetAllSupplierQuery } from "../../providers/store/api/supplierApi";
+import { useCheckUserExistMutation } from "../../providers/store/api/plansApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -74,6 +78,7 @@ interface Props {
   inputSection?: React.ReactNode;
   dropzoneHeight?: number;
   disableContinueButton?: boolean;
+  validateExpenseId?: boolean;
   validateExpenseCode?: boolean;
   validateStatusCode?: boolean;
   hideBackButton?: boolean;
@@ -88,6 +93,7 @@ export const UploadFileStage: React.FC<Props> = ({
   inputSection,
   dropzoneHeight = 330,
   disableContinueButton,
+  validateExpenseId,
   validateExpenseCode,
   validateStatusCode,
   hideBackButton = false,
@@ -95,9 +101,13 @@ export const UploadFileStage: React.FC<Props> = ({
   onPreviousState,
   onNextStage,
 }) => {
-  // Cost type
+  // Validation API
   const { data: costTypeListResult } = useGetAllCostTypeQuery();
   const { data: expenseStatusListResult } = useGetAllExpenseStatusQuery();
+  const { data: projectListResult } = useGetAllProjectQuery();
+  const { data: currencyListResult } = useGetAllCurrencyQuery();
+  const { data: supplierListResult } = useGetAllSupplierQuery();
+  const [checkuserExist] = useCheckUserExistMutation();
 
   // UI: file over
   const [isFileOver, setIsFileOver] = useState<boolean>(false);
@@ -162,17 +172,38 @@ export const UploadFileStage: React.FC<Props> = ({
           }
 
           // Handle file upload logic
-          if (costTypeListResult?.data && expenseStatusListResult?.data) {
-            const { errors, expenses, isError } = await processFile(
+          if (
+            costTypeListResult?.data &&
+            expenseStatusListResult?.data &&
+            projectListResult?.data &&
+            supplierListResult?.data &&
+            currencyListResult?.data
+          ) {
+            // Validate data
+            const { errors, expenses, isError } = await processFile({
               file,
-              costTypeListResult.data,
-              expenseStatusListResult.data,
-              { validateExpenseCode, validateStatusCode }
-            );
+              costTypeList: costTypeListResult.data,
+              expenseStatusList: expenseStatusListResult.data,
+              projectList: projectListResult.data,
+              currencyList: currencyListResult.data,
+              supplierList: supplierListResult.data,
+              checkListUsernameExist: async (usernameList) => {
+                const { data } = await checkuserExist({ usernameList });
 
+                return data?.data || [];
+              },
+              options: {
+                validateExpenseCode,
+                validateStatusCode,
+                validateExpenseId,
+              },
+            });
+
+            // Set to state to show table
             setExpenses(expenses);
             setExpenseErrors(errors);
 
+            // UI: show error table or go to next stage
             if (isError) {
               setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
             } else {
@@ -316,6 +347,7 @@ export const UploadFileStage: React.FC<Props> = ({
             >
               <ErrorExpensesTable
                 expenses={expenseErrors}
+                showExpenseIdColumn={validateExpenseId}
                 showExpenseCodeColumn={validateExpenseCode}
                 showStatusColumn={validateStatusCode}
               />

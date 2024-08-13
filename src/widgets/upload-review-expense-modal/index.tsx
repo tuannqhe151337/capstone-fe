@@ -11,7 +11,10 @@ import { Expense } from "../../features/upload-file-stage/type";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
-import { useReviewListExpensesMutation } from "../../providers/store/api/reportsAPI";
+import {
+  useLazyGetReportDetailQuery,
+  useReviewListExpensesMutation,
+} from "../../providers/store/api/reportsAPI";
 
 enum AnimationStage {
   LEFT = "left",
@@ -77,6 +80,23 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
   const [reviewListExpenses, { isLoading, isError, isSuccess }] =
     useReviewListExpensesMutation();
 
+  // Report detail
+  const [getReportDetail, { data: report }] = useLazyGetReportDetailQuery();
+
+  useEffect(() => {
+    let reportIdInt = 0;
+
+    if (reportId) {
+      if (typeof reportId === "string") {
+        reportIdInt = parseInt(reportId);
+      } else {
+        reportIdInt = reportId;
+      }
+    }
+
+    getReportDetail({ reportId: reportIdInt });
+  }, [reportId]);
+
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
@@ -141,6 +161,7 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                   <UploadFileStage
                     hide={stage !== 1}
                     dropzoneHeight={380}
+                    validateExpenseId
                     validateExpenseCode
                     validateStatusCode
                     downloadButtonText="Download report"
@@ -154,7 +175,8 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                           `${
                             import.meta.env.VITE_BACKEND_HOST
                           }report/download-xlsx?reportId=${reportId}`,
-                          token
+                          token,
+                          `${report?.name}.xlsx`
                         );
                       }
                     }}
@@ -200,8 +222,9 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                               ? parseInt(reportId)
                               : reportId,
                           listExpenses: expenses.map((expense) => ({
-                            expenseCode: expense.code,
-                            statusId: expense.status?.statusId || 0,
+                            expenseId: expense.id,
+                            statusCode:
+                              expense.status?.code.toUpperCase() || "",
                           })),
                         });
                       }

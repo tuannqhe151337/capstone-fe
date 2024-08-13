@@ -6,10 +6,14 @@ import { RiCalendarScheduleFill } from "react-icons/ri";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaPiggyBank } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
-import { ExpenseMonthByMonthChart } from "../../widgets/expense-month-by-month-chart";
-import { ExpenseByCostTypeChart } from "../../widgets/expense-by-cost-type-chart";
+import { MonthlyCostTypeExpenseChart } from "../../widgets/monthly-cost-type-expense-chart";
+import { YearlyCostTypeExpenseChart } from "../../widgets/yearly-cost-type-expense-chart";
 import { lazy } from "react";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { MonthlyExpectedActualCostChart } from "../../widgets/monthly-expected-actual-cost-chart";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { Role } from "../../providers/store/api/type";
+import { useFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -54,8 +58,16 @@ export const HomePage: React.FC = () => {
   // Scroll to top
   useScrollToTopOnLoad();
 
+  // Me query
+  const { data: me } = useMeQuery();
+
   // Use in view
   const { ref, inView } = useInView();
+
+  // Get annual report detail for overview card
+  const { data: annual } = useFetchAnnualReportDetailQuery(
+    new Date().getFullYear()
+  );
 
   return (
     <motion.div
@@ -70,7 +82,9 @@ export const HomePage: React.FC = () => {
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={t("Total terms")}
             // isFetching={isFetching}
-            value={<CountUp start={0} end={6} duration={4} />}
+            value={
+              <CountUp start={0} end={annual?.totalTerm || 0} duration={4} />
+            }
             meteors
           />
         </motion.div>
@@ -80,7 +94,13 @@ export const HomePage: React.FC = () => {
             icon={<PiTreeStructureFill className="text-4xl" />}
             label={t("Total departments")}
             // isFetching={isFetching}
-            value={<CountUp start={0} end={12} duration={4} />}
+            value={
+              <CountUp
+                start={0}
+                end={annual?.totalDepartment || 0}
+                duration={4}
+              />
+            }
           />
         </motion.div>
 
@@ -90,19 +110,36 @@ export const HomePage: React.FC = () => {
             label={t("Total expenses")}
             // isFetching={isFetching}
             value={
-              <CountUp start={0} end={126643732} duration={4} suffix=" VNĐ" />
+              <CountUp
+                start={0}
+                end={annual?.totalExpense || 0}
+                duration={4}
+                suffix=" VNĐ"
+              />
             }
           />
         </motion.div>
       </div>
 
+      {me?.role.code === Role.ACCOUNTANT && (
+        <motion.div className="mt-10 px-10">
+          <MonthlyExpectedActualCostChart />
+        </motion.div>
+      )}
+
       <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
-        <motion.div className="flex-[2]" variants={childrenAnimation}>
-          <ExpenseMonthByMonthChart />
-        </motion.div>
-        <motion.div className="flex-1" variants={childrenAnimation}>
-          <ExpenseByCostTypeChart />
-        </motion.div>
+        {(me?.role.code === Role.ACCOUNTANT ||
+          me?.role.code === Role.FINANCIAL_STAFF) && (
+          <motion.div className="flex-[2]" variants={childrenAnimation}>
+            <MonthlyCostTypeExpenseChart />
+          </motion.div>
+        )}
+        {(me?.role.code === Role.ACCOUNTANT ||
+          me?.role.code === Role.FINANCIAL_STAFF) && (
+          <motion.div className="flex-1" variants={childrenAnimation}>
+            <YearlyCostTypeExpenseChart />
+          </motion.div>
+        )}
       </div>
 
       <div ref={ref} className="mt-20 mb-20">

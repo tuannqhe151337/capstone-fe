@@ -3,22 +3,33 @@ import { useParams } from "react-router-dom";
 import {
   AnnualReportChart,
   useLazyFetchAnnualReportChartQuery,
+  useLazyFetchAnnualReportDetailQuery,
 } from "../../providers/store/api/annualsAPI";
 import { useEffect } from "react";
 import { ApexOptions } from "apexcharts";
 
 export const AnnualReportDetailChartPage: React.FC = () => {
-  // Get annual report chart
-  const { annualReportId } = useParams<{ annualReportId: string }>();
+  // Get annual report detail
+  const { year } = useParams<{ year: string }>();
 
+  const [fetchAnnualReportDetail, { data: annualDetail }] =
+    useLazyFetchAnnualReportDetailQuery();
+
+  useEffect(() => {
+    if (year) {
+      fetchAnnualReportDetail(parseInt(year, 10), true);
+    }
+  }, [year]);
+
+  // Get annual report chart
   const [fetchAnnualReportChart, { data: annual, isFetching, isSuccess }] =
     useLazyFetchAnnualReportChartQuery();
 
   useEffect(() => {
-    if (annualReportId) {
-      fetchAnnualReportChart(parseInt(annualReportId, 10), true);
+    if (annualDetail) {
+      fetchAnnualReportChart(annualDetail.annualReportId, true);
     }
-  }, [annualReportId]);
+  }, [annualDetail]);
 
   if (!isFetching && isSuccess && !annual) return <p>No annual found</p>;
 
