@@ -1,37 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Variants, motion } from "framer-motion";
 import { FaChartLine } from "react-icons/fa6";
-
-import { TESelect } from "tw-elements-react";
-import clsx from "clsx";
-import { Tag } from "../../shared/tag";
-
-// Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "inProgress" | "denied";
-const renderButton = (status: StatusType) => {
-  switch (status) {
-    case "new":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          Approved
-        </Tag>
-      );
-    case "inProgress":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
-          Waiting for approval
-        </Tag>
-      );
-    case "denied":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Deny
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { useNavigate, useParams } from "react-router-dom";
+import { useLazyFetchPlansQuery } from "../../providers/store/api/plansApi";
+import { PlanPreviewer } from "../../entities/plan-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -67,79 +39,29 @@ const childrenAnimation: Variants = {
   },
 };
 
-// Định nghĩa kiểu cho dữ liệu bảng
-type TablePlanDataType = {
-  id: number;
-  plan: string;
-  term: string;
-  department: string;
-  version: string;
-  status: StatusType;
-};
-
-const tablePlanDataList: TablePlanDataType[] = [
-  {
-    id: 1,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v1",
-    status: "inProgress",
-  },
-
-  {
-    id: 2,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v3",
-    status: "denied",
-  },
-  {
-    id: 3,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v4",
-    status: "new",
-  },
-];
-
 export const TermDetailPlanPage: React.FC = () => {
-  // UI
-  const [listSelectedIndex, _] = useState<Set<number>>(new Set());
-  const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const [_hoverRowIndex, _setHoverRowIndex] = useState<number>();
+  const { termId } = useParams<{ termId: string }>();
+
+  const [fetchPlans, { data: plans }] = useLazyFetchPlansQuery();
 
   useEffect(() => {
-    if (listSelectedIndex.size !== 0) {
-      setShowReviewExpense(true);
-    } else {
-      setShowReviewExpense(false);
+    let termIdInt = 0;
+
+    if (termId) {
+      if (typeof termId === "number") {
+        termIdInt = termId;
+      } else {
+        termIdInt = parseInt(termId);
+      }
     }
-  }, [listSelectedIndex]);
+
+    fetchPlans({ termId: termIdInt, page: 1, pageSize: 1 });
+  }, [termId]);
 
   return (
     <motion.div>
-      <motion.div
-        className=""
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
-      >
-        <motion.div className="flex justify-end mt-4">
-          <motion.div variants={childrenAnimation} className="mr-4 ">
-            <TESelect data={[]} label="Cost type" />
-          </motion.div>
-
-          <motion.div variants={childrenAnimation} className="mr-4">
-            <TESelect data={[]} label="Status" />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
       <motion.div
         initial={AnimationStage.HIDDEN}
         animate={AnimationStage.VISIBLE}
@@ -147,31 +69,34 @@ export const TermDetailPlanPage: React.FC = () => {
         variants={staggerChildrenAnimation}
       >
         <motion.table
-          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
+          className="text-sm font-light mt-3 min-w-full"
           variants={childrenAnimation}
         >
           <tbody>
-            {tablePlanDataList.map((row, index) => (
-              <tr
-                key={row.id}
-                className={clsx({
-                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
-                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
-                })}
-              >
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
+            <tr>
+              {plans?.data.map((plan) => (
+                <td
+                  className="group whitespace-nowrap px-6 py-4 font-medium cursor-pointer"
+                  onClick={() => {
+                    navigate(`/plan-management/detail/expenses/${plan.planId}`);
+                  }}
+                >
                   <div className="flex flex-row flex-wrap">
                     <div className="text-neutral-300 dark:text-neutral-600">
                       <FaChartLine className="text-xl mt-2" />
                     </div>
-                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
-                      {row.plan}
-                    </p>
-                    <div>{renderButton(row.status)}</div>
+                    <PlanPreviewer
+                      containerClassName="ml-0"
+                      planId={plan.planId}
+                    >
+                      <p className="font-extrabold text-neutral-500/80 dark:text-neutral-500 pr-3 group-hover:underline duration-200">
+                        {plan.name}
+                      </p>
+                    </PlanPreviewer>
                   </div>
                 </td>
-              </tr>
-            ))}
+              ))}
+            </tr>
           </tbody>
         </motion.table>
       </motion.div>
