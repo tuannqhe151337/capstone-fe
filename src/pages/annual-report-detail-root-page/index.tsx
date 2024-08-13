@@ -10,8 +10,6 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { IconButton } from "../../shared/icon-button";
-import { HiDotsVertical } from "react-icons/hi";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { Button } from "../../shared/button";
 import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
@@ -74,16 +72,16 @@ export const AnnualReportDetailRootPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Get annual report detail
-  const { annualReportId } = useParams<{ annualReportId: string }>();
+  const { year } = useParams<{ year: string }>();
 
   const [fetchAnnualReportDetail, { data: annual, isFetching, isSuccess }] =
     useLazyFetchAnnualReportDetailQuery();
 
   useEffect(() => {
-    if (annualReportId) {
-      fetchAnnualReportDetail(parseInt(annualReportId, 10), true);
+    if (year) {
+      fetchAnnualReportDetail(parseInt(year, 10), true);
     }
-  }, [annualReportId]);
+  }, [year]);
 
   // Tablist state
   const [selectedTabId, setSelectedTabId] = useState<TabId>("detail");
@@ -125,7 +123,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
             <span className="ml-3 text-base opacity-40">&gt;</span>
             <span>
               {t("Report", {
-                year: parseISOInResponse(annual?.createdAt).getFullYear(),
+                year: annual?.name,
               })}
             </span>
           </p>
@@ -165,7 +163,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
       >
         <p className="text-2xl font-extrabold text-primary mr-5">
           {t("ReportYear", {
-            year: parseISOInResponse(annual?.createdAt).getFullYear(),
+            year: annual?.name,
           })}
         </p>
       </motion.div>
@@ -213,11 +211,11 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               onItemChangeHandler={({ id }) => {
                 switch (id) {
                   case "overview":
-                    navigate(`./chart/${annualReportId}`);
+                    navigate(`./chart/${year}`);
                     break;
 
                   case "detail":
-                    navigate(`./table/${annualReportId}`);
+                    navigate(`./table/${year}`);
                     break;
                 }
               }}

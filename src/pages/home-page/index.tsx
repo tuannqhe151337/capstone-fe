@@ -13,6 +13,7 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { MonthlyExpectedActualCostChart } from "../../widgets/monthly-expected-actual-cost-chart";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
+import { useFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -63,6 +64,11 @@ export const HomePage: React.FC = () => {
   // Use in view
   const { ref, inView } = useInView();
 
+  // Get annual report detail for overview card
+  const { data: annual } = useFetchAnnualReportDetailQuery(
+    new Date().getFullYear()
+  );
+
   return (
     <motion.div
       initial={AnimationStage.HIDDEN}
@@ -76,7 +82,9 @@ export const HomePage: React.FC = () => {
             icon={<RiCalendarScheduleFill className="text-4xl" />}
             label={t("Total terms")}
             // isFetching={isFetching}
-            value={<CountUp start={0} end={6} duration={4} />}
+            value={
+              <CountUp start={0} end={annual?.totalTerm || 0} duration={4} />
+            }
             meteors
           />
         </motion.div>
@@ -86,7 +94,13 @@ export const HomePage: React.FC = () => {
             icon={<PiTreeStructureFill className="text-4xl" />}
             label={t("Total departments")}
             // isFetching={isFetching}
-            value={<CountUp start={0} end={12} duration={4} />}
+            value={
+              <CountUp
+                start={0}
+                end={annual?.totalDepartment || 0}
+                duration={4}
+              />
+            }
           />
         </motion.div>
 
@@ -96,11 +110,22 @@ export const HomePage: React.FC = () => {
             label={t("Total expenses")}
             // isFetching={isFetching}
             value={
-              <CountUp start={0} end={126643732} duration={4} suffix=" VNĐ" />
+              <CountUp
+                start={0}
+                end={annual?.totalExpense || 0}
+                duration={4}
+                suffix=" VNĐ"
+              />
             }
           />
         </motion.div>
       </div>
+
+      {me?.role.code === Role.ACCOUNTANT && (
+        <motion.div className="mt-10 px-10">
+          <MonthlyExpectedActualCostChart />
+        </motion.div>
+      )}
 
       <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
         {(me?.role.code === Role.ACCOUNTANT ||
@@ -116,12 +141,6 @@ export const HomePage: React.FC = () => {
           </motion.div>
         )}
       </div>
-
-      {me?.role.code === Role.ACCOUNTANT && (
-        <motion.div className="mt-10 px-10">
-          <MonthlyExpectedActualCostChart />
-        </motion.div>
-      )}
 
       <div ref={ref} className="mt-20 mb-20">
         <div className="h-[510px]">{inView && <GlobeSection />}</div>

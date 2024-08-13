@@ -81,11 +81,11 @@
 
 /* custom-select.css */
 .custom-select__option {
-  @apply !text-sm !font-bold dark:!font-bold !py-3 px-4 !text-neutral-500 dark:bg-black/90 dark:text-neutral-500 duration-200;
+  @apply !text-sm !font-bold dark:!font-bold !py-3 px-4 !text-neutral-500 dark:bg-black/90 dark:!text-neutral-200 duration-200;
 }
 
 .custom-select__input {
-  @apply text-sm font-bold !text-neutral-500 dark:!text-neutral-300;
+  @apply text-sm font-bold !text-neutral-500 dark:!text-neutral-200;
 }
 
 /* css placeholder khi chưa tương tác với ô select */

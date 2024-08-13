@@ -137,7 +137,11 @@ export const TableAnnualReport: React.FC<Props> = ({
                 //   setHoverRowIndex(undefined);
                 // }}
                 onClick={() => {
-                  navigate(`detail/chart/${annualReport.annualReportId}`);
+                  navigate(
+                    `detail/chart/${parseISOInResponse(
+                      annualReport.name
+                    ).getFullYear()}`
+                  );
                 }}
                 onContextMenu={(e) => {
                   e.preventDefault();
