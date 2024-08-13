@@ -196,7 +196,7 @@ export const TableCostType: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
-                  {isFetching && (
+                  {!isFetching && (
                     <motion.div
                       className="flex flex-row flex-wrap items-center justify-center gap-2 w-max m-auto"
                       initial={AnimationStage.HIDDEN}

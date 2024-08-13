@@ -3,7 +3,7 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
-import { Expense } from "../../providers/store/api/type";
+import { AFFIX, Expense } from "../../providers/store/api/type";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { Skeleton } from "../../shared/skeleton";
 import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
@@ -121,13 +121,13 @@ export const TablePlanExpenses: React.FC<Props> = ({
               Cost type
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Unit price (VND)
+              Unit price
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Amount
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Total (VND)
+              Total
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Project name
@@ -224,7 +224,16 @@ export const TablePlanExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
-                      disabled
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
@@ -242,7 +251,17 @@ export const TablePlanExpenses: React.FC<Props> = ({
                   ) : (
                     <NumericFormat
                       displayType="text"
-                      value={expense.unitPrice * expense.amount}
+                      value={expense.amount * expense.unitPrice}
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}

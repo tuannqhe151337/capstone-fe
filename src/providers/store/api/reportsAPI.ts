@@ -69,6 +69,7 @@ export interface Term {
   name: string;
   startDate: string;
   endDate: string;
+  allowReupload: boolean;
   reuploadStartDate: string;
   reuploadEndDate: string;
   finalEndTermDate: string;
@@ -130,8 +131,8 @@ export interface UploadReportExpenses {
 }
 
 export interface ExpenseBody {
-  expenseCode: string;
-  statusId: number;
+  expenseId: number;
+  statusCode: string;
 }
 
 // DEV ONLY!!!
@@ -269,7 +270,7 @@ const reportsAPI = createApi({
           method: "POST",
           body: uploadReportExpenses,
         }),
-        invalidatesTags: ["actual-cost"],
+        invalidatesTags: ["actual-cost", "query"],
       }),
     };
   },

@@ -74,7 +74,7 @@ export const projectAPI = createApi({
       },
       providesTags: ["projects"],
     }),
-    getAllProject: builder.query<ListResponse<Project[]>, any>({
+    getAllProject: builder.query<ListResponse<Project[]>, void>({
       query: () => ({
         url: `/project/list`,
       }),

@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { LocalStorageItemKey } from "./type";
 
 export interface LoginBody {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -75,11 +75,11 @@ export const authAPI = createApi({
   tagTypes: ["me"],
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginBody>({
-      query: ({ username, password }) => ({
+      query: ({ email, password }) => ({
         url: "auth/login",
         method: "POST",
         body: {
-          username,
+          email,
           password,
         },
       }),
@@ -111,5 +111,5 @@ export const {
   useMeQuery,
   useLazyMeQuery,
   useLogoutMutation,
-  useUserSettingMutation
+  useUserSettingMutation,
 } = authAPI;

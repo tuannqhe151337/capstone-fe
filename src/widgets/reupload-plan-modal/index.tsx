@@ -152,6 +152,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                     hide={stage !== 1}
                     termName={termName}
                     planName={planName}
+                    validateExpenseId
                     onDownloadTemplateClick={() => {
                       const token = localStorage.getItem(
                         LocalStorageItemKey.TOKEN
@@ -228,25 +229,28 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                             planId,
                             data: expenses.map(
                               ({
-                                code,
+                                id,
                                 name,
                                 costType,
                                 unitPrice,
                                 amount,
-                                projectName,
-                                supplierName,
+                                project,
+                                supplier,
+                                currency,
                                 pic,
                                 notes,
                               }) => ({
-                                expenseCode: code,
+                                expenseId: id,
+                                // expenseCode: code,
                                 expenseName: name,
                                 costTypeId: costType.costTypeId,
                                 unitPrice,
                                 amount,
-                                projectName,
-                                supplierName,
-                                pic,
+                                projectId: project.projectId,
+                                supplierId: supplier.supplierId,
+                                picId: pic.userId,
                                 notes,
+                                currencyId: currency.currencyId,
                               })
                             ),
                           });
