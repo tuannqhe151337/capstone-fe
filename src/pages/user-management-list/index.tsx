@@ -15,6 +15,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -82,6 +83,9 @@ const childrenAnimation: Variants = {
 };
 
 export const UserManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["user-management-list"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ADMIN]);
 
@@ -166,7 +170,7 @@ export const UserManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            User management
+            {t("User management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -176,7 +180,9 @@ export const UserManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2">
                 <HiUserAdd className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">Add new user</p>
+                <p className="text-sm font-bold">
+                  {t("Add new user")}
+                </p>
               </div>
             </Button>
           </div>
