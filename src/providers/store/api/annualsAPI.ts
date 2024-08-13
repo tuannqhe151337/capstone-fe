@@ -17,7 +17,7 @@ export interface ListAnnualReportExpenseParameters {
 }
 
 export interface AnnualReport {
-  annualReportId: number | string;
+  annualReportId: number;
   name: string;
   totalTerm: number;
   totalExpense: number;
@@ -123,8 +123,7 @@ const annualAPI = createApi({
       }),
 
       fetchAnnualReportDetail: builder.query<AnnualReport, number>({
-        query: (annualReportId) =>
-          `annual-report/detail?annualReportId=${annualReportId}`,
+        query: (year) => `annual-report/detail?year=${year}`,
         providesTags: ["annual"],
       }),
 

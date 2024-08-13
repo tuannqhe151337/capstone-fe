@@ -5,6 +5,7 @@ import { Pagination } from "../../shared/pagination";
 import { useParams } from "react-router-dom";
 import {
   ListAnnualReportExpenseParameters,
+  useLazyFetchAnnualReportDetailQuery,
   useLazyFetchAnnualReportExpenseQuery,
 } from "../../providers/store/api/annualsAPI";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
@@ -90,9 +91,19 @@ export const AnnualReportDetailTablePage: React.FC<Props> = () => {
   // i18n
   const { t } = useTranslation(["annual-report-detail"]);
 
-  // Get annual report expense
-  const { annualReportId } = useParams<{ annualReportId: string }>();
+  // Get annual report detail
+  const { year } = useParams<{ year: string }>();
 
+  const [fetchAnnualReportDetail, { data: annualDetail }] =
+    useLazyFetchAnnualReportDetailQuery();
+
+  useEffect(() => {
+    if (year) {
+      fetchAnnualReportDetail(parseInt(year, 10), true);
+    }
+  }, [year]);
+
+  // Get annual report expense
   const [fetchAnnualReportExpense, { data: annual, isFetching, isSuccess }] =
     useLazyFetchAnnualReportExpenseQuery();
 
@@ -103,9 +114,9 @@ export const AnnualReportDetailTablePage: React.FC<Props> = () => {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (annualReportId) {
+      if (annualDetail) {
         const paramters: ListAnnualReportExpenseParameters = {
-          annualReportId: parseInt(annualReportId, 10),
+          annualReportId: annualDetail.annualReportId,
           costTypeId,
           departmentId,
           page,
@@ -125,7 +136,7 @@ export const AnnualReportDetailTablePage: React.FC<Props> = () => {
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [page, annualReportId, departmentId, costTypeId]);
+  }, [page, annualDetail, departmentId, costTypeId]);
 
   // Is data empty (derived from data)
   const [isDataEmpty, setIsDataEmpty] = useState<boolean>();
