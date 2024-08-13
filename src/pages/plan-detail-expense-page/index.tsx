@@ -93,6 +93,9 @@ export const PlanDetailExpensePage: React.FC = () => {
   // Get show upload modal method
   const { plan, setShowReuploadModal } = usePlanDetailContext();
 
+  // Currency
+  const [currencyId, setCurrencyId] = useState<number>();
+
   // Get params
   const { planId } = useParams<{ planId: string }>();
 
@@ -135,6 +138,10 @@ export const PlanDetailExpensePage: React.FC = () => {
           pageSize,
         };
 
+        if (currencyId) {
+          paramters.currencyId = currencyId;
+        }
+
         if (costTypeId) {
           paramters.costTypeId = costTypeId;
         }
@@ -147,7 +154,7 @@ export const PlanDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId, planId]);
+  }, [searchboxValue, page, costTypeId, statusId, planId, currencyId]);
 
   // Authorized to show reupload button
   const isAuthorizedToReupload = useIsAuthorizedToReupload({
@@ -166,6 +173,7 @@ export const PlanDetailExpensePage: React.FC = () => {
     >
       <ListPlanDetailFilter
         className="pl-3 mt-7"
+        currencyId={currencyId}
         showReviewExpense={showReviewExpense}
         searchboxValue={searchboxValue}
         onSearchboxChange={(value) => {
@@ -176,6 +184,9 @@ export const PlanDetailExpensePage: React.FC = () => {
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
+        }}
+        onCurrencyChoose={(currency) => {
+          setCurrencyId(currency?.currencyId);
         }}
         showReupload={isAuthorizedToReupload}
         onDownloadClick={() => {

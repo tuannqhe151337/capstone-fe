@@ -168,12 +168,6 @@ export const AnnualReportDetailRootPage: React.FC = () => {
             year: parseISOInResponse(annual?.createdAt).getFullYear(),
           })}
         </p>
-
-        <div className="flex flex-row flex-wrap gap-3 ml-auto">
-          <IconButton>
-            <HiDotsVertical className="text-xl text-primary" />
-          </IconButton>
-        </div>
       </motion.div>
 
       <div className="flex flex-row flex-wrap justify-between gap-5 mt-10 px-5 w-full">

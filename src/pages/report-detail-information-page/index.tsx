@@ -88,20 +88,22 @@ export const ReportDetailInformationPage: React.FC = () => {
         </motion.div>
 
         {/* Reupload period */}
-        <motion.div variants={childrenAnimation}>
-          <DetailPropertyItem
-            isFetching={isFetching}
-            icon={<FaFileImport className="text-3xl -ml-1 mr-1" />}
-            title="Reupload plan period"
-            value={`${format(
-              parseISOInResponse(report?.term.reuploadStartDate),
-              "dd/MM/yyyy"
-            )} - ${format(
-              parseISOInResponse(report?.term.reuploadEndDate),
-              "dd/MM/yyyy"
-            )}`}
-          />
-        </motion.div>
+        {report?.term.allowReupload && (
+          <motion.div variants={childrenAnimation}>
+            <DetailPropertyItem
+              isFetching={isFetching}
+              icon={<FaFileImport className="text-3xl -ml-1 mr-1" />}
+              title="Reupload plan period"
+              value={`${format(
+                parseISOInResponse(report?.term.reuploadStartDate),
+                "dd/MM/yyyy"
+              )} - ${format(
+                parseISOInResponse(report?.term.reuploadEndDate),
+                "dd/MM/yyyy"
+              )}`}
+            />
+          </motion.div>
+        )}
       </div>
       <div className="flex flex-col flex-wrap flex-1 gap-9">
         {/* Status */}

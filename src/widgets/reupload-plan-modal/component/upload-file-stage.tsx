@@ -9,6 +9,7 @@ interface Props {
   hide?: boolean;
   termName?: string;
   planName?: string;
+  validateExpenseId?: boolean;
   validateExpenseCode?: boolean;
   hideBackButton?: boolean;
   onDownloadTemplateClick?: Function;
@@ -20,6 +21,7 @@ export const UploadFileStage: React.FC<Props> = ({
   hide,
   termName,
   planName,
+  validateExpenseId,
   validateExpenseCode,
   hideBackButton = false,
   onDownloadTemplateClick,
@@ -63,6 +65,7 @@ export const UploadFileStage: React.FC<Props> = ({
           />
         </div>
       }
+      validateExpenseId={validateExpenseId}
       validateExpenseCode={validateExpenseCode}
       hideBackButton={hideBackButton}
       onDownloadTemplateClick={onDownloadTemplateClick}
