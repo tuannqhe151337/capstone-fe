@@ -16,6 +16,7 @@ import { projectAPI } from "./api/projectsApi";
 import { supplierAPI } from "./api/supplierApi";
 import { exchangeRateAPI } from "./api/exchangeRateApi";
 import { currencyApi } from "./api/currencyApi";
+import { dashboardApi } from "./api/dashboardAPI";
 
 export const store = configureStore({
   reducer: {
@@ -35,6 +36,7 @@ export const store = configureStore({
     [supplierAPI.reducerPath]: supplierAPI.reducer,
     [exchangeRateAPI.reducerPath]: exchangeRateAPI.reducer,
     [currencyApi.reducerPath]: currencyApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -52,7 +54,8 @@ export const store = configureStore({
       projectAPI.middleware,
       supplierAPI.middleware,
       exchangeRateAPI.middleware,
-      currencyApi.middleware
+      currencyApi.middleware,
+      dashboardApi.middleware
     ),
 });
 

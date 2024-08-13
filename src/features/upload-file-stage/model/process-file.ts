@@ -526,8 +526,6 @@ export const processFile = async ({
     }
   }
 
-  console.log(expenses);
-
   return { expenses, errors, isError } as const;
 };
 
