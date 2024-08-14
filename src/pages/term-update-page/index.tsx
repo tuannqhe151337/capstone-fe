@@ -84,26 +84,14 @@ const StartDateSchema = z.date({
   required_error: "Start date cannot be null",
 });
 
-const EndDateSchema = z
-  .date({
-    required_error: "End date cannot be null",
-  })
-  .refine((date) => new Date(date) > new Date(), {
-    message: "Must be in the future",
-  });
+const EndDateSchema = z.date({
+  required_error: "End date cannot be null",
+});
 
 const AllowReuploadSchema = z.optional(z.boolean());
 
-const ReuploadStartDateSchema = z.optional(
-  z.date().refine((date) => new Date(date) > new Date(), {
-    message: "Must be in the future",
-  })
-);
-const ReuploadEndDateSchema = z.optional(
-  z.date().refine((date) => new Date(date) > new Date(), {
-    message: "Must be in the future",
-  })
-);
+const ReuploadStartDateSchema = z.optional(z.date());
+const ReuploadEndDateSchema = z.optional(z.date());
 
 export const TermUpdate: React.FC = () => {
   // Authorized
@@ -358,17 +346,6 @@ export const TermUpdate: React.FC = () => {
     }
   }, [isError, errorMessage]);
 
-  // Default start date
-  const defaultStartDate: Date = useMemo(() => {
-    const currentDate = new Date();
-
-    return new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
-      termInterval?.startTermDate
-    );
-  }, [termInterval]);
-
   // Handle on radio click
   function handleOnClickRadio(duration: Duration) {
     setSelectedOption(duration);
@@ -432,45 +409,54 @@ export const TermUpdate: React.FC = () => {
               <Controller
                 name="startDate"
                 control={control}
-                render={({ field: { onChange } }) => (
-                  <DatePickerInputWithErrorAndLabel
-                    label="Start date"
-                    showValidationMessage={dirtyFields.startDate || false}
-                    validateFn={() => {
-                      const startDate = watch("startDate");
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    {value && (
+                      <DatePickerInputWithErrorAndLabel
+                        label="Start date"
+                        showValidationMessage={dirtyFields.startDate || false}
+                        validateFn={() => {
+                          const startDate = watch("startDate");
 
-                      StartDateSchema.parse(startDate);
+                          StartDateSchema.parse(startDate);
 
-                      const monthOfStartDate = watch("startDate").getMonth();
-                      const minimumStartDate = new Date(
-                        new Date().getFullYear(),
-                        monthOfStartDate,
-                        termInterval?.startTermDate
-                      );
-                      const maximumEndDate = addDate(minimumStartDate, {
-                        days: termInterval?.endTermInterval,
-                      });
+                          const monthOfStartDate =
+                            watch("startDate").getMonth();
+                          const minimumStartDate = new Date(
+                            startDate.getFullYear(),
+                            monthOfStartDate,
+                            termInterval?.startTermDate
+                          );
+                          const maximumEndDate = addDate(minimumStartDate, {
+                            days: termInterval?.endTermInterval,
+                          });
 
-                      if (
-                        startDate < minimumStartDate ||
-                        startDate > maximumEndDate
-                      ) {
-                        throw new Error(
-                          `Must be between
-                          ${minimumStartDate.getDate()}/${
-                            minimumStartDate.getMonth() + 1
-                          } - 
-                          ${maximumEndDate.getDate()}/${
-                            maximumEndDate.getMonth() + 1
-                          }`
-                        );
-                      }
-                    }}
-                    value={defaultStartDate}
-                    onChange={(value) => {
-                      onChange(value);
-                    }}
-                  />
+                          if (
+                            startDate < minimumStartDate ||
+                            startDate > maximumEndDate
+                          ) {
+                            if (startDate.getMonth() === 2) {
+                              throw new Error(
+                                `Must be between ${minimumStartDate.getDate()}/${
+                                  minimumStartDate.getMonth() + 1
+                                } - ${maximumEndDate.getDate()}/${
+                                  maximumEndDate.getMonth() + 1
+                                }`
+                              );
+                            } else {
+                              throw new Error(
+                                `Must be between day ${minimumStartDate.getDate()} - ${maximumEndDate.getDate()}`
+                              );
+                            }
+                          }
+                        }}
+                        value={value}
+                        onChange={(value) => {
+                          onChange(value);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               />
             </InputSkeleton>
@@ -493,47 +479,52 @@ export const TermUpdate: React.FC = () => {
               <Controller
                 name="endDate"
                 control={control}
-                render={({ field: { onChange } }) => (
-                  <DatePickerInputWithErrorAndLabel
-                    label="End date"
-                    showValidationMessage={dirtyFields.startDate || false}
-                    validateFn={() => {
-                      EndDateSchema.parse(watch("endDate"));
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    {value && (
+                      <DatePickerInputWithErrorAndLabel
+                        label="End date"
+                        showValidationMessage={dirtyFields.startDate || false}
+                        validateFn={() => {
+                          EndDateSchema.parse(watch("endDate"));
 
-                      if (watch("endDate") < watch("startDate")) {
-                        throw new Error("Must be after start date");
-                      }
+                          if (watch("endDate") < watch("startDate")) {
+                            throw new Error("Must be after start date");
+                          }
 
-                      const monthOfStartDate = watch("startDate").getMonth();
-                      const minimumStartDate = new Date(
-                        new Date().getFullYear(),
-                        monthOfStartDate,
-                        termInterval?.startTermDate
-                      );
-                      const maximumEndDate = addDate(minimumStartDate, {
-                        days: termInterval?.endTermInterval,
-                      });
+                          const monthOfStartDate =
+                            watch("startDate").getMonth();
+                          const minimumStartDate = new Date(
+                            new Date().getFullYear(),
+                            monthOfStartDate,
+                            termInterval?.startTermDate
+                          );
+                          const maximumEndDate = addDate(minimumStartDate, {
+                            days: termInterval?.endTermInterval,
+                          });
 
-                      if (
-                        minimumStartDate < minimumStartDate ||
-                        minimumStartDate > maximumEndDate
-                      ) {
-                        throw new Error(
-                          `Must be between
+                          if (
+                            minimumStartDate < minimumStartDate ||
+                            minimumStartDate > maximumEndDate
+                          ) {
+                            throw new Error(
+                              `Must be between
                           ${minimumStartDate.getDate()}/${
-                            minimumStartDate.getMonth() + 1
-                          } - 
+                                minimumStartDate.getMonth() + 1
+                              } - 
                           ${maximumEndDate.getDate()}/${
-                            maximumEndDate.getMonth() + 1
-                          }`
-                        );
-                      }
-                    }}
-                    value={addDate(defaultStartDate, { days: 5 })}
-                    onChange={(value) => {
-                      onChange(value);
-                    }}
-                  />
+                                maximumEndDate.getMonth() + 1
+                              }`
+                            );
+                          }
+                        }}
+                        value={value}
+                        onChange={(value) => {
+                          onChange(value);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               />
             </InputSkeleton>
@@ -652,65 +643,77 @@ export const TermUpdate: React.FC = () => {
               <Controller
                 name="reuploadStartDate"
                 control={control}
-                render={({ field: { onChange } }) => (
-                  <DatePickerInputWithErrorAndLabel
-                    label="Reupload start date"
-                    disabled={!watch("allowReupload")}
-                    modalPosition={{
-                      top: -100,
-                      right: -320,
-                    }}
-                    showValidationMessage={
-                      watch("allowReupload") && (dirtyFields.startDate || false)
-                    }
-                    validateFn={() => {
-                      const reuploadStartDate = watch("reuploadStartDate");
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    {value && (
+                      <DatePickerInputWithErrorAndLabel
+                        label="Reupload start date"
+                        disabled={!watch("allowReupload")}
+                        modalPosition={{
+                          top: -100,
+                          right: -320,
+                        }}
+                        showValidationMessage={
+                          watch("allowReupload") &&
+                          (dirtyFields.reuploadStartDate || false)
+                        }
+                        validateFn={() => {
+                          const reuploadStartDate = watch("reuploadStartDate");
 
-                      ReuploadStartDateSchema.parse(reuploadStartDate);
+                          ReuploadStartDateSchema.parse(reuploadStartDate);
 
-                      if (
-                        reuploadStartDate &&
-                        reuploadStartDate < watch("endDate")
-                      ) {
-                        throw new Error("Must be after end date");
-                      }
+                          if (
+                            reuploadStartDate &&
+                            reuploadStartDate < watch("endDate")
+                          ) {
+                            throw new Error("Must be after end date");
+                          }
 
-                      const monthOfStartDate = watch("startDate").getMonth();
-                      const minimumStartDate = new Date(
-                        new Date().getFullYear(),
-                        monthOfStartDate,
-                        termInterval?.startTermDate
-                      );
-                      const minimumReuploadDate = addDate(minimumStartDate, {
-                        days: termInterval?.startReuploadInterval,
-                      });
-                      const maximumReuploadDate = addDate(minimumStartDate, {
-                        days:
-                          (termInterval?.startReuploadInterval || 0) +
-                          (termInterval?.endReuploadInterval || 0),
-                      });
+                          const monthOfStartDate =
+                            watch("startDate").getMonth();
+                          const minimumStartDate = new Date(
+                            new Date().getFullYear(),
+                            monthOfStartDate,
+                            termInterval?.startTermDate
+                          );
+                          const minimumReuploadDate = addDate(
+                            minimumStartDate,
+                            {
+                              days: termInterval?.startReuploadInterval,
+                            }
+                          );
+                          const maximumReuploadDate = addDate(
+                            minimumStartDate,
+                            {
+                              days:
+                                (termInterval?.startReuploadInterval || 0) +
+                                (termInterval?.endReuploadInterval || 0),
+                            }
+                          );
 
-                      if (
-                        reuploadStartDate &&
-                        (reuploadStartDate < minimumReuploadDate ||
-                          reuploadStartDate > maximumReuploadDate)
-                      ) {
-                        throw new Error(
-                          `Must be between
+                          if (
+                            reuploadStartDate &&
+                            (reuploadStartDate < minimumReuploadDate ||
+                              reuploadStartDate > maximumReuploadDate)
+                          ) {
+                            throw new Error(
+                              `Must be between
                           ${minimumReuploadDate.getDate()}/${
-                            minimumReuploadDate.getMonth() + 1
-                          } - 
+                                minimumReuploadDate.getMonth() + 1
+                              } - 
                           ${maximumReuploadDate.getDate()}/${
-                            maximumReuploadDate.getMonth() + 1
-                          }`
-                        );
-                      }
-                    }}
-                    value={addDate(defaultStartDate, { days: 20 })}
-                    onChange={(value) => {
-                      onChange(value);
-                    }}
-                  />
+                                maximumReuploadDate.getMonth() + 1
+                              }`
+                            );
+                          }
+                        }}
+                        value={value}
+                        onChange={(value) => {
+                          onChange(value);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               />
             </InputSkeleton>
@@ -734,67 +737,81 @@ export const TermUpdate: React.FC = () => {
               <Controller
                 name="reuploadEndDate"
                 control={control}
-                render={({ field: { onChange } }) => (
-                  <DatePickerInputWithErrorAndLabel
-                    label="Reupload end date"
-                    disabled={!watch("allowReupload")}
-                    modalPosition={{
-                      top: -100,
-                      right: -320,
-                    }}
-                    showValidationMessage={
-                      watch("allowReupload") && (dirtyFields.startDate || false)
-                    }
-                    validateFn={() => {
-                      const reuploadStartDate = watch("reuploadStartDate");
-                      const reuploadEndDate = watch("reuploadEndDate");
+                render={({ field: { value, onChange } }) => (
+                  <>
+                    {value && (
+                      <DatePickerInputWithErrorAndLabel
+                        label="Reupload end date"
+                        disabled={!watch("allowReupload")}
+                        modalPosition={{
+                          top: -100,
+                          right: -320,
+                        }}
+                        showValidationMessage={
+                          watch("allowReupload") &&
+                          (dirtyFields.reuploadEndDate || false)
+                        }
+                        validateFn={() => {
+                          const reuploadStartDate = watch("reuploadStartDate");
+                          const reuploadEndDate = watch("reuploadEndDate");
 
-                      ReuploadEndDateSchema.parse(watch("reuploadEndDate"));
+                          ReuploadEndDateSchema.parse(watch("reuploadEndDate"));
 
-                      if (
-                        reuploadStartDate &&
-                        reuploadEndDate &&
-                        reuploadEndDate < reuploadStartDate
-                      ) {
-                        throw new Error("Must be after reupload start date");
-                      }
+                          if (
+                            reuploadStartDate &&
+                            reuploadEndDate &&
+                            reuploadEndDate < reuploadStartDate
+                          ) {
+                            throw new Error(
+                              "Must be after reupload start date"
+                            );
+                          }
 
-                      const monthOfStartDate = watch("startDate").getMonth();
-                      const minimumStartDate = new Date(
-                        new Date().getFullYear(),
-                        monthOfStartDate,
-                        termInterval?.startTermDate
-                      );
-                      const minimumReuploadDate = addDate(minimumStartDate, {
-                        days: termInterval?.startReuploadInterval,
-                      });
-                      const maximumReuploadDate = addDate(minimumStartDate, {
-                        days:
-                          (termInterval?.startReuploadInterval || 0) +
-                          (termInterval?.endReuploadInterval || 0),
-                      });
+                          const monthOfStartDate =
+                            watch("startDate").getMonth();
+                          const minimumStartDate = new Date(
+                            new Date().getFullYear(),
+                            monthOfStartDate,
+                            termInterval?.startTermDate
+                          );
+                          const minimumReuploadDate = addDate(
+                            minimumStartDate,
+                            {
+                              days: termInterval?.startReuploadInterval,
+                            }
+                          );
+                          const maximumReuploadDate = addDate(
+                            minimumStartDate,
+                            {
+                              days:
+                                (termInterval?.startReuploadInterval || 0) +
+                                (termInterval?.endReuploadInterval || 0),
+                            }
+                          );
 
-                      if (
-                        reuploadEndDate &&
-                        (reuploadEndDate < minimumReuploadDate ||
-                          reuploadEndDate > maximumReuploadDate)
-                      ) {
-                        throw new Error(
-                          `Must be between
+                          if (
+                            reuploadEndDate &&
+                            (reuploadEndDate < minimumReuploadDate ||
+                              reuploadEndDate > maximumReuploadDate)
+                          ) {
+                            throw new Error(
+                              `Must be between
                           ${minimumReuploadDate.getDate()}/${
-                            minimumReuploadDate.getMonth() + 1
-                          } - 
+                                minimumReuploadDate.getMonth() + 1
+                              } - 
                           ${maximumReuploadDate.getDate()}/${
-                            maximumReuploadDate.getMonth() + 1
-                          }`
-                        );
-                      }
-                    }}
-                    value={addDate(defaultStartDate, { days: 21 })}
-                    onChange={(value) => {
-                      onChange(value);
-                    }}
-                  />
+                                maximumReuploadDate.getMonth() + 1
+                              }`
+                            );
+                          }
+                        }}
+                        value={value}
+                        onChange={(value) => {
+                          onChange(value);
+                        }}
+                      />
+                    )}
+                  </>
                 )}
               />
             </InputSkeleton>

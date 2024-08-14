@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { FaBookOpen } from "react-icons/fa6";
 import { IconButton } from "../../shared/icon-button";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
 import { Modal } from "../../shared/modal";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Pagination } from "../../shared/pagination";
 import { produce } from "immer";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 export const UserGuide: React.FC = () => {
   // Show modal

@@ -39,6 +39,9 @@ const childrenAnimation: Variants = {
   },
 };
 
+// TODO: Fetch infinite plan
+const pageSize = 10;
+
 export const TermDetailPlanPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -57,7 +60,7 @@ export const TermDetailPlanPage: React.FC = () => {
       }
     }
 
-    fetchPlans({ termId: termIdInt, page: 1, pageSize: 1 });
+    fetchPlans({ termId: termIdInt, page: 1, pageSize });
   }, [termId]);
 
   return (

@@ -102,7 +102,9 @@ export const Sidebar = () => {
           <div>
             <Link to={`/term-management`}>
               <Tab
-                icon={<RiCalendarScheduleFill className="text-2xl -ml-0.5" />}
+                icon={
+                  <RiCalendarScheduleFill className="text-2xl -ml-0.5 mr-0.5" />
+                }
                 text={t("Term management")}
                 selected={location.pathname.startsWith("/term-management")}
                 isExpanded={isExpanded}
@@ -116,7 +118,7 @@ export const Sidebar = () => {
           <div>
             <Link to={`/report-management`}>
               <Tab
-                icon={<HiDocumentReport className="text-3xl -ml-1" />}
+                icon={<HiDocumentReport className="text-3xl -ml-1 -mr-0.5" />}
                 text={t("Financial report")}
                 selected={location.pathname.startsWith("/report-management")}
                 isExpanded={isExpanded}
@@ -176,7 +178,7 @@ export const Sidebar = () => {
             <Link to={`/exchange-rate`}>
               <Tab
                 icon={
-                  <CurrencyConversionIcon className="w-[27px] fill-primary-500 -mr-1 -mt-1 -mb-2" />
+                  <CurrencyConversionIcon className="w-[27px] fill-primary-500 -mr-[3px] -mt-1 -mb-2" />
                 }
                 text={t("Exchange rate")}
                 selected={location.pathname.startsWith("/exchange-rate")}

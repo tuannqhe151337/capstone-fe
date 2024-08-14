@@ -371,7 +371,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
 
                       const monthOfStartDate = watch("startDate").getMonth();
                       const minimumStartDate = new Date(
-                        new Date().getFullYear(),
+                        startDate.getFullYear(),
                         monthOfStartDate,
                         termInterval?.startTermDate
                       );
@@ -383,15 +383,19 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                         startDate < minimumStartDate ||
                         startDate > maximumEndDate
                       ) {
-                        throw new Error(
-                          `Must be between
-                          ${minimumStartDate.getDate()}/${
-                            minimumStartDate.getMonth() + 1
-                          } - 
-                          ${maximumEndDate.getDate()}/${
-                            maximumEndDate.getMonth() + 1
-                          }`
-                        );
+                        if (startDate.getMonth() === 1) {
+                          throw new Error(
+                            `Must be between ${minimumStartDate.getDate()}/${
+                              minimumStartDate.getMonth() + 1
+                            } - ${maximumEndDate.getDate()}/${
+                              maximumEndDate.getMonth() + 1
+                            }`
+                          );
+                        } else {
+                          throw new Error(
+                            `Must be between day ${minimumStartDate.getDate()} - ${maximumEndDate.getDate()}`
+                          );
+                        }
                       }
                     }}
                     value={defaultStartDate}
@@ -568,7 +572,8 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                       right: -320,
                     }}
                     showValidationMessage={
-                      watch("allowReupload") && (dirtyFields.startDate || false)
+                      watch("allowReupload") &&
+                      (dirtyFields.reuploadStartDate || false)
                     }
                     validateFn={() => {
                       const reuploadStartDate = watch("reuploadStartDate");
@@ -647,7 +652,8 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                       right: -320,
                     }}
                     showValidationMessage={
-                      watch("allowReupload") && (dirtyFields.startDate || false)
+                      watch("allowReupload") &&
+                      (dirtyFields.reuploadEndDate || false)
                     }
                     validateFn={() => {
                       const reuploadStartDate = watch("reuploadStartDate");

@@ -1,19 +1,24 @@
 import Chart from "react-apexcharts";
 import { cn } from "../../shared/utils/cn";
-import { YearFilter } from "../../entities/year-filter";
 import { useLazyGetYearlyCostTypeExpenseQuery } from "../../providers/store/api/dashboardAPI";
 import { useEffect, useMemo, useState } from "react";
-import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
+import {
+  CostType,
+  useGetAllCostTypeQuery,
+} from "../../providers/store/api/costTypeAPI";
 import { FaChartPie } from "react-icons/fa6";
 
 interface Props {
+  year: number;
   className?: string;
+  chosenCostTypeIdList?: number[];
 }
 
-export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
-  // Select year
-  const [year, setYear] = useState<number>(new Date().getFullYear());
-
+export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
+  year,
+  className,
+  chosenCostTypeIdList,
+}) => {
   // Get cost type
   const { data: costTypeResult } = useGetAllCostTypeQuery();
 
@@ -26,6 +31,27 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
     }
   }, [year]);
 
+  // Chosen cost type
+  const [listChosenCostType, setListChosenCostType] = useState<CostType[]>([]);
+
+  useEffect(() => {
+    // List cost type for showing
+    let listCostType: CostType[] = costTypeResult?.data || [];
+
+    if (chosenCostTypeIdList && chosenCostTypeIdList.length > 0) {
+      if (chosenCostTypeIdList.findIndex((id) => id === 0)) {
+        listCostType =
+          costTypeResult?.data.filter(({ costTypeId }) =>
+            chosenCostTypeIdList.includes(costTypeId)
+          ) || [];
+      }
+    } else if (chosenCostTypeIdList && chosenCostTypeIdList?.length === 0) {
+      listCostType = [];
+    }
+
+    setListChosenCostType(listCostType);
+  }, [chosenCostTypeIdList]);
+
   const dataChart: ApexNonAxisChartSeries = useMemo(() => {
     const costTypeMap: Record<string, number> = {};
 
@@ -35,8 +61,8 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
       }
     }
 
-    return costTypeResult?.data.map(({ name }) => costTypeMap[name] || 0) || [];
-  }, [data, costTypeResult]);
+    return listChosenCostType.map(({ name }) => costTypeMap[name] || 0) || [];
+  }, [data, listChosenCostType]);
 
   return (
     <div
@@ -49,17 +75,6 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
         <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
           By year
         </p>
-        <div className="ml-auto">
-          <YearFilter
-            defaultOption={{
-              value: new Date().getFullYear(),
-              label: new Date().getFullYear().toString(),
-            }}
-            onChange={(option) => {
-              option && setYear(option.value);
-            }}
-          />
-        </div>
       </div>
       <div className="mt-10 h-full">
         {/* Show chart */}
@@ -68,7 +83,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
             options={{
               chart: { toolbar: { show: true, offsetY: 345 } },
               legend: { show: false },
-              labels: costTypeResult?.data.map(({ name }) => name) || [],
+              labels: listChosenCostType.map(({ name }) => name) || [],
               dataLabels: { enabled: true },
               plotOptions: {
                 pie: {

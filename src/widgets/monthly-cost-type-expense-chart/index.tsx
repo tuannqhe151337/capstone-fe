@@ -1,18 +1,23 @@
 import Chart from "react-apexcharts";
-import { YearFilter } from "../../entities/year-filter";
 import { cn } from "../../shared/utils/cn";
 import { useEffect, useMemo, useState } from "react";
 import { useLazyGetMonthlyCostTypeExpenseQuery } from "../../providers/store/api/dashboardAPI";
-import { useGetAllCostTypeQuery } from "../../providers/store/api/costTypeAPI";
+import {
+  CostType,
+  useGetAllCostTypeQuery,
+} from "../../providers/store/api/costTypeAPI";
 
 interface Props {
+  year: number;
   className?: string;
+  chosenCostTypeIdList?: number[];
 }
 
-export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
-  // Select year
-  const [year, setYear] = useState<number>(new Date().getFullYear());
-
+export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
+  year,
+  className,
+  chosenCostTypeIdList,
+}) => {
   // Get cost type
   const { data: costTypeResult } = useGetAllCostTypeQuery();
 
@@ -26,15 +31,36 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
     }
   }, [year]);
 
+  // Chosen cost type
+  const [listChosenCostType, setListChosenCostType] = useState<CostType[]>([]);
+
+  useEffect(() => {
+    // List cost type for showing
+    let listCostType: CostType[] = costTypeResult?.data || [];
+
+    if (chosenCostTypeIdList && chosenCostTypeIdList.length > 0) {
+      if (chosenCostTypeIdList.findIndex((id) => id === 0)) {
+        listCostType =
+          costTypeResult?.data.filter(({ costTypeId }) =>
+            chosenCostTypeIdList.includes(costTypeId)
+          ) || [];
+      }
+    } else if (chosenCostTypeIdList && chosenCostTypeIdList?.length === 0) {
+      listCostType = [];
+    }
+
+    setListChosenCostType(listCostType);
+  }, [chosenCostTypeIdList]);
+
   const dataChart: ApexAxisChartSeries = useMemo(() => {
     const dataChart: ApexAxisChartSeries = [];
 
-    if (data && costTypeResult) {
+    if (data && chosenCostTypeIdList) {
       // Map by cost type name and list amount corresponding to each month
       const costTypeMonthlyMap: Record<string, number[]> = {};
 
       // Fill all cost type to the map
-      for (const costType of costTypeResult.data) {
+      for (const costType of listChosenCostType) {
         costTypeMonthlyMap[costType.name] = [];
       }
 
@@ -48,7 +74,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
         }
 
         // Insert all of cost type for that month, if it's not exists return 0
-        for (const costType of costTypeResult.data) {
+        for (const costType of listChosenCostType) {
           costTypeMonthlyMap[costType.name].push(
             costTypeMonthMap[costType.name] || 0
           );
@@ -67,7 +93,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
     }
 
     return dataChart;
-  }, [data, costTypeResult]);
+  }, [data, listChosenCostType]);
 
   return (
     <div
@@ -79,19 +105,8 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
       <div className="flex flex-row flex-wrap mb-8">
         <div>
           <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
-            Cost type consumption over time
+            By month
           </p>
-        </div>
-        <div className="ml-auto">
-          <YearFilter
-            defaultOption={{
-              value: new Date().getFullYear(),
-              label: new Date().getFullYear().toString(),
-            }}
-            onChange={(option) => {
-              option && setYear(option.value);
-            }}
-          />
         </div>
       </div>
       <Chart

@@ -1,7 +1,6 @@
 import { Variants, motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { MonthlyCostTypeExpenseChart } from "../../widgets/monthly-cost-type-expense-chart";
-import { YearlyCostTypeExpenseChart } from "../../widgets/yearly-cost-type-expense-chart";
+
 import { lazy } from "react";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { MonthlyExpectedActualCostChart } from "../../widgets/monthly-expected-actual-cost-chart";
@@ -10,6 +9,7 @@ import { Role } from "../../providers/store/api/type";
 import { MonthlyUserChart } from "../../widgets/monthly-user-chart";
 import { DepartmentUserChart } from "../../widgets/department-user-chart";
 import { TopListOverviewCard } from "../../widgets/top-list-overview-card";
+import { CostTypeConsumptionSection } from "../../widgets/cost-type-consumption-section";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -76,13 +76,8 @@ export const HomePage: React.FC = () => {
 
       {(me?.role.code === Role.ACCOUNTANT ||
         me?.role.code === Role.FINANCIAL_STAFF) && (
-        <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
-          <motion.div className="flex-[2]" variants={childrenAnimation}>
-            <MonthlyCostTypeExpenseChart />
-          </motion.div>
-          <motion.div className="flex-1" variants={childrenAnimation}>
-            <YearlyCostTypeExpenseChart />
-          </motion.div>
+        <div className="mt-10 px-10">
+          <CostTypeConsumptionSection />
         </div>
       )}
 

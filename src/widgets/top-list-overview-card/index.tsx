@@ -74,8 +74,6 @@ export const TopListOverviewCard: React.FC = () => {
     }
   }, [me]);
 
-  console.log(me?.role.code === Role.ACCOUNTANT);
-
   return (
     <motion.div
       className="flex flex-row flex-wrap justify-between gap-5 w-full"
