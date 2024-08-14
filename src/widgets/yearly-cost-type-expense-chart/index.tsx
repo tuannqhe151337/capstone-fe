@@ -38,8 +38,6 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({ className }) => {
     return costTypeResult?.data.map(({ name }) => costTypeMap[name] || 0) || [];
   }, [data, costTypeResult]);
 
-  console.log(data?.data);
-
   return (
     <div
       className={cn(
