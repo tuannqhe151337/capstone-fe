@@ -162,7 +162,6 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                     hide={stage !== 1}
                     dropzoneHeight={380}
                     validateExpenseId
-                    validateExpenseCode
                     validateStatusCode
                     downloadButtonText="Download report"
                     onDownloadTemplateClick={() => {
