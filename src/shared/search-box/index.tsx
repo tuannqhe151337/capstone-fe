@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FaSearch } from "react-icons/fa";
 import { cn } from "../utils/cn";
+import { useTranslation } from "react-i18next";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLInputElement> {
   hideCtrlK?: boolean;
@@ -15,6 +16,9 @@ export const SearchBox: React.FC<Props> = ({
   className,
   ...props
 }) => {
+  // i18n
+  const { t } = useTranslation(["filter-search"]);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [isFocus, setIsFocus] = useState<boolean>();
@@ -53,7 +57,7 @@ export const SearchBox: React.FC<Props> = ({
       <input
         ref={inputRef}
         type="text"
-        placeholder="Search"
+        placeholder={t("Search")}
         className={cn(
           "flex-1 py-3 bg-transparent outline-none h-full text-sm font-semibold",
           { "pl-5 pr-5": !hideCtrlK, "pl-5": hideCtrlK },

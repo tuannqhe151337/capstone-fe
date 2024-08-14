@@ -13,6 +13,7 @@ import { UserDeactiveConfirmModal } from "../user-deactive-confirm-modal";
 import { UserPreview } from "../../providers/store/api/usersApi";
 import { useHotkeys } from "react-hotkeys-hook";
 import { UserActionContextMenu } from "../../entities/user-action-context-menu";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -74,6 +75,9 @@ export const UserTable: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["table-user"]);
+
   // Navigation
   const navigate = useNavigate();
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
@@ -122,37 +126,43 @@ export const UserTable: React.FC<Props> = ({
                 scope="col"
                 className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
               >
-                ID
+                {/* ID */}
+                {t("ID")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-4 w-[220px] font-extrabold text-primary-500/80 dark:text-primary-600/80 text-left"
               >
-                Username
+                {/* Username */}
+                {t("Username")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-4 w-[160px] font-extrabold text-primary-500/80 dark:text-primary-600/80"
               >
-                Role
+                {/* Role */}
+                {t("Role")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
               >
-                Email
+                {/* Email */}
+                {t("Email")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
               >
-                Deparment
+                {/* Deparment */}
+                {t("Department")}
               </th>
               <th
                 scope="col"
                 className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
               >
-                Position
+                {/* Position */}
+                {t("Position")}
               </th>
               <th scope="col">
                 <IconButton
@@ -268,7 +278,8 @@ export const UserTable: React.FC<Props> = ({
 
         {isDataEmpty && (
           <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-            No data found.
+            {/* No data found. */}
+            {t("No data found")}
           </div>
         )}
       </div>

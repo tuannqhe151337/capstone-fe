@@ -27,6 +27,7 @@ import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -113,6 +114,9 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
 });
 
 export const UserCreate: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["user-detail"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ADMIN]);
 
@@ -192,10 +196,10 @@ export const UserCreate: React.FC = () => {
               to={`/user-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              User management
+              {t("User management")}
             </Link>
             <span className="text-base opacity-40">&gt;</span>
-            <span>Create new user</span>
+            <span>{t("Create new user")}</span>
           </p>
         </div>
       </BubbleBanner>
@@ -220,7 +224,7 @@ export const UserCreate: React.FC = () => {
             >
               <TEInput
                 type="text"
-                label="Full name"
+                label={t("Full name")}
                 className="mb-4 bg-white dark:bg-neutral-900"
                 autoFocus
                 {...register("fullName", { required: true })}
@@ -244,7 +248,7 @@ export const UserCreate: React.FC = () => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <RoleFilter
-                    defaultOption={{ value: 0, label: "Select role" }}
+                    defaultOption={{ value: 0, label: t("Select role") }}
                     onChange={(option) => option && onChange(option.value)}
                     className="z-40 dark:z-40 w-[440px]"
                   />
@@ -274,7 +278,7 @@ export const UserCreate: React.FC = () => {
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <TEInput
-                    label="Phone"
+                    label={t("Phone")}
                     className="mb-4 w-full bg-white dark:bg-neutral-900"
                     value={value}
                     onChange={(e) => {
@@ -303,7 +307,7 @@ export const UserCreate: React.FC = () => {
                 render={({ field: { onChange } }) => (
                   <DepartmentFilter
                     className="z-30 dark:z-30 w-[440px]"
-                    defaultOption={{ value: 0, label: "Select department" }}
+                    defaultOption={{ value: 0, label: t("Select department") }}
                     onChange={(option) => option && onChange(option.value)}
                   />
                 )}
@@ -331,7 +335,7 @@ export const UserCreate: React.FC = () => {
             >
               <TEInput
                 type="email"
-                label="Email"
+                label={t("Email")}
                 className="mb-4 w-full bg-white dark:bg-neutral-900"
                 {...register("email", { required: true })}
               />
@@ -355,7 +359,7 @@ export const UserCreate: React.FC = () => {
                 render={({ field: { onChange } }) => (
                   <PositionFilter
                     className="z-20 dark:z-20 w-[440px]"
-                    defaultOption={{ value: 0, label: "Select position" }}
+                    defaultOption={{ value: 0, label: t("Select position") }}
                     onChange={(option) => option && onChange(option.value)}
                   />
                 )}
@@ -381,7 +385,7 @@ export const UserCreate: React.FC = () => {
             >
               <TEInput
                 type="text"
-                label="Address"
+                label={t("Address")}
                 className="mb-4 w-full bg-white dark:bg-neutral-900"
                 {...register("address")}
               />
@@ -416,7 +420,7 @@ export const UserCreate: React.FC = () => {
             className="py-2 dark:text-white/80"
             onClick={handleSubmit(onSubmit)}
           >
-            {!isLoading && "Create user"}
+            {!isLoading && t("Create user")}
             {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>

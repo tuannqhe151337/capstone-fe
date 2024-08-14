@@ -29,6 +29,8 @@ import { toast } from "react-toastify";
 import { ErrorData, Role } from "../../providers/store/api/type";
 import { InputSkeleton } from "../../shared/input-skeleton";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -125,6 +127,9 @@ export const CreateUserSchema: ZodType<FormData> = z.object({
 });
 
 export const UserEditPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["user-detail"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ADMIN]);
 
@@ -238,7 +243,8 @@ export const UserEditPage: React.FC = () => {
               to={`/user-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              User management
+              
+              {t("User management")}
             </Link>
             <span className="text-base opacity-40">&gt;</span>
             <Link
@@ -248,7 +254,7 @@ export const UserEditPage: React.FC = () => {
               {user?.username}
             </Link>
             <span className="text-base opacity-40">&gt;</span>
-            <span>Update</span>
+            <span>{t("Update user")}</span>
           </p>
         </div>
       </BubbleBanner>
@@ -282,7 +288,7 @@ export const UserEditPage: React.FC = () => {
               >
                 <TEInput
                   type="text"
-                  label="Full name"
+                  label={t("Full name")}
                   className="mb-4 font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   autoFocus
                   {...register("fullName", { required: true })}
@@ -349,7 +355,7 @@ export const UserEditPage: React.FC = () => {
                   defaultValue=""
                   render={({ field: { onChange, ...props } }) => (
                     <TEInput
-                      label="Phone"
+                      label={t("Phone")}
                       className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                       onChange={(e) => {
                         onChange(allowOnlyNumber(e.currentTarget.value));
@@ -419,7 +425,7 @@ export const UserEditPage: React.FC = () => {
               >
                 <TEInput
                   type="email"
-                  label="Email"
+                  label={t("Email")}
                   className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   {...register("email", { required: true })}
                 />
@@ -481,7 +487,7 @@ export const UserEditPage: React.FC = () => {
               >
                 <TEInput
                   type="text"
-                  label="Address"
+                  label={t("Address")}
                   className="mb-4 w-full font-semibold !text-neutral-500 bg-white dark:bg-neutral-900"
                   {...register("address")}
                 />
@@ -505,7 +511,7 @@ export const UserEditPage: React.FC = () => {
                   control={control}
                   render={({ field: { onChange } }) => (
                     <DatePickerInput
-                      value={new Date()}
+                      value={parseISOInResponse(user?.dob)}
                       onChange={(value) => onChange(value)}
                       className="w-[440px]"
                     />
@@ -523,7 +529,7 @@ export const UserEditPage: React.FC = () => {
             className="py-2 dark:text-white/80"
             onClick={handleSubmit(onSubmit)}
           >
-            {!isLoading && "Update user"}
+            {!isLoading && t("Update user")}
             {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>
