@@ -191,6 +191,12 @@ export interface UserResponse {
   username: string;
 }
 
+export interface InfinteScrollPlansOfTermParam {
+  termId: number;
+  page: number;
+  pageSize: number;
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -244,6 +250,36 @@ const plansApi = createApi({
           return endpoint;
         },
         providesTags: ["plans"],
+      }),
+
+      fetchInfinteScrollPlansOfTerm: builder.query<
+        PaginationResponse<PlanPreview[]>,
+        InfinteScrollPlansOfTermParam
+      >({
+        query: ({ termId, page, pageSize }) =>
+          `plan/list?termId=${termId}&page=${page}&size=${pageSize}`,
+        providesTags: ["plans"],
+        // Only have one cache entry because the arg always maps to one string
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Merge to exists cache, if page === 0 then invalidate all cache
+        // https://stackoverflow.com/questions/72530121/rtk-query-infinite-scrolling-retaining-existing-data
+        // https://github.com/reduxjs/redux-toolkit/issues/2874
+        merge(currentCacheData, responseData, { arg: { page } }) {
+          if (page > 1) {
+            currentCacheData.data.push(...responseData.data);
+            currentCacheData.pagination = responseData.pagination;
+          } else if (page <= 1) {
+            currentCacheData = responseData;
+          }
+
+          return currentCacheData;
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return currentArg !== previousArg;
+        },
       }),
 
       getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
@@ -384,6 +420,7 @@ const plansApi = createApi({
 export const {
   useFetchPlansQuery,
   useLazyFetchPlansQuery,
+  useLazyFetchInfinteScrollPlansOfTermQuery,
   useGetPlanDetailQuery,
   useLazyGetPlanDetailQuery,
   useDeletePlanMutation,

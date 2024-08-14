@@ -10,12 +10,14 @@ import {
   Position,
   ListPositionParameters,
   useLazyGetListPositionQuery,
+  positionAPI,
 } from "../../providers/store/api/positionApi";
 import { DeletePositionModal } from "../../widgets/delete-position-modal";
 import { PositionCreateModal } from "../../widgets/position-create-modal";
 import { PositionEditModal } from "../../widgets/position-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { useDispatch } from "react-redux";
 
 const generateEmptyPositions = (total: number): Position[] => {
   const positions: Row[] = [];
@@ -73,6 +75,13 @@ export const PositionManagementList: React.FC = () => {
 
   // Scroll to top
   useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(positionAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

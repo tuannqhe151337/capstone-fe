@@ -492,11 +492,9 @@ export const TermUpdate: React.FC = () => {
                             throw new Error("Must be after start date");
                           }
 
-                          const monthOfStartDate =
-                            watch("startDate").getMonth();
                           const minimumStartDate = new Date(
-                            new Date().getFullYear(),
-                            monthOfStartDate,
+                            watch("startDate").getFullYear(),
+                            watch("startDate").getMonth(),
                             termInterval?.startTermDate
                           );
                           const maximumEndDate = addDate(minimumStartDate, {

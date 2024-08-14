@@ -10,12 +10,14 @@ import {
   Supplier,
   ListSupplierParameters,
   useLazyGetListSupplierQuery,
+  supplierAPI,
 } from "../../providers/store/api/supplierApi";
 import { DeleteSupplierModal } from "../../widgets/delete-supplier-modal";
 import { SupplierCreateModal } from "../../widgets/supplier-create-modal";
 import { SupplierEditModal } from "../../widgets/supplier-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { useDispatch } from "react-redux";
 
 const generateEmptySuppliers = (total: number): Supplier[] => {
   const suppliers: Row[] = [];
@@ -73,6 +75,13 @@ export const SupplierManagementList: React.FC = () => {
 
   // Query
   const [fetchSuppliers, { data, isFetching }] = useLazyGetListSupplierQuery();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(supplierAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
