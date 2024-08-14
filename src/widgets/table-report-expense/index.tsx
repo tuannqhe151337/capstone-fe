@@ -10,7 +10,7 @@ import {
 } from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
 import { ExpenseTag } from "../../entities/expense-tag";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ExpenseActionContextMenu } from "../../entities/expense-action-context-menu";
 import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
@@ -62,7 +62,8 @@ interface Props {
   isRowsSelectable?: boolean;
   listSelectedId?: Set<number>;
   onSelectAllClick?: () => any;
-  onRowClick?: (index: number) => any;
+  onRowClick?: (expenseId: number, index: number) => any;
+  onShiftRowClick?: (expenseId: number, index: number) => any;
   expenses?: Expense[];
   isFetching?: boolean;
   page?: number | undefined | null;
@@ -81,6 +82,7 @@ export const TableReportExpenses: React.FC<Props> = ({
   isRowsSelectable,
   onSelectAllClick,
   onRowClick,
+  onShiftRowClick,
   expenses,
   isFetching,
   page,
@@ -121,6 +123,27 @@ export const TableReportExpenses: React.FC<Props> = ({
       }
     },
     { enableOnFormTags: ["input", "INPUT"] }
+  );
+
+  // Prevent select on shift + click
+  const preventSelect = useCallback((e: Event) => {
+    e.preventDefault();
+  }, []);
+
+  useHotkeys(
+    "shift",
+    () => {
+      document.addEventListener("selectstart", preventSelect);
+    },
+    { keydown: true }
+  );
+
+  useHotkeys(
+    "shift",
+    () => {
+      document.removeEventListener("selectstart", preventSelect);
+    },
+    { keyup: true }
   );
 
   return (
@@ -208,10 +231,16 @@ export const TableReportExpenses: React.FC<Props> = ({
                     (index % 2 === 1 && !listSelectedId),
                 })}
                 variants={rowAnimation}
-                onClick={() => {
-                  isRowsSelectable &&
-                    onRowClick &&
-                    onRowClick(expense.expenseId);
+                onClick={(e) => {
+                  if (isRowsSelectable) {
+                    if (e.shiftKey) {
+                      e.currentTarget.onselectstart = (e) => e.preventDefault();
+                      onShiftRowClick &&
+                        onShiftRowClick(expense.expenseId, index);
+                    } else {
+                      onRowClick && onRowClick(expense.expenseId, index);
+                    }
+                  }
                 }}
                 onContextMenu={(e) => {
                   if (isRowsSelectable) {

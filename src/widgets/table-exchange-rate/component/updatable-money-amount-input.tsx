@@ -12,6 +12,7 @@ import { AFFIX } from "../../../providers/store/api/type";
 interface Props {
   exchangeId?: number;
   initialValue?: number;
+  baseCurrencyValue?: number;
   month?: string;
   currencyId: number;
   symbol?: string;
@@ -21,6 +22,7 @@ interface Props {
 export const UpdatableMoneyAmountInput: React.FC<Props> = ({
   exchangeId,
   initialValue,
+  baseCurrencyValue,
   month,
   currencyId,
   symbol,
@@ -57,13 +59,24 @@ export const UpdatableMoneyAmountInput: React.FC<Props> = ({
       month?: string,
       currencyId?: number
     ) => {
-      if (exchangeId && amount) {
-        updateMonthlyExchangeRate({ exchangeId, amount: amount || 0 });
+      if (!amount) {
+        amount = 0;
+      }
+
+      if (!baseCurrencyValue) {
+        baseCurrencyValue = 0;
+      }
+
+      if (exchangeId) {
+        updateMonthlyExchangeRate({
+          exchangeId,
+          amount: amount * baseCurrencyValue,
+        });
       } else if (amount && month && currencyId) {
         createExchangeRate({
           month,
           currencyId,
-          amount,
+          amount: amount * baseCurrencyValue,
         });
       }
     },
@@ -80,6 +93,7 @@ export const UpdatableMoneyAmountInput: React.FC<Props> = ({
       suffix={affix === AFFIX.SUFFIX ? symbol : undefined}
       thousandSeparator=","
       decimalSeparator="."
+      decimalScale={2}
       onValueChange={({ floatValue }) => {
         setValue(floatValue);
         setIsDirty(true);

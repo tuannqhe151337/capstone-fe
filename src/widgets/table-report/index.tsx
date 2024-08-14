@@ -112,7 +112,7 @@ export const TableReportManagement: React.FC<Props> = ({
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
               Report
             </th>
@@ -124,7 +124,7 @@ export const TableReportManagement: React.FC<Props> = ({
             </th>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tr-lg"
             >
               Created at
             </th>
@@ -160,7 +160,13 @@ export const TableReportManagement: React.FC<Props> = ({
                   setChosenReport(report);
                 }}
               >
-                <td className="whitespace-nowrap w-[500px] px-6 py-5 font-extrabold">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap w-[600px] px-6 py-5 font-extrabold":
+                      true,
+                    "rounded-bl-lg": index === reports.length - 1,
+                  })}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -191,7 +197,12 @@ export const TableReportManagement: React.FC<Props> = ({
                     </TermPreviewer>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap px-6 py-5 font-bold": true,
+                    "rounded-br-lg": index === reports.length - 1,
+                  })}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (

@@ -3,7 +3,7 @@ import { FaPlusCircle, FaTrash } from "react-icons/fa";
 import { IconButton } from "../../shared/icon-button";
 import { Skeleton } from "../../shared/skeleton";
 import clsx from "clsx";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExchangeRateCreateModal } from "../exchange-rate-create-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { DeleteExchangeRateModal } from "../delete-exchange-rate-modal";
@@ -12,7 +12,10 @@ import {
   ExchangeRate,
   MonthlyExchangeRate,
 } from "../../providers/store/api/exchangeRateApi";
-import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
+import {
+  Currency,
+  useGetAllCurrencyQuery,
+} from "../../providers/store/api/currencyApi";
 import { UpdatableMoneyAmountInput } from "./component/updatable-money-amount-input";
 
 enum AnimationStage {
@@ -147,6 +150,33 @@ export const TableExchangeRate: React.FC<Props> = ({
     return [];
   }, [listMonthlyExchangeRate]);
 
+  // Base currency
+  const baseCurrency: Currency | undefined = useMemo(() => {
+    return currencies?.data.find((currency) => currency.default === true);
+  }, [currencies]);
+
+  // Calculate compare to 1 unit of the target currency (Eg: 1 USD = 23.000 VND, 1 KRW = 18 VND,...)
+  const calculateAmountCompareToBaseCurrency = useCallback(
+    (
+      currencyExchangeMap: Record<number, ExchangeRate>,
+      currencyId: number
+    ): number => {
+      if (
+        !baseCurrency ||
+        currencyExchangeMap[baseCurrency.currencyId].amount === 0 ||
+        !currencyExchangeMap[currencyId]
+      ) {
+        return 0;
+      }
+
+      return (
+        currencyExchangeMap[currencyId].amount /
+        currencyExchangeMap[baseCurrency.currencyId].amount
+      );
+    },
+    [baseCurrency]
+  );
+
   return (
     <motion.div
       className="pb-24"
@@ -154,7 +184,10 @@ export const TableExchangeRate: React.FC<Props> = ({
       animate={AnimationStage.VISIBLE}
       variants={tableAnimation}
     >
-      <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
+      <div className="italic font-semibold text-sm text-neutral-400/70 mb-1">
+        *value compare to {baseCurrency?.name}
+      </div>
+      <table className="text-center text-sm font-light min-w-full shadow rounded-lg">
         <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600 rounded-lg">
           <tr>
             <th
@@ -163,15 +196,19 @@ export const TableExchangeRate: React.FC<Props> = ({
             >
               Month
             </th>
-            {currencies?.data.map(({ currencyId, name }) => (
-              <th
-                key={currencyId}
-                scope="col"
-                className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
-              >
-                {name}
-              </th>
-            ))}
+            {currencies?.data
+              .filter(
+                (currency) => currency.currencyId !== baseCurrency?.currencyId
+              )
+              .map(({ currencyId, name }) => (
+                <th
+                  key={currencyId}
+                  scope="col"
+                  className="px-6 py-4 font-bold text-primary-500/70 dark:text-primary-600/80"
+                >
+                  {name}
+                </th>
+              ))}
             <th scope="col" className="px-5 rounded-tr-lg">
               <IconButton
                 className="px-3"
@@ -219,38 +256,49 @@ export const TableExchangeRate: React.FC<Props> = ({
               <td
                 className={clsx({
                   "whitespace-nowrap px-10 py-5 font-extrabold w-[250px]": true,
-                  "rounded-bl-lg": index === 4,
+                  "rounded-bl-lg":
+                    index === Object.entries(monthlyExchangeRateMap).length - 1,
                 })}
               >
                 {monthlyExchangeRate.month}
               </td>
-              {currencies?.data.map(({ currencyId, symbol, affix }) => (
-                <td
-                  key={currencyId}
-                  className="whitespace-nowrap px-2 py-5 font-bold"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <UpdatableMoneyAmountInput
-                    exchangeId={
-                      monthlyExchangeRate.exchangeRateMap[currencyId]
-                        ?.exchangeRateId
-                    }
-                    initialValue={
-                      monthlyExchangeRate.exchangeRateMap[currencyId]?.amount ||
-                      0
-                    }
-                    month={monthlyExchangeRate.month}
-                    currencyId={currencyId}
-                    symbol={symbol}
-                    affix={affix}
-                  />
-                </td>
-              ))}
+              {currencies?.data
+                .filter(
+                  (currency) => currency.currencyId !== baseCurrency?.currencyId
+                )
+                .map(({ currencyId }) => (
+                  <td
+                    key={currencyId}
+                    className="whitespace-nowrap px-2 py-5 font-bold"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <UpdatableMoneyAmountInput
+                      exchangeId={
+                        monthlyExchangeRate.exchangeRateMap[currencyId]
+                          ?.exchangeRateId
+                      }
+                      initialValue={calculateAmountCompareToBaseCurrency(
+                        monthlyExchangeRate.exchangeRateMap,
+                        currencyId
+                      )}
+                      baseCurrencyValue={
+                        monthlyExchangeRate.exchangeRateMap[
+                          baseCurrency?.currencyId || 0
+                        ]?.amount
+                      }
+                      month={monthlyExchangeRate.month}
+                      currencyId={currencyId}
+                      symbol={baseCurrency?.symbol}
+                      affix={baseCurrency?.affix}
+                    />
+                  </td>
+                ))}
 
               <td
                 className={clsx({
                   "whitespace-nowrap px-6 py-5 font-bold": true,
-                  "rounded-br-lg": index === 4,
+                  "rounded-br-lg":
+                    index === Object.entries(monthlyExchangeRateMap).length - 1,
                 })}
               >
                 <motion.div

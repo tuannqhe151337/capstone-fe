@@ -123,11 +123,11 @@ export const TablePlanManagement: React.FC<Props> = ({
   return (
     <div className="pb-24">
       <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
-        <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
+        <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600 rounded-lg">
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
               Plan
             </th>
@@ -149,7 +149,7 @@ export const TablePlanManagement: React.FC<Props> = ({
             >
               Version
             </th>
-            <th scope="col">
+            <th scope="col" className="rounded-tr-lg">
               <IconButton
                 className="px-3"
                 tooltip="Upload new plan"
@@ -196,7 +196,12 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setChosenPlan(plan);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-5 font-extrabold">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap px-6 py-5 font-extrabold": true,
+                    "rounded-bl-lg": index === plans.length - 1,
+                  })}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -240,7 +245,12 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <>v{plan.version}</>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap px-6 py-4": true,
+                    "rounded-br-lg": index === plans.length - 1,
+                  })}
+                >
                   {!isFetching &&
                     isAuthorizedToReuploadFn({
                       planDepartmentId: plan.department.departmentId,

@@ -119,8 +119,8 @@ export const UserTable: React.FC<Props> = ({
   return (
     <div>
       <div className="shadow rounded-lg">
-        <table className="text-center text-sm font-light mt-6 min-w-full overflow-hidden rounded">
-          <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
+        <table className="text-center text-sm font-light mt-6 min-w-full overflow-hidden rounded-lg">
+          <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600 rounded-lg">
             <tr>
               <th
                 scope="col"

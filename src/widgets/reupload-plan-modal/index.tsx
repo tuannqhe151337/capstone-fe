@@ -163,7 +163,8 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                           `${
                             import.meta.env.VITE_BACKEND_HOST
                           }plan/download/last-version-xlsx?planId=${planId}`,
-                          token
+                          token,
+                          `${planName}.xlsx`
                         );
                       }
                     }}
