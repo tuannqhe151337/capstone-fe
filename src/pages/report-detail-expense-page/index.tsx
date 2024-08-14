@@ -184,8 +184,10 @@ export const ReportDetailExpensePage: React.FC = () => {
     });
 
   // Approve and deny mutation
-  const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
-    useApproveExpensesMutation();
+  const [
+    approveExpenses,
+    { data: approveExpensesResponse, isSuccess: approveExpensesSuccess },
+  ] = useApproveExpensesMutation();
   const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
     useDenyExpensesMutation();
 
@@ -202,7 +204,7 @@ export const ReportDetailExpensePage: React.FC = () => {
     }
   }, [denyExpensesSuccess]);
 
-  // Approve and deny expense with cache handling
+  // Approve and deny expense with update status of expenses cache
   const approveExpenseAndUpdateCache = (listExpenseId: number[]) => {
     if (reportId) {
       let reportIdInt: number;
@@ -295,6 +297,53 @@ export const ReportDetailExpensePage: React.FC = () => {
       } catch {}
     }
   };
+
+  // Update expense code of expenses cache
+  useEffect(() => {
+    if (reportId && approveExpensesResponse) {
+      try {
+        // Parse planId to int
+        let reportIdInt: number;
+
+        if (typeof reportId === "string") {
+          reportIdInt = parseInt(reportId);
+        } else {
+          reportIdInt = reportId;
+        }
+
+        if (approveExpensesSuccess) {
+          dispatch(
+            reportsAPI.util.updateQueryData(
+              "fetchReportExpenses",
+              {
+                reportId: reportIdInt,
+                costTypeId,
+                query: searchboxValue,
+                page,
+                pageSize,
+              },
+              (draft) => {
+                draft.data.forEach((expense, index) => {
+                  const approvedExpenseIndex =
+                    approveExpensesResponse.data.findIndex(
+                      (approveExpense) =>
+                        approveExpense.expenseId === expense.expenseId
+                    );
+
+                  if (approvedExpenseIndex !== -1) {
+                    draft.data[index].expenseCode =
+                      approveExpensesResponse.data[
+                        approvedExpenseIndex
+                      ].expenseCode;
+                  }
+                });
+              }
+            )
+          );
+        }
+      } catch (e) {}
+    }
+  }, [approveExpensesSuccess, approveExpensesResponse]);
 
   return (
     <motion.div

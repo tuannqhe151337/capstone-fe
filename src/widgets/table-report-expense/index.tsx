@@ -3,7 +3,11 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
-import { AFFIX, Expense } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  ExpenseStatusCodes,
+} from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { useEffect, useState } from "react";
@@ -237,7 +241,9 @@ export const TableReportExpenses: React.FC<Props> = ({
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
                     <Skeleton className="w-[60px]" />
-                  ) : expense.expenseCode ? (
+                  ) : expense.expenseCode &&
+                    ExpenseStatusCodes.check(expense.status.code) !==
+                      "DENIED" ? (
                     <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
                   ) : (
                     <div className="opacity-40 font-semibold italic select-none">

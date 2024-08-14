@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
 import {
   AFFIX,
   Expense,
+  ListResponse,
   LocalStorageItemKey,
   PaginationResponse,
 } from "./type";
@@ -123,6 +124,11 @@ export interface Currency {
 export interface ReviewExpensesBody {
   reportId: number;
   listExpenseId: number[];
+}
+
+export interface ReviewExpenseResult {
+  expenseId: number;
+  expenseCode: string;
 }
 
 export interface UploadReportExpenses {
@@ -247,7 +253,10 @@ const reportsAPI = createApi({
         },
       }),
 
-      approveExpenses: builder.mutation<any, ReviewExpensesBody>({
+      approveExpenses: builder.mutation<
+        ListResponse<ReviewExpenseResult[]>,
+        ReviewExpensesBody
+      >({
         query: (reviewExpenseBody) => ({
           url: "report/expense-approval",
           method: "PUT",
