@@ -2,10 +2,7 @@ import { useEffect } from "react";
 import { Variants, motion } from "framer-motion";
 import { FaChartLine } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  useLazyFetchInfinteScrollPlansOfTermQuery,
-  useLazyFetchPlansQuery,
-} from "../../providers/store/api/plansApi";
+import { useLazyFetchInfinteScrollPlansOfTermQuery } from "../../providers/store/api/plansApi";
 import { PlanPreviewer } from "../../entities/plan-previewer";
 import clsx from "clsx";
 import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
@@ -54,7 +51,7 @@ export const TermDetailPlanPage: React.FC = () => {
   const { termId } = useParams<{ termId: string }>();
 
   // Fetch data
-  const [getListPlanOfTerm, { data: plans, isFetching }] =
+  const [getListPlanOfTerm, { data: plans, isFetching, isSuccess }] =
     useLazyFetchInfinteScrollPlansOfTermQuery();
 
   useEffect(() => {
@@ -113,9 +110,13 @@ export const TermDetailPlanPage: React.FC = () => {
       exit={AnimationStage.HIDDEN}
       variants={staggerChildrenAnimation}
     >
-      <div className="ml-5 mt-6 text-neutral-300 dark:text-neutral-600 italic font-semibold">
-        No plans in this term
-      </div>
+      {isSuccess &&
+        plans.data.length === 0 &&
+        plans.pagination.totalRecords === 0 && (
+          <div className="ml-5 mt-6 text-neutral-300 dark:text-neutral-600 italic font-semibold">
+            No plans in this term
+          </div>
+        )}
 
       <motion.table
         className="text-sm font-light mt-3 min-w-full"
