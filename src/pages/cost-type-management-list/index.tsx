@@ -8,6 +8,7 @@ import { SearchBox } from "../../shared/search-box";
 import { FaPlusCircle } from "react-icons/fa";
 import {
   CostType,
+  costTypeAPI,
   ListCostTypeParameters,
   useLazyGetListCostTypeQuery,
 } from "../../providers/store/api/costTypeAPI";
@@ -18,6 +19,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
+import { useDispatch } from "react-redux";
 
 const generateEmptyCostTypes = (total: number): CostType[] => {
   const costTypes: Row[] = [];
@@ -78,6 +80,13 @@ export const CostTypeManagementList: React.FC = () => {
 
   // Scroll to top
   useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(costTypeAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

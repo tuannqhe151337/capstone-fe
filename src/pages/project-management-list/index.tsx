@@ -10,12 +10,14 @@ import {
   Project,
   ListProjectParameters,
   useLazyGetListProjectQuery,
+  projectAPI,
 } from "../../providers/store/api/projectsApi";
 import { DeleteProjectModal } from "../../widgets/delete-project-modal";
 import { ProjectCreateModal } from "../../widgets/project-create-modal";
 import { ProjectEditModal } from "../../widgets/project-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { useDispatch } from "react-redux";
 
 const generateEmptyProjects = (total: number): Project[] => {
   const projects: Row[] = [];
@@ -73,6 +75,13 @@ export const ProjectManagementList: React.FC = () => {
 
   // Scroll to top
   useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(projectAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");

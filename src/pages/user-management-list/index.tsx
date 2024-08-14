@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import {
   ListUserParameters,
   useLazyFetchUsersQuery,
+  usersApi,
 } from "../../providers/store/api/usersApi";
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -16,6 +17,7 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
 
 const generateEmptyUsers = (total: number): Row[] => {
   const users: Row[] = [];
@@ -94,6 +96,13 @@ export const UserManagementList: React.FC = () => {
 
   // Scroll to top
   useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(usersApi.util.resetApiState());
+  }, []);
 
   // Query
   const [fetchUser, { data, isFetching }] = useLazyFetchUsersQuery();
@@ -180,9 +189,7 @@ export const UserManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2">
                 <HiUserAdd className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">
-                  {t("Add new user")}
-                </p>
+                <p className="text-sm font-bold">{t("Add new user")}</p>
               </div>
             </Button>
           </div>
