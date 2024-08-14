@@ -5,7 +5,6 @@ import { IconButton } from "../../shared/icon-button";
 import { FaFilter } from "react-icons/fa6";
 import { TermFilter } from "../../entities/term-filter";
 import { DepartmentFilter } from "../../entities/department-filter";
-import { StatusPlanFilter } from "../../entities/status-plan-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -58,7 +57,6 @@ interface Props {
   onSearchboxChange?: (value: string) => any;
   onTermIdChange?: (termId: number | null | undefined) => any;
   onDepartmentIdChange?: (departmentId: number | null | undefined) => any;
-  onStatusIdChange?: (statusId: number | null | undefined) => any;
 }
 
 export const ListPlanFilter: React.FC<Props> = ({
@@ -66,7 +64,6 @@ export const ListPlanFilter: React.FC<Props> = ({
   onSearchboxChange,
   onTermIdChange,
   onDepartmentIdChange,
-  onStatusIdChange,
 }) => {
   // UI: show 3 select box
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -92,14 +89,6 @@ export const ListPlanFilter: React.FC<Props> = ({
           <DepartmentFilter
             onChange={(option) => {
               onDepartmentIdChange && onDepartmentIdChange(option?.value);
-            }}
-          />
-        </motion.div>
-
-        <motion.div variants={childrenAnimation} className="">
-          <StatusPlanFilter
-            onChange={(option) => {
-              onStatusIdChange && onStatusIdChange(option?.value);
             }}
           />
         </motion.div>

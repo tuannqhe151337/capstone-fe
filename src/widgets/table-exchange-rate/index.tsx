@@ -12,11 +12,9 @@ import {
   ExchangeRate,
   MonthlyExchangeRate,
 } from "../../providers/store/api/exchangeRateApi";
-import {
-  Currency,
-  useGetAllCurrencyQuery,
-} from "../../providers/store/api/currencyApi";
+import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
 import { UpdatableMoneyAmountInput } from "./component/updatable-money-amount-input";
+import { useGetBaseCurrency } from "../../features/use-get-base-currency";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -151,9 +149,7 @@ export const TableExchangeRate: React.FC<Props> = ({
   }, [listMonthlyExchangeRate]);
 
   // Base currency
-  const baseCurrency: Currency | undefined = useMemo(() => {
-    return currencies?.data.find((currency) => currency.default === true);
-  }, [currencies]);
+  const baseCurrency = useGetBaseCurrency();
 
   // Calculate compare to 1 unit of the target currency (Eg: 1 USD = 23.000 VND, 1 KRW = 18 VND,...)
   const calculateAmountCompareToBaseCurrency = useCallback(

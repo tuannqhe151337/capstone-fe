@@ -112,7 +112,6 @@ export const PlanManagementList: React.FC = () => {
 
   const [termId, setTermId] = useState<number | null>();
   const [departmentId, setDepartmentId] = useState<number | null>();
-  const [statusId, setStatusId] = useState<number | null>();
 
   const [page, setPage] = useState<number>(1);
 
@@ -149,15 +148,11 @@ export const PlanManagementList: React.FC = () => {
         paramters.departmentId = departmentId;
       }
 
-      if (statusId) {
-        paramters.statusId = statusId;
-      }
-
       fetchPlans(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId, departmentId, statusId, deletedPlanId]);
+  }, [searchboxValue, page, termId, departmentId, deletedPlanId]);
 
   return (
     <motion.div
@@ -198,9 +193,6 @@ export const PlanManagementList: React.FC = () => {
           }}
           onDepartmentIdChange={(departmentId) => {
             setDepartmentId(departmentId);
-          }}
-          onStatusIdChange={(statusId) => {
-            setStatusId(statusId);
           }}
         />
       </motion.div>
