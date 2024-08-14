@@ -426,7 +426,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
 
                       const monthOfStartDate = watch("startDate").getMonth();
                       const minimumStartDate = new Date(
-                        new Date().getFullYear(),
+                        watch("startDate").getFullYear(),
                         monthOfStartDate,
                         termInterval?.startTermDate
                       );
@@ -435,8 +435,8 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                       });
 
                       if (
-                        minimumStartDate < minimumStartDate ||
-                        minimumStartDate > maximumEndDate
+                        watch("endDate") < minimumStartDate ||
+                        watch("endDate") > maximumEndDate
                       ) {
                         throw new Error(
                           `Must be between

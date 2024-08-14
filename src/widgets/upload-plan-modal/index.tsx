@@ -182,7 +182,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                         downloadFileFromServer(
                           `${
                             import.meta.env.VITE_BACKEND_HOST
-                          }plan/download/template/xlsx`,
+                          }plan/download/template-xlsx`,
                           token
                         );
                       }
@@ -228,11 +228,13 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                           className="w-[300px]"
                           label="Term"
                           value={term?.name || ""}
+                          maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
                           label="Department"
                           value={me?.department.name || ""}
+                          maxLengthBeforeTrim={16}
                         />
                       </div>
                     }
