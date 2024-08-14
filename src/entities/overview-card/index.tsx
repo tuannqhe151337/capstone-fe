@@ -1,8 +1,9 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { Meteors } from "../../shared/meteors";
 import { cn } from "../../shared/utils/cn";
 import { OverviewCardSkeleton } from "./ui/overview-card-skeleton";
+import { TETooltip } from "tw-elements-react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -61,6 +62,18 @@ export const OverviewCard: React.FC<Props> = ({
     containerRef.current.style.transform = `rotateY(0deg) rotateX(0deg)`;
   };
 
+  const trimmedValue = useMemo(() => {
+    if (value && typeof value === "string") {
+      if (value.length > 20) {
+        return (
+          <TETooltip title={value}>{value.substring(0, 28) + "..."}</TETooltip>
+        );
+      }
+    }
+
+    return value;
+  }, [value]);
+
   return (
     <div className="relative h-[100px]">
       <AnimatePresence>
@@ -90,7 +103,7 @@ export const OverviewCard: React.FC<Props> = ({
               <div className="flex-1 flex flex-col flex-wrap gap-1">
                 <p className="text-sm font-bold text-primary-400/80">{label}</p>
                 <p className="text-base font-extrabold text-primary-500/80">
-                  {value}
+                  {trimmedValue}
                 </p>
               </div>
             </div>

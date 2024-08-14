@@ -116,6 +116,7 @@ export const ReportDetailExpensePage: React.FC = () => {
 
   // UI: select expenses
   const [listSelectedId, setListSelectedId] = useState<Set<number>>(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number>();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -144,6 +145,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   // Fetch report expense on change
   useEffect(() => {
     setListSelectedId(new Set());
+    setLastSelectedIndex(undefined);
 
     if (reportId) {
       const timeoutId = setTimeout(() => {
@@ -397,7 +399,7 @@ export const ReportDetailExpensePage: React.FC = () => {
         expenses={isFetching ? generateEmptyReportExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
         listSelectedId={listSelectedId}
-        onRowClick={(expenseId) => {
+        onRowClick={(expenseId, index) => {
           setListSelectedId(
             produce((draft) => {
               if (draft.has(expenseId)) {
@@ -407,6 +409,49 @@ export const ReportDetailExpensePage: React.FC = () => {
               }
             })
           );
+          setLastSelectedIndex(index);
+        }}
+        onShiftRowClick={(expenseId, index) => {
+          if (data) {
+            if (
+              lastSelectedIndex !== null &&
+              lastSelectedIndex !== undefined &&
+              lastSelectedIndex < data.data.length
+            ) {
+              // Find out if the last selected is select or deselect
+              const isSelected = listSelectedId.has(
+                data.data[lastSelectedIndex].expenseId
+              );
+
+              setListSelectedId(
+                produce((draft) => {
+                  if (index < lastSelectedIndex) {
+                    for (let i = index; i <= lastSelectedIndex; i++) {
+                      isSelected
+                        ? draft.add(data.data[i].expenseId)
+                        : draft.delete(data.data[i].expenseId);
+                    }
+                  } else {
+                    for (let i = lastSelectedIndex; i <= index; i++) {
+                      isSelected
+                        ? draft.add(data.data[i].expenseId)
+                        : draft.delete(data.data[i].expenseId);
+                    }
+                  }
+                })
+              );
+            } else {
+              setListSelectedId(
+                produce((draft) => {
+                  if (draft.has(expenseId)) {
+                    draft.delete(expenseId);
+                  } else {
+                    draft.add(expenseId);
+                  }
+                })
+              );
+            }
+          }
         }}
         onSelectAllClick={() => {
           setListSelectedId(

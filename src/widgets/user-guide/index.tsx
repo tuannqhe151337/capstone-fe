@@ -40,7 +40,11 @@ export const UserGuide: React.FC = () => {
         <div className="relative min-w-[550px] min-h-[95vh]">
           <Document
             className="-mt-5 ml-3"
-            file="/user-guide.pdf"
+            file={
+              import.meta.env.VITE_USER_GUIDE_URL
+                ? import.meta.env.VITE_USER_GUIDE_URL
+                : "/user-guide.pdf"
+            }
             onLoadSuccess={onDocumentLoadSuccess}
           >
             <Page height={750} pageNumber={pageNumber} />

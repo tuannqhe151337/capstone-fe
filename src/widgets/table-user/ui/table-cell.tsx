@@ -11,7 +11,7 @@ export const TableCell: React.FC<Props> = ({
   isFetching,
   skeletonClassName,
 }) => (
-  <td className="whitespace-nowrap px-6 py-4 font-bold">
+  <td className="whitespace-nowrap py-7 font-bold">
     {isFetching ? (
       <span
         className={cn(
@@ -20,7 +20,14 @@ export const TableCell: React.FC<Props> = ({
         )}
       ></span>
     ) : (
-      <p className="font-bold py-2">{children}</p>
+      <p
+        className="font-bold px-1 cursor-auto"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {children}
+      </p>
     )}
   </td>
 );

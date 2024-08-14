@@ -10,7 +10,6 @@ export interface ListPlanParameters {
   query?: string | null;
   termId?: number | null;
   departmentId?: number | null;
-  statusId?: number | null;
   page: number;
   pageSize: number;
 }
@@ -228,7 +227,7 @@ const plansApi = createApi({
         PaginationResponse<PlanPreview[]>,
         ListPlanParameters
       >({
-        query: ({ query, termId, departmentId, statusId, page, pageSize }) => {
+        query: ({ query, termId, departmentId, page, pageSize }) => {
           let endpoint = `plan/list?page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
@@ -241,10 +240,6 @@ const plansApi = createApi({
 
           if (termId) {
             endpoint += `&termId=${termId}`;
-          }
-
-          if (statusId) {
-            endpoint += `&statusId=${statusId}`;
           }
 
           return endpoint;

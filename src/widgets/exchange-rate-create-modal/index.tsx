@@ -21,6 +21,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { InputValidationMessage } from "../../shared/validation-input-message";
+import { useGetBaseCurrency } from "../../features/use-get-base-currency";
 
 const MonthSchema = z.string().refine(
   (month) => {
@@ -76,7 +77,14 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
   });
 
   const onSubmit: SubmitHandler<CreateMonthlyExchangeRateBody> = (data) => {
-    createMonthlyExchangeRate(data);
+    baseCurrency &&
+      createMonthlyExchangeRate({
+        month: data.month,
+        exchangeRates: [
+          ...data.exchangeRates,
+          { currencyId: baseCurrency.currencyId, amount: 1 },
+        ],
+      });
   };
 
   // Get all currencies
@@ -113,6 +121,9 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
       }
     }
   }, [isError]);
+
+  // Base currency
+  const baseCurrency = useGetBaseCurrency();
 
   return (
     <Modal
@@ -168,6 +179,12 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                     mask="_"
                     onChange={onChange}
                     onBlur={onBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                      }
+                    }}
                   />
                 )}
               />
@@ -179,52 +196,67 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
 
               <div className="border-b-2 border-b-neutral-100"></div>
 
-              {currencies?.data.map(
-                ({ currencyId, affix, name, symbol }, index) => (
-                  <div key={currencyId}>
-                    <input
-                      type="hidden"
-                      value={currencyId}
-                      {...register(`exchangeRates.${index}.currencyId`, {
-                        valueAsNumber: true,
-                      })}
-                    />
-                    <Controller
-                      name={`exchangeRates.${index}.amount`}
-                      control={control}
-                      render={({ field: { value, onChange, onBlur } }) => (
-                        <InputRate
-                          label={name}
-                          input={
-                            <NumericFormat
-                              className="!text-neutral-500 font-semibold"
-                              customInput={TEInput}
-                              value={value || 0}
-                              allowNegative={false}
-                              prefix={
-                                affix === AFFIX.PREFIX ? symbol : undefined
-                              }
-                              suffix={
-                                affix === AFFIX.SUFFIX ? symbol : undefined
-                              }
-                              thousandSeparator=","
-                              decimalSeparator="."
-                              onValueChange={({ floatValue }) => {
-                                onChange(floatValue);
-                              }}
-                              onBlur={onBlur}
-                            />
-                          }
-                        />
-                      )}
-                    ></Controller>
-                  </div>
-                )
-              )}
+              {baseCurrency &&
+                currencies?.data
+                  .filter((currency) => currency.default === false)
+                  .map(({ currencyId, name }, index) => (
+                    <div key={currencyId}>
+                      <input
+                        type="hidden"
+                        value={currencyId}
+                        {...register(`exchangeRates.${index}.currencyId`, {
+                          valueAsNumber: true,
+                        })}
+                      />
+                      <Controller
+                        name={`exchangeRates.${index}.amount`}
+                        control={control}
+                        render={({ field: { value, onChange, onBlur } }) => (
+                          <InputRate
+                            label={name}
+                            input={
+                              <NumericFormat
+                                className="!text-neutral-500 font-semibold"
+                                customInput={TEInput}
+                                value={value || 0}
+                                allowNegative={false}
+                                prefix={
+                                  baseCurrency.affix === AFFIX.PREFIX
+                                    ? baseCurrency.symbol
+                                    : undefined
+                                }
+                                suffix={
+                                  baseCurrency.affix === AFFIX.SUFFIX
+                                    ? baseCurrency.symbol
+                                    : undefined
+                                }
+                                thousandSeparator=","
+                                decimalSeparator="."
+                                onValueChange={({ floatValue }) => {
+                                  onChange(floatValue);
+                                }}
+                                onBlur={onBlur}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Escape") {
+                                    e.preventDefault();
+                                    e.currentTarget.blur();
+                                  }
+                                }}
+                              />
+                            }
+                          />
+                        )}
+                      ></Controller>
+                    </div>
+                  ))}
             </div>
           </div>
 
-          <div className="mt-10 flex flex-row gap-3 w-full">
+          <div className="mt-4 italic font-semibold text-sm text-neutral-400/70 mb-1">
+            *value compare to {baseCurrency?.name}
+          </div>
+
+          <div className="mt-8 flex flex-row gap-3 w-full">
             <Button
               type="button"
               variant="tertiary"
@@ -238,7 +270,9 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
             </Button>
             <Button
               type="submit"
-              disabled={!isValid}
+              disabled={
+                !isValid && baseCurrency !== null && baseCurrency !== undefined
+              }
               tabIndex={-1}
               containerClassName="flex-1"
               className="p-3"
