@@ -205,11 +205,13 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                           className="w-[300px]"
                           label="Term"
                           value={termName || ""}
+                          maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
                           label="Department"
                           value={me?.department.name || ""}
+                          maxLengthBeforeTrim={16}
                         />
                       </div>
                     }

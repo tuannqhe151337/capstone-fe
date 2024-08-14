@@ -504,8 +504,8 @@ export const TermUpdate: React.FC = () => {
                           });
 
                           if (
-                            minimumStartDate < minimumStartDate ||
-                            minimumStartDate > maximumEndDate
+                            watch("endDate") < minimumStartDate ||
+                            watch("endDate") > maximumEndDate
                           ) {
                             throw new Error(
                               `Must be between
