@@ -39,6 +39,36 @@ export interface MonthlyExpectedActualCostParam {
   year: number;
 }
 
+export interface MonthlyUserStats {
+  month: string;
+  numberUserCreated: number;
+  numberUserDeleted: number;
+}
+
+export interface MonthlyUserStatsParam {
+  year: number;
+}
+
+export interface DepartmentUserStats {
+  department: Department;
+  numberUser: number;
+}
+
+export interface Department {
+  id: number;
+  name: string;
+}
+
+export interface DepartmentUserStatsParam {
+  year: number;
+}
+
+export interface AdminStatistic {
+  totalDepartment: number;
+  totalEmployee: number;
+  totalPosition: number;
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -92,6 +122,23 @@ const dashboardApi = createApi({
       >({
         query: ({ year }) => `/report/year-diagram?year=${year}`,
       }),
+      getMonthlyUserStats: builder.query<
+        ListResponse<MonthlyUserStats[]>,
+        MonthlyUserStatsParam
+      >({
+        query: ({ year }) =>
+          `/user/user-created-over-time-diagram?year=${year}`,
+      }),
+      getDepartmentUserStats: builder.query<
+        ListResponse<DepartmentUserStats[]>,
+        DepartmentUserStatsParam
+      >({
+        query: ({ year }) =>
+          `/user/number-user-of-department-diagram?year=${year}`,
+      }),
+      getAdminStatistic: builder.query<AdminStatistic, void>({
+        query: () => `/admin/statistic`,
+      }),
     };
   },
 });
@@ -100,5 +147,8 @@ export const {
   useLazyGetYearlyCostTypeExpenseQuery,
   useLazyGetMonthlyCostTypeExpenseQuery,
   useLazyGetMonthlyExpectedActualCostQuery,
+  useLazyGetMonthlyUserStatsQuery,
+  useLazyGetDepartmentUserStatsQuery,
+  useLazyGetAdminStatisticQuery,
 } = dashboardApi;
 export { dashboardApi };

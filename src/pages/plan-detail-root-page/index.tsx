@@ -175,9 +175,9 @@ export const PlanDetailRootPage: React.FC = () => {
                   downloadFileFromServer(
                     `${
                       import.meta.env.VITE_BACKEND_HOST
-                    }plan/download-xlsx?planId=${planId}`,
+                    }plan/download/last-version-xlsx?planId=${planId}`,
                     token,
-                    `${plan.name}.xlsx`
+                    `${plan.name}-${plan.version}.xlsx`
                   );
                 }
               }}

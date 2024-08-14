@@ -1,11 +1,5 @@
-import CountUp from "react-countup";
 import { Variants, motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { OverviewCard } from "../../entities/overview-card";
-import { RiCalendarScheduleFill } from "react-icons/ri";
-import { PiTreeStructureFill } from "react-icons/pi";
-import { FaPiggyBank } from "react-icons/fa";
-import { useTranslation } from "react-i18next";
 import { MonthlyCostTypeExpenseChart } from "../../widgets/monthly-cost-type-expense-chart";
 import { YearlyCostTypeExpenseChart } from "../../widgets/yearly-cost-type-expense-chart";
 import { lazy } from "react";
@@ -13,7 +7,9 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { MonthlyExpectedActualCostChart } from "../../widgets/monthly-expected-actual-cost-chart";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
-import { useFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
+import { MonthlyUserChart } from "../../widgets/monthly-user-chart";
+import { DepartmentUserChart } from "../../widgets/department-user-chart";
+import { TopListOverviewCard } from "../../widgets/top-list-overview-card";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -52,9 +48,6 @@ const childrenAnimation: Variants = {
 };
 
 export const HomePage: React.FC = () => {
-  // i18n
-  const { t } = useTranslation(["annual-report-detail"]);
-
   // Scroll to top
   useScrollToTopOnLoad();
 
@@ -64,11 +57,6 @@ export const HomePage: React.FC = () => {
   // Use in view
   const { ref, inView } = useInView();
 
-  // Get annual report detail for overview card
-  const { data: annual } = useFetchAnnualReportDetailQuery(
-    new Date().getFullYear()
-  );
-
   return (
     <motion.div
       initial={AnimationStage.HIDDEN}
@@ -76,49 +64,8 @@ export const HomePage: React.FC = () => {
       exit={AnimationStage.HIDDEN}
       variants={staggerChildrenAnimation}
     >
-      <div className="flex flex-row flex-wrap justify-between gap-5 px-10 w-full">
-        <motion.div className="flex-1" variants={childrenAnimation}>
-          <OverviewCard
-            icon={<RiCalendarScheduleFill className="text-4xl" />}
-            label={t("Total terms")}
-            // isFetching={isFetching}
-            value={
-              <CountUp start={0} end={annual?.totalTerm || 0} duration={4} />
-            }
-            meteors
-          />
-        </motion.div>
-
-        <motion.div className="flex-1" variants={childrenAnimation}>
-          <OverviewCard
-            icon={<PiTreeStructureFill className="text-4xl" />}
-            label={t("Total departments")}
-            // isFetching={isFetching}
-            value={
-              <CountUp
-                start={0}
-                end={annual?.totalDepartment || 0}
-                duration={4}
-              />
-            }
-          />
-        </motion.div>
-
-        <motion.div className="flex-1" variants={childrenAnimation}>
-          <OverviewCard
-            icon={<FaPiggyBank className="text-4xl" />}
-            label={t("Total expenses")}
-            // isFetching={isFetching}
-            value={
-              <CountUp
-                start={0}
-                end={annual?.totalExpense || 0}
-                duration={4}
-                suffix=" VNĐ"
-              />
-            }
-          />
-        </motion.div>
+      <div className="px-10">
+        <TopListOverviewCard />
       </div>
 
       {me?.role.code === Role.ACCOUNTANT && (
@@ -127,20 +74,28 @@ export const HomePage: React.FC = () => {
         </motion.div>
       )}
 
-      <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
-        {(me?.role.code === Role.ACCOUNTANT ||
-          me?.role.code === Role.FINANCIAL_STAFF) && (
+      {(me?.role.code === Role.ACCOUNTANT ||
+        me?.role.code === Role.FINANCIAL_STAFF) && (
+        <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
           <motion.div className="flex-[2]" variants={childrenAnimation}>
             <MonthlyCostTypeExpenseChart />
           </motion.div>
-        )}
-        {(me?.role.code === Role.ACCOUNTANT ||
-          me?.role.code === Role.FINANCIAL_STAFF) && (
           <motion.div className="flex-1" variants={childrenAnimation}>
             <YearlyCostTypeExpenseChart />
           </motion.div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {me?.role.code === Role.ADMIN && (
+        <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
+          <motion.div className="flex-[2]" variants={childrenAnimation}>
+            <MonthlyUserChart />
+          </motion.div>
+          <motion.div className="flex-1" variants={childrenAnimation}>
+            <DepartmentUserChart />
+          </motion.div>
+        </div>
+      )}
 
       <div ref={ref} className="mt-20 mb-20">
         <div className="h-[510px]">{inView && <GlobeSection />}</div>
