@@ -373,7 +373,7 @@ export const processFile = async ({
 
           // -- Status
           let status: ExpenseStatus | null | undefined = undefined;
-          if (options && options.validateExpenseCode) {
+          if (options && options.validateStatusCode) {
             let statusCode = "";
             const statusCodeErrorMessage = getZodMessasges(
               () => (statusCode = StatusCodeSchema.parse(rawStatusCode))

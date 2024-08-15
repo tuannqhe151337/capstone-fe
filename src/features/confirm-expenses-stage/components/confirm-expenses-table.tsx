@@ -1,7 +1,7 @@
 import { Variants, motion } from "framer-motion";
 import { NumericFormat } from "react-number-format";
 import { Pagination } from "../../../shared/pagination";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ExpenseTag } from "../../../entities/expense-tag";
 import { Expense } from "../../upload-file-stage/type";
 import clsx from "clsx";
@@ -55,6 +55,7 @@ const rowAnimation: Variants = {
 interface Props {
   expenses?: Expense[];
   hide?: boolean;
+  showExpenseIdColumn?: boolean;
   showExpenseCodeColumn?: boolean;
   showStatusColumn?: boolean;
   pageSize?: number;
@@ -63,6 +64,7 @@ interface Props {
 export const ConfirmExpensesTable: React.FC<Props> = ({
   expenses,
   hide,
+  showExpenseIdColumn = false,
   showExpenseCodeColumn = false,
   showStatusColumn = false,
   pageSize = 5,
@@ -86,17 +88,32 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
     []
   );
 
+  // UI: small text for large table
+  const isSmallText = useMemo(() => {
+    return showExpenseIdColumn || showExpenseCodeColumn || showStatusColumn;
+  }, [showExpenseIdColumn, showExpenseCodeColumn, showStatusColumn]);
+
   return (
     <div>
       <div className="min-h-[312px]">
         <table className="table-auto sm:mt-3 lg:mt-5 mx-auto">
           <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-400/70 dark:text-neutral-500">
             <tr>
+              {showExpenseIdColumn && (
+                <th
+                  className={clsx({
+                    "px-1 lg:py-1 font-semibold dark:font-bold": true,
+                    "text-sm": isSmallText,
+                  })}
+                >
+                  ID
+                </th>
+              )}
               {showExpenseCodeColumn && (
                 <th
                   className={clsx({
                     "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                    "text-sm": showExpenseCodeColumn || showStatusColumn,
+                    "text-sm": isSmallText,
                   })}
                 >
                   Code
@@ -105,7 +122,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Expenses
@@ -113,7 +130,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Cost type
@@ -121,7 +138,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Unit price (VND)
@@ -129,7 +146,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Amount
@@ -137,7 +154,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Total (VND)
@@ -145,7 +162,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Project name
@@ -153,7 +170,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Supplier name
@@ -161,7 +178,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 PiC
@@ -169,7 +186,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
               <th
                 className={clsx({
                   "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                  "text-sm": showExpenseCodeColumn || showStatusColumn,
+                  "text-sm": isSmallText,
                 })}
               >
                 Notes
@@ -178,7 +195,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                 <th
                   className={clsx({
                     "px-1 lg:py-1 font-semibold dark:font-bold": true,
-                    "text-sm": showExpenseCodeColumn || showStatusColumn,
+                    "text-sm": isSmallText,
                   })}
                 >
                   Status
@@ -198,12 +215,22 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                 .slice((page - 1) * pageSize, page * pageSize)
                 .map((expense, index) => (
                   <motion.tr key={index} variants={rowAnimation}>
+                    {showExpenseIdColumn && (
+                      <td className="px-4 py-4 lg:w-min sm:w-[100px] font-extrabold text-left">
+                        <div
+                          className={clsx({
+                            "text-sm": isSmallText,
+                          })}
+                        >
+                          {expense.id}
+                        </div>
+                      </td>
+                    )}
                     {showExpenseCodeColumn && (
                       <td className="px-4 py-4 lg:w-min sm:w-[100px] font-extrabold text-left">
                         <div
                           className={clsx({
-                            "text-sm":
-                              showExpenseCodeColumn || showStatusColumn,
+                            "text-sm": isSmallText,
                           })}
                         >
                           {renderExpenseCodeValue(expense.code)}
@@ -213,7 +240,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-extrabold text-left">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.name}
@@ -222,7 +249,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.costType.name}
@@ -231,7 +258,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 xl:w-min font-bold text-right">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         <NumericFormat
@@ -245,7 +272,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 xl:w-min font-bold text-center">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.amount}
@@ -254,7 +281,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 xl:w-min font-bold text-right">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         <NumericFormat
@@ -267,7 +294,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 xl:w-min font-bold text-center">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.project.name}
@@ -276,7 +303,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.supplier.name}
@@ -285,7 +312,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 xl:w-min font-bold text-center">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.pic.username}
@@ -294,7 +321,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     <td className="px-4 py-4 lg:w-min sm:w-[100px] font-bold text-center text-neutral-400 dark:text-neutral-500">
                       <div
                         className={clsx({
-                          "text-sm": showExpenseCodeColumn || showStatusColumn,
+                          "text-sm": isSmallText,
                         })}
                       >
                         {expense.notes}
@@ -321,7 +348,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
         transition={{ delay: 0.4 }}
       >
         <Pagination
-          className="mt-1"
+          className="mt-3"
           page={page}
           totalPage={Math.ceil(expenses ? expenses.length / pageSize : 1)}
           onNext={() =>

@@ -207,8 +207,9 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                     submitButtonText="Upload report review"
                     isLoading={isLoading}
                     expenses={expenses}
-                    showStatusColumn
+                    showExpenseIdColumn
                     showExpenseCodeColumn
+                    showStatusColumn
                     hide={stage !== 2}
                     onPreviousState={() => {
                       setStage(1);
