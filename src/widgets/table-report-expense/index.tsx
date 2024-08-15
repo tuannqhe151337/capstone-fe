@@ -146,8 +146,6 @@ export const TableReportExpenses: React.FC<Props> = ({
     { keyup: true }
   );
 
-  console.log(expenses);
-
   return (
     <div>
       <table className="table-auto w-full sm:mt-3 lg:mt-7 xl:mx-auto">
