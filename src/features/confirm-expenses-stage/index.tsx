@@ -46,6 +46,7 @@ interface Props {
   termName?: string;
   planName?: string;
   expenses?: Expense[];
+  showExpenseIdColumn?: boolean;
   showExpenseCodeColumn?: boolean;
   showStatusColumn?: boolean;
   pageSize?: number;
@@ -59,6 +60,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
   submitButtonText,
   isLoading,
   expenses,
+  showExpenseIdColumn,
   showExpenseCodeColumn,
   showStatusColumn,
   pageSize,
@@ -81,6 +83,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
         expenses={expenses}
         hide={hide}
         pageSize={pageSize}
+        showExpenseIdColumn={showExpenseIdColumn}
         showExpenseCodeColumn={showExpenseCodeColumn}
         showStatusColumn={showStatusColumn}
       />
