@@ -1,7 +1,7 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { SearchBox } from "../../shared/search-box";
 import { IconButton } from "../../shared/icon-button";
-import { FaListCheck, FaFilter } from "react-icons/fa6";
+import { FaListCheck, FaFilter, FaCheck } from "react-icons/fa6";
 import { HiDotsVertical } from "react-icons/hi";
 import { FaDownload, FaUpload } from "react-icons/fa";
 import { useState } from "react";
@@ -90,6 +90,7 @@ interface Props {
   showReviewExpense?: boolean;
   searchboxValue?: string;
   currencyId?: number;
+  allowReviewPlan?: boolean;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
@@ -98,6 +99,7 @@ interface Props {
   onDenyExpensesClick?: () => any;
   onDownloadClick?: () => any;
   onUploadReviewReportClick?: () => any;
+  onMarkAsReviewed?: () => any;
 }
 
 export const ListReportExpenseFilter: React.FC<Props> = ({
@@ -105,6 +107,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   showReviewExpense,
   searchboxValue,
   currencyId,
+  allowReviewPlan,
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
@@ -113,6 +116,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onDenyExpensesClick,
   onDownloadClick,
   onUploadReviewReportClick,
+  onMarkAsReviewed,
 }) => {
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
@@ -249,22 +253,24 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                     exit={AnimationStage.HIDDEN}
                     variants={animation}
                   >
+                    {allowReviewPlan && (
+                      <TERipple
+                        rippleColor="light"
+                        className="w-full border-b-2 border-b-neutral-100 dark:border-b-neutral-700 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
+                        onClick={onUploadReviewReportClick}
+                      >
+                        <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
+                          <FaUpload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
+
+                          <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
+                            Upload review file
+                          </p>
+                        </div>
+                      </TERipple>
+                    )}
                     <TERipple
                       rippleColor="light"
                       className="w-full border-b-2 border-b-neutral-100 dark:border-b-neutral-700 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
-                      onClick={onUploadReviewReportClick}
-                    >
-                      <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
-                        <FaUpload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
-
-                        <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Upload review file
-                        </p>
-                      </div>
-                    </TERipple>
-                    <TERipple
-                      rippleColor="light"
-                      className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
                       onClick={onDownloadClick}
                     >
                       <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
@@ -275,6 +281,21 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                         </p>
                       </div>
                     </TERipple>
+                    {allowReviewPlan && (
+                      <TERipple
+                        rippleColor="light"
+                        className="w-full cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 duration-200"
+                        onClick={onMarkAsReviewed}
+                      >
+                        <div className="flex flex-row flex-wrap items-center px-5 py-3 w-max text-base font-bold">
+                          <FaCheck className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
+
+                          <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
+                            Mark as reviewed
+                          </p>
+                        </div>
+                      </TERipple>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>

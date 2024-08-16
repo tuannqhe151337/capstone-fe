@@ -6,30 +6,49 @@ import { useEffect, useState } from "react";
 import { LogoutModal } from "../../widgets/logout-modal";
 import { changeTheme } from "../../features/theme-changer/utils/change-theme";
 import { changeLanguage } from "i18next";
+import { useRegisterFCMTokenMutation } from "../../providers/store/api/fcmApi";
+import { onMessageListener, requestForToken } from "../../providers/firebase";
+import { toast } from "react-toastify";
 
 export const ProtectedRootPage: React.FC = () => {
   // Naviate
   const navigate = useNavigate();
 
   // Check if user is logged in
-  const [getMeQuery, { data, isSuccess, isError }] = useLazyMeQuery();
+  const [getMeQuery, { data: me, isSuccess, isError }] = useLazyMeQuery();
 
   useEffect(() => {
     getMeQuery();
   }, []);
 
   useEffect(() => {
-    if (isSuccess && data) {
-      changeTheme(data.settings.theme);
-      changeLanguage(data.settings.language);
+    if (isSuccess && me) {
+      changeTheme(me.settings.theme);
+      changeLanguage(me.settings.language);
     }
-  }, [data, isSuccess]);
+  }, [me, isSuccess]);
 
   useEffect(() => {
     if (isError) {
       navigate("/auth/login");
     }
   }, [isError]);
+
+  // Register FCM Token
+  const [registerFcmToken] = useRegisterFCMTokenMutation();
+
+  useEffect(() => {
+    if (me) {
+      requestForToken().then((fcmToken) => {
+        fcmToken && registerFcmToken({ token: fcmToken });
+      });
+    }
+  }, [me]);
+
+  // Listen to notifications
+  onMessageListener().then((payload) => {
+    toast(payload.notification?.body, { type: "success" });
+  });
 
   // Logout modal
   const [isShowLogout, setIsShowLogout] = useState<boolean>(false);

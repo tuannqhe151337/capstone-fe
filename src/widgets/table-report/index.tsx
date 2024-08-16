@@ -50,6 +50,7 @@ interface Props {
   page?: number | undefined | null;
   totalPage?: number;
   isDataEmpty?: boolean;
+  onMarkAsReviewed?: (reportId?: number) => any;
   onPageChange?: (page: number | undefined | null) => any;
   onPrevious?: () => any;
   onNext?: () => any;
@@ -61,6 +62,7 @@ export const TableReportManagement: React.FC<Props> = ({
   page,
   totalPage,
   isDataEmpty,
+  onMarkAsReviewed,
   onPageChange,
   onPrevious,
   onNext,
@@ -100,6 +102,7 @@ export const TableReportManagement: React.FC<Props> = ({
     useIsAuthorizedAndTimeToReviewReport({
       reportStatusCode: chosenReport?.status.code,
       termEndDate: chosenReport?.term.endDate,
+      allowReupload: chosenReport?.term.allowReupload,
       termReuploadStartDate: chosenReport?.term.reuploadStartDate,
       termReuploadEndDate: chosenReport?.term.reuploadEndDate,
       finalEndTermDate: chosenReport?.term.finalEndTermDate,
@@ -256,6 +259,9 @@ export const TableReportManagement: React.FC<Props> = ({
             navigate(
               `/report-management/detail/information/${chosenReport.reportId}`
             );
+          }}
+          onMarkAsReviewed={() => {
+            onMarkAsReviewed && onMarkAsReviewed(chosenReport.reportId);
           }}
           onReview={() => {
             navigate(

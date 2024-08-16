@@ -1,4 +1,4 @@
-import { FaInfoCircle } from "react-icons/fa";
+import { FaCheck, FaInfoCircle } from "react-icons/fa";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ContextMenu } from "../../shared/context-menu";
 import { ContextMenuItem } from "../../shared/context-menu-item";
@@ -15,6 +15,7 @@ interface Props {
   onViewDetail?: () => any;
   onReview?: () => any;
   onDownload?: () => any;
+  onMarkAsReviewed?: () => any;
 }
 
 export const ReportActionContextMenu: React.FC<Props> = ({
@@ -26,12 +27,19 @@ export const ReportActionContextMenu: React.FC<Props> = ({
   right,
   showReviewOption,
   onViewDetail,
+  onMarkAsReviewed,
   onReview,
   onDownload,
 }) => {
   useHotkeys("v", () => {
     if (show) {
       onViewDetail && onViewDetail();
+    }
+  });
+
+  useHotkeys("m", () => {
+    if (show) {
+      showReviewOption && onMarkAsReviewed && onMarkAsReviewed();
     }
   });
 
@@ -70,6 +78,18 @@ export const ReportActionContextMenu: React.FC<Props> = ({
         />
         {showReviewOption && (
           <ContextMenuItem
+            icon={<FaCheck className="text-base dark:opacity-60 ml-0.5" />}
+            text={
+              <>
+                <span className="underline">M</span>
+                <span>ark as review complete</span>
+              </>
+            }
+            onClick={onMarkAsReviewed}
+          />
+        )}
+        {showReviewOption && (
+          <ContextMenuItem
             borderBottom
             icon={<MdRateReview className="text-xl dark:opacity-60" />}
             text={
@@ -81,6 +101,7 @@ export const ReportActionContextMenu: React.FC<Props> = ({
             onClick={onReview}
           />
         )}
+
         <ContextMenuItem
           icon={<MdDownload className="text-2xl -ml-0.5 dark:opacity-60" />}
           text={
