@@ -46,9 +46,16 @@ export const ProtectedRootPage: React.FC = () => {
   }, [me]);
 
   // Listen to notifications
-  onMessageListener().then((payload) => {
-    toast(payload.notification?.body, { type: "success" });
-  });
+  const [messageId, setMessageId] = useState<string>();
+
+  useEffect(() => {
+    onMessageListener().then((payload) => {
+      toast(payload.notification?.body, { type: "success" });
+
+      // Set for infinitely listen to message from firebase
+      setMessageId(payload.messageId);
+    });
+  }, [messageId]);
 
   // Logout modal
   const [isShowLogout, setIsShowLogout] = useState<boolean>(false);
