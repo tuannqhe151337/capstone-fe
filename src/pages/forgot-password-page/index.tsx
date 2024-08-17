@@ -92,7 +92,7 @@ export const ForgotPasswordPage: React.FC = () => {
   const {
     register,
     watch,
-    formState: { isValid },
+    formState: { isValid, dirtyFields },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ForgotPasswordSchema),
@@ -189,9 +189,9 @@ export const ForgotPasswordPage: React.FC = () => {
                   size="lg"
                   autoFocus
                   {...register("email", { required: true })}
-                ></TEInput>
+                />
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.email || false}
                   validateFn={() => EmailSchema.parse(watch("email"))}
                   className="mt-2 pl-0"
                 />
