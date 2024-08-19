@@ -27,6 +27,7 @@ import { formatDate } from "../../shared/utils/format-date";
 import { addDate } from "../../shared/utils/add-date";
 import { Switch } from "../../shared/switch";
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   show: boolean;
@@ -232,6 +233,9 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
     resolver: zodResolver(CreateTermSchema),
   });
 
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   // Mutation
   const [createTerm, { isLoading, isSuccess, isError, error }] =
     useCreateTermMutation();
@@ -318,7 +322,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
       onClose={onClose}
     >
       <div className="relative w-full h-full flex flex-col items-center justify-center px-10 py-8">
-        <div className="font-bold text-3xl text-primary-500">Create term</div>
+        <div className="font-bold text-3xl text-primary-500">{t("Create term")}</div>
 
         <div className="absolute top-3 right-5">
           <IconButton
@@ -335,7 +339,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
         <motion.div variants={childrenAnimation} className="w-11/12 mx-auto">
           <TEInput
             type="text"
-            label="Term name"
+            label={t("Term name")}
             className="bg-white dark:bg-neutral-900 custom-wrapper mt-8 border rounded font-bold opacity-70 "
             autoFocus
             onKeyDown={(e) => {
@@ -362,7 +366,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <DatePickerInputWithErrorAndLabel
-                    label="Start date"
+                    label={t("Start date")}
                     showValidationMessage={dirtyFields.startDate || false}
                     validateFn={() => {
                       const startDate = watch("startDate");
@@ -415,7 +419,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <DatePickerInputWithErrorAndLabel
-                    label="End date"
+                    label={t("End date")}
                     showValidationMessage={dirtyFields.startDate || false}
                     validateFn={() => {
                       EndDateSchema.parse(watch("endDate"));
@@ -474,7 +478,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               }
               onClick={() => handleOnClickRadio(Duration.MONTHLY)}
               isSelected={selectedOption === Duration.MONTHLY}
-              label={"Monthly"}
+              label={t("Monthly")}
               description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
@@ -496,7 +500,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               // onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
               // isSelected={selectedOption === Duration.QUARTERLY}
               tooltip="We'll complete this feature in the future"
-              label={"Quarterly"}
+              label={t("Quarterly")}
               description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
@@ -518,7 +522,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               // onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
               // isSelected={selectedOption === Duration.HALF_YEARLY}
               tooltip="We'll complete this feature in the future"
-              label={"Half year"}
+              label={t("Half year")}
               description={
                 <>
                   {formatDate(watch("startDate"))} -{" "}
@@ -553,7 +557,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                   !watch("allowReupload"),
               })}
             >
-              Allow to reupload
+              {t("Allow to reupload")}
             </div>
           </div>
 
@@ -565,7 +569,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <DatePickerInputWithErrorAndLabel
-                    label="Reupload start date"
+                    label={t("Reupload start date")}
                     disabled={!watch("allowReupload")}
                     modalPosition={{
                       top: -100,
@@ -645,7 +649,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
                 control={control}
                 render={({ field: { onChange } }) => (
                   <DatePickerInputWithErrorAndLabel
-                    label="Reupload end date"
+                    label={t("Reupload end date")}
                     disabled={!watch("allowReupload")}
                     modalPosition={{
                       top: -100,
@@ -720,7 +724,7 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
               handleSubmit(onSubmit)();
             }}
           >
-            {!isLoading && "Create new term"}
+            {!isLoading && t("Create new term")}
             {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </div>

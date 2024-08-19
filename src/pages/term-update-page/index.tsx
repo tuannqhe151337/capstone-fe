@@ -31,6 +31,7 @@ import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 import clsx from "clsx";
 import { Switch } from "../../shared/switch";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,6 +95,9 @@ const ReuploadStartDateSchema = z.optional(z.date());
 const ReuploadEndDateSchema = z.optional(z.date());
 
 export const TermUpdate: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
@@ -366,17 +370,19 @@ export const TermUpdate: React.FC = () => {
               to={`../../term-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Term management
+              {t("Term management")}
             </Link>
             <span className="text-base opacity-40">&gt;</span>
             <Link
               to={`/term-management/detail/information/${termId}`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Term detail
+              {t("Term detail")}
             </Link>
             <span className="text-base opacity-40">&gt;</span>
-            <span>Update {term?.name}</span>
+            <span>
+              {t("Update")} {term?.name}
+            </span>
           </p>
         </div>
       </BubbleBanner>
@@ -386,7 +392,7 @@ export const TermUpdate: React.FC = () => {
         <motion.div variants={childrenAnimation} className="">
           <TEInput
             type="text"
-            label="Term name"
+            label={t("Term name")}
             className="bg-white dark:bg-neutral-900 custom-wrapper mt-8 border rounded font-bold opacity-70 "
             autoFocus
             {...register("name", { required: true })}
@@ -413,7 +419,7 @@ export const TermUpdate: React.FC = () => {
                   <>
                     {value && (
                       <DatePickerInputWithErrorAndLabel
-                        label="Start date"
+                        label={t("Start date")}
                         showValidationMessage={dirtyFields.startDate || false}
                         validateFn={() => {
                           const startDate = watch("startDate");
@@ -483,7 +489,7 @@ export const TermUpdate: React.FC = () => {
                   <>
                     {value && (
                       <DatePickerInputWithErrorAndLabel
-                        label="End date"
+                        label={t("End date")}
                         showValidationMessage={dirtyFields.startDate || false}
                         validateFn={() => {
                           EndDateSchema.parse(watch("endDate"));
@@ -544,7 +550,7 @@ export const TermUpdate: React.FC = () => {
             }
             onClick={() => handleOnClickRadio(Duration.MONTHLY)}
             isSelected={selectedOption === Duration.MONTHLY}
-            label={"Monthly"}
+            label={t("Monthly")}
             description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
@@ -566,7 +572,7 @@ export const TermUpdate: React.FC = () => {
             // onClick={() => handleOnClickRadio(Duration.QUARTERLY)}
             // isSelected={selectedOption === Duration.QUARTERLY}
             tooltip="We'll complete this feature in the future"
-            label={"Quarterly"}
+            label={t("Quarterly")}
             description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
@@ -588,7 +594,7 @@ export const TermUpdate: React.FC = () => {
             // onClick={() => handleOnClickRadio(Duration.HALF_YEARLY)}
             // isSelected={selectedOption === Duration.HALF_YEARLY}
             tooltip="We'll complete this feature in the future"
-            label={"Half year"}
+            label={t("Half year")}
             description={
               <>
                 {formatDate(watch("startDate"))} -{" "}
@@ -624,7 +630,7 @@ export const TermUpdate: React.FC = () => {
               "text-neutral-400 dark:text-neutral-500": !watch("allowReupload"),
             })}
           >
-            Allow to reupload
+            {t("Allow to reupload")}
           </div>
         </motion.div>
 
@@ -645,7 +651,7 @@ export const TermUpdate: React.FC = () => {
                   <>
                     {value && (
                       <DatePickerInputWithErrorAndLabel
-                        label="Reupload start date"
+                        label={t("Reupload start date")}
                         disabled={!watch("allowReupload")}
                         modalPosition={{
                           top: -100,
@@ -739,7 +745,7 @@ export const TermUpdate: React.FC = () => {
                   <>
                     {value && (
                       <DatePickerInputWithErrorAndLabel
-                        label="Reupload end date"
+                        label={t("Reupload end date")}
                         disabled={!watch("allowReupload")}
                         modalPosition={{
                           top: -100,
@@ -828,7 +834,7 @@ export const TermUpdate: React.FC = () => {
               navigate(`/term-management/detail/information/${term?.id}`);
             }}
           >
-            Back
+            {t("Back")}
           </Button>
           <Button
             disabled={!isValid}
@@ -838,7 +844,7 @@ export const TermUpdate: React.FC = () => {
               handleSubmit(onSubmit)();
             }}
           >
-            {!isLoading && "Update term"}
+            {!isLoading && t("Update term")}
             {isLoading && <CgSpinner className="m-auto text-lg animate-spin" />}
           </Button>
         </motion.div>
