@@ -116,7 +116,7 @@ export const ResetPasswordPage: React.FC = () => {
   const {
     register,
     watch,
-    formState: { isValid },
+    formState: { isValid, dirtyFields },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ResetPasswordSchema),
@@ -234,7 +234,7 @@ export const ResetPasswordPage: React.FC = () => {
                 />
 
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.confirmPassword || false}
                   validateFn={() => {
                     ConfirmPasswordSchema.parse(watch("confirmPassword"));
 

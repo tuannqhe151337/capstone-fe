@@ -123,7 +123,7 @@ export const ChangePasswordPage: React.FC = () => {
   const {
     register,
     watch,
-    formState: { isValid },
+    formState: { dirtyFields, isValid },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ChangePassWordSchema),
@@ -195,7 +195,7 @@ export const ChangePasswordPage: React.FC = () => {
                 />
 
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() =>
                     OldPasswordSchema.parse(watch("oldPassword"))
                   }
@@ -211,7 +211,7 @@ export const ChangePasswordPage: React.FC = () => {
                   {...register("newPassword", { required: true })}
                 />
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() =>
                     NewPasswordSchema.parse(watch("newPassword"))
                   }
@@ -227,7 +227,7 @@ export const ChangePasswordPage: React.FC = () => {
                   {...register("confirmNewPassword", { required: true })}
                 />
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() => {
                     ConfirmNewPasswordSchema.parse(watch("confirmNewPassword"));
 

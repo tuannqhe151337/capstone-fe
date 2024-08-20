@@ -104,7 +104,7 @@ export const OtpPage: React.FC = () => {
   const {
     // register,
     watch,
-    formState: { isValid },
+    formState: { isValid, dirtyFields },
     handleSubmit,
     control,
     // setValue,
@@ -222,7 +222,7 @@ export const OtpPage: React.FC = () => {
               />
             </motion.div>
             <InputValidationMessage
-              show={true}
+              show={dirtyFields.otp || false}
               validateFn={() => OtpSchema.parse(watch("otp"))}
               className="mt-2 pl-0"
             />
