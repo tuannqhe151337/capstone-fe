@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { produce } from "immer";
 import { SearchBox } from "../../shared/search-box";
@@ -9,6 +9,7 @@ import {
   TermCreatePlan,
   useLazyGetListTermWhenCreatePlanQuery,
 } from "../../providers/store/api/termApi";
+import { useWindowHeight } from "../../shared/utils/use-window-height";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -52,12 +53,13 @@ interface Props {
 export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
   // Pagination
   const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(5);
 
   // Searchbox
   const [searchboxValue, setSearchboxValue] = useState<string>("");
 
   // Mutation
-  const [getListTermWhenCreatePlan, { data, isFetching }] =
+  const [getListTermWhenCreatePlan, { data, isFetching, isSuccess }] =
     useLazyGetListTermWhenCreatePlanQuery();
 
   // Fetch list term on change
@@ -66,7 +68,7 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
       const paramters: ListTermWhenCreatePlanParameters = {
         query: searchboxValue,
         page,
-        pageSize: 5,
+        pageSize,
       };
 
       getListTermWhenCreatePlan(paramters, true);
@@ -74,6 +76,20 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
 
     return () => clearTimeout(timeoutId);
   }, [searchboxValue, page, hide]);
+
+  // Calculate optimal height for select term
+  const windowHeight = useWindowHeight();
+
+  const termListHeight = useMemo(() => {
+    return windowHeight - 350;
+  }, [windowHeight]);
+
+  useEffect(() => {
+    // py-6: 24px
+    // gap-3: 12px
+    // term item height: 55px
+    setPageSize(Math.floor((termListHeight - 24 * 2 + 12) / (55 + 12)));
+  }, [termListHeight]);
 
   return (
     <motion.div
@@ -96,6 +112,8 @@ export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
         <TermList
           hide={hide}
           isFetching={isFetching}
+          height={termListHeight}
+          isEmpty={isSuccess && data?.pagination.totalRecords === 0}
           terms={data?.data || []}
           onClick={(term) => {
             onTermSelected && onTermSelected(term);

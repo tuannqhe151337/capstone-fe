@@ -3,7 +3,7 @@ import { FaUpload } from "react-icons/fa";
 export const EmptyFileUploadUI: React.FC = () => {
   return (
     <div className="flex flex-col flex-wrap items-center justify-evenly w-full h-full">
-      <div className="flex flex-col flex-wrap items-center justify-center mt-10">
+      <div className="flex flex-col flex-wrap items-center justify-center flex-1">
         <div>
           <FaUpload
             size={75}
@@ -20,7 +20,7 @@ export const EmptyFileUploadUI: React.FC = () => {
         </p>
       </div>
 
-      <div className="flex flex-col flex-wrap items-center justify-center gap-1 mt-10">
+      <div className="flex flex-col flex-wrap items-center justify-center gap-1 mt-auto mb-5">
         <p className="text-sm text-primary-400/60 dark:text-primary-600/70 group-hover:text-primary-500/60 dark:group-hover:text-primary-500/90 font-bold duration-150">
           Allow file type: xls, xlsx, csv
         </p>

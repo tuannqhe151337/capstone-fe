@@ -161,7 +161,8 @@ export const ResetPasswordPage: React.FC = () => {
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">
-        <LogoRedirect />
+        <LogoRedirect to="/auth/login" />
+
         <div className="ml-auto flex flex-row flex-wrap items-center pr-10 z-20">
           <div className="ml-1.5">
             <LanguageChanger />
