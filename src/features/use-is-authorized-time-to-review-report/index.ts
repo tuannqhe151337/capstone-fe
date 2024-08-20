@@ -6,6 +6,7 @@ interface Parameters {
   reportStatusCode?: ReportStatusCode;
   termEndDate?: string;
   termReuploadStartDate?: string;
+  allowReupload?: boolean;
   termReuploadEndDate?: string;
   finalEndTermDate?: string;
 }
@@ -13,12 +14,21 @@ interface Parameters {
 export const useIsAuthorizedAndTimeToReviewReport = ({
   reportStatusCode,
   termEndDate,
+  allowReupload,
   termReuploadStartDate,
   termReuploadEndDate,
   finalEndTermDate,
 }: Parameters) => {
   const isTimeToReviewReport = useMemo(() => {
     const reportNotClosed = reportStatusCode !== "CLOSED";
+
+    const betweenEndAndFinalEndDate =
+      parseISOInResponse(termEndDate) <= new Date() &&
+      parseISOInResponse(finalEndTermDate) >= new Date();
+
+    if (!allowReupload) {
+      return reportNotClosed && betweenEndAndFinalEndDate;
+    }
 
     const betweenEndAndReuploadStartDate =
       parseISOInResponse(termEndDate) <= new Date() &&

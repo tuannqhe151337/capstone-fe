@@ -9,6 +9,7 @@ import {
   useDenyExpensesMutation,
   useGetReportDetailQuery,
   useLazyFetchReportExpensesQuery,
+  useMarkAsReviewedMutation,
 } from "../../providers/store/api/reportsAPI";
 import { useParams } from "react-router-dom";
 import {
@@ -22,6 +23,7 @@ import { useAppDispatch } from "../../providers/store/hook";
 import { toast } from "react-toastify";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useReportDetailContext } from "../report-detail-root-page";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -114,6 +116,10 @@ export const ReportDetailExpensePage: React.FC = () => {
     reportId: reportId ? parseInt(reportId) : 0,
   });
 
+  // Mark as reviewed
+  const [markAsReviewed, { isSuccess: isMarkedAsReviewedSuccess }] =
+    useMarkAsReviewedMutation();
+
   // UI: select expenses
   const [listSelectedId, setListSelectedId] = useState<Set<number>>(new Set());
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>();
@@ -181,9 +187,22 @@ export const ReportDetailExpensePage: React.FC = () => {
       reportStatusCode: report?.status.code,
       termEndDate: report?.term.endDate,
       termReuploadStartDate: report?.term.reuploadStartDate,
+      allowReupload: report?.term.allowReupload,
       termReuploadEndDate: report?.term.reuploadEndDate,
       finalEndTermDate: report?.term.finalEndTermDate,
     });
+
+  // Mark as reviewed success
+  const isDarkmode = useDetectDarkmode();
+
+  useEffect(() => {
+    if (isMarkedAsReviewedSuccess) {
+      toast("Mark as reviewed successfully!", {
+        type: "success",
+        theme: isDarkmode ? "dark" : "light",
+      });
+    }
+  }, [isMarkedAsReviewedSuccess]);
 
   // Approve and deny mutation
   const [
@@ -358,6 +377,7 @@ export const ReportDetailExpensePage: React.FC = () => {
         showReviewExpense={listSelectedId.size > 0}
         searchboxValue={searchboxValue}
         currencyId={currencyId}
+        allowReviewPlan={isAuthorizedAndTimeToReviewReport}
         onSearchboxChange={(value) => {
           setSearchboxValue(value);
         }}
@@ -391,6 +411,9 @@ export const ReportDetailExpensePage: React.FC = () => {
               `${report.name}.xlsx`
             );
           }
+        }}
+        onMarkAsReviewed={() => {
+          reportId && markAsReviewed({ reportId: parseInt(reportId) });
         }}
       />
 

@@ -10,7 +10,6 @@ import {
 export interface ListReportParameters {
   query?: string | null;
   termId?: number | null;
-  departmentId?: number | null;
   page: number;
   pageSize: number;
 }
@@ -26,7 +25,7 @@ export interface ListReportExpenseParameters {
 }
 
 export interface Report {
-  reportId: number | string;
+  reportId: number;
   name: string;
   version: string;
   month: string;
@@ -62,7 +61,6 @@ export type ReportStatusCode =
   | "NEW"
   | "WAITING_FOR_APPROVAL"
   | "REVIEWED"
-  | "APPROVED"
   | "CLOSED";
 
 export interface Term {
@@ -141,6 +139,10 @@ export interface ExpenseBody {
   statusCode: string;
 }
 
+export interface CompleteReviewReportBody {
+  reportId: number;
+}
+
 // DEV ONLY!!!
 // const pause = (duration: number) => {
 //   return new Promise((resolve) => {
@@ -173,22 +175,18 @@ const staggeredBaseQuery = retry(
 const reportsAPI = createApi({
   reducerPath: "report",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["query", "actual-cost"],
+  tagTypes: ["query", "report-detail", "actual-cost"],
   endpoints(builder) {
     return {
       fetchReports: builder.query<
         PaginationResponse<Report[]>,
         ListReportParameters
       >({
-        query: ({ query, termId, departmentId, page, pageSize }) => {
+        query: ({ query, termId, page, pageSize }) => {
           let endpoint = `report/list?page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
-          }
-
-          if (departmentId) {
-            endpoint += `&departmentId=${departmentId}`;
           }
 
           if (termId) {
@@ -201,6 +199,7 @@ const reportsAPI = createApi({
 
       getReportDetail: builder.query<ReportDetail, ReportDetailParameters>({
         query: ({ reportId }) => `/report/detail?reportId=${reportId}`,
+        providesTags: ["report-detail"],
       }),
 
       getReportActualCost: builder.query<
@@ -281,6 +280,15 @@ const reportsAPI = createApi({
         }),
         invalidatesTags: ["actual-cost", "query"],
       }),
+
+      markAsReviewed: builder.mutation<void, CompleteReviewReportBody>({
+        query: (completeReviewReportBody) => ({
+          url: "report/complete-review",
+          method: "POST",
+          body: completeReviewReportBody,
+        }),
+        invalidatesTags: ["report-detail"],
+      }),
     };
   },
 });
@@ -298,5 +306,6 @@ export const {
   useApproveExpensesMutation,
   useDenyExpensesMutation,
   useReviewListExpensesMutation,
+  useMarkAsReviewedMutation,
 } = reportsAPI;
 export { reportsAPI };

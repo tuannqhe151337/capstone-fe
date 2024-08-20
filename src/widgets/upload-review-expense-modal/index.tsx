@@ -160,7 +160,7 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                 >
                   <UploadFileStage
                     hide={stage !== 1}
-                    dropzoneHeight={380}
+                    dropzoneHeight={350}
                     validateExpenseId
                     validateStatusCode
                     downloadButtonText="Download report"
