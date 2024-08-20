@@ -44,7 +44,6 @@ export default {
   plugins: [
     // Don't know why but without it, the tooltip seems to work just fine
     // but with it the plugin tw-colors just broken
-    // require("tw-elements-react/dist/plugin.cjs"),
     createThemes({
       blue: {
         primary: colors.sky,
@@ -103,5 +102,6 @@ export default {
         secondary: colors.fuchsia["400"],
       },
     }),
+    require("tw-elements-react/dist/plugin.cjs"),
   ],
 };

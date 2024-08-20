@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
@@ -15,6 +15,7 @@ import {
   useLazyGetReportDetailQuery,
   useReviewListExpensesMutation,
 } from "../../providers/store/api/reportsAPI";
+import { useWindowHeight } from "../../shared/utils/use-window-height";
 
 enum AnimationStage {
   LEFT = "left",
@@ -114,6 +115,13 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
     }
   }, [isError]);
 
+  // Calculate optimal height for dropzone
+  const windowHeight = useWindowHeight();
+
+  const dropzoneHeight = useMemo(() => {
+    return windowHeight - 350;
+  }, [windowHeight]);
+
   return (
     <Modal
       className={`w-[95vw] xl:w-[90vw] h-[95vh]`}
@@ -160,7 +168,7 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                 >
                   <UploadFileStage
                     hide={stage !== 1}
-                    dropzoneHeight={350}
+                    dropzoneHeight={dropzoneHeight}
                     validateExpenseId
                     validateStatusCode
                     downloadButtonText="Download report"

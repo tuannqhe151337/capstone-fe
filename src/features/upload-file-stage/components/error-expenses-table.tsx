@@ -1,7 +1,7 @@
 import { Variants, motion } from "framer-motion";
 import { NumericFormat } from "react-number-format";
 import { Pagination } from "../../../shared/pagination";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ExpenseError } from "../type";
 import { HiExclamationCircle } from "react-icons/hi";
 import { TETooltip } from "tw-elements-react";
@@ -9,6 +9,7 @@ import { EmptyText } from "../ui/empty-text";
 import { ExpenseTag } from "../../../entities/expense-tag";
 import { ExpenseStatusCodes } from "../../../providers/store/api/type";
 import clsx from "clsx";
+import { useWindowHeight } from "../../../shared/utils/use-window-height";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -84,8 +85,6 @@ interface Props {
   showStatusColumn?: boolean;
 }
 
-const pageSize = 5;
-
 export const ErrorExpensesTable: React.FC<Props> = ({
   expenses,
   hide,
@@ -93,8 +92,11 @@ export const ErrorExpensesTable: React.FC<Props> = ({
   showExpenseCodeColumn,
   showStatusColumn,
 }) => {
+  // Page
   const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(5);
 
+  // Render expense code cell's value
   const renderExpenseCodeValue = useCallback(
     (expenseCode?: string | number) => {
       if (expenseCode) {
@@ -112,6 +114,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
     []
   );
 
+  // Render status code cell's value
   const renderStatusCode = useCallback((statusCode?: string | number) => {
     if (statusCode) {
       if (typeof statusCode === "string") {
@@ -133,9 +136,22 @@ export const ErrorExpensesTable: React.FC<Props> = ({
     }
   }, []);
 
+  // Calculate optimal height for table
+  const windowHeight = useWindowHeight();
+
+  const tableHeight = useMemo(() => {
+    return windowHeight - 420;
+  }, [windowHeight]);
+
+  useEffect(() => {
+    // Header height: 32px
+    // Row height: 56px
+    setPageSize(Math.floor((windowHeight - 426 - 32) / 56));
+  }, [windowHeight]);
+
   return (
     <div className="mt-10">
-      <div className="min-h-[312px]">
+      <div className="min-h-[312px]" style={{ height: tableHeight }}>
         <table className="table-auto sm:mt-3 lg:mt-5 mx-auto">
           <thead className="xl:text-base lg:text-sm md:text-sm sm:text-sm text-neutral-400/70 dark:text-neutral-500">
             <tr>
