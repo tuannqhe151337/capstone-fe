@@ -193,7 +193,12 @@ export const ProcessingFileUI: React.FC<Props> = ({
                 "text-neutral-400/50": stage !== Stage.PROCESSING,
               })}
             >
-              <NumericFormat displayType="text" value={fileSize / 1000} /> KB
+              <NumericFormat
+                displayType="text"
+                value={fileSize / 1000}
+                decimalScale={2}
+              />{" "}
+              KB
             </p>
           )}
 

@@ -37,10 +37,12 @@ export const MonthlyExpectedActualCostChart: React.FC<Props> = ({
       };
 
       for (let monthlyRecord of data.data) {
-        expectedActualCostMap[ACTUAL_COST_KEY].push(monthlyRecord.actualCost);
-        expectedActualCostMap[EXPECTED_COST_KEY].push(
-          monthlyRecord.expectedCost
-        );
+        if (monthlyRecord.actualCost && monthlyRecord.expectedCost) {
+          expectedActualCostMap[ACTUAL_COST_KEY].push(monthlyRecord.actualCost);
+          expectedActualCostMap[EXPECTED_COST_KEY].push(
+            monthlyRecord.expectedCost
+          );
+        }
       }
 
       dataChart.push({

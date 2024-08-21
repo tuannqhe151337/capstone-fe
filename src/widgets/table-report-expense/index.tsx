@@ -294,6 +294,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
+                      decimalScale={2}
                       prefix={
                         expense.currency.affix === AFFIX.PREFIX
                           ? expense.currency.symbol
@@ -322,6 +323,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice * expense.amount}
+                      decimalScale={2}
                       prefix={
                         expense.currency.affix === AFFIX.PREFIX
                           ? expense.currency.symbol

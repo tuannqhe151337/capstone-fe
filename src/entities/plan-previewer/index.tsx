@@ -113,6 +113,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                                 ? ` ${plan?.expectedCost.currency.name}`
                                 : undefined
                             }
+                            decimalScale={2}
                             thousandSeparator
                           />
                         </div>
@@ -140,6 +141,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                                 ? ` ${plan?.actualCost.currency.name}`
                                 : undefined
                             }
+                            decimalScale={2}
                             thousandSeparator
                           />
                         </div>
