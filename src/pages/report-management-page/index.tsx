@@ -109,6 +109,8 @@ export const ReportManagementList: React.FC = () => {
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
 
+  const [statusId, setStatusId] = useState<number | null>();
+
   const [termId, setTermId] = useState<number | null>();
 
   const [page, setPage] = useState<number>(1);
@@ -133,11 +135,15 @@ export const ReportManagementList: React.FC = () => {
         paramters.termId = termId;
       }
 
+      if (statusId) {
+        paramters.statusId = statusId;
+      }
+
       fetchReport(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId]);
+  }, [searchboxValue, page, termId, statusId]);
 
   // Mark as reviewed
   const [markAsReviewed, { isSuccess }] = useMarkAsReviewedMutation();
@@ -150,7 +156,7 @@ export const ReportManagementList: React.FC = () => {
 
       reportsAPI.util.updateQueryData(
         "fetchReports",
-        { query: searchboxValue, termId, page, pageSize },
+        { query: searchboxValue, termId, statusId, page, pageSize },
         (draft) => {
           draft.data.forEach((report, index) => {
             if (report.reportId === reportId) {
@@ -200,6 +206,9 @@ export const ReportManagementList: React.FC = () => {
           }}
           onTermIdChange={(termId) => {
             setTermId(termId);
+          }}
+          onStatusIdChange={(statusId) => {
+            setStatusId(statusId);
           }}
         />
       </motion.div>
