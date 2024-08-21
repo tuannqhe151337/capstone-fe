@@ -16,6 +16,7 @@ import { downloadFileFromServer } from "../../shared/utils/download-file-from-se
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { TermPreviewer } from "../../entities/term-previewer";
 import { ReportPreviewer } from "../../entities/report-previewer";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -67,6 +68,9 @@ export const TableReportManagement: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Navigation
   const navigate = useNavigate();
 
@@ -117,19 +121,19 @@ export const TableReportManagement: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
-              Report
+              {t("Report")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Term
+              {t("Term")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tr-lg"
             >
-              Created at
+              {t("Created at")}
             </th>
           </tr>
         </thead>
@@ -224,7 +228,7 @@ export const TableReportManagement: React.FC<Props> = ({
 
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

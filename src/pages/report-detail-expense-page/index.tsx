@@ -99,6 +99,7 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
 const pageSize = 10;
 
 export const ReportDetailExpensePage: React.FC = () => {
+
   // Params
   const { reportId } = useParams<{ reportId: string }>();
 

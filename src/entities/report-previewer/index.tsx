@@ -12,6 +12,7 @@ import {
 import { ReportTag } from "../report-tag";
 import { NumericFormat } from "react-number-format";
 import { AFFIX } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -38,6 +39,10 @@ export const ReportPreviewer: React.FC<Props> = ({
   children,
   containerClassName,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Query
   const [fetchReportDetail, { data: report, isSuccess }] =
     useLazyGetReportDetailQuery();
@@ -115,7 +120,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                         <FaMoneyBillTrendUp className="text-lg text-neutral-400/30" />
                         <div className="space-y-1">
                           <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                            Actual cost
+                            {t("Actual cost")}
                           </p>
                           <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                             <NumericFormat
@@ -145,7 +150,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                         <FaCoins className="text-lg text-neutral-400/30" />
                         <div className="space-y-1">
                           <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                            Expected cost
+                            {t("Expected cost")}
                           </p>
                           <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                             <NumericFormat
@@ -177,7 +182,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                         <FaClock className="text-lg text-neutral-400/30" />
                         <div className="space-y-1">
                           <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                            Created at
+                            {t("Created at")}
                           </p>
                           <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                             {(report?.createdAt &&

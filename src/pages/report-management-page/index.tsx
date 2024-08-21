@@ -16,6 +16,7 @@ import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for
 import { Role } from "../../providers/store/api/type";
 import { toast } from "react-toastify";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyReports = (total: number): Row[] => {
   const reports: Row[] = [];
@@ -86,6 +87,9 @@ const childrenAnimation: Variants = {
 const pageSize = 10;
 
 export const ReportManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
@@ -183,7 +187,7 @@ export const ReportManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Report management
+            {t("Report management")}
           </p>
         </div>
       </BubbleBanner>

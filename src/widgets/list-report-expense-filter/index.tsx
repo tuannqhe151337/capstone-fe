@@ -13,6 +13,7 @@ import { Button } from "../../shared/button";
 import { RiDeleteRow } from "react-icons/ri";
 import { CurrencyChanger } from "../../entities/currency-changer";
 import { Currency } from "../../providers/store/api/currencyApi";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -118,6 +119,9 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onUploadReviewReportClick,
   onMarkAsReviewed,
 }) => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
 
@@ -175,7 +179,9 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                       >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <RiDeleteRow className="text-xl" />
-                          <p className="text-sm font-semibold">Deny expense</p>
+                          <p className="text-sm font-semibold">
+                            {t("Deny expense")}
+                          </p>
                         </div>
                       </Button>
                     </motion.div>
@@ -190,7 +196,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <FaListCheck className="text-lg" />
                           <p className="text-sm font-semibold">
-                            Approve expense
+                            {t("Approve expense")}
                           </p>
                         </div>
                       </Button>
@@ -263,7 +269,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                           <FaUpload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Upload review file
+                            {t("Upload review file")}
                           </p>
                         </div>
                       </TERipple>
@@ -277,7 +283,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                         <FaDownload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Download report
+                          {t("Download report")}
                         </p>
                       </div>
                     </TERipple>
@@ -291,7 +297,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                           <FaCheck className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Mark as reviewed
+                            {t("Mark as reviewed")}
                           </p>
                         </div>
                       </TERipple>
