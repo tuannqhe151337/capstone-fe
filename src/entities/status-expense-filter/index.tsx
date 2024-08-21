@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
-import {
-  PlanStatus,
-  useGetListStatusPlanQuery,
-} from "../../providers/store/api/statusApi";
+import { useGetAllExpenseStatusQuery } from "../../providers/store/api/statusApi";
+import { ExpenseStatus } from "../../providers/store/api/type";
 
 interface Option {
   value: number;
@@ -16,7 +14,7 @@ const DefaultOption: Option = {
 };
 
 const convertStatusToOptions = (
-  roles: PlanStatus[],
+  roles: ExpenseStatus[],
   excludeRoleId?: number
 ) => {
   return roles
@@ -29,12 +27,12 @@ interface Props {
   onChange?: (option: Option | null | undefined) => any;
 }
 
-export const StatusPlanFilter: React.FC<Props> = ({
+export const StatusExpenseFilter: React.FC<Props> = ({
   onChange,
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const { data } = useGetListStatusPlanQuery();
+  const { data } = useGetAllExpenseStatusQuery();
 
   // Select state
   const [selectedOption, setSelectedOption] = useState<Option | null>(
