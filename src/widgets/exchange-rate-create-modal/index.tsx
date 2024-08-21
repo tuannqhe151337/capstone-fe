@@ -219,6 +219,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                                 className="!text-neutral-500 font-semibold"
                                 customInput={TEInput}
                                 value={value || 0}
+                                decimalScale={2}
                                 allowNegative={false}
                                 prefix={
                                   baseCurrency.affix === AFFIX.PREFIX

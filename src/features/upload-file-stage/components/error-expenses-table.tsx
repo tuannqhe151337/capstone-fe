@@ -410,6 +410,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                               value={expense.unitPrice.value}
                               disabled
                               thousandSeparator
+                              decimalScale={2}
                             />
                           ) : (
                             <div
@@ -449,6 +450,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                               value={expense.amount.value}
                               disabled
                               thousandSeparator
+                              decimalScale={2}
                             />
                           ) : expense.amount.value ? (
                             expense.amount.value
@@ -473,6 +475,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                             expense.amount.value
                           )}
                           thousandSeparator
+                          decimalScale={2}
                         />
                       </div>
                     </td>

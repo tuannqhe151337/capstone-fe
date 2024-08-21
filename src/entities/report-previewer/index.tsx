@@ -133,6 +133,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                                   ? ` ${expectedCostData?.currency.name}`
                                   : undefined
                               }
+                              decimalScale={2}
                               thousandSeparator
                             />
                           </p>
@@ -162,6 +163,7 @@ export const ReportPreviewer: React.FC<Props> = ({
                                   ? ` ${expectedCostData?.currency.name}`
                                   : undefined
                               }
+                              decimalScale={2}
                               thousandSeparator
                             />
                           </p>
