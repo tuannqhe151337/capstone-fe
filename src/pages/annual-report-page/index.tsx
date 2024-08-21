@@ -10,6 +10,9 @@ import {
 } from "../../providers/store/api/annualsAPI";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyAnnual = (total: number): Row[] => {
   const annual: Row[] = [];
@@ -64,11 +67,18 @@ const childrenAnimation: Variants = {
 };
 
 export const AnnualReportList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
+  // UI: reupload modal
   const [showUploadPlanModal, setShowUploadPlanModal] =
     useState<boolean>(false);
 
   // i18n
   const { t } = useTranslation(["sidebar"]);
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Query
   const [fetchAnnual, { data, isFetching }] = useLazyFetchAnnualQuery();
@@ -110,7 +120,7 @@ export const AnnualReportList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
             {t("Annual Report")}
           </p>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BubbleBanner } from "../../entities/bubble-banner";
 import { Variants, motion } from "framer-motion";
 import { Row, TableReportManagement } from "../../widgets/table-report";
@@ -6,10 +6,16 @@ import {
   ListReportParameters,
   reportsAPI,
   useLazyFetchReportsQuery,
+  useMarkAsReviewedMutation,
 } from "../../providers/store/api/reportsAPI";
 import _ from "lodash";
 import { ListReportFilter } from "../../widgets/list-report-filter";
 import { useDispatch } from "react-redux";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
+import { toast } from "react-toastify";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 
 const generateEmptyReports = (total: number): Row[] => {
   const reports: Row[] = [];
@@ -25,6 +31,7 @@ const generateEmptyReports = (total: number): Row[] => {
         name: "",
         startDate: "",
         endDate: "",
+        allowReupload: false,
         reuploadStartDate: "",
         reuploadEndDate: "",
         finalEndTermDate: "",
@@ -76,9 +83,17 @@ const childrenAnimation: Variants = {
   },
 };
 
+const pageSize = 10;
+
 export const ReportManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Query
   const [fetchReport, { data, isFetching }] = useLazyFetchReportsQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Clear previous cache
   const dispatch = useDispatch();
@@ -107,7 +122,7 @@ export const ReportManagementList: React.FC = () => {
       const paramters: ListReportParameters = {
         query: searchboxValue,
         page,
-        pageSize: 10,
+        pageSize,
       };
 
       if (termId) {
@@ -120,6 +135,43 @@ export const ReportManagementList: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [searchboxValue, page, termId]);
 
+  // Mark as reviewed
+  const [markAsReviewed, { isSuccess }] = useMarkAsReviewedMutation();
+
+  // Mark as reviewed handler: update cache
+  const markAsReviewedHandler = useCallback(
+    (reportId?: number) => {
+      // Call API
+      reportId && markAsReviewed({ reportId });
+
+      reportsAPI.util.updateQueryData(
+        "fetchReports",
+        { query: searchboxValue, termId, page, pageSize },
+        (draft) => {
+          draft.data.forEach((report, index) => {
+            if (report.reportId === reportId) {
+              draft.data[index].status.code = "REVIEWED";
+              draft.data[index].status.name = "Reviewed";
+            }
+          });
+        }
+      );
+    },
+    [markAsReviewed]
+  );
+
+  // Mark as reviewed success
+  const isDarkmode = useDetectDarkmode();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast("Mark as reviewed successfully!", {
+        type: "success",
+        theme: isDarkmode ? "dark" : "light",
+      });
+    }
+  }, [isSuccess]);
+
   return (
     <motion.div
       className="px-6 pb-20"
@@ -130,7 +182,7 @@ export const ReportManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
             Report management
           </p>
         </div>
@@ -154,6 +206,7 @@ export const ReportManagementList: React.FC = () => {
           isDataEmpty={isDataEmpty}
           page={page}
           totalPage={data?.pagination.numPages}
+          onMarkAsReviewed={markAsReviewedHandler}
           onNext={() =>
             setPage((prevPage) => {
               if (data?.pagination.numPages) {

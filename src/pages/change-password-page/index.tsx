@@ -71,7 +71,13 @@ type FormData = {
 
 const OldPasswordSchema = z.string().min(1, "Old password cannot be empty");
 
-const NewPasswordSchema = z.string().min(1, "New password cannot be empty");
+const NewPasswordSchema = z
+  .string()
+  // .min(8, "New password must be at least 8 characters long")
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    "Use 8 characters or more and include a mix of letters, numbers, and symbols"
+  );
 
 const ConfirmNewPasswordSchema = z
   .string()
@@ -117,7 +123,7 @@ export const ChangePasswordPage: React.FC = () => {
   const {
     register,
     watch,
-    formState: { isValid },
+    formState: { dirtyFields, isValid },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ChangePassWordSchema),
@@ -189,7 +195,7 @@ export const ChangePasswordPage: React.FC = () => {
                 />
 
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() =>
                     OldPasswordSchema.parse(watch("oldPassword"))
                   }
@@ -202,11 +208,10 @@ export const ChangePasswordPage: React.FC = () => {
                   label={t("newPassword")}
                   className=" w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  autoFocus
                   {...register("newPassword", { required: true })}
                 />
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() =>
                     NewPasswordSchema.parse(watch("newPassword"))
                   }
@@ -219,11 +224,10 @@ export const ChangePasswordPage: React.FC = () => {
                   label={t("confirmNewPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  autoFocus
                   {...register("confirmNewPassword", { required: true })}
                 />
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.oldPassword || false}
                   validateFn={() => {
                     ConfirmNewPasswordSchema.parse(watch("confirmNewPassword"));
 

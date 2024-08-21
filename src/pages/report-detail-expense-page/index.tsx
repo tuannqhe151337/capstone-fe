@@ -9,14 +9,21 @@ import {
   useDenyExpensesMutation,
   useGetReportDetailQuery,
   useLazyFetchReportExpensesQuery,
+  useMarkAsReviewedMutation,
 } from "../../providers/store/api/reportsAPI";
 import { useParams } from "react-router-dom";
-import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  LocalStorageItemKey,
+} from "../../providers/store/api/type";
 import { useIsAuthorizedAndTimeToReviewReport } from "../../features/use-is-authorized-time-to-review-report";
 import { produce } from "immer";
 import { useAppDispatch } from "../../providers/store/hook";
 import { toast } from "react-toastify";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { useReportDetailContext } from "../report-detail-root-page";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -58,14 +65,29 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
       },
       unitPrice: 0,
       amount: 0,
-      projectName: "",
-      supplierName: "",
-      pic: "",
+      project: {
+        projectId: 0,
+        name: "",
+      },
+      supplier: {
+        supplierId: 0,
+        name: "",
+      },
+      pic: {
+        picId: 0,
+        name: "",
+      },
       notes: "",
       status: {
         statusId: 0,
         code: "WAITING_FOR_APPROVAL",
         name: "",
+      },
+      currency: {
+        currencyId: 0,
+        affix: AFFIX.PREFIX,
+        name: "",
+        symbol: "",
       },
       isFetching: true,
     });
@@ -80,6 +102,9 @@ export const ReportDetailExpensePage: React.FC = () => {
   // Params
   const { reportId } = useParams<{ reportId: string }>();
 
+  // Get show upload modal method
+  const { setShowReportReviewExpensesModal } = useReportDetailContext();
+
   // Dispatch
   const dispatch = useAppDispatch();
 
@@ -91,12 +116,18 @@ export const ReportDetailExpensePage: React.FC = () => {
     reportId: reportId ? parseInt(reportId) : 0,
   });
 
+  // Mark as reviewed
+  const [markAsReviewed, { isSuccess: isMarkedAsReviewedSuccess }] =
+    useMarkAsReviewedMutation();
+
   // UI: select expenses
   const [listSelectedId, setListSelectedId] = useState<Set<number>>(new Set());
+  const [lastSelectedIndex, setLastSelectedIndex] = useState<number>();
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
   const [costTypeId, setCostTypeId] = useState<number | null>();
+  const [currencyId, setCurrencyId] = useState<number>();
   const [statusId, setStatusId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
@@ -120,6 +151,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   // Fetch report expense on change
   useEffect(() => {
     setListSelectedId(new Set());
+    setLastSelectedIndex(undefined);
 
     if (reportId) {
       const timeoutId = setTimeout(() => {
@@ -129,6 +161,10 @@ export const ReportDetailExpensePage: React.FC = () => {
           page,
           pageSize: 10,
         };
+
+        if (currencyId) {
+          paramters.currencyId = currencyId;
+        }
 
         if (costTypeId) {
           paramters.costTypeId = costTypeId;
@@ -143,7 +179,7 @@ export const ReportDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId]);
+  }, [searchboxValue, page, costTypeId, statusId, currencyId]);
 
   // Show checkboxes for review
   const isAuthorizedAndTimeToReviewReport =
@@ -151,13 +187,28 @@ export const ReportDetailExpensePage: React.FC = () => {
       reportStatusCode: report?.status.code,
       termEndDate: report?.term.endDate,
       termReuploadStartDate: report?.term.reuploadStartDate,
+      allowReupload: report?.term.allowReupload,
       termReuploadEndDate: report?.term.reuploadEndDate,
       finalEndTermDate: report?.term.finalEndTermDate,
     });
 
+  // Mark as reviewed success
+  const isDarkmode = useDetectDarkmode();
+
+  useEffect(() => {
+    if (isMarkedAsReviewedSuccess) {
+      toast("Mark as reviewed successfully!", {
+        type: "success",
+        theme: isDarkmode ? "dark" : "light",
+      });
+    }
+  }, [isMarkedAsReviewedSuccess]);
+
   // Approve and deny mutation
-  const [approveExpenses, { isSuccess: approveExpensesSuccess }] =
-    useApproveExpensesMutation();
+  const [
+    approveExpenses,
+    { data: approveExpensesResponse, isSuccess: approveExpensesSuccess },
+  ] = useApproveExpensesMutation();
   const [denyExpenses, { isSuccess: denyExpensesSuccess }] =
     useDenyExpensesMutation();
 
@@ -174,7 +225,7 @@ export const ReportDetailExpensePage: React.FC = () => {
     }
   }, [denyExpensesSuccess]);
 
-  // Approve and deny expense with cache handling
+  // Approve and deny expense with update status of expenses cache
   const approveExpenseAndUpdateCache = (listExpenseId: number[]) => {
     if (reportId) {
       let reportIdInt: number;
@@ -268,6 +319,53 @@ export const ReportDetailExpensePage: React.FC = () => {
     }
   };
 
+  // Update expense code of expenses cache
+  useEffect(() => {
+    if (reportId && approveExpensesResponse) {
+      try {
+        // Parse planId to int
+        let reportIdInt: number;
+
+        if (typeof reportId === "string") {
+          reportIdInt = parseInt(reportId);
+        } else {
+          reportIdInt = reportId;
+        }
+
+        if (approveExpensesSuccess) {
+          dispatch(
+            reportsAPI.util.updateQueryData(
+              "fetchReportExpenses",
+              {
+                reportId: reportIdInt,
+                costTypeId,
+                query: searchboxValue,
+                page,
+                pageSize,
+              },
+              (draft) => {
+                draft.data.forEach((expense, index) => {
+                  const approvedExpenseIndex =
+                    approveExpensesResponse.data.findIndex(
+                      (approveExpense) =>
+                        approveExpense.expenseId === expense.expenseId
+                    );
+
+                  if (approvedExpenseIndex !== -1) {
+                    draft.data[index].expenseCode =
+                      approveExpensesResponse.data[
+                        approvedExpenseIndex
+                      ].expenseCode;
+                  }
+                });
+              }
+            )
+          );
+        }
+      } catch (e) {}
+    }
+  }, [approveExpensesSuccess, approveExpensesResponse]);
+
   return (
     <motion.div
       initial={AnimationStage.HIDDEN}
@@ -278,6 +376,8 @@ export const ReportDetailExpensePage: React.FC = () => {
         className="pl-3 mt-7"
         showReviewExpense={listSelectedId.size > 0}
         searchboxValue={searchboxValue}
+        currencyId={currencyId}
+        allowReviewPlan={isAuthorizedAndTimeToReviewReport}
         onSearchboxChange={(value) => {
           setSearchboxValue(value);
         }}
@@ -287,11 +387,17 @@ export const ReportDetailExpensePage: React.FC = () => {
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
         }}
+        onCurrencyChoose={(currency) => {
+          setCurrencyId(currency?.currencyId);
+        }}
         onApproveExpensesClick={() => {
           approveExpenseAndUpdateCache(Array.from(listSelectedId));
         }}
         onDenyExpensesClick={() => {
           denyExpensesAndUpdateCache(Array.from(listSelectedId));
+        }}
+        onUploadReviewReportClick={() => {
+          setShowReportReviewExpensesModal(true);
         }}
         onDownloadClick={() => {
           const token = localStorage.getItem(LocalStorageItemKey.TOKEN);
@@ -306,6 +412,9 @@ export const ReportDetailExpensePage: React.FC = () => {
             );
           }
         }}
+        onMarkAsReviewed={() => {
+          reportId && markAsReviewed({ reportId: parseInt(reportId) });
+        }}
       />
 
       <TableReportExpenses
@@ -313,7 +422,7 @@ export const ReportDetailExpensePage: React.FC = () => {
         expenses={isFetching ? generateEmptyReportExpenses(10) : data?.data}
         isDataEmpty={isDataEmpty}
         listSelectedId={listSelectedId}
-        onRowClick={(expenseId) => {
+        onRowClick={(expenseId, index) => {
           setListSelectedId(
             produce((draft) => {
               if (draft.has(expenseId)) {
@@ -323,6 +432,49 @@ export const ReportDetailExpensePage: React.FC = () => {
               }
             })
           );
+          setLastSelectedIndex(index);
+        }}
+        onShiftRowClick={(expenseId, index) => {
+          if (data) {
+            if (
+              lastSelectedIndex !== null &&
+              lastSelectedIndex !== undefined &&
+              lastSelectedIndex < data.data.length
+            ) {
+              // Find out if the last selected is select or deselect
+              const isSelected = listSelectedId.has(
+                data.data[lastSelectedIndex].expenseId
+              );
+
+              setListSelectedId(
+                produce((draft) => {
+                  if (index < lastSelectedIndex) {
+                    for (let i = index; i <= lastSelectedIndex; i++) {
+                      isSelected
+                        ? draft.add(data.data[i].expenseId)
+                        : draft.delete(data.data[i].expenseId);
+                    }
+                  } else {
+                    for (let i = lastSelectedIndex; i <= index; i++) {
+                      isSelected
+                        ? draft.add(data.data[i].expenseId)
+                        : draft.delete(data.data[i].expenseId);
+                    }
+                  }
+                })
+              );
+            } else {
+              setListSelectedId(
+                produce((draft) => {
+                  if (draft.has(expenseId)) {
+                    draft.delete(expenseId);
+                  } else {
+                    draft.add(expenseId);
+                  }
+                })
+              );
+            }
+          }
         }}
         onSelectAllClick={() => {
           setListSelectedId(

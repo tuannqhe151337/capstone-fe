@@ -6,6 +6,7 @@ import { FaExclamation } from "react-icons/fa";
 import { useStartTermMutation } from "../../providers/store/api/termApi";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   termId: string | number;
@@ -22,6 +23,9 @@ export const StartTermModal: React.FC<Props> = ({
   onClose,
   onStartTermSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   const [startTerm, { isError, isLoading, isSuccess }] = useStartTermMutation();
 
   useEffect(() => {
@@ -57,21 +61,23 @@ export const StartTermModal: React.FC<Props> = ({
           </div>
 
           <div className="font-bold text-2xl text-primary-500 dark:text-primary-500 mt-5">
-            Start term
+            {t("Start term")}
           </div>
+
           <div className="font-semibold dark:font-bold text-primary-400 dark:text-primary-600 mt-5">
-            You're going to start term{" "}
+            {t("start_term_message.part1")}
             <span className="font-extrabold dark:text-primary-500">
-              "{termName}"
+              {t("start_term_message.part2", { termName })}
             </span>
+            {t("start_term_message.part3")}
           </div>
 
           <div className="mt-3 font-semibold dark:font-bold text-primary-400 dark:text-primary-600">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold dark:text-primary-500">
-              can not
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -83,7 +89,7 @@ export const StartTermModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
 
           <Button
@@ -95,7 +101,7 @@ export const StartTermModal: React.FC<Props> = ({
               }
             }}
           >
-            Yes, start term
+            {t("Yes, start term")}
           </Button>
         </div>
       </div>

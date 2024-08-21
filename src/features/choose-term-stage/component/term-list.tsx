@@ -41,6 +41,8 @@ const childrenAnimation: Variants = {
 interface Props {
   hide?: boolean;
   isFetching?: boolean;
+  height?: number;
+  isEmpty?: boolean;
   terms: TermCreatePlan[];
   onClick?: (term: TermCreatePlan) => any;
 }
@@ -48,6 +50,8 @@ interface Props {
 export const TermList: React.FC<Props> = ({
   hide,
   isFetching,
+  height = 368,
+  isEmpty,
   terms,
   onClick,
 }) => {
@@ -122,10 +126,17 @@ export const TermList: React.FC<Props> = ({
     <motion.div
       ref={ref}
       className="flex flex-col flex-wrap py-6 gap-3 w-full min-h-[368px]"
+      style={{ height }}
       initial={AnimationStage.HIDDEN}
       animate={hide ? AnimationStage.HIDDEN : AnimationStage.VISIBLE}
       variants={staggerChildrenAnimation}
     >
+      {isEmpty && (
+        <div className="italic font-semibold text-neutral-400 dark:text-neutral-500">
+          No available term
+        </div>
+      )}
+
       {isFetching &&
         new Array(5)
           .fill(true)

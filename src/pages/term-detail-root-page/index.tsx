@@ -1,6 +1,5 @@
 import { AnimatePresence, Variants, motion } from "framer-motion";
 import { BubbleBanner } from "../../entities/bubble-banner";
-import { Tag } from "../../shared/tag";
 // import { OverviewCard } from "./ui/overview-card";
 import { FaPlay, FaTrash } from "react-icons/fa6";
 import TabList from "../../shared/tab-list";
@@ -22,31 +21,10 @@ import { DeleteTermModal } from "../../widgets/delete-term-modal";
 import { useLazyFetchTermDetailQuery } from "../../providers/store/api/termApi";
 import { Skeleton } from "../../shared/skeleton";
 import { StartTermModal } from "../../widgets/start-term-modal";
-
-const renderButton = (status: string) => {
-  switch (status) {
-    case "NEW":
-      return (
-        <Tag background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "IN_PROGRESS":
-      return (
-        <Tag background="filled" variant="inProgress">
-          In progess
-        </Tag>
-      );
-    case "CLOSED":
-      return (
-        <Tag background="unfilled" variant="denied">
-          Closed
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
+import { TermTag } from "../../entities/term-tag";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -100,6 +78,12 @@ interface Props {
 export const TermDetailRootPage: React.FC<Props> = ({
   onDeleteSuccessFully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
   // Location
   const location = useLocation();
 
@@ -134,7 +118,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
     }
   }, [termId]);
 
-  if (!isFetching && isSuccess && !term) return <p>No term found</p>;
+  if (!isFetching && isSuccess && !term) return <p>{t("No data found")}</p>;
 
   // Show dropdown options
   const [showOptions, setShowOptions] = useState(false);
@@ -193,10 +177,10 @@ export const TermDetailRootPage: React.FC<Props> = ({
               to={`/term-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Term management
+              {t("Term management")}
             </Link>
             <span className="ml-3 text-base opacity-40">&gt;</span>
-            <span>Term detail</span>
+            <span>{t("Term detail")}</span>
           </p>
         </div>
       </BubbleBanner>
@@ -214,7 +198,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
             </p>
 
             <div className="flex flex-row flex-wrap gap-3">
-              {renderButton(term.status.code)}
+              <TermTag status={term.status.code} />
             </div>
 
             <div className="flex flex-row flex-wrap gap-3 ml-auto">
@@ -228,7 +212,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
                 >
                   <MdEdit className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
                   <div className="text-white dark:text-neutral-300 text-sm font-bold">
-                    Edit
+                    {t("Edit")}
                   </div>
                 </Button>
               </motion.div>
@@ -267,7 +251,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
                             <div className="w-full flex flex-row flex-wrap items-center px-5 py-3 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-bold duration-200">
                               <FaPlay className="mb-0.5 text-primary-400 dark:text-primary-600 mr-3 mt-[1.25px] dark:opacity-80" />
                               <p className="mt-0.5 text-primary-400 dark:text-primary-600 dark:opacity-80">
-                                Start term
+                                {t("Start term")}
                               </p>
                             </div>
                           </TERipple>
@@ -286,7 +270,7 @@ export const TermDetailRootPage: React.FC<Props> = ({
                             <FaTrash className="mb-0.5 mr-3 text-red-400 dark:text-red-600 dark:opacity-80" />
 
                             <p className="mt-0.5 text-red-400 dark:text-red-600 dark:opacity-80">
-                              Delete term
+                              {t("Delete term")}
                             </p>
                           </div>
                         </TERipple>
@@ -307,9 +291,9 @@ export const TermDetailRootPage: React.FC<Props> = ({
               className="-mb-0.5"
               selectedItemId={selectedTabId}
               items={[
-                { id: "detail", name: "Detail" },
-                { id: "plan", name: "Plan" },
-                { id: "report", name: "Report" },
+                { id: "detail", name: t("Detail") },
+                { id: "plan", name: t("Plan") },
+                { id: "report", name: t("Report") },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {

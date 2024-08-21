@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { forwardRef } from "react";
 import { TEInput } from "tw-elements-react";
 import { InputProps } from "tw-elements-react/dist/types/forms/Input/types";
@@ -18,9 +19,7 @@ export const AdornmentInput = forwardRef<any, Props>(
         )}
         <TEInput
           ref={ref}
-          className={`
-            ${startAdornment ? "pl-7" : null} ${endAdornment ? "pr-7" : null}
-            `}
+          className={clsx({ "pl-7": startAdornment, "pr-7": endAdornment })}
           {...props}
         />
         {endAdornment && (

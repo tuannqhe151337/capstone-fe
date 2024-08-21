@@ -4,7 +4,7 @@ import { ContextMenu } from "../../shared/context-menu";
 import { ContextMenuItem } from "../../shared/context-menu-item";
 import { FaTrash } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
-import { ReloadCloudIcon } from "../../shared/reload-cloud-icon";
+import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
 
 interface Props {
   className?: string;

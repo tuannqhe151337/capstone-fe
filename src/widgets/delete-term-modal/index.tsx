@@ -7,6 +7,7 @@ import { useDeleteTermMutation } from "../../providers/store/api/termApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   termId: string | number;
@@ -23,6 +24,9 @@ export const DeleteTermModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessFully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   // Navigate
   const navigate = useNavigate();
 
@@ -62,21 +66,23 @@ export const DeleteTermModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete term
+            {t("Delete term")}
           </div>
-          <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete term{" "}
-            <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{termName}"
+
+          <div className="font-semibold dark:font-bold text-primary-400 dark:text-primary-600 mt-5">
+            {t("delete_term_message.part1")}
+            <span className="font-extrabold dark:text-primary-500">
+              {t("delete_term_message.part2", { termName })}
             </span>
-            .
+            {t("delete_term_message.part3")}
           </div>
-          <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
-            <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+
+          <div className="mt-3 font-semibold dark:font-bold text-primary-400 dark:text-primary-600">
+            {t("confirmation_message.part1")}{" "}
+            <span className="font-extrabold dark:text-primary-500">
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -87,7 +93,7 @@ export const DeleteTermModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -98,7 +104,7 @@ export const DeleteTermModal: React.FC<Props> = ({
               deleteTerm({ id: termId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>

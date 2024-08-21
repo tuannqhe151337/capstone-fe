@@ -10,8 +10,6 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { IconButton } from "../../shared/icon-button";
-import { HiDotsVertical } from "react-icons/hi";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { Button } from "../../shared/button";
 import { useLazyFetchAnnualReportDetailQuery } from "../../providers/store/api/annualsAPI";
@@ -20,8 +18,9 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { OverviewCard } from "../../entities/overview-card";
 import { useTranslation } from "react-i18next";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -60,6 +59,9 @@ const childrenAnimation: Variants = {
 type TabId = "overview" | "detail";
 
 export const AnnualReportDetailRootPage: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   // i18n
   const { t } = useTranslation(["annual-report-detail"]);
 
@@ -70,16 +72,16 @@ export const AnnualReportDetailRootPage: React.FC = () => {
   const navigate = useNavigate();
 
   // Get annual report detail
-  const { annualReportId } = useParams<{ annualReportId: string }>();
+  const { year } = useParams<{ year: string }>();
 
   const [fetchAnnualReportDetail, { data: annual, isFetching, isSuccess }] =
     useLazyFetchAnnualReportDetailQuery();
 
   useEffect(() => {
-    if (annualReportId) {
-      fetchAnnualReportDetail(parseInt(annualReportId, 10), true);
+    if (year) {
+      fetchAnnualReportDetail(parseInt(year, 10), true);
     }
-  }, [annualReportId]);
+  }, [year]);
 
   // Tablist state
   const [selectedTabId, setSelectedTabId] = useState<TabId>("detail");
@@ -121,7 +123,7 @@ export const AnnualReportDetailRootPage: React.FC = () => {
             <span className="ml-3 text-base opacity-40">&gt;</span>
             <span>
               {t("Report", {
-                year: parseISOInResponse(annual?.createdAt).getFullYear(),
+                year: annual?.name,
               })}
             </span>
           </p>
@@ -161,15 +163,9 @@ export const AnnualReportDetailRootPage: React.FC = () => {
       >
         <p className="text-2xl font-extrabold text-primary mr-5">
           {t("ReportYear", {
-            year: parseISOInResponse(annual?.createdAt).getFullYear(),
+            year: annual?.name,
           })}
         </p>
-
-        <div className="flex flex-row flex-wrap gap-3 ml-auto">
-          <IconButton>
-            <HiDotsVertical className="text-xl text-primary" />
-          </IconButton>
-        </div>
       </motion.div>
 
       <div className="flex flex-row flex-wrap justify-between gap-5 mt-10 px-5 w-full">
@@ -215,11 +211,11 @@ export const AnnualReportDetailRootPage: React.FC = () => {
               onItemChangeHandler={({ id }) => {
                 switch (id) {
                   case "overview":
-                    navigate(`./chart/${annualReportId}`);
+                    navigate(`./chart/${year}`);
                     break;
 
                   case "detail":
-                    navigate(`./table/${annualReportId}`);
+                    navigate(`./table/${year}`);
                     break;
                 }
               }}

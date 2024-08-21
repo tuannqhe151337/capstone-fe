@@ -13,10 +13,15 @@ import {
   useLoginMutation,
 } from "../../providers/store/api/authApi";
 import { CgSpinner } from "react-icons/cg";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { ErrorData, LocalStorageItemKey } from "../../providers/store/api/type";
 import { LogoRedirect } from "../../widgets/logo-redirect";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { PasswordInput } from "../../shared/password-input";
+import { z, ZodType } from "zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InputValidationMessage } from "../../shared/validation-input-message";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -67,14 +72,18 @@ const imageAnimation: Variants = {
   },
 };
 
-const errorMessageAnimation: Variants = {
-  hidden: {
-    opacity: 0,
-  },
-  visible: {
-    opacity: 1,
-  },
-};
+interface FormData {
+  email: string;
+  password: string;
+}
+
+const EmailSchema = z.string().email();
+const PasswordSchema = z.string();
+
+export const LoginSchema: ZodType<FormData> = z.object({
+  email: EmailSchema,
+  password: PasswordSchema,
+});
 
 export const LoginPage: React.FC = () => {
   // Navigate
@@ -82,6 +91,16 @@ export const LoginPage: React.FC = () => {
 
   // Use translation
   const { t } = useTranslation(["login"]);
+
+  // Form
+  const {
+    register,
+    watch,
+    formState: { dirtyFields, isValid },
+    handleSubmit,
+  } = useForm<FormData>({
+    resolver: zodResolver(LoginSchema), // Apply the zodResolver
+  });
 
   // Redirect if user already logged in
   const [
@@ -104,23 +123,18 @@ export const LoginPage: React.FC = () => {
   }, [meQueryFetching, meQuerySuccess, meQueryError]);
 
   // Mutation
-  const [login, { data, isLoading, isError, isSuccess }] = useLoginMutation();
-
-  // Username input state
-  const [username, setUsername] = useState<string>("");
-  const [isUsernameDirty, setIsUsernameDirty] = useState<boolean>(false);
-
-  // Password input state
-  const [password, setPassword] = useState<string>("");
-  const [isPasswordDirty, setIsPasswordDirty] = useState<boolean>(false);
+  const [login, { data, isLoading, isError, isSuccess, error }] =
+    useLoginMutation();
 
   // Handling submit
-  const handleSubmit = async () => {
-    if (username !== "" && password !== "") {
-      login({ username, password });
-    }
+  const onSubmit: SubmitHandler<FormData> = ({ email, password }) => {
+    login({
+      email,
+      password,
+    });
   };
 
+  // Success
   useEffect(() => {
     if (isSuccess) {
       if (data) {
@@ -135,10 +149,25 @@ export const LoginPage: React.FC = () => {
     }
   }, [isSuccess]);
 
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (error && "data" in error && "message" in (error.data as any)) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">
-        <LogoRedirect />
+        <LogoRedirect to="/auth/login" />
 
         <div className="ml-auto flex flex-row flex-wrap items-center pr-10 z-20">
           <div className="ml-1.5">
@@ -165,7 +194,10 @@ export const LoginPage: React.FC = () => {
         </div>
 
         <div className="flex-1 z-10">
-          <div className="flex justify-center items-center h-full">
+          <form
+            className="flex justify-center items-center h-full"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <motion.div
               className="w-[560px]"
               initial={AnimationStage.HIDDEN}
@@ -182,80 +214,40 @@ export const LoginPage: React.FC = () => {
 
               <ErrorNotificationCard
                 show={!isLoading && isError}
-                errorMessage="Wrong username or password"
+                errorMessage={errorMessage}
               />
 
-              {/* Username input */}
+              {/* Email input */}
               <motion.div variants={childrenAnimation}>
                 <TEInput
                   type="text"
-                  label="Username"
+                  label="Email"
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
-                  value={username}
-                  onChange={(e) => {
-                    setUsername(e.currentTarget.value);
-                  }}
-                  onKeyDown={(e) => {
-                    if (!isUsernameDirty) {
-                      setIsUsernameDirty(true);
-                    }
-
-                    if (e.key === "Enter") {
-                      handleSubmit();
-                    }
-                  }}
+                  {...register("email")}
                 />
               </motion.div>
 
-              <motion.div
-                className="pl-3 mb-3 text-sm text-red-500 font-semibold"
-                initial={AnimationStage.HIDDEN}
-                animate={
-                  username === "" && isUsernameDirty
-                    ? AnimationStage.VISIBLE
-                    : AnimationStage.HIDDEN
-                }
-                variants={errorMessageAnimation}
-              >
-                Username can not be empty.
-              </motion.div>
+              <InputValidationMessage
+                show={dirtyFields.email || false}
+                validateFn={() => EmailSchema.parse(watch("email"))}
+              />
 
               {/* Password input */}
-              <motion.div variants={childrenAnimation}>
+              <motion.div className="mt-3" variants={childrenAnimation}>
                 <PasswordInput
                   label="Password"
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.currentTarget.value);
-                  }}
-                  onKeyDown={async (e) => {
-                    if (!isPasswordDirty) {
-                      setIsPasswordDirty(true);
-                    }
-
-                    if (e.key === "Enter") {
-                      await handleSubmit();
-                    }
-                  }}
+                  {...register("password")}
                 />
               </motion.div>
 
-              <motion.div
-                className="pl-3 text-sm text-red-500 font-semibold"
-                initial={AnimationStage.HIDDEN}
-                animate={
-                  password === "" && isPasswordDirty
-                    ? AnimationStage.VISIBLE
-                    : AnimationStage.HIDDEN
-                }
-                variants={errorMessageAnimation}
-              >
-                Password can not be empty.
-              </motion.div>
+              <InputValidationMessage
+                show={dirtyFields.password || false}
+                validateFn={() => PasswordSchema.parse(watch("password"))}
+              />
 
               <motion.div
                 className="text-right font-bold text-primary-500 hover:text-primary-600 underline dark:text-primary-700 dark:hover:text-primary-600 duration-200"
@@ -268,13 +260,11 @@ export const LoginPage: React.FC = () => {
               <motion.div className="mt-5" variants={childrenAnimation}>
                 <TERipple className="w-full">
                   <Button
-                    type="button"
+                    type="submit"
                     containerClassName="w-full"
                     className="h-[45px]"
-                    disabled={username === "" || password === "" || isLoading}
-                    onClick={async () => {
-                      await handleSubmit();
-                    }}
+                    disabled={!isValid}
+                    onClick={handleSubmit(onSubmit)}
                   >
                     {!isLoading && t("login")}
                     {isLoading && (
@@ -284,7 +274,7 @@ export const LoginPage: React.FC = () => {
                 </TERipple>
               </motion.div>
             </motion.div>
-          </div>
+          </form>
         </div>
 
         <Outlet />

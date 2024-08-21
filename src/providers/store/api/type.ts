@@ -42,15 +42,24 @@ export type ExpenseStatusCode = typeof ExpenseStatusCodes.type;
 
 export interface Expense {
   expenseId: number;
+  expenseCode?: string;
   name: string;
   costType: CostType;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  currency: Currency;
+  project: Project;
+  supplier: Supplier;
+  pic: Pic;
   notes: string;
   status: ExpenseStatus;
+}
+
+export interface Currency {
+  currencyId: number;
+  name: string;
+  symbol: string;
+  affix: AFFIX;
 }
 
 export interface ExpenseStatus {
@@ -62,4 +71,24 @@ export interface ExpenseStatus {
 export interface CostType {
   costTypeId: number;
   name: string;
+}
+
+export interface Project {
+  projectId: number;
+  name: string;
+}
+
+export interface Supplier {
+  supplierId: number;
+  name: string;
+}
+
+export interface Pic {
+  picId: number;
+  name: string;
+}
+
+export enum AFFIX {
+  PREFIX = "PREFIX",
+  SUFFIX = "SUFFIX",
 }

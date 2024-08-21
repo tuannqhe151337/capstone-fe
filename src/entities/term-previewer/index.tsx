@@ -9,6 +9,9 @@ import { motion, Variants, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { capitalizeFirstLetter } from "../../shared/utils/capitalized-string";
 import { cn } from "../../shared/utils/cn";
+import { useMeQuery } from "../../providers/store/api/authApi";
+import { Role } from "../../providers/store/api/type";
+import { TermTag } from "../term-tag";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -35,6 +38,9 @@ export const TermPreviewer: React.FC<Props> = ({
   children,
   containerClassName,
 }) => {
+  // Me query
+  const { data: me } = useMeQuery();
+
   // Query
   const [fetchTermDetail, { data: term, isSuccess }] =
     useLazyFetchTermDetailQuery();
@@ -78,15 +84,20 @@ export const TermPreviewer: React.FC<Props> = ({
           >
             <div className="px-7 py-5">
               <div className="flex flex-row flex-wrap items-center w-max gap-3 -mt-1">
-                <Link
-                  to={`/term-management/detail/information/${term.id}`}
-                  className="ml-3 text-sm font-extrabold text-neutral-500 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
-                >
-                  {term.name}
-                </Link>
+                {me?.role.code === Role.ACCOUNTANT ? (
+                  <Link
+                    to={`/term-management/detail/information/${term.id}`}
+                    className="ml-3 text-sm font-extrabold text-neutral-500 dark:text-neutral-400 hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
+                  >
+                    {term.name}
+                  </Link>
+                ) : (
+                  <>{term.name}</>
+                )}
                 <Tag className="shadow-none">
                   {capitalizeFirstLetter(term.duration)}
                 </Tag>
+                <TermTag status={term.status.code} />
               </div>
 
               <div className="mt-2.5 border-b-2 border-neutral-100 dark:border-neutral-600"></div>
@@ -105,25 +116,27 @@ export const TermPreviewer: React.FC<Props> = ({
                   </div>
                 </div>
 
-                <div className="flex flex-row flex-wrap items-center gap-3 w-max">
-                  <FaFileImport className="text-lg text-neutral-400/30 -ml-0.5 mr-1" />
-                  <div className="space-y-1">
-                    <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                      Reupload period
-                    </p>
-                    <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
-                      {format(
-                        parseISOInResponse(term.reuploadStartDate),
-                        "dd/MM/yyyy"
-                      )}{" "}
-                      -{" "}
-                      {format(
-                        parseISOInResponse(term.reuploadEndDate),
-                        "dd/MM/yyyy"
-                      )}
-                    </p>
+                {term.allowReupload && (
+                  <div className="flex flex-row flex-wrap items-center gap-3 w-max">
+                    <FaFileImport className="text-lg text-neutral-400/30 -ml-0.5 mr-1" />
+                    <div className="space-y-1">
+                      <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
+                        Reupload period
+                      </p>
+                      <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
+                        {format(
+                          parseISOInResponse(term.reuploadStartDate),
+                          "dd/MM/yyyy"
+                        )}{" "}
+                        -{" "}
+                        {format(
+                          parseISOInResponse(term.reuploadEndDate),
+                          "dd/MM/yyyy"
+                        )}
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </motion.div>

@@ -10,11 +10,14 @@ import {
   Position,
   ListPositionParameters,
   useLazyGetListPositionQuery,
+  positionAPI,
 } from "../../providers/store/api/positionApi";
 import { DeletePositionModal } from "../../widgets/delete-position-modal";
 import { PositionCreateModal } from "../../widgets/position-create-modal";
 import { PositionEditModal } from "../../widgets/position-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { useDispatch } from "react-redux";
 
 const generateEmptyPositions = (total: number): Position[] => {
   const positions: Row[] = [];
@@ -69,6 +72,16 @@ const childrenAnimation: Variants = {
 export const PositionManagementList: React.FC = () => {
   // Query
   const [fetchPositions, { data, isFetching }] = useLazyGetListPositionQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(positionAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -129,7 +142,7 @@ export const PositionManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
             Position management
           </p>
           <div className="ml-auto">

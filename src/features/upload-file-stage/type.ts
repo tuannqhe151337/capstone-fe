@@ -1,4 +1,8 @@
 import { CostType } from "../../providers/store/api/costTypeAPI";
+import { Currency } from "../../providers/store/api/currencyApi";
+import { UserResponse } from "../../providers/store/api/plansApi";
+import { Project } from "../../providers/store/api/projectsApi";
+import { Supplier } from "../../providers/store/api/supplierApi";
 import { ExpenseStatus } from "../../providers/store/api/type";
 
 export enum FileUploadStage {
@@ -11,16 +15,18 @@ export enum FileUploadStage {
 
 export interface Expense {
   // date: Date;
+  id: number;
   costType: CostType;
   code: string;
   name: string;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  project: Project;
+  supplier: Supplier;
+  pic: UserResponse;
   notes?: string;
   status?: ExpenseStatus;
+  currency: Currency;
 }
 
 export interface ExpenseFieldError {
@@ -30,14 +36,16 @@ export interface ExpenseFieldError {
 
 export interface ExpenseError {
   // date: ExpenseFieldError;
+  expenseId: ExpenseFieldError;
   costType: ExpenseFieldError;
   code: ExpenseFieldError;
   name: ExpenseFieldError;
   unitPrice: ExpenseFieldError;
   amount: ExpenseFieldError;
-  projectName: ExpenseFieldError;
-  supplierName: ExpenseFieldError;
+  project: ExpenseFieldError;
+  supplier: ExpenseFieldError;
   pic: ExpenseFieldError;
   notes?: string | number | undefined;
   status: ExpenseFieldError;
+  currency: ExpenseFieldError;
 }

@@ -152,6 +152,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                     hide={stage !== 1}
                     termName={termName}
                     planName={planName}
+                    validateExpenseId
                     onDownloadTemplateClick={() => {
                       const token = localStorage.getItem(
                         LocalStorageItemKey.TOKEN
@@ -162,7 +163,8 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                           `${
                             import.meta.env.VITE_BACKEND_HOST
                           }plan/download/last-version-xlsx?planId=${planId}`,
-                          token
+                          token,
+                          `${planName}.xlsx`
                         );
                       }
                     }}
@@ -204,11 +206,13 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                           className="w-[300px]"
                           label="Term"
                           value={termName || ""}
+                          maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
                           label="Department"
                           value={me?.department.name || ""}
+                          maxLengthBeforeTrim={16}
                         />
                       </div>
                     }
@@ -228,25 +232,28 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                             planId,
                             data: expenses.map(
                               ({
-                                code,
+                                id,
                                 name,
                                 costType,
                                 unitPrice,
                                 amount,
-                                projectName,
-                                supplierName,
+                                project,
+                                supplier,
+                                currency,
                                 pic,
                                 notes,
                               }) => ({
-                                expenseCode: code,
+                                expenseId: id,
+                                // expenseCode: code,
                                 expenseName: name,
                                 costTypeId: costType.costTypeId,
                                 unitPrice,
                                 amount,
-                                projectName,
-                                supplierName,
-                                pic,
+                                projectId: project.projectId,
+                                supplierId: supplier.supplierId,
+                                picId: pic.userId,
                                 notes,
+                                currencyId: currency.currencyId,
                               })
                             ),
                           });

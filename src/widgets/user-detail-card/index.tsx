@@ -6,6 +6,7 @@ import React from "react";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { UserListItem } from "./ui/user-list-item";
 import { MdEmail } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -62,6 +63,9 @@ export const UserDetailCard: React.FC<Props> = ({
   address,
   actionComponent,
 }) => {
+  // i18n
+  const { t } = useTranslation(["user-detail"]);
+
   return (
     <motion.div
       className={cn(
@@ -78,7 +82,7 @@ export const UserDetailCard: React.FC<Props> = ({
           <UserListItem
             isLoading={isLoading}
             icon={<FaUser />}
-            label="Full name"
+            label={t("Full name")}
             value={fullName}
           />
         </motion.div>
@@ -87,7 +91,7 @@ export const UserDetailCard: React.FC<Props> = ({
           <UserListItem
             isLoading={isLoading}
             icon={<FaPhoneAlt />}
-            label="Phone"
+            label={t("Phone")}
             value={phone}
           />
         </motion.div>
@@ -96,7 +100,7 @@ export const UserDetailCard: React.FC<Props> = ({
           <UserListItem
             isLoading={isLoading}
             icon={<MdEmail className="text-2xl -ml-0.5" />}
-            label="Email"
+            label={t("Email")}
             value={email}
           />
         </motion.div>
@@ -105,7 +109,7 @@ export const UserDetailCard: React.FC<Props> = ({
           <UserListItem
             isLoading={isLoading}
             icon={<FaBirthdayCake />}
-            label="Date of birth"
+            label={t("Date of birth")}
             value={formatISODateFromResponse(dateOfBirth)}
           />
         </motion.div>
@@ -114,7 +118,7 @@ export const UserDetailCard: React.FC<Props> = ({
           <UserListItem
             isLoading={isLoading}
             icon={<FaLocationDot />}
-            label="Address"
+            label={t("Address")}
             value={address}
           />
         </motion.div>

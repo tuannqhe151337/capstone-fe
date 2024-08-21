@@ -29,7 +29,7 @@ export const Switch: React.FC<Props> = ({
               true,
             "h-3.5 w-8 before:size-3.5 after:-mt-[0.1875rem] after:size-5 after:bg-neutral-100 checked:bg-primary checked:after:-mt-[3px] checked:after:ml-[1.0625rem] checked:after:size-5 checked:after:bg-primary focus:after:size-5 checked:focus:border-primary checked:focus:bg-primary checked:focus:before:ml-[1.0625rem] checked:focus:before:scale-100 checked:focus:before:shadow-[3px_-1px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s] dark:after:bg-neutral-400 dark:checked:after:bg-primary":
               size === "md",
-            "h-7 w-12 before:size-3.5 before:mt-[7.5px] before:ml-[4px] checked:focus:before:ml-[23px] after:size-6 after:mt-[1.95px] after:ml-0.5 checked:after:mt-[1.95px] checked:after:size-6 focus:after:size-6 checked:after:ml-[22px] checked:after:bg-neutral-50":
+            "h-7 w-12 before:size-3.5 before:mt-[7.5px] before:ml-[4px] checked:focus:before:ml-[23px] after:size-6 after:mt-[1.88px] after:ml-0.5 checked:after:mt-[1.88px] checked:after:size-6 focus:after:size-6 checked:after:ml-[22px] checked:after:bg-neutral-50":
               size === "lg",
           },
           className

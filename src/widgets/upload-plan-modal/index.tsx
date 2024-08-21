@@ -182,7 +182,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                         downloadFileFromServer(
                           `${
                             import.meta.env.VITE_BACKEND_HOST
-                          }plan/download/template/xlsx`,
+                          }plan/download/template-xlsx`,
                           token
                         );
                       }
@@ -228,11 +228,13 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                           className="w-[300px]"
                           label="Term"
                           value={term?.name || ""}
+                          maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
                           label="Department"
                           value={me?.department.name || ""}
+                          maxLengthBeforeTrim={16}
                         />
                       </div>
                     }
@@ -257,19 +259,21 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                               costType,
                               unitPrice,
                               amount,
-                              projectName,
-                              supplierName,
+                              project,
+                              supplier,
                               pic,
                               notes,
+                              currency,
                             }) => ({
                               name,
                               costTypeId: costType.costTypeId,
                               unitPrice,
                               amount,
-                              projectName,
-                              supplierName,
-                              pic,
+                              projectId: project.projectId,
+                              supplierId: supplier.supplierId,
+                              picId: pic.userId,
                               notes,
+                              currencyId: currency.currencyId,
                             })
                           ),
                         });

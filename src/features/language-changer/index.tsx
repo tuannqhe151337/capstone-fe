@@ -9,6 +9,7 @@ import {
 } from "../../providers/store/api/authApi";
 import { changeLanguage } from "i18next";
 import { LanguageCode, LanguageCodes, languages } from "../../type";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -43,37 +44,35 @@ export const LanguageChanger: React.FC = () => {
   };
 
   // Get data
-  const { data } = useMeQuery();
+  const { data: me } = useMeQuery();
+
+  useEffect(() => {
+    try {
+      const language = LanguageCodes.check(me?.settings.language || "en");
+      setSelectedLanguageCode(language);
+    } catch {}
+  }, [me]);
 
   // Mutation
   const [updateUserSetting] = useUserSettingMutation();
 
-  // Change language (by changing classes in the body)
+  // Change language
   useEffect(() => {
     changeLanguage(selectedLanguageCode);
-    if (data) {
-      updateUserSetting({
-        theme: data.settings.theme,
-        language: selectedLanguageCode,
-        darkMode: data.settings.darkMode,
-      });
-    }
   }, [selectedLanguageCode]);
 
   useEffect(() => {
-    if (data) {
+    if (me) {
       let typedSelectedLanguageCode: LanguageCode = "en";
 
       try {
-        typedSelectedLanguageCode = LanguageCodes.check(
-          data?.settings.language
-        );
+        typedSelectedLanguageCode = LanguageCodes.check(me?.settings.language);
       } catch (_) {
       } finally {
         setSelectedLanguageCode(typedSelectedLanguageCode);
       }
     }
-  }, [data?.settings.language]);
+  }, [me?.settings.language]);
 
   let modalLanguage;
 
@@ -86,17 +85,32 @@ export const LanguageChanger: React.FC = () => {
         exit={AnimationStage.HIDDEN}
         variants={dropDownAnimation}
       >
-        <div className="shadow rounded-lg bg-white/70 overflow-hidden dark:bg-neutral-800">
-          {Object.values(languages).map(({ code, name }) => (
+        <div className="shadow rounded-lg bg-white overflow-hidden dark:bg-neutral-800">
+          {Object.values(languages).map(({ code, name }, index) => (
             <TERipple
               key={name}
               rippleColor="light"
               className="w-full"
               onClick={() => {
                 setSelectedLanguageCode(code);
+
+                if (me) {
+                  updateUserSetting({
+                    theme: me.settings.theme,
+                    language: code,
+                    darkMode: me.settings.darkMode,
+                  });
+                }
               }}
             >
-              <div className="select-none min-w-max py-2 px-4 cursor-pointer text-neutral-500/90 font-semibold hover:bg-primary-400 hover:text-white duration-200 dark:text-neutral-300 dark:hover:bg-primary-900">
+              <div
+                className={clsx({
+                  "select-none min-w-max py-2 px-6 cursor-pointer text-neutral-500/90 font-semibold hover:bg-primary-400 hover:text-white duration-200 dark:text-neutral-300 dark:hover:bg-primary-900":
+                    true,
+                  "border-b-2 border-b-neutral-100 dark:border-b-neutral-700/50":
+                    index !== Object.values(languages).length - 1,
+                })}
+              >
                 {name}
               </div>
             </TERipple>
@@ -113,7 +127,6 @@ export const LanguageChanger: React.FC = () => {
         onClick={handleOnClick}
       >
         <span className="text-lg mt-0.5 font-bold text-primary-500/80 group-hover:text-primary-500 dark:text-primary-600 select-none duration-200">
-          {/* {language} */}
           {selectedLanguageCode}
         </span>{" "}
         <FaChevronDown className="text-sm text-primary-500/60 group-hover:text-primary-500/80 mt-1 duration-200" />

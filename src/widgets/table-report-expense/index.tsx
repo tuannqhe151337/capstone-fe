@@ -3,12 +3,17 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
-import { Expense } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  ExpenseStatusCodes,
+} from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
 import { ExpenseTag } from "../../entities/expense-tag";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ExpenseActionContextMenu } from "../../entities/expense-action-context-menu";
+import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -57,7 +62,8 @@ interface Props {
   isRowsSelectable?: boolean;
   listSelectedId?: Set<number>;
   onSelectAllClick?: () => any;
-  onRowClick?: (index: number) => any;
+  onRowClick?: (expenseId: number, index: number) => any;
+  onShiftRowClick?: (expenseId: number, index: number) => any;
   expenses?: Expense[];
   isFetching?: boolean;
   page?: number | undefined | null;
@@ -76,6 +82,7 @@ export const TableReportExpenses: React.FC<Props> = ({
   isRowsSelectable,
   onSelectAllClick,
   onRowClick,
+  onShiftRowClick,
   expenses,
   isFetching,
   page,
@@ -118,18 +125,39 @@ export const TableReportExpenses: React.FC<Props> = ({
     { enableOnFormTags: ["input", "INPUT"] }
   );
 
+  // Prevent select on shift + click
+  const preventSelect = useCallback((e: Event) => {
+    e.preventDefault();
+  }, []);
+
+  useHotkeys(
+    "shift",
+    () => {
+      document.addEventListener("selectstart", preventSelect);
+    },
+    { keydown: true }
+  );
+
+  useHotkeys(
+    "shift",
+    () => {
+      document.removeEventListener("selectstart", preventSelect);
+    },
+    { keyup: true }
+  );
+
   return (
     <div>
       <table className="table-auto w-full sm:mt-3 lg:mt-7 xl:mx-auto">
         <motion.thead
-          className="border-b-2 border-primary-100 dark:border-neutral-700/60 xl:text-base lg:text-sm md:text-sm sm:text-sm"
+          className="border-b-2 border-primary-100 dark:border-neutral-700/60 text-sm"
           initial={AnimationStage.HIDDEN}
           animate={AnimationStage.VISIBLE}
           variants={rowAnimation}
         >
           <tr>
             {isRowsSelectable && !isFetching && (
-              <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
+              <th className="pl-2.5 pr-1 lg:py-1 xl:py-3 font-bold text-primary/70">
                 <Checkbox
                   className="ml-1 mt-0.5"
                   checked={listSelectedId?.size === expenses?.length}
@@ -142,17 +170,20 @@ export const TableReportExpenses: React.FC<Props> = ({
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
+            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
+              Code
+            </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Cost type
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Unit price (VND)
+              Unit price
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Amount
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Total (VND)
+              Total
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Project name
@@ -200,10 +231,16 @@ export const TableReportExpenses: React.FC<Props> = ({
                     (index % 2 === 1 && !listSelectedId),
                 })}
                 variants={rowAnimation}
-                onClick={() => {
-                  isRowsSelectable &&
-                    onRowClick &&
-                    onRowClick(expense.expenseId);
+                onClick={(e) => {
+                  if (isRowsSelectable) {
+                    if (e.shiftKey) {
+                      e.currentTarget.onselectstart = (e) => e.preventDefault();
+                      onShiftRowClick &&
+                        onShiftRowClick(expense.expenseId, index);
+                    } else {
+                      onRowClick && onRowClick(expense.expenseId, index);
+                    }
+                  }
                 }}
                 onContextMenu={(e) => {
                   if (isRowsSelectable) {
@@ -225,14 +262,27 @@ export const TableReportExpenses: React.FC<Props> = ({
                 )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.name}</>
                   )}
                 </td>
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
+                  {isFetching ? (
+                    <Skeleton className="w-[60px]" />
+                  ) : expense.expenseCode &&
+                    ExpenseStatusCodes.check(expense.status.code) !==
+                      "DENIED" ? (
+                    <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
+                  ) : (
+                    <div className="opacity-40 font-semibold italic select-none">
+                      Empty
+                    </div>
+                  )}
+                </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.costType.name}</>
                   )}
@@ -244,14 +294,23 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
-                      disabled
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.amount}</>
                   )}
@@ -263,6 +322,16 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice * expense.amount}
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
@@ -271,26 +340,26 @@ export const TableReportExpenses: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <> {expense.projectName}</>
+                    <> {expense.project.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <> {expense.supplierName}</>
+                    <> {expense.supplier.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.pic}</>
+                    <> {expense.pic.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.notes}</>
                   )}
@@ -298,7 +367,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                 <td className="px-2 py-3">
                   <div className="flex flex-row flex-wrap items-center justify-center">
                     {isFetching ? (
-                      <Skeleton className="w-[80px]" />
+                      <Skeleton className="w-[60px]" />
                     ) : (
                       <ExpenseTag statusCode={expense.status.code} />
                     )}

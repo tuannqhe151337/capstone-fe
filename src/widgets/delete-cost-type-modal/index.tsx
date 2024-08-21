@@ -29,7 +29,7 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
 
   useEffect(() => {
     if (!isLoading && !isError && isSuccess) {
-      toast("Delete CostType successfully!", { type: "success" });
+      toast("Delete cost type successfully!", { type: "success" });
       onClose && onClose();
       onDeleteSuccessfully && onDeleteSuccessfully(costType);
     }

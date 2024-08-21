@@ -6,10 +6,11 @@ import { RiPencilFill } from "react-icons/ri";
 import { UserAvatarCard } from "../../widgets/user-avatar-card";
 import { UserDetailCard } from "../../widgets/user-detail-card";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  useLazyFetchUserDetailQuery,
-} from "../../providers/store/api/usersApi";
+import { useLazyFetchUserDetailQuery } from "../../providers/store/api/usersApi";
 import { useEffect } from "react";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -46,6 +47,12 @@ const childrenAnimation: Variants = {
 };
 
 export const UserDetail: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["user-detail"]);
+
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Navigate
   const navigate = useNavigate();
 
@@ -61,7 +68,7 @@ export const UserDetail: React.FC = () => {
     }
   }, [userId]);
 
-  if (!isFetching && isSuccess && !user) return <p>No user found</p>;
+  if (!isFetching && isSuccess && !user) return <p>{t("No data found")}</p>;
 
   return (
     <div className="relative px-6">
@@ -104,7 +111,7 @@ export const UserDetail: React.FC = () => {
                 }}
               >
                 <RiPencilFill className="text-xl mb-0.5" />
-                <p className="text-sm font-bold">Update user</p>
+                <p className="text-sm font-bold">{t("Update user")}</p>
               </Button>
             }
           />

@@ -8,6 +8,7 @@ import { SearchBox } from "../../shared/search-box";
 import { FaPlusCircle } from "react-icons/fa";
 import {
   Department,
+  departmentAPI,
   ListDepartmentParameters,
   useLazyGetListDepartmentQuery,
 } from "../../providers/store/api/departmentApi";
@@ -15,6 +16,10 @@ import { DeleteDepartmentModal } from "../../widgets/delete-department-modal";
 import { DepartmentCreateModal } from "../../widgets/department-create-modal";
 import { DepartmentEditModal } from "../../widgets/department-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
+import { useDispatch } from "react-redux";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -67,9 +72,22 @@ const childrenAnimation: Variants = {
 };
 
 export const DepartmentManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ADMIN]);
+
   // Query
   const [fetchDepartments, { data, isFetching }] =
     useLazyGetListDepartmentQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
+
+  // Clear previous cache
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(departmentAPI.util.resetApiState());
+  }, []);
 
   // Searchbox state
   const [searchboxValue, setSearchboxValue] = useState<string>("");
@@ -133,7 +151,7 @@ export const DepartmentManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
             Department management
           </p>
           <div className="ml-auto">

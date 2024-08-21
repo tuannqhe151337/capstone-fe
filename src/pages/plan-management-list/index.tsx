@@ -14,6 +14,9 @@ import {
 import _ from "lodash";
 import { useDispatch } from "react-redux";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
 
 const generateEmptyPlans = (total: number): Row[] => {
   const plans: Row[] = [];
@@ -84,8 +87,14 @@ const childrenAnimation: Variants = {
 };
 
 export const PlanManagementList: React.FC = () => {
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
+
   // Query
   const [fetchPlans, { data, isFetching }] = useLazyFetchPlansQuery();
+
+  // Scroll to top
+  useScrollToTopOnLoad();
 
   // Clear previous cache
   const dispatch = useDispatch();
@@ -103,7 +112,6 @@ export const PlanManagementList: React.FC = () => {
 
   const [termId, setTermId] = useState<number | null>();
   const [departmentId, setDepartmentId] = useState<number | null>();
-  const [statusId, setStatusId] = useState<number | null>();
 
   const [page, setPage] = useState<number>(1);
 
@@ -140,15 +148,11 @@ export const PlanManagementList: React.FC = () => {
         paramters.departmentId = departmentId;
       }
 
-      if (statusId) {
-        paramters.statusId = statusId;
-      }
-
       fetchPlans(paramters, true);
     }, 200);
 
     return () => clearTimeout(timeoutId);
-  }, [searchboxValue, page, termId, departmentId, statusId, deletedPlanId]);
+  }, [searchboxValue, page, termId, departmentId, deletedPlanId]);
 
   return (
     <motion.div
@@ -189,9 +193,6 @@ export const PlanManagementList: React.FC = () => {
           }}
           onDepartmentIdChange={(departmentId) => {
             setDepartmentId(departmentId);
-          }}
-          onStatusIdChange={(statusId) => {
-            setStatusId(statusId);
           }}
         />
       </motion.div>

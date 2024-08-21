@@ -12,13 +12,13 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { PlanActionContextMenu } from "../../entities/plan-action-context-menu";
 import { ReuploadPlanModal } from "../reupload-plan-modal";
 import { Skeleton } from "../../shared/skeleton";
-import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { LocalStorageItemKey, Role } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
 import { TermPreviewer } from "../../entities/term-previewer";
 import { PlanPreviewer } from "../../entities/plan-previewer";
 import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
-import { ReloadCloudIcon } from "../../shared/reload-cloud-icon";
+import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -123,11 +123,11 @@ export const TablePlanManagement: React.FC<Props> = ({
   return (
     <div className="pb-24">
       <table className="text-center text-sm font-light mt-6 min-w-full shadow rounded-lg">
-        <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600">
+        <thead className="bg-primary-100 dark:bg-primary-950/50 font-medium dark:border-neutral-500 dark:bg-neutral-600 rounded-lg">
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
+              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
               Plan
             </th>
@@ -149,7 +149,7 @@ export const TablePlanManagement: React.FC<Props> = ({
             >
               Version
             </th>
-            <th scope="col">
+            <th scope="col" className="rounded-tr-lg">
               <IconButton
                 className="px-3"
                 tooltip="Upload new plan"
@@ -196,7 +196,12 @@ export const TablePlanManagement: React.FC<Props> = ({
                   setChosenPlan(plan);
                 }}
               >
-                <td className="whitespace-nowrap px-6 py-5 font-extrabold">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap px-6 py-5 font-extrabold": true,
+                    "rounded-bl-lg": index === plans.length - 1,
+                  })}
+                >
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -213,12 +218,16 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <TermPreviewer termId={plan.term.termId}>
-                      <Link
-                        to={`/term-management/detail/information/${plan.term.termId}`}
-                        className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
-                      >
-                        {plan.term.name}
-                      </Link>
+                      {me?.role.code === Role.ACCOUNTANT ? (
+                        <Link
+                          to={`/term-management/detail/information/${plan.term.termId}`}
+                          className="hover:text-sky-600 dark:hover:text-sky-600 hover:underline duration-200"
+                        >
+                          {plan.term.name}
+                        </Link>
+                      ) : (
+                        <>{plan.term.name}</>
+                      )}
                     </TermPreviewer>
                   )}
                 </td>
@@ -236,7 +245,12 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <>v{plan.version}</>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4">
+                <td
+                  className={clsx({
+                    "whitespace-nowrap px-6 py-4": true,
+                    "rounded-br-lg": index === plans.length - 1,
+                  })}
+                >
                   {!isFetching &&
                     isAuthorizedToReuploadFn({
                       planDepartmentId: plan.department.departmentId,

@@ -12,6 +12,7 @@ import { useDetectDarkmode } from "../hooks/use-detect-darkmode";
 import { mergeRefs } from "react-merge-refs";
 import { cn } from "../utils/cn";
 import { formatDate } from "../utils/format-date";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -43,6 +44,7 @@ export interface DatePickerInputProps {
   modalPosition?: ModalPosition;
   value?: Date;
   allowEmpty?: boolean;
+  disabled?: boolean;
   onChange?: (value: Date) => any;
   onClickOutside?: () => any;
   onFocus?: () => any;
@@ -58,6 +60,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
       modalPosition,
       value,
       allowEmpty,
+      disabled,
       onChange,
       onClickOutside,
       onFocus,
@@ -162,7 +165,7 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
         <PatternFormat
           getInputRef={inputRef}
           className={cn(
-            "text-base font-semibold !text-neutral-500 focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary dark:!text-neutral-400 duration-500",
+            "text-base font-semibold !text-neutral-500 disabled:!text-neutral-400/70 disabled:dark:!text-neutral-500 focus:-outline-offset-1 focus:outline-primary focus:outline-[2px] focus:shadow-sm focus:shadow-primary dark:!text-neutral-400 duration-500",
             {
               "outline-offset-1 outline-[2px] outline-red-600":
                 isInputValueValid === false,
@@ -176,18 +179,25 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
             <div
               className="flex flex-row flex-wrap items-center w-full h-full mt-[2.25px] mr-1 rounded-full overflow-hidden"
               onClick={() => {
-                setShowCalendar((prevState) => !prevState);
+                !disabled && setShowCalendar((prevState) => !prevState);
               }}
             >
               <TERipple
                 className="cursor-pointer rounded-full hover:bg-neutral-200 hover:dark:bg-neutral-700 duration-500 p-2"
                 rippleColor={isDarkMode ? "light" : "dark"}
               >
-                <FaCalendar className="text-neutral-500/80 dark:text-neutral-400/80" />
+                <FaCalendar
+                  className={clsx({
+                    "duration-200": true,
+                    "text-neutral-300 dark:text-neutral-500": disabled,
+                    "text-neutral-500/80 dark:text-neutral-400/80": !disabled,
+                  })}
+                />
               </TERipple>
             </div>
           }
           customInput={AdornmentInput}
+          disabled={disabled}
           onChange={(e) => {
             setInputValue(e.currentTarget.value);
           }}
@@ -208,9 +218,12 @@ export const DatePickerInput = forwardRef<HTMLDivElement, DatePickerInputProps>(
         />
 
         <AnimatePresence>
-          {showModal && isInputValueValid && (
+          {!disabled && showModal && isInputValueValid && (
             <motion.div
-              className={`absolute bg-white dark:bg-neutral-700 shadow rounded-lg z-30 ${calendarClassName}`}
+              className={cn(
+                "absolute bg-white dark:bg-neutral-700 shadow rounded-lg z-30",
+                calendarClassName
+              )}
               style={{
                 top: modalPosition?.top || 50,
                 left: modalPosition?.left,

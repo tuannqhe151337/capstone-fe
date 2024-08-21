@@ -74,7 +74,7 @@ export const departmentAPI = createApi({
       },
       providesTags: ["departments"],
     }),
-    getAllDepartment: builder.query<ListResponse<Department[]>, any>({
+    getAllDepartment: builder.query<ListResponse<Department[]>, void>({
       query: () => ({
         url: `/department/list`,
       }),

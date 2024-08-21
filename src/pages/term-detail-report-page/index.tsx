@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { FaChartLine } from "react-icons/fa6";
-
-import { TESelect } from "tw-elements-react";
-import clsx from "clsx";
+import { useLazyFetchReportsQuery } from "../../providers/store/api/reportsAPI";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { ReportPreviewer } from "../../entities/report-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -39,60 +39,29 @@ const childrenAnimation: Variants = {
   },
 };
 
-// Định nghĩa kiểu cho dữ liệu bảng
-type TablePlanDataType = {
-  id: number;
-  report: string;
-};
-
-const tablePlanDataList: TablePlanDataType[] = [
-  {
-    id: 1,
-    report: "BU 01_Q1_report",
-  },
-
-  {
-    id: 2,
-    report: "BU 02_Q2_report",
-  },
-  {
-    id: 3,
-    report: "BU 03_Q3_report",
-  },
-];
-
 export const TermDetailReportPage: React.FC = () => {
-  const [listSelectedIndex, _setListSelectedIndex] = useState<Set<number>>(
-    new Set()
-  );
-  const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const [_hoverRowIndex, _setHoverRowIndex] = useState<number>();
+  const { termId } = useParams<{ termId: string }>();
+
+  const [fetchReports, { data: reports }] = useLazyFetchReportsQuery();
 
   useEffect(() => {
-    if (listSelectedIndex.size !== 0) {
-      setShowReviewExpense(true);
-    } else {
-      setShowReviewExpense(false);
+    let termIdInt = 0;
+
+    if (termId) {
+      if (typeof termId === "number") {
+        termIdInt = termId;
+      } else {
+        termIdInt = parseInt(termId);
+      }
     }
-  }, [listSelectedIndex]);
+
+    fetchReports({ termId: termIdInt, page: 1, pageSize: 1 });
+  }, [termId]);
 
   return (
     <motion.div>
-      <motion.div
-        className=""
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
-      >
-        <motion.div className="flex justify-end mt-4">
-          <motion.div variants={childrenAnimation} className="mr-4 ">
-            <TESelect data={[]} label="Department" />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
       <motion.div
         initial={AnimationStage.HIDDEN}
         animate={AnimationStage.VISIBLE}
@@ -100,30 +69,33 @@ export const TermDetailReportPage: React.FC = () => {
         variants={staggerChildrenAnimation}
       >
         <motion.table
-          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
+          className="text-center text-sm font-light mt-3 min-w-full"
           variants={childrenAnimation}
         >
           <tbody>
-            {tablePlanDataList.map((row, index) => (
-              <tr
-                key={row.id}
-                className={clsx({
-                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
-                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
-                })}
-              >
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
+            <tr>
+              {reports && reports.data.length > 0 && (
+                <td
+                  className="group whitespace-nowrap px-6 py-4 font-medium cursor-pointer"
+                  onClick={() => {
+                    navigate(
+                      `/report-management/detail/expenses/${reports.data[0].reportId}`
+                    );
+                  }}
+                >
                   <div className="flex flex-row flex-wrap">
                     <div className="text-neutral-300 dark:text-neutral-600">
                       <FaChartLine className="text-xl mt-2" />
                     </div>
-                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
-                      {row.report}
-                    </p>
+                    <ReportPreviewer reportId={reports.data[0].reportId}>
+                      <p className="font-extrabold text-neutral-500/80 dark:text-neutral-500 pr-3 py-2 ml-5 group-hover:underline duration-200">
+                        {reports.data[0].name}
+                      </p>
+                    </ReportPreviewer>
                   </div>
                 </td>
-              </tr>
-            ))}
+              )}
+            </tr>
           </tbody>
         </motion.table>
       </motion.div>

@@ -12,6 +12,12 @@ import { annualAPI } from "./api/annualsAPI";
 import { statusAPI } from "./api/statusApi";
 import { costTypeAPI } from "./api/costTypeAPI";
 import { reportsAPI } from "./api/reportsAPI";
+import { projectAPI } from "./api/projectsApi";
+import { supplierAPI } from "./api/supplierApi";
+import { exchangeRateAPI } from "./api/exchangeRateApi";
+import { currencyApi } from "./api/currencyApi";
+import { dashboardApi } from "./api/dashboardAPI";
+import { fcmApi } from "./api/fcmApi";
 
 export const store = configureStore({
   reducer: {
@@ -27,6 +33,12 @@ export const store = configureStore({
     [statusAPI.reducerPath]: statusAPI.reducer,
     [costTypeAPI.reducerPath]: costTypeAPI.reducer,
     [reportsAPI.reducerPath]: reportsAPI.reducer,
+    [projectAPI.reducerPath]: projectAPI.reducer,
+    [supplierAPI.reducerPath]: supplierAPI.reducer,
+    [exchangeRateAPI.reducerPath]: exchangeRateAPI.reducer,
+    [currencyApi.reducerPath]: currencyApi.reducer,
+    [dashboardApi.reducerPath]: dashboardApi.reducer,
+    [fcmApi.reducerPath]: fcmApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -40,7 +52,13 @@ export const store = configureStore({
       annualAPI.middleware,
       statusAPI.middleware,
       costTypeAPI.middleware,
-      reportsAPI.middleware
+      reportsAPI.middleware,
+      projectAPI.middleware,
+      supplierAPI.middleware,
+      exchangeRateAPI.middleware,
+      currencyApi.middleware,
+      dashboardApi.middleware,
+      fcmApi.middleware
     ),
 });
 

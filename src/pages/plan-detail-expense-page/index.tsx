@@ -7,7 +7,11 @@ import {
   useLazyFetchPlanExpensesQuery,
 } from "../../providers/store/api/plansApi";
 import { useParams } from "react-router-dom";
-import { Expense, LocalStorageItemKey } from "../../providers/store/api/type";
+import {
+  AFFIX,
+  Expense,
+  LocalStorageItemKey,
+} from "../../providers/store/api/type";
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
@@ -57,9 +61,24 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
       },
       unitPrice: 0,
       amount: 0,
-      projectName: "",
-      supplierName: "",
-      pic: "",
+      project: {
+        projectId: 0,
+        name: "",
+      },
+      supplier: {
+        supplierId: 0,
+        name: "",
+      },
+      pic: {
+        picId: 0,
+        name: "",
+      },
+      currency: {
+        currencyId: 0,
+        name: "",
+        affix: AFFIX.PREFIX,
+        symbol: "",
+      },
       notes: "",
       isFetching: true,
     });
@@ -73,6 +92,9 @@ const pageSize = 10;
 export const PlanDetailExpensePage: React.FC = () => {
   // Get show upload modal method
   const { plan, setShowReuploadModal } = usePlanDetailContext();
+
+  // Currency
+  const [currencyId, setCurrencyId] = useState<number>();
 
   // Get params
   const { planId } = useParams<{ planId: string }>();
@@ -116,6 +138,10 @@ export const PlanDetailExpensePage: React.FC = () => {
           pageSize,
         };
 
+        if (currencyId) {
+          paramters.currencyId = currencyId;
+        }
+
         if (costTypeId) {
           paramters.costTypeId = costTypeId;
         }
@@ -128,7 +154,7 @@ export const PlanDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId, planId]);
+  }, [searchboxValue, page, costTypeId, statusId, planId, currencyId]);
 
   // Authorized to show reupload button
   const isAuthorizedToReupload = useIsAuthorizedToReupload({
@@ -147,6 +173,7 @@ export const PlanDetailExpensePage: React.FC = () => {
     >
       <ListPlanDetailFilter
         className="pl-3 mt-7"
+        currencyId={currencyId}
         showReviewExpense={showReviewExpense}
         searchboxValue={searchboxValue}
         onSearchboxChange={(value) => {
@@ -157,6 +184,9 @@ export const PlanDetailExpensePage: React.FC = () => {
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
+        }}
+        onCurrencyChoose={(currency) => {
+          setCurrencyId(currency?.currencyId);
         }}
         showReupload={isAuthorizedToReupload}
         onDownloadClick={() => {

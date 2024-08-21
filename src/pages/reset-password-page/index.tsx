@@ -79,7 +79,12 @@ type FormData = {
   confirmPassword: string;
 };
 
-const NewPasswordSchema = z.string().min(1, "New password cannot be empty");
+const NewPasswordSchema = z
+  .string()
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    "Use 8 characters or more and include a mix of letters, numbers, and symbols"
+  );
 const ConfirmPasswordSchema = z
   .string()
   .min(1, "Confirm password cannot be empty");
@@ -111,7 +116,7 @@ export const ResetPasswordPage: React.FC = () => {
   const {
     register,
     watch,
-    formState: { isValid },
+    formState: { isValid, dirtyFields },
     handleSubmit,
   } = useForm<FormData>({
     resolver: zodResolver(ResetPasswordSchema),
@@ -156,7 +161,8 @@ export const ResetPasswordPage: React.FC = () => {
   return (
     <div className="flex flex-row flex-wrap w-full">
       <div className="flex flex-row flex-wrap items-center w-full z-20">
-        <LogoRedirect />
+        <LogoRedirect to="/auth/login" />
+
         <div className="ml-auto flex flex-row flex-wrap items-center pr-10 z-20">
           <div className="ml-1.5">
             <LanguageChanger />
@@ -229,7 +235,7 @@ export const ResetPasswordPage: React.FC = () => {
                 />
 
                 <InputValidationMessage
-                  show={true}
+                  show={dirtyFields.confirmPassword || false}
                   validateFn={() => {
                     ConfirmPasswordSchema.parse(watch("confirmPassword"));
 

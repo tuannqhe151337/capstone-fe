@@ -4,10 +4,11 @@ import { motion, Variants, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { cn } from "../../shared/utils/cn";
 import { useLazyGetPlanDetailQuery } from "../../providers/store/api/plansApi";
-import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { Tag } from "../../shared/tag";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { HiUser } from "react-icons/hi";
+import { NumericFormat } from "react-number-format";
+import { AFFIX } from "../../providers/store/api/type";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -91,29 +92,57 @@ export const PlanPreviewer: React.FC<Props> = ({
               <div className="mt-3.5 mb-0.5  px-2">
                 <div className="flex flex-row flex-wrap gap-10 w-max">
                   <div className="space-y-5">
-                    {/* Biggest expenditure */}
+                    {/* Expected cost */}
                     <div className="flex flex-row flex-wrap items-center gap-3 w-max">
                       <FaMoneyBillTrendUp className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Biggest expenditure
+                          Expected cost
                         </p>
-                        <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
-                          {formatViMoney(plan?.biggestExpenditure || 0)}
-                        </p>
+                        <div className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
+                          <NumericFormat
+                            displayType="text"
+                            value={plan?.expectedCost.cost}
+                            prefix={
+                              plan?.expectedCost.currency.affix === AFFIX.PREFIX
+                                ? ` ${plan?.expectedCost.currency.name}`
+                                : undefined
+                            }
+                            suffix={
+                              plan?.expectedCost.currency.affix === AFFIX.SUFFIX
+                                ? ` ${plan?.expectedCost.currency.name}`
+                                : undefined
+                            }
+                            thousandSeparator
+                          />
+                        </div>
                       </div>
                     </div>
 
-                    {/* Total plan */}
+                    {/* Actual cost */}
                     <div className="flex flex-row flex-wrap items-center gap-3 w-max">
                       <FaCoins className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Total plan
+                          Actual cost
                         </p>
-                        <p className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
-                          {formatViMoney(plan?.totalPlan || 0)}
-                        </p>
+                        <div className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
+                          <NumericFormat
+                            displayType="text"
+                            value={plan?.actualCost.cost}
+                            prefix={
+                              plan?.actualCost.currency.affix === AFFIX.PREFIX
+                                ? ` ${plan?.actualCost.currency.name}`
+                                : undefined
+                            }
+                            suffix={
+                              plan?.actualCost.currency.affix === AFFIX.SUFFIX
+                                ? ` ${plan?.actualCost.currency.name}`
+                                : undefined
+                            }
+                            thousandSeparator
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

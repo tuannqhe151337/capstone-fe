@@ -3,9 +3,10 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import { Checkbox } from "../../shared/checkbox";
 import clsx from "clsx";
-import { Expense } from "../../providers/store/api/type";
+import { AFFIX, Expense } from "../../providers/store/api/type";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { Skeleton } from "../../shared/skeleton";
+import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,7 +95,7 @@ export const TablePlanExpenses: React.FC<Props> = ({
     <div>
       <table className="table-auto w-full sm:mt-3 lg:mt-7 xl:mx-auto">
         <motion.thead
-          className="border-b-2 border-primary-100 dark:border-neutral-700/60 xl:text-base lg:text-sm md:text-sm sm:text-sm"
+          className="border-b-2 border-primary-100 dark:border-neutral-700/60 text-sm"
           initial={AnimationStage.HIDDEN}
           animate={AnimationStage.VISIBLE}
           variants={rowAnimation}
@@ -113,17 +114,20 @@ export const TablePlanExpenses: React.FC<Props> = ({
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               Expenses
             </th>
+            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
+              Code
+            </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Cost type
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Unit price (VND)
+              Unit price
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Amount
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Total (VND)
+              Total
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               Project name
@@ -190,79 +194,109 @@ export const TablePlanExpenses: React.FC<Props> = ({
                 )}
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.name}</>
                   )}
                 </td>
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
+                  {isFetching ? (
+                    <Skeleton className="w-[60px]" />
+                  ) : expense.expenseCode ? (
+                    <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
+                  ) : (
+                    <div className="opacity-40 font-semibold italic select-none">
+                      Empty
+                    </div>
+                  )}
+                </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.costType.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
-                      disabled
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.amount}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-right">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <NumericFormat
                       displayType="text"
-                      value={expense.unitPrice * expense.amount}
+                      value={expense.amount * expense.unitPrice}
+                      prefix={
+                        expense.currency.affix === AFFIX.PREFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
+                      suffix={
+                        expense.currency.affix === AFFIX.SUFFIX
+                          ? expense.currency.symbol
+                          : undefined
+                      }
                       thousandSeparator
                     />
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.projectName}</>
+                    <> {expense.project.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.supplierName}</>
+                    <> {expense.supplier.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 xl:w-min font-bold text-center">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.pic}</>
+                    <> {expense.pic.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <> {expense.notes}</>
                   )}
                 </td>
                 <td className="px-2 py-3">
                   {isFetching ? (
-                    <Skeleton className="w-[80px]" />
+                    <Skeleton className="w-[60px]" />
                   ) : (
                     <ExpenseTag
                       className="m-auto"

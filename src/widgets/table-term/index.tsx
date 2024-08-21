@@ -3,7 +3,6 @@ import { IconButton } from "../../shared/icon-button";
 import { Pagination } from "../../shared/pagination";
 import { useEffect, useState } from "react";
 import { motion, Variants } from "framer-motion";
-import { Tag } from "../../shared/tag";
 import { useNavigate } from "react-router-dom";
 import { FaPlay } from "react-icons/fa6";
 import { Button } from "../../shared/button";
@@ -16,31 +15,8 @@ import { TermActionContextMenu } from "../../entities/term-action-context-menu";
 import { DeleteTermModal } from "../delete-term-modal";
 import { Skeleton } from "../../shared/skeleton";
 import { TermPreviewer } from "../../entities/term-previewer";
-
-const renderButton = (status: string) => {
-  switch (status) {
-    case "NEW":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          New
-        </Tag>
-      );
-    case "IN_PROGRESS":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
-          In progess
-        </Tag>
-      );
-    case "CLOSED":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Closed
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { TermTag } from "../../entities/term-tag";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -84,6 +60,9 @@ export const TableTermManagement: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   // Navigation
   const navigate = useNavigate();
 
@@ -133,19 +112,19 @@ export const TableTermManagement: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Term
+              {t("Term")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Start date
+              {t("Start date")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              End date
+              {t("End date")}
             </th>
 
             <th scope="col">
@@ -208,7 +187,9 @@ export const TableTermManagement: React.FC<Props> = ({
                           {term.name}
                         </p>
                       </TermPreviewer>
-                      <div>{renderButton(term.status.code)}</div>
+                      <div>
+                        <TermTag status={term.status.code} />
+                      </div>
                     </div>
                   )}
                 </td>
@@ -250,7 +231,7 @@ export const TableTermManagement: React.FC<Props> = ({
                       >
                         <FaPlay className="text-white dark:text-neutral-300 text-base mr-2 mt-[1.25px]" />
                         <div className="text-white dark:text-neutral-300 text-sm font-bold">
-                          Start
+                          {t("Start")}
                         </div>
                       </Button>
                     </motion.div>
@@ -263,7 +244,7 @@ export const TableTermManagement: React.FC<Props> = ({
 
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

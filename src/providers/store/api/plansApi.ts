@@ -1,11 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  Expense,
+  ListResponse,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListPlanParameters {
   query?: string | null;
   termId?: number | null;
   departmentId?: number | null;
-  statusId?: number | null;
   page: number;
   pageSize: number;
 }
@@ -15,6 +19,7 @@ export interface ListPlanExpenseParameters {
   planId: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
+  currencyId?: number | null;
   page: number;
   pageSize: number;
 }
@@ -36,14 +41,31 @@ export interface PlanDetailParameters {
 export interface PlanDetail {
   id: string | number;
   name: string;
-  biggestExpenditure: number;
-  totalPlan: number;
+  actualCost: ActualCost;
+  expectedCost: ExpectedCost;
   term: Term;
   planDueDate: string;
   createdAt: string;
   department: PlanDepartment;
   user: User;
   version: number;
+}
+
+export interface ExpectedCost {
+  cost: number;
+  currency: Currency;
+}
+
+export interface ActualCost {
+  cost: number;
+  currency: Currency;
+}
+
+export interface Currency {
+  currencyId: 1;
+  name: string;
+  symbol: string;
+  affix: string;
 }
 
 export interface CostType {
@@ -124,10 +146,11 @@ export interface ExpenseBody {
   costTypeId: number;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  projectId: number;
+  supplierId: number;
+  picId: number;
   notes?: string | number;
+  currencyId: number;
 }
 
 export interface ReuploadPlanBody {
@@ -136,15 +159,17 @@ export interface ReuploadPlanBody {
 }
 
 export interface ReuploadExpenseBody {
-  expenseCode: string;
+  expenseId: number;
+  // expenseCode: string;
   expenseName: string;
   costTypeId: number;
   unitPrice: number;
   amount: number;
-  projectName: string;
-  supplierName: string;
-  pic: string;
+  projectId: number;
+  supplierId: number;
+  picId: number;
   notes?: string | number;
+  currencyId: number;
 }
 
 export interface ReviewExpensesBody {
@@ -154,6 +179,21 @@ export interface ReviewExpensesBody {
 
 export interface SubmitPlanBody {
   planId: number;
+}
+
+export interface CheckUserExistBody {
+  usernameList: string[];
+}
+
+export interface UserResponse {
+  userId: number;
+  username: string;
+}
+
+export interface InfinteScrollPlansOfTermParam {
+  termId: number;
+  page: number;
+  pageSize: number;
 }
 
 // DEV ONLY!!!
@@ -187,7 +227,7 @@ const plansApi = createApi({
         PaginationResponse<PlanPreview[]>,
         ListPlanParameters
       >({
-        query: ({ query, termId, departmentId, statusId, page, pageSize }) => {
+        query: ({ query, termId, departmentId, page, pageSize }) => {
           let endpoint = `plan/list?page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
@@ -202,18 +242,46 @@ const plansApi = createApi({
             endpoint += `&termId=${termId}`;
           }
 
-          if (statusId) {
-            endpoint += `&statusId=${statusId}`;
-          }
-
           return endpoint;
         },
         providesTags: ["plans"],
       }),
+
+      fetchInfinteScrollPlansOfTerm: builder.query<
+        PaginationResponse<PlanPreview[]>,
+        InfinteScrollPlansOfTermParam
+      >({
+        query: ({ termId, page, pageSize }) =>
+          `plan/list?termId=${termId}&page=${page}&size=${pageSize}`,
+        providesTags: ["plans"],
+        // Only have one cache entry because the arg always maps to one string
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Merge to exists cache, if page === 0 then invalidate all cache
+        // https://stackoverflow.com/questions/72530121/rtk-query-infinite-scrolling-retaining-existing-data
+        // https://github.com/reduxjs/redux-toolkit/issues/2874
+        merge(currentCacheData, responseData, { arg: { page } }) {
+          if (page > 1) {
+            currentCacheData.data.push(...responseData.data);
+            currentCacheData.pagination = responseData.pagination;
+          } else if (page <= 1) {
+            currentCacheData = responseData;
+          }
+
+          return currentCacheData;
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return currentArg !== previousArg;
+        },
+      }),
+
       getPlanDetail: builder.query<PlanDetail, PlanDetailParameters>({
         query: ({ planId }) => `/plan/detail?planId=${planId}`,
         providesTags: ["plan-detail"],
       }),
+
       deletePlan: builder.mutation<any, PlanDeleteParameters>({
         query: ({ planId }) => ({
           url: `/plan/delete`,
@@ -222,6 +290,7 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plans"],
       }),
+
       getPlanVersion: builder.query<
         PaginationResponse<PlanVersion[]>,
         PlanVersionParameters
@@ -251,6 +320,7 @@ const plansApi = createApi({
           return currentArg !== previousArg;
         },
       }),
+
       createPlan: builder.mutation<any, CreatePlanBody>({
         query: (createPlanBody) => ({
           url: `plan/create`,
@@ -260,15 +330,38 @@ const plansApi = createApi({
         invalidatesTags: ["plans"],
       }),
 
+      checkUserExist: builder.mutation<
+        ListResponse<UserResponse[]>,
+        CheckUserExistBody
+      >({
+        query: (checkUserExistBody) => ({
+          url: `plan/check-user-exist`,
+          method: "POST",
+          body: checkUserExistBody,
+        }),
+      }),
+
       fetchPlanExpenses: builder.query<
         PaginationResponse<Expense[]>,
         ListPlanExpenseParameters
       >({
-        query: ({ query, planId, costTypeId, statusId, page, pageSize }) => {
+        query: ({
+          query,
+          planId,
+          costTypeId,
+          statusId,
+          currencyId,
+          page,
+          pageSize,
+        }) => {
           let endpoint = `plan/expenses?planId=${planId}&page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
+          }
+
+          if (currencyId) {
+            endpoint += `&currencyId=${currencyId}`;
           }
 
           if (costTypeId) {
@@ -283,6 +376,7 @@ const plansApi = createApi({
         },
         providesTags: ["plan-detail", "plan-expenses"],
       }),
+
       reuploadPlan: builder.mutation<any, ReuploadPlanBody>({
         query: (reuploadPlanBody) => ({
           url: "plan/re-upload",
@@ -291,6 +385,7 @@ const plansApi = createApi({
         }),
         invalidatesTags: ["plan-detail"],
       }),
+
       // approveExpenses: builder.mutation<any, ReviewExpensesBody>({
       //   query: (reviewExpenseBody) => ({
       //     url: "plan/expense-approval",
@@ -320,6 +415,7 @@ const plansApi = createApi({
 export const {
   useFetchPlansQuery,
   useLazyFetchPlansQuery,
+  useLazyFetchInfinteScrollPlansOfTermQuery,
   useGetPlanDetailQuery,
   useLazyGetPlanDetailQuery,
   useDeletePlanMutation,
@@ -328,6 +424,7 @@ export const {
   useFetchPlanExpensesQuery,
   useLazyFetchPlanExpensesQuery,
   useReuploadPlanMutation,
+  useCheckUserExistMutation,
   // useApproveExpensesMutation,
   // useDenyExpensesMutation,
   // useSubmitPlanForReviewMutation,

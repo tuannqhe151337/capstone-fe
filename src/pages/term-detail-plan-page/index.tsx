@@ -1,37 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Variants, motion } from "framer-motion";
 import { FaChartLine } from "react-icons/fa6";
-
-import { TESelect } from "tw-elements-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useLazyFetchInfinteScrollPlansOfTermQuery } from "../../providers/store/api/plansApi";
+import { PlanPreviewer } from "../../entities/plan-previewer";
 import clsx from "clsx";
-import { Tag } from "../../shared/tag";
-
-// Định nghĩa kiểu cho status
-type StatusType = "new" | "approve" | "inProgress" | "denied";
-const renderButton = (status: StatusType) => {
-  switch (status) {
-    case "new":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="new">
-          Approved
-        </Tag>
-      );
-    case "inProgress":
-      return (
-        <Tag className="ml-4 mt-1" background="filled" variant="inProgress">
-          Waiting for approval
-        </Tag>
-      );
-    case "denied":
-      return (
-        <Tag className="ml-4 mt-1" background="unfilled" variant="denied">
-          Deny
-        </Tag>
-      );
-    default:
-      return null;
-  }
-};
+import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-whole-page";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -67,115 +42,129 @@ const childrenAnimation: Variants = {
   },
 };
 
-// Định nghĩa kiểu cho dữ liệu bảng
-type TablePlanDataType = {
-  id: number;
-  plan: string;
-  term: string;
-  department: string;
-  version: string;
-  status: StatusType;
-};
-
-const tablePlanDataList: TablePlanDataType[] = [
-  {
-    id: 1,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v1",
-    status: "inProgress",
-  },
-
-  {
-    id: 2,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v3",
-    status: "denied",
-  },
-  {
-    id: 3,
-    plan: "BU name_termplan",
-    term: "Financial plan December Q3 2021",
-    department: "BU 1",
-    version: "v4",
-    status: "new",
-  },
-];
+// TODO: Fetch infinite plan
+const pageSize = 10;
 
 export const TermDetailPlanPage: React.FC = () => {
-  const [listSelectedIndex, _] = useState<Set<number>>(
-    new Set()
-  );
-  const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const [_hoverRowIndex, _setHoverRowIndex] = useState<number>();
+  const { termId } = useParams<{ termId: string }>();
+
+  // Fetch data
+  const [getListPlanOfTerm, { data: plans, isFetching, isSuccess }] =
+    useLazyFetchInfinteScrollPlansOfTermQuery();
 
   useEffect(() => {
-    if (listSelectedIndex.size !== 0) {
-      setShowReviewExpense(true);
-    } else {
-      setShowReviewExpense(false);
-    }
-  }, [listSelectedIndex]);
+    try {
+      let termIdInt = 0;
+
+      if (termId) {
+        if (typeof termId === "string") {
+          termIdInt = parseInt(termId);
+        } else {
+          termIdInt = termId;
+        }
+      }
+
+      if (termIdInt) {
+        getListPlanOfTerm({
+          termId: termIdInt,
+          page: 1,
+          pageSize,
+        });
+      }
+    } catch (_) {}
+  }, []);
+
+  // Infinite scroll
+  useInfiteLoaderWholePage(() => {
+    try {
+      let termIdInt = 0;
+
+      if (termId) {
+        if (typeof termId === "string") {
+          termIdInt = parseInt(termId);
+        } else {
+          termIdInt = termId;
+        }
+      }
+
+      if (
+        plans &&
+        plans.data.length < plans.pagination.totalRecords &&
+        termIdInt
+      ) {
+        getListPlanOfTerm({
+          termId: termIdInt,
+          page: plans.pagination.page + 1,
+          pageSize,
+        });
+      }
+    } catch (_) {}
+  });
 
   return (
-    <motion.div>
-      <motion.div
-        className=""
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
-      >
-        <motion.div className="flex justify-end mt-4">
-          <motion.div variants={childrenAnimation} className="mr-4 ">
-            <TESelect data={[]} label="Cost type" />
-          </motion.div>
+    <motion.div
+      initial={AnimationStage.HIDDEN}
+      animate={AnimationStage.VISIBLE}
+      exit={AnimationStage.HIDDEN}
+      variants={staggerChildrenAnimation}
+    >
+      {isSuccess &&
+        plans.data.length === 0 &&
+        plans.pagination.totalRecords === 0 && (
+          <div className="ml-5 mt-6 text-neutral-300 dark:text-neutral-600 italic font-semibold">
+            No plans in this term
+          </div>
+        )}
 
-          <motion.div variants={childrenAnimation} className="mr-4">
-            <TESelect data={[]} label="Status" />
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      <motion.div
-        initial={AnimationStage.HIDDEN}
-        animate={AnimationStage.VISIBLE}
-        exit={AnimationStage.HIDDEN}
-        variants={staggerChildrenAnimation}
+      <motion.table
+        className="text-sm font-light mt-3 min-w-full"
+        variants={childrenAnimation}
       >
-        <motion.table
-          className="text-center text-sm font-light mt-6 min-w-full  overflow-hidden "
-          variants={childrenAnimation}
-        >
-          <tbody>
-            {tablePlanDataList.map((row, index) => (
-              <tr
-                key={row.id}
+        <tbody>
+          <tr className="flex flex-col flex-wrap">
+            {plans?.data.map((plan, index) => (
+              <td
                 className={clsx({
-                  "bg-white  dark:bg-neutral-800/50 ": index % 2 === 0,
-                  "bg-primary-50  dark:bg-neutral-800/80  ": index % 2 === 1,
+                  "group px-6 py-3 rounded-lg cursor-pointer duration-200":
+                    true,
+                  "bg-white hover:bg-neutral-50/50 dark:bg-neutral-800/50 dark:hover:bg-neutral-800/70":
+                    index % 2 === 0,
+                  "bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800/80 dark:hover:bg-neutral-800":
+                    index % 2 === 1,
                 })}
+                onClick={() => {
+                  navigate(`/plan-management/detail/expenses/${plan.planId}`);
+                }}
               >
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
-                  <div className="flex flex-row flex-wrap">
-                    <div className="text-neutral-300 dark:text-neutral-600">
-                      <FaChartLine className="text-xl mt-2" />
-                    </div>
-                    <p className="font-extrabold text-neutral-500 dark:font-bold dark:text-neutral-500 py-2 ml-3">
-                      {row.plan}
-                    </p>
-                    <div>{renderButton(row.status)}</div>
+                <div className="flex flex-row flex-wrap">
+                  <div className="text-neutral-400/80 dark:text-neutral-600">
+                    <FaChartLine className="text-xl mt-2" />
                   </div>
-                </td>
-              </tr>
+                  <PlanPreviewer containerClassName="ml-0" planId={plan.planId}>
+                    <p className="font-extrabold text-neutral-500/80 dark:text-neutral-500 group-hover:underline duration-200">
+                      {plan.name}
+                    </p>
+                  </PlanPreviewer>
+                </div>
+              </td>
             ))}
-          </tbody>
-        </motion.table>
-      </motion.div>
+
+            {isFetching &&
+              new Array(2).fill(true).map((_, index) => (
+                <tr key={-index} className="border-b-2 border-neutral-100">
+                  <td className="py-2">
+                    <Skeleton className="w-[20px]" />
+                  </td>
+                  <td className="py-2">
+                    <Skeleton className="w-[300px]" />
+                  </td>
+                </tr>
+              ))}
+          </tr>
+        </tbody>
+      </motion.table>
     </motion.div>
   );
 };

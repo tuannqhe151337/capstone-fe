@@ -13,6 +13,8 @@ import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { StatusPlanFilter } from "../../entities/status-plan-filter";
 import clsx from "clsx";
+import { CurrencyChanger } from "../../entities/currency-changer";
+import { Currency } from "../../providers/store/api/currencyApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -87,12 +89,14 @@ const widthPlaceholderAnimation: Variants = {
 
 interface Props {
   className?: string;
+  currencyId?: number;
   showReviewExpense?: boolean;
   searchboxValue?: string;
   showReupload?: boolean;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
+  onCurrencyChoose?: (currency?: Currency) => any;
   onApproveExpensesClick?: () => any;
   onDenyExpensesClick?: () => any;
   onDownloadClick?: () => any;
@@ -101,12 +105,14 @@ interface Props {
 
 export const ListPlanDetailFilter: React.FC<Props> = ({
   className,
+  currencyId,
   showReviewExpense,
   searchboxValue,
   showReupload,
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onCurrencyChoose,
   onApproveExpensesClick,
   onDenyExpensesClick,
   onDownloadClick,
@@ -204,6 +210,12 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
               variants={widthPlaceholderAnimation}
             />
           </div>
+
+          {/* Currency changer */}
+          <CurrencyChanger
+            chosenCurrencyId={currencyId}
+            onCurrencyChoose={onCurrencyChoose}
+          />
 
           {/* Filter icon */}
           <motion.div variants={childrenAnimation}>

@@ -14,8 +14,9 @@ export interface CreateTermBody {
   duration: Duration;
   startDate: string;
   endDate: string;
-  reuploadStartDate: string;
-  reuploadEndDate: string;
+  allowReupload: boolean;
+  reuploadStartDate?: string;
+  reuploadEndDate?: string;
 }
 
 export interface UpdateTermBody {
@@ -24,8 +25,9 @@ export interface UpdateTermBody {
   duration: Duration;
   startDate: string;
   endDate: string;
-  reuploadStartDate: string;
-  reuploadEndDate: string;
+  allowReupload: boolean;
+  reuploadStartDate?: string;
+  reuploadEndDate?: string;
 }
 
 export interface StartTermBody {
@@ -71,6 +73,7 @@ export interface TermDetail {
   duration: Duration;
   startDate: string;
   endDate: string;
+  allowReupload: boolean;
   reuploadStartDate: string;
   reuploadEndDate: string;
   finalEndTermDate: string;
@@ -88,6 +91,13 @@ export interface ListTermWhenCreatePlanParameters {
   query?: string;
   page: number;
   pageSize: number;
+}
+
+export interface TermInterval {
+  startTermDate: number;
+  endTermInterval: number;
+  startReuploadInterval: number;
+  endReuploadInterval: number;
 }
 
 // DEV ONLY!!!
@@ -140,6 +150,11 @@ export const termAPI = createApi({
       },
       providesTags: ["terms"],
     }),
+
+    getListTermInterval: builder.query<TermInterval, void>({
+      query: () => `/term/termInterval`,
+    }),
+
     getListTermWhenCreatePlan: builder.query<
       PaginationResponse<TermCreatePlan[]>,
       ListTermWhenCreatePlanParameters
@@ -201,6 +216,7 @@ export const termAPI = createApi({
 export const {
   useLazyGetListTermQuery,
   useLazyGetListTermWhenCreatePlanQuery,
+  useGetListTermIntervalQuery,
   useCreateTermMutation,
   useFetchTermDetailQuery,
   useLazyFetchTermDetailQuery,

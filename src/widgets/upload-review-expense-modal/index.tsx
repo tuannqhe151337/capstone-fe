@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { IconButton } from "../../shared/icon-button";
 import { Modal } from "../../shared/modal";
@@ -11,7 +11,11 @@ import { Expense } from "../../features/upload-file-stage/type";
 import { toast } from "react-toastify";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
-import { useReviewListExpensesMutation } from "../../providers/store/api/reportsAPI";
+import {
+  useLazyGetReportDetailQuery,
+  useReviewListExpensesMutation,
+} from "../../providers/store/api/reportsAPI";
+import { useWindowHeight } from "../../shared/utils/use-window-height";
 
 enum AnimationStage {
   LEFT = "left",
@@ -77,6 +81,23 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
   const [reviewListExpenses, { isLoading, isError, isSuccess }] =
     useReviewListExpensesMutation();
 
+  // Report detail
+  const [getReportDetail, { data: report }] = useLazyGetReportDetailQuery();
+
+  useEffect(() => {
+    let reportIdInt = 0;
+
+    if (reportId) {
+      if (typeof reportId === "string") {
+        reportIdInt = parseInt(reportId);
+      } else {
+        reportIdInt = reportId;
+      }
+    }
+
+    getReportDetail({ reportId: reportIdInt });
+  }, [reportId]);
+
   // Expenses read from file
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
@@ -93,6 +114,13 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
       toast("Something went wrong, please try again!", { type: "error" });
     }
   }, [isError]);
+
+  // Calculate optimal height for dropzone
+  const windowHeight = useWindowHeight();
+
+  const dropzoneHeight = useMemo(() => {
+    return windowHeight - 350;
+  }, [windowHeight]);
 
   return (
     <Modal
@@ -140,8 +168,8 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                 >
                   <UploadFileStage
                     hide={stage !== 1}
-                    dropzoneHeight={380}
-                    validateExpenseCode
+                    dropzoneHeight={dropzoneHeight}
+                    validateExpenseId
                     validateStatusCode
                     downloadButtonText="Download report"
                     onDownloadTemplateClick={() => {
@@ -154,7 +182,8 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                           `${
                             import.meta.env.VITE_BACKEND_HOST
                           }report/download-xlsx?reportId=${reportId}`,
-                          token
+                          token,
+                          `${report?.name}.xlsx`
                         );
                       }
                     }}
@@ -186,8 +215,9 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                     submitButtonText="Upload report review"
                     isLoading={isLoading}
                     expenses={expenses}
-                    showStatusColumn
+                    showExpenseIdColumn
                     showExpenseCodeColumn
+                    showStatusColumn
                     hide={stage !== 2}
                     onPreviousState={() => {
                       setStage(1);
@@ -200,8 +230,9 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                               ? parseInt(reportId)
                               : reportId,
                           listExpenses: expenses.map((expense) => ({
-                            expenseCode: expense.code,
-                            statusId: expense.status?.statusId || 0,
+                            expenseId: expense.id,
+                            statusCode:
+                              expense.status?.code.toUpperCase() || "",
                           })),
                         });
                       }

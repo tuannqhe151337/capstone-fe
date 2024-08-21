@@ -10,6 +10,7 @@ import {
   useMeQuery,
   useUserSettingMutation,
 } from "../../providers/store/api/authApi";
+import clsx from "clsx";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -30,7 +31,7 @@ export const ThemeChanger = () => {
   const [selectedThemeCode, setSelectedThemeCode] = useState<ThemeCode>("blue");
 
   // Get data
-  const { data } = useMeQuery();
+  const { data: me } = useMeQuery();
 
   // Mutation
   const [updateUserSetting] = useUserSettingMutation();
@@ -48,13 +49,6 @@ export const ThemeChanger = () => {
   // Change theme (by changing classes in the body)
   useEffect(() => {
     changeTheme(selectedThemeCode);
-    if (data) {
-      updateUserSetting({
-        theme: selectedThemeCode,
-        language: data.settings.language,
-        darkMode: data.settings.darkMode,
-      });
-    }
   }, [selectedThemeCode]);
 
   useEffect(() => {
@@ -66,7 +60,7 @@ export const ThemeChanger = () => {
     } finally {
       setSelectedThemeCode(typedSelectedThemeCode);
     }
-  }, [data?.settings.theme]);
+  }, [me?.settings.theme]);
 
   return (
     <div ref={ref} className="relative z-30">
@@ -89,16 +83,31 @@ export const ThemeChanger = () => {
             exit={AnimationStage.HIDDEN}
             variants={animation}
           >
-            {Object.values(themes).map(({ code, name }) => (
+            {Object.values(themes).map(({ code, name }, index) => (
               <TERipple
                 key={name}
                 rippleColor="light"
                 className="w-full"
                 onClick={() => {
                   setSelectedThemeCode(code);
+
+                  if (me) {
+                    updateUserSetting({
+                      theme: code,
+                      language: me.settings.language,
+                      darkMode: me.settings.darkMode,
+                    });
+                  }
                 }}
               >
-                <div className="px-5 py-3 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200">
+                <div
+                  className={clsx({
+                    "px-5 py-3 text-neutral-500 dark:text-neutral-300 cursor-pointer select-none hover:bg-primary-100 dark:hover:bg-primary-900 text-base font-semibold duration-200":
+                      true,
+                    "border-b-2 border-b-neutral-100 dark:border-b-neutral-700/50":
+                      index !== Object.values(themes).length - 1,
+                  })}
+                >
                   {name}
                 </div>
               </TERipple>

@@ -12,6 +12,10 @@ import {
 } from "../../providers/store/api/termApi";
 import _ from "lodash";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
+import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
+import { Role } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyTerms = (total: number): Row[] => {
   const terms: Row[] = [];
@@ -69,6 +73,15 @@ const childrenAnimation: Variants = {
 };
 
 export const TermManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
+  // Authorized
+  usePageAuthorizedForRole([Role.ACCOUNTANT]);
+
+  // Scroll to top
+  useScrollToTopOnLoad();
+
   // Create modal
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
@@ -125,8 +138,8 @@ export const TermManagementList: React.FC = () => {
       {/* Banner */}
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
-          <p className="text-primary dark:text-primary/70 font-extrabold text-2xl w-fit ml-7">
-            Term management
+          <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
+            {t("Term management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -137,7 +150,7 @@ export const TermManagementList: React.FC = () => {
               <div className="flex flex-row flex-wrap items-center gap-3 text-white dark:text-neutral-300">
                 <IoIosAddCircle className="text-2xl -mt-0.5" />
 
-                <p className="text-sm font-bold">Add new term</p>
+                <p className="text-sm font-bold">{t("Add new term")}</p>
               </div>
             </Button>
           </div>

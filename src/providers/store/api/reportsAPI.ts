@@ -1,16 +1,22 @@
 import { createApi, fetchBaseQuery, retry } from "@reduxjs/toolkit/query/react";
-import { Expense, LocalStorageItemKey, PaginationResponse } from "./type";
+import {
+  AFFIX,
+  Expense,
+  ListResponse,
+  LocalStorageItemKey,
+  PaginationResponse,
+} from "./type";
 
 export interface ListReportParameters {
   query?: string | null;
   termId?: number | null;
-  departmentId?: number | null;
   page: number;
   pageSize: number;
 }
 
 export interface ListReportExpenseParameters {
   query?: string | null;
+  currencyId?: number | null;
   reportId: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
@@ -19,7 +25,7 @@ export interface ListReportExpenseParameters {
 }
 
 export interface Report {
-  reportId: number | string;
+  reportId: number;
   name: string;
   version: string;
   month: string;
@@ -55,7 +61,6 @@ export type ReportStatusCode =
   | "NEW"
   | "WAITING_FOR_APPROVAL"
   | "REVIEWED"
-  | "APPROVED"
   | "CLOSED";
 
 export interface Term {
@@ -63,6 +68,7 @@ export interface Term {
   name: string;
   startDate: string;
   endDate: string;
+  allowReupload: boolean;
   reuploadStartDate: string;
   reuploadEndDate: string;
   finalEndTermDate: string;
@@ -97,16 +103,30 @@ export interface Position {
 }
 
 export interface ReportExpectedCostResponse {
-  expectedCost: number;
+  cost: number;
+  currency: Currency;
 }
 
 export interface ReportActualCostResponse {
-  actualCost: number;
+  cost: number;
+  currency: Currency;
+}
+
+export interface Currency {
+  currencyId: number;
+  name: string;
+  symbol: string;
+  affix: AFFIX;
 }
 
 export interface ReviewExpensesBody {
   reportId: number;
   listExpenseId: number[];
+}
+
+export interface ReviewExpenseResult {
+  expenseId: number;
+  expenseCode: string;
 }
 
 export interface UploadReportExpenses {
@@ -115,8 +135,12 @@ export interface UploadReportExpenses {
 }
 
 export interface ExpenseBody {
-  expenseCode: string;
-  statusId: number;
+  expenseId: number;
+  statusCode: string;
+}
+
+export interface CompleteReviewReportBody {
+  reportId: number;
 }
 
 // DEV ONLY!!!
@@ -151,22 +175,18 @@ const staggeredBaseQuery = retry(
 const reportsAPI = createApi({
   reducerPath: "report",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["query", "actual-cost"],
+  tagTypes: ["query", "report-detail", "actual-cost"],
   endpoints(builder) {
     return {
       fetchReports: builder.query<
         PaginationResponse<Report[]>,
         ListReportParameters
       >({
-        query: ({ query, termId, departmentId, page, pageSize }) => {
+        query: ({ query, termId, page, pageSize }) => {
           let endpoint = `report/list?page=${page}&size=${pageSize}`;
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
-          }
-
-          if (departmentId) {
-            endpoint += `&departmentId=${departmentId}`;
           }
 
           if (termId) {
@@ -179,6 +199,7 @@ const reportsAPI = createApi({
 
       getReportDetail: builder.query<ReportDetail, ReportDetailParameters>({
         query: ({ reportId }) => `/report/detail?reportId=${reportId}`,
+        providesTags: ["report-detail"],
       }),
 
       getReportActualCost: builder.query<
@@ -200,8 +221,20 @@ const reportsAPI = createApi({
         PaginationResponse<Expense[]>,
         ListReportExpenseParameters
       >({
-        query: ({ query, reportId, costTypeId, statusId, page, pageSize }) => {
+        query: ({
+          query,
+          reportId,
+          currencyId,
+          costTypeId,
+          statusId,
+          page,
+          pageSize,
+        }) => {
           let endpoint = `report/expenses?reportId=${reportId}&page=${page}&size=${pageSize}`;
+
+          if (currencyId) {
+            endpoint += `&currencyId=${currencyId}`;
+          }
 
           if (query && query !== "") {
             endpoint += `&query=${query}`;
@@ -219,7 +252,10 @@ const reportsAPI = createApi({
         },
       }),
 
-      approveExpenses: builder.mutation<any, ReviewExpensesBody>({
+      approveExpenses: builder.mutation<
+        ListResponse<ReviewExpenseResult[]>,
+        ReviewExpensesBody
+      >({
         query: (reviewExpenseBody) => ({
           url: "report/expense-approval",
           method: "PUT",
@@ -242,7 +278,16 @@ const reportsAPI = createApi({
           method: "POST",
           body: uploadReportExpenses,
         }),
-        invalidatesTags: ["actual-cost"],
+        invalidatesTags: ["actual-cost", "query"],
+      }),
+
+      markAsReviewed: builder.mutation<void, CompleteReviewReportBody>({
+        query: (completeReviewReportBody) => ({
+          url: "report/complete-review",
+          method: "POST",
+          body: completeReviewReportBody,
+        }),
+        invalidatesTags: ["report-detail"],
       }),
     };
   },
@@ -257,10 +302,10 @@ export const {
   useLazyFetchReportsQuery,
   useGetReportDetailQuery,
   useLazyGetReportDetailQuery,
-  useFetchReportExpensesQuery,
   useLazyFetchReportExpensesQuery,
   useApproveExpensesMutation,
   useDenyExpensesMutation,
   useReviewListExpensesMutation,
+  useMarkAsReviewedMutation,
 } = reportsAPI;
 export { reportsAPI };

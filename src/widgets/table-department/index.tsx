@@ -196,36 +196,38 @@ export const TableDepartment: React.FC<Props> = ({
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
-                  <motion.div
-                    className="flex flex-row flex-wrap items-center justify-center gap-2 w-max m-auto"
-                    initial={AnimationStage.HIDDEN}
-                    animate={
-                      hoverRowIndex === index
-                        ? AnimationStage.VISIBLE
-                        : AnimationStage.HIDDEN
-                    }
-                    exit={AnimationStage.HIDDEN}
-                    variants={animation}
-                  >
-                    <IconButton
-                      tooltip="Edit department"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onEditDepartment && onEditDepartment(department);
-                      }}
+                  {!isFetching && (
+                    <motion.div
+                      className="flex flex-row flex-wrap items-center justify-center gap-2 w-max m-auto"
+                      initial={AnimationStage.HIDDEN}
+                      animate={
+                        hoverRowIndex === index
+                          ? AnimationStage.VISIBLE
+                          : AnimationStage.HIDDEN
+                      }
+                      exit={AnimationStage.HIDDEN}
+                      variants={animation}
                     >
-                      <AiFillEdit className="text-primary-600 text-2xl" />
-                    </IconButton>
-                    <IconButton
-                      tooltip="Delete department"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onDeleteDepartment && onDeleteDepartment(department);
-                      }}
-                    >
-                      <FaTrash className="text-red-600 text-xl" />
-                    </IconButton>
-                  </motion.div>
+                      <IconButton
+                        tooltip="Edit department"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onEditDepartment && onEditDepartment(department);
+                        }}
+                      >
+                        <AiFillEdit className="text-primary-600 text-2xl" />
+                      </IconButton>
+                      <IconButton
+                        tooltip="Delete department"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          onDeleteDepartment && onDeleteDepartment(department);
+                        }}
+                      >
+                        <FaTrash className="text-red-600 text-xl" />
+                      </IconButton>
+                    </motion.div>
+                  )}
                 </td>
               </motion.tr>
             ))}

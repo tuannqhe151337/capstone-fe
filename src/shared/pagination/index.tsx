@@ -53,7 +53,7 @@ export const Pagination: React.FC<Props> = ({
         <span className="ml-2 mr-1">{t("Previous page")}</span>
       </Button>
 
-      <div className="flex flex-row flex-wrap items-center text-sm font-semibold text-neutral-400">
+      <div className="flex flex-row flex-wrap items-center -ml-5 text-sm font-semibold text-neutral-400">
         <span className="mr-1.5">{t("Page")}</span>
         <input
           value={page || ""}

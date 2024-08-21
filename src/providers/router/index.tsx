@@ -397,7 +397,7 @@ const router = createBrowserRouter([
             },
             children: [
               {
-                path: "chart/:annualReportId",
+                path: "chart/:year",
                 lazy: async () => {
                   const AnnualReportDetailChartPage = (
                     await import("../../pages/annual-report-detail-chart-page")
@@ -409,7 +409,7 @@ const router = createBrowserRouter([
                 },
               },
               {
-                path: "table/:annualReportId",
+                path: "table/:year",
                 lazy: async () => {
                   const AnnualReportDetailTablePage = (
                     await import("../../pages/annual-report-detail-table-page")
@@ -476,6 +476,86 @@ const router = createBrowserRouter([
 
               return {
                 element: <PositionManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // List project pages
+      {
+        path: "project-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ProjectManagementListPage = (
+                await import("../../pages/project-management-list")
+              ).ProjectManagementList;
+
+              return {
+                element: <ProjectManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // List supplier pages
+      {
+        path: "supplier-management",
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const SupplierManagementListPage = (
+                await import("../../pages/supplier-management-list")
+              ).SupplierManagementList;
+
+              return {
+                element: <SupplierManagementListPage />,
+              };
+            },
+          },
+        ],
+      },
+
+      // Exchange rate pages
+      {
+        path: "exchange-rate",
+        lazy: async () => {
+          const ExchangeRateRootPage = (
+            await import("../../pages/exchange-rate-root-page")
+          ).ExchangeRateRootPage;
+
+          return {
+            element: <ExchangeRateRootPage />,
+          };
+        },
+        children: [
+          {
+            path: "",
+            lazy: async () => {
+              const ExchangeRateManagementList = (
+                await import(
+                  "../../pages/monthly-exchange-rate-management-list"
+                )
+              ).ExchangeRateManagementList;
+
+              return {
+                element: <ExchangeRateManagementList />,
+              };
+            },
+          },
+          {
+            path: "currency",
+            lazy: async () => {
+              const CurrencyManagementListPage = (
+                await import("../../pages/currency-management-list-page")
+              ).CurrencyManagementListPage;
+
+              return {
+                element: <CurrencyManagementListPage />,
               };
             },
           },
