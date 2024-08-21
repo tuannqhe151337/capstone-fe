@@ -150,19 +150,19 @@ export const TermDetailPlanPage: React.FC = () => {
                 </div>
               </td>
             ))}
-
-            {isFetching &&
-              new Array(2).fill(true).map((_, index) => (
-                <tr key={-index} className="border-b-2 border-neutral-100">
-                  <td className="py-2">
-                    <Skeleton className="w-[20px]" />
-                  </td>
-                  <td className="py-2">
-                    <Skeleton className="w-[300px]" />
-                  </td>
-                </tr>
-              ))}
           </tr>
+
+          {isFetching &&
+            new Array(2).fill(true).map((_, index) => (
+              <tr key={-index} className="border-b-2 border-neutral-100">
+                <td className="py-2">
+                  <Skeleton className="w-[20px]" />
+                </td>
+                <td className="py-2">
+                  <Skeleton className="w-[300px]" />
+                </td>
+              </tr>
+            ))}
         </tbody>
       </motion.table>
     </motion.div>

@@ -4,6 +4,7 @@ import { useLazyFetchReportsQuery } from "../../providers/store/api/reportsAPI";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ReportPreviewer } from "../../entities/report-previewer";
+import { Skeleton } from "../../shared/skeleton";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -44,7 +45,8 @@ export const TermDetailReportPage: React.FC = () => {
 
   const { termId } = useParams<{ termId: string }>();
 
-  const [fetchReports, { data: reports }] = useLazyFetchReportsQuery();
+  const [fetchReports, { data: reports, isFetching }] =
+    useLazyFetchReportsQuery();
 
   useEffect(() => {
     let termIdInt = 0;
@@ -96,6 +98,18 @@ export const TermDetailReportPage: React.FC = () => {
                 </td>
               )}
             </tr>
+
+            {isFetching &&
+              new Array(2).fill(true).map((_, index) => (
+                <tr key={-index} className="border-b-2 border-neutral-100">
+                  <td className="py-2">
+                    <Skeleton className="w-[20px]" />
+                  </td>
+                  <td className="py-2">
+                    <Skeleton className="w-[300px]" />
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </motion.table>
       </motion.div>
