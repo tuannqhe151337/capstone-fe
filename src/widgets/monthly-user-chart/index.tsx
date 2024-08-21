@@ -43,12 +43,12 @@ export const MonthlyUserChart: React.FC<Props> = ({ className }) => {
       }
 
       dataChart.push({
-        name: "User activated",
+        name: "User joined",
         data: expectedActualCostMap[NUMBER_USER_CREATED],
       });
 
       dataChart.push({
-        name: "User deactivated",
+        name: "User left",
         data: expectedActualCostMap[NUMBER_USER_DELETED],
       });
     }
