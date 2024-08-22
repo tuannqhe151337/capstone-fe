@@ -18,6 +18,7 @@ import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { ErrorData } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import clsx from "clsx";
+import { useProcessError } from "../../shared/utils/use-process-error";
 
 type FormData = {
   supplierName: string;
@@ -91,19 +92,7 @@ export const SupplierEditModal: React.FC<Props> = ({
   }, [isLoading, isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
+  const errorMessage = useProcessError({ error, isError });
 
   return (
     <Modal

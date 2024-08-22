@@ -6,6 +6,7 @@ import { Pagination } from "../../shared/pagination";
 import { TermList } from "./component/term-list";
 import {
   ListTermWhenCreatePlanParameters,
+  termAPI,
   TermCreatePlan,
   useLazyGetListTermWhenCreatePlanQuery,
 } from "../../providers/store/api/termApi";
@@ -51,6 +52,13 @@ interface Props {
 }
 
 export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
+  // Remove cache each time show this stage
+  useEffect(() => {
+    if (!hide) {
+      termAPI.util.invalidateTags(["create-plan-terms"]);
+    }
+  }, [hide]);
+
   // Pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);

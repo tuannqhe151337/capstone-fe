@@ -146,6 +146,10 @@ export const processFile = async ({
         // Get row
         const row = rows[index];
 
+        if (checkLineEmpty(row)) {
+          continue;
+        }
+
         // Any row that have index >= 3 will be mapped to expense
         if (index + 1 >= BeginLine) {
           // Get data from cell
@@ -587,4 +591,22 @@ const mapExpenseStatusCodeByLowercaseName = (
   }
 
   return expenseStatusCodeMap;
+};
+
+const checkLineEmpty = (
+  line?: (string | number | Date | undefined)[]
+): boolean => {
+  if (!line) {
+    return false;
+  }
+
+  let isCellEmpty = true;
+
+  for (let cell of line) {
+    if (cell && cell !== 0) {
+      isCellEmpty = false;
+    }
+  }
+
+  return isCellEmpty;
 };

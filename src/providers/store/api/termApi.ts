@@ -132,7 +132,7 @@ const staggeredBaseQuery = retry(
 export const termAPI = createApi({
   reducerPath: "termAPI",
   baseQuery: staggeredBaseQuery,
-  tagTypes: ["terms"],
+  tagTypes: ["terms", "create-plan-terms"],
   endpoints: (builder) => ({
     getListTerm: builder.query<PaginationResponse<Term[]>, ListTermParameters>({
       query: ({ query, statusId, page, pageSize }) => {
@@ -148,7 +148,7 @@ export const termAPI = createApi({
 
         return endpoint;
       },
-      providesTags: ["terms"],
+      providesTags: ["terms", "create-plan-terms"],
     }),
 
     getListTermInterval: builder.query<TermInterval, void>({

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,14 +20,14 @@ import { PiBagSimpleFill } from "react-icons/pi";
 import { MdEmail } from "react-icons/md";
 import { useCreateUserMutation } from "../../providers/store/api/usersApi";
 import { CgSpinner } from "react-icons/cg";
-import { ErrorData, Role } from "../../providers/store/api/type";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { Role } from "../../providers/store/api/type";
 import { toast } from "react-toastify";
 import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 import { formatISODateForBody } from "../../shared/utils/format-iso-date-for-body";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { useTranslation } from "react-i18next";
+import { useProcessError } from "../../shared/utils/use-process-error";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -161,25 +161,7 @@ export const UserCreate: React.FC = () => {
   }, [isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (isError) {
-      toast(errorMessage, { type: "error" });
-    }
-  }, [isError, errorMessage]);
+  const errorMessage = useProcessError({ error, isError });
 
   return (
     <motion.div
