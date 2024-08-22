@@ -12,6 +12,7 @@ import { cn } from "../../shared/utils/cn";
 import { useMeQuery } from "../../providers/store/api/authApi";
 import { Role } from "../../providers/store/api/type";
 import { TermTag } from "../term-tag";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -38,6 +39,10 @@ export const TermPreviewer: React.FC<Props> = ({
   children,
   containerClassName,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["term-management"]);
+
   // Me query
   const { data: me } = useMeQuery();
 
@@ -107,7 +112,7 @@ export const TermPreviewer: React.FC<Props> = ({
                   <SiClockify className="text-lg text-neutral-400/30" />
                   <div className="space-y-1">
                     <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                      Start - end date
+                      {t("Start - end date")}
                     </p>
                     <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                       {format(parseISOInResponse(term.startDate), "dd/MM/yyyy")}{" "}
@@ -121,7 +126,7 @@ export const TermPreviewer: React.FC<Props> = ({
                     <FaFileImport className="text-lg text-neutral-400/30 -ml-0.5 mr-1" />
                     <div className="space-y-1">
                       <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                        Reupload period
+                        {t("Reupload period")}
                       </p>
                       <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                         {format(
