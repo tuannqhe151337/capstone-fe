@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BubbleBanner } from "../../entities/bubble-banner";
@@ -24,13 +24,13 @@ import { allowOnlyNumber } from "../../shared/utils/allow-only-number";
 import { RoleFilter } from "../../entities/role-filter";
 import { PositionFilter } from "../../entities/position-filter";
 import { CgSpinner } from "react-icons/cg";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { toast } from "react-toastify";
-import { ErrorData, Role } from "../../providers/store/api/type";
+import { Role } from "../../providers/store/api/type";
 import { InputSkeleton } from "../../shared/input-skeleton";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
 import { useTranslation } from "react-i18next";
+import { useProcessError } from "../../shared/utils/use-process-error";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -208,25 +208,7 @@ export const UserEditPage: React.FC = () => {
   }, [isLoading, isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (isError) {
-      toast(errorMessage, { type: "error" });
-    }
-  }, [isError, errorMessage]);
+  const errorMessage = useProcessError({ error, isError });
 
   return (
     <motion.div
@@ -243,7 +225,6 @@ export const UserEditPage: React.FC = () => {
               to={`/user-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              
               {t("User management")}
             </Link>
             <span className="text-base opacity-40">&gt;</span>

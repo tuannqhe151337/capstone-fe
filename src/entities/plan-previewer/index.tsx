@@ -55,7 +55,7 @@ export const PlanPreviewer: React.FC<Props> = ({
 
   return (
     <div
-      className={cn("relative w-max m-auto px-5 py-2", containerClassName)}
+      className={cn("relative w-max pl-14 py-2", containerClassName)}
       onMouseEnter={() => {
         setIsHover(true);
       }}
@@ -103,6 +103,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                           <NumericFormat
                             displayType="text"
                             value={plan?.expectedCost.cost}
+                            decimalScale={2}
                             prefix={
                               plan?.expectedCost.currency.affix === AFFIX.PREFIX
                                 ? ` ${plan?.expectedCost.currency.name}`
@@ -113,7 +114,6 @@ export const PlanPreviewer: React.FC<Props> = ({
                                 ? ` ${plan?.expectedCost.currency.name}`
                                 : undefined
                             }
-                            decimalScale={2}
                             thousandSeparator
                           />
                         </div>
@@ -131,6 +131,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                           <NumericFormat
                             displayType="text"
                             value={plan?.actualCost.cost}
+                            decimalScale={2}
                             prefix={
                               plan?.actualCost.currency.affix === AFFIX.PREFIX
                                 ? ` ${plan?.actualCost.currency.name}`
@@ -141,7 +142,6 @@ export const PlanPreviewer: React.FC<Props> = ({
                                 ? ` ${plan?.actualCost.currency.name}`
                                 : undefined
                             }
-                            decimalScale={2}
                             thousandSeparator
                           />
                         </div>
