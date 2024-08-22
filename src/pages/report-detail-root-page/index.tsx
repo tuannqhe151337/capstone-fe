@@ -40,6 +40,7 @@ import { IconButton } from "../../shared/icon-button";
 import { HiDotsVertical } from "react-icons/hi";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
 import { TERipple } from "tw-elements-react";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -95,6 +96,9 @@ type ContextType = {
 };
 
 export const ReportDetailRootPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
@@ -191,10 +195,10 @@ export const ReportDetailRootPage: React.FC = () => {
               to={`/report-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Report management
+              {t("Report management")}
             </Link>
             <span className="ml-3 text-base opacity-40">&gt;</span>
-            <span>Report detail</span>
+            <span>{t("Report detail")}</span>
           </p>
 
           {/* Right */}
@@ -219,7 +223,7 @@ export const ReportDetailRootPage: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap gap-3">
                 <FaDownload />
-                <p className="text-sm font-bold">Download report</p>
+                <p className="text-sm font-bold">{t("Download report")}</p>
               </div>
             </Button>
             {isAuthorizedAndTimeToReviewReport && (
@@ -231,7 +235,7 @@ export const ReportDetailRootPage: React.FC = () => {
               >
                 <div className="flex flex-row flex-wrap gap-3">
                   <FaUpload className="mt-0.5" />
-                  <p className="text-sm font-semibold">Upload review file</p>
+                  <p className="text-sm font-semibold">{t("Upload review file")}</p>
                 </div>
               </Button>
             )}
@@ -296,7 +300,7 @@ export const ReportDetailRootPage: React.FC = () => {
                         <FaCheck className="text-lg mr-5 text-primary-500/80 dark:text-neutral-400" />
 
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Mark as reviewed
+                          {t("Mark as reviewed")}
                         </p>
                       </div>
                     </TERipple>
@@ -312,7 +316,7 @@ export const ReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<RiCalendarScheduleFill className="text-4xl" />}
-            label={"Term"}
+            label={t("Term")}
             isFetching={isFetching}
             value={report?.term.name}
             meteors
@@ -322,7 +326,7 @@ export const ReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaMoneyBillTrendUp className="text-4xl" />}
-            label={"Expected cost"}
+            label={t("Expected cost")}
             isFetching={isFetching}
             value={
               <NumericFormat
@@ -348,7 +352,7 @@ export const ReportDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaCoins className="text-4xl" />}
-            label={"Actual cost"}
+            label={t("Actual cost")}
             isFetching={isFetching}
             value={
               <NumericFormat
@@ -379,8 +383,8 @@ export const ReportDetailRootPage: React.FC = () => {
               className="-mb-0.5"
               selectedItemId={selectedTabId}
               items={[
-                { id: "expenses", name: "Expenses" },
-                { id: "detail", name: "Detail" },
+                { id: "expenses", name: t("Expenses") },
+                { id: "detail", name: t("Detail") },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {
