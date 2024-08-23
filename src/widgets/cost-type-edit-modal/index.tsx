@@ -18,6 +18,7 @@ import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import clsx from "clsx";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import { ErrorData } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 type FormData = {
   costTypeName: string;
@@ -45,6 +46,8 @@ export const CostTypeEditModal: React.FC<Props> = ({
   onClose,
   onUpdateSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["cost-type-management"]);
   // Form
   const {
     register,
@@ -127,7 +130,7 @@ export const CostTypeEditModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Update cost type
+              {t("Update cost type")}
             </div>
 
             <ErrorNotificationCard
@@ -146,7 +149,7 @@ export const CostTypeEditModal: React.FC<Props> = ({
               <TEInput
                 autoFocus
                 className="w-full"
-                label="Cost type name"
+                label={t("Cost type name")}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     e.currentTarget.blur();
@@ -173,7 +176,7 @@ export const CostTypeEditModal: React.FC<Props> = ({
                 onClose && onClose();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               type="submit"
@@ -182,7 +185,7 @@ export const CostTypeEditModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Update cost type"}
+              {!isLoading && t("Update cost type")}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}
