@@ -11,6 +11,7 @@ import {
 } from "../../providers/store/api/departmentApi";
 import { ErrorData } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   department: Department;
@@ -25,6 +26,9 @@ export const DeleteDepartmentModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["department-management"]);
+
   // Mutation
   const [deleteDepartment, { isError, isLoading, isSuccess, error }] =
     useDeleteDepartmentMutation();
@@ -89,21 +93,25 @@ export const DeleteDepartmentModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete department
+            {t("Delete department")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the department{" "}
+            {t("delete_department_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{department.name}"
+              "
+              {t("delete_department_message.part2", {
+                departmentName: department.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_department_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -114,7 +122,7 @@ export const DeleteDepartmentModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -125,7 +133,7 @@ export const DeleteDepartmentModal: React.FC<Props> = ({
               deleteDepartment({ departmentId: department.departmentId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>
