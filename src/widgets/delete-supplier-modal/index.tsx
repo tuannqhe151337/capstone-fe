@@ -9,6 +9,7 @@ import {
 } from "../../providers/store/api/supplierApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   supplier: Supplier;
@@ -23,6 +24,9 @@ export const DeleteSupplierModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["supplier-management"]);
+
   // Mutation
   const [deleteSupplier, { isError, isLoading, isSuccess }] =
     useDeleteSupplierMutation();
@@ -59,21 +63,26 @@ export const DeleteSupplierModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete supplier
+            {t("Delete supplier")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the supplier{" "}
+            {/* You're going to delete the supplier{" "} */}
+            {t("delete_supplier_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{supplier.name}"
+              {/* "{supplier.name}" */}"
+              {t("delete_supplier_message.part2", {
+                supplierName: supplier.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_supplier_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -84,7 +93,7 @@ export const DeleteSupplierModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -95,7 +104,7 @@ export const DeleteSupplierModal: React.FC<Props> = ({
               deleteSupplier({ supplierId: supplier.supplierId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>
