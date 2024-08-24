@@ -15,6 +15,8 @@ import { CurrencyChanger } from "../../entities/currency-changer";
 import { Currency } from "../../providers/store/api/currencyApi";
 import { StatusExpenseFilter } from "../../entities/status-expense-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
+import { ProjectFilter } from "../../entities/project-filter";
+import { SupplierFilter } from "../../entities/supplier-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,6 +96,8 @@ interface Props {
   searchboxValue?: string;
   showReupload?: boolean;
   onSearchboxChange?: (value: string) => any;
+  onProjectIdChange?: (projectId: number | null | undefined) => any;
+  onSupplierIdChange?: (supplierId: number | null | undefined) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
   onCurrencyChoose?: (currency?: Currency) => any;
@@ -110,6 +114,8 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
   searchboxValue,
   showReupload,
   onSearchboxChange,
+  onProjectIdChange,
+  onSupplierIdChange,
   onCostTypeIdChange,
   onStatusIdChange,
   onCurrencyChoose,
@@ -303,6 +309,22 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
               variants={staggerChildrenAnimation}
             >
               <motion.div className="flex justify-end mt-4">
+                <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <SupplierFilter
+                    onChange={(option) => {
+                      onSupplierIdChange && onSupplierIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <ProjectFilter
+                    onChange={(option) => {
+                      onProjectIdChange && onProjectIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
                 <motion.div variants={childrenAnimation} className="mr-4 ">
                   <CostTypeFilter
                     onChange={(option) => {
