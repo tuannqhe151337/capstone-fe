@@ -9,6 +9,7 @@ import {
   Position,
   useDeletePositionMutation,
 } from "../../providers/store/api/positionApi";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   position: Position;
@@ -23,6 +24,9 @@ export const DeletePositionModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["position-management"]);
+
   // Mutation
   const [deletePosition, { isError, isLoading, isSuccess }] =
     useDeletePositionMutation();
@@ -59,21 +63,25 @@ export const DeletePositionModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete position
+            {t("Delete position")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the Position{" "}
+            {t("delete_position_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{position.name}"
+              {/* "{supplier.name}" */}"
+              {t("delete_position_message.part2", {
+                positionName: position.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_position_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -84,7 +92,7 @@ export const DeletePositionModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -95,7 +103,7 @@ export const DeletePositionModal: React.FC<Props> = ({
               deletePosition({ positionId: position.id });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>

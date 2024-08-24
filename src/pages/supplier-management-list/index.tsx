@@ -18,6 +18,7 @@ import { SupplierEditModal } from "../../widgets/supplier-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const generateEmptySuppliers = (total: number): Supplier[] => {
   const suppliers: Row[] = [];
@@ -70,6 +71,9 @@ const childrenAnimation: Variants = {
 };
 
 export const SupplierManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["supplier-management"]);
+
   // Scroll to top
   useScrollToTopOnLoad();
 
@@ -141,7 +145,7 @@ export const SupplierManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Supplier management
+            {t("Supplier management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -151,7 +155,7 @@ export const SupplierManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New supplier</p>
+                <p className="text-sm font-semibold">{t("New supplier")}</p>
               </div>
             </Button>
           </div>
