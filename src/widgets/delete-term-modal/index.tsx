@@ -100,19 +100,28 @@ export const DeleteTermModal: React.FC<Props> = ({
           </div>
 
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-600 mt-5">
-            {t("delete_term_message.part1")}
+            {t("delete_term_message.part1", {
+              defaultValue: "You're going to delete term ",
+            })}
             <span className="font-extrabold text-red-500 dark:text-red-500">
-              "{t("delete_term_message.part2", { termName })}"
+              "
+              {t("delete_term_message.part2", {
+                termName,
+                defaultValue: termName,
+              })}
+              "
             </span>
-            {t("delete_term_message.part3")}
+            {t("delete_term_message.part3", { defaultValue: "" })}
           </div>
 
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-600">
-            {t("confirmation_message.part1")}{" "}
+            {t("confirmation_message.part1", { defaultValue: "This action" })}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-500">
-              {t("confirmation_message.part2")}
+              {t("confirmation_message.part2", { defaultValue: "cannot" })}
             </span>{" "}
-            {t("confirmation_message.part3")}
+            {t("confirmation_message.part3", {
+              defaultValue: "be reversed. Are you sure?",
+            })}
           </div>
         </div>
 
