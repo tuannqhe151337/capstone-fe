@@ -65,19 +65,26 @@ export const StartTermModal: React.FC<Props> = ({
           </div>
 
           <div className="font-semibold dark:font-bold text-primary-400 dark:text-primary-600 mt-5">
-            {t("start_term_message.part1")}
+            {t("start_term_message.part1", {
+              defaultValue: "You're going to start term",
+            })}
             <span className="font-extrabold dark:text-primary-500">
-              {t("start_term_message.part2", { termName })}
+              {t("start_term_message.part2", {
+                termName,
+                defaultValue: termName,
+              })}
             </span>
-            {t("start_term_message.part3")}
+            {t("start_term_message.part3", { defaultValue: "" })}
           </div>
 
           <div className="mt-3 font-semibold dark:font-bold text-primary-400 dark:text-primary-600">
-            {t("confirmation_message.part1")}{" "}
+            {t("confirmation_message.part1", { defaultValue: "This action" })}{" "}
             <span className="font-extrabold dark:text-primary-500">
-              {t("confirmation_message.part2")}
+              {t("confirmation_message.part2", { defaultValue: "cannot" })}
             </span>{" "}
-            {t("confirmation_message.part3")}
+            {t("confirmation_message.part3", {
+              defaultValue: "be reversed. Are you sure?",
+            })}
           </div>
         </div>
 
