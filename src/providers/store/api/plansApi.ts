@@ -17,6 +17,8 @@ export interface ListPlanParameters {
 export interface ListPlanExpenseParameters {
   query?: string | null;
   planId: number | null;
+  projectId?: number | null;
+  supplierId?: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
   currencyId?: number | null;
@@ -350,6 +352,8 @@ const plansApi = createApi({
           planId,
           costTypeId,
           statusId,
+          projectId,
+          supplierId,
           currencyId,
           page,
           pageSize,
@@ -366,6 +370,14 @@ const plansApi = createApi({
 
           if (costTypeId) {
             endpoint += `&costTypeId=${costTypeId}`;
+          }
+
+          if (projectId) {
+            endpoint += `&projectId=${projectId}`;
+          }
+
+          if (supplierId) {
+            endpoint += `&supplierId=${supplierId}`;
           }
 
           if (statusId) {

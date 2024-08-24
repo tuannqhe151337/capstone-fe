@@ -14,6 +14,7 @@ import { CurrencyChanger } from "../../entities/currency-changer";
 import { Currency } from "../../providers/store/api/currencyApi";
 import { StatusExpenseFilter } from "../../entities/status-expense-filter";
 import { useTranslation } from "react-i18next";
+import { DepartmentFilter } from "../../entities/department-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,6 +95,7 @@ interface Props {
   allowReviewPlan?: boolean;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
+  onDepartmentIdChange?: (departmentId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
   onCurrencyChoose?: (currency?: Currency) => any;
   onApproveExpensesClick?: () => any;
@@ -112,6 +114,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onDepartmentIdChange,
   onCurrencyChoose,
   onApproveExpensesClick,
   onDenyExpensesClick,
@@ -322,6 +325,15 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
               variants={staggerChildrenAnimation}
             >
               <motion.div className="flex justify-end mt-4">
+                <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <DepartmentFilter
+                    onChange={(option) => {
+                      onDepartmentIdChange &&
+                        onDepartmentIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
                 <motion.div variants={childrenAnimation} className="mr-4 ">
                   <CostTypeFilter
                     onChange={(option) => {

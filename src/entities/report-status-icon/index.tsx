@@ -35,7 +35,11 @@ export const ReportStatusIcon: React.FC<Props> = ({
 
     case "waitingforapproval":
       return (
-        <TETooltip title="Waiting for approval">
+        <TETooltip
+          className="relative flex size-4"
+          title="Waiting for approval"
+        >
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-500/30"></span>
           <FaRegCircleDot
             className={cn("text-base text-primary-500", className)}
           />

@@ -18,6 +18,7 @@ export interface ListReportParameters {
 export interface ListReportExpenseParameters {
   query?: string | null;
   currencyId?: number | null;
+  departmentId?: number | null;
   reportId: number | null;
   statusId?: number | null;
   costTypeId?: number | null;
@@ -230,6 +231,7 @@ const reportsAPI = createApi({
           query,
           reportId,
           currencyId,
+          departmentId,
           costTypeId,
           statusId,
           page,
@@ -247,6 +249,10 @@ const reportsAPI = createApi({
 
           if (costTypeId) {
             endpoint += `&costTypeId=${costTypeId}`;
+          }
+
+          if (departmentId) {
+            endpoint += `&departmentId=${departmentId}`;
           }
 
           if (statusId) {

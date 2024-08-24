@@ -5,9 +5,12 @@ import { BsStack } from "react-icons/bs";
 import { HiUser } from "react-icons/hi2";
 import { PiTreeStructureFill } from "react-icons/pi";
 import { FaClock } from "react-icons/fa6";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useGetPlanDetailQuery } from "../../providers/store/api/plansApi";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
+import { parseISOInResponse } from "../../shared/utils/parse-iso-in-response";
+import { format } from "date-fns";
+import { SiClockify } from "react-icons/si";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -66,7 +69,31 @@ export const PlanDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<RiCalendarScheduleFill className="text-3xl" />}
             title="Term"
-            value={data?.term.name}
+            value={
+              <Link
+                to={`/term-management/detail/information/${data?.term.termId}`}
+              >
+                <span className="hover:underline duration-200">
+                  {data?.term.name}
+                </span>
+              </Link>
+            }
+          />
+        </motion.div>
+
+        {/* Start-end date */}
+        <motion.div variants={childrenAnimation}>
+          <DetailPropertyItem
+            isFetching={isFetching}
+            icon={<SiClockify className="text-2xl" />}
+            title="Start - end term"
+            value={`${format(
+              parseISOInResponse(data?.term.startDate),
+              "dd/MM/yyyy"
+            )} - ${format(
+              parseISOInResponse(data?.term.endDate),
+              "dd/MM/yyyy"
+            )}`}
           />
         </motion.div>
 

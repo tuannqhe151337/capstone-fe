@@ -99,7 +99,6 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
 const pageSize = 10;
 
 export const ReportDetailExpensePage: React.FC = () => {
-
   // Params
   const { reportId } = useParams<{ reportId: string }>();
 
@@ -130,6 +129,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   const [costTypeId, setCostTypeId] = useState<number | null>();
   const [currencyId, setCurrencyId] = useState<number>();
   const [statusId, setStatusId] = useState<number | null>();
+  const [departmentId, setDepartmentId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
   const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
@@ -171,6 +171,10 @@ export const ReportDetailExpensePage: React.FC = () => {
           paramters.costTypeId = costTypeId;
         }
 
+        if (departmentId) {
+          paramters.departmentId = departmentId;
+        }
+
         if (statusId) {
           paramters.statusId = statusId;
         }
@@ -180,7 +184,7 @@ export const ReportDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId, currencyId]);
+  }, [searchboxValue, page, costTypeId, departmentId, statusId, currencyId]);
 
   // Show checkboxes for review
   const isAuthorizedAndTimeToReviewReport =
@@ -384,6 +388,9 @@ export const ReportDetailExpensePage: React.FC = () => {
         }}
         onCostTypeIdChange={(costTypeId) => {
           setCostTypeId(costTypeId);
+        }}
+        onDepartmentIdChange={(departmentId) => {
+          setDepartmentId(departmentId);
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);

@@ -3,7 +3,7 @@ import { RiCalendarScheduleFill, RiProgress3Fill } from "react-icons/ri";
 import { DetailPropertyItem } from "../../entities/detail-property-item";
 import { FaCheck, FaClock, FaFileImport } from "react-icons/fa6";
 import { SiClockify } from "react-icons/si";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { useGetReportDetailQuery } from "../../providers/store/api/reportsAPI";
 import clsx from "clsx";
@@ -67,7 +67,15 @@ export const ReportDetailInformationPage: React.FC = () => {
             isFetching={isFetching}
             icon={<RiCalendarScheduleFill className="text-3xl" />}
             title="Term"
-            value={report?.term.name}
+            value={
+              <Link
+                to={`/term-management/detail/information/${report?.term.termId}`}
+              >
+                <span className="hover:underline duration-200">
+                  {report?.term.name}
+                </span>
+              </Link>
+            }
           />
         </motion.div>
 
@@ -114,7 +122,6 @@ export const ReportDetailInformationPage: React.FC = () => {
               <RiProgress3Fill
                 className={clsx({
                   "text-3xl": true,
-                  "text-green-600": report?.status.code === "APPROVED",
                   "text-primary-400 dark:text-primary-600":
                     report?.status.code === "REVIEWED",
                 })}
@@ -125,7 +132,6 @@ export const ReportDetailInformationPage: React.FC = () => {
               <div
                 className={clsx({
                   "flex flex-row flex-wrap items-center gap-2": true,
-                  "text-green-600": report?.status.code === "APPROVED",
                   "text-primary-500":
                     report?.status.code === "REVIEWED" ||
                     report?.status.code === "WAITING_FOR_APPROVAL",
@@ -140,8 +146,7 @@ export const ReportDetailInformationPage: React.FC = () => {
                 >
                   {report?.status.name}
                 </p>
-                {report?.status.code === "REVIEWED" ||
-                report?.status.code === "APPROVED" ? (
+                {report?.status.code === "REVIEWED" ? (
                   <FaCheck className="mb-0.5" />
                 ) : null}
               </div>
