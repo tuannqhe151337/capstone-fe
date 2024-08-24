@@ -80,6 +80,9 @@ export const AnnualReportList: React.FC = () => {
   // Scroll to top
   useScrollToTopOnLoad();
 
+  // Year
+  const [year, setYear] = useState<number>();
+
   // Query
   const [fetchAnnual, { data, isFetching }] = useLazyFetchAnnualQuery();
 
@@ -94,8 +97,17 @@ export const AnnualReportList: React.FC = () => {
 
   // Fetch plan on change
   useEffect(() => {
-    fetchAnnual({ page: 1, pageSize: 10 });
-  }, []);
+    const params: ListAnnualReportParameters = {
+      page: 1,
+      pageSize: 10,
+    };
+
+    if (year) {
+      params.year = year;
+    }
+
+    fetchAnnual(params);
+  }, [year]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -130,7 +142,7 @@ export const AnnualReportList: React.FC = () => {
         variants={childrenAnimation}
         className="mt-6 flex justify-end"
       >
-        <YearFilter />
+        <YearFilter onChange={(option) => option && setYear(option.value)} />
       </motion.div>
 
       <motion.div variants={childrenAnimation}>
