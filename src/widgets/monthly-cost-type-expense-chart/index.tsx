@@ -9,6 +9,7 @@ import {
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useConvertNumberToMonthFn } from "../../shared/utils/use-convert-number-to-month-fn";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
+import { useInView } from "react-intersection-observer";
 
 interface Props {
   year: number;
@@ -21,6 +22,9 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
   className,
   chosenCostTypeIdList,
 }) => {
+  // Use in view
+  const { ref, inView } = useInView();
+
   // Get cost type
   const { data: costTypeResult } = useGetAllCostTypeQuery();
 
@@ -58,7 +62,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
   const dataChart: ApexAxisChartSeries = useMemo(() => {
     const dataChart: ApexAxisChartSeries = [];
 
-    if (data && chosenCostTypeIdList) {
+    if (inView && data && chosenCostTypeIdList) {
       // Map by cost type name and list amount corresponding to each month
       const costTypeMonthlyMap: Record<string, number[]> = {};
 
@@ -96,7 +100,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
     }
 
     return dataChart;
-  }, [data, listChosenCostType]);
+  }, [data, listChosenCostType, inView]);
 
   // UI: dark mode
   const isDarkmode = useDetectDarkmode();
@@ -106,12 +110,13 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
 
   return (
     <div
+      ref={ref}
       className={cn(
         "relative w-full h-full border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl pt-9 pb-12 px-8",
         className
       )}
     >
-      <div className="flex flex-row flex-wrap mb-8">
+      <div className="flex flex-row flex-wrap mb-4">
         <div>
           <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
             By month
@@ -121,6 +126,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
       <Chart
         options={{
           chart: {
+            id: "monthly-cost-type-expense-chart",
             toolbar: { show: true, offsetY: 355 },
             animations: { enabled: true },
             redrawOnParentResize: true,
