@@ -7,6 +7,7 @@ import {
   useGetAllCostTypeQuery,
 } from "../../providers/store/api/costTypeAPI";
 import { FaChartPie } from "react-icons/fa6";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 interface Props {
   year: number;
@@ -88,7 +89,23 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
               plotOptions: {
                 pie: {
                   donut: {
-                    labels: { show: true },
+                    labels: {
+                      show: true,
+                      value: {
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        formatter(val) {
+                          return formatViMoney(parseFloat(val));
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              yaxis: {
+                labels: {
+                  formatter: (val) => {
+                    return formatViMoney(val);
                   },
                 },
               },

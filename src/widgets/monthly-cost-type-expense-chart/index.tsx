@@ -6,6 +6,7 @@ import {
   CostType,
   useGetAllCostTypeQuery,
 } from "../../providers/store/api/costTypeAPI";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 interface Props {
   year: number;
@@ -125,6 +126,13 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
             },
           },
           legend: { position: "top" },
+          yaxis: {
+            labels: {
+              formatter: (val) => {
+                return formatViMoney(val);
+              },
+            },
+          },
         }}
         series={dataChart}
         type="area"
