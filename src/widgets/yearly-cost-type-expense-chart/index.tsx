@@ -82,7 +82,11 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
         {data?.data && data.data.length > 0 && (
           <Chart
             options={{
-              chart: { toolbar: { show: true, offsetY: 345 } },
+              chart: {
+                toolbar: { show: true, offsetY: 345 },
+                redrawOnParentResize: true,
+                redrawOnWindowResize: true,
+              },
               legend: { show: false },
               labels: listChosenCostType.map(({ name }) => name) || [],
               dataLabels: { enabled: true },
