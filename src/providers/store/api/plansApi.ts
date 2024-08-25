@@ -5,6 +5,7 @@ import {
   LocalStorageItemKey,
   PaginationResponse,
 } from "./type";
+import { trimObject } from "../../../shared/utils/trim-object";
 
 export interface ListPlanParameters {
   query?: string | null;
@@ -327,7 +328,7 @@ const plansApi = createApi({
         query: (createPlanBody) => ({
           url: `plan/create`,
           method: "POST",
-          body: createPlanBody,
+          body: trimObject(createPlanBody),
         }),
         invalidatesTags: ["plans"],
       }),
@@ -339,7 +340,7 @@ const plansApi = createApi({
         query: (checkUserExistBody) => ({
           url: `plan/check-user-exist`,
           method: "POST",
-          body: checkUserExistBody,
+          body: trimObject(checkUserExistBody),
         }),
       }),
 
@@ -393,7 +394,7 @@ const plansApi = createApi({
         query: (reuploadPlanBody) => ({
           url: "plan/re-upload",
           method: "PUT",
-          body: reuploadPlanBody,
+          body: trimObject(reuploadPlanBody),
         }),
         invalidatesTags: ["plan-detail"],
       }),
