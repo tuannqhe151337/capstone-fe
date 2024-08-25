@@ -51,7 +51,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
     }
 
     setListChosenCostType(listCostType);
-  }, [chosenCostTypeIdList]);
+  }, [costTypeResult, chosenCostTypeIdList]);
 
   const dataChart: ApexNonAxisChartSeries = useMemo(() => {
     const costTypeMap: Record<string, number> = {};
