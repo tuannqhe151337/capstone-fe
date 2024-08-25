@@ -84,6 +84,7 @@ export const MonthlyUserChart: React.FC<Props> = React.memo(({ className }) => {
       <Chart
         options={{
           chart: {
+            id: "monthly-user-chart",
             toolbar: { show: true, offsetY: 355 },
             animations: { enabled: true },
           },
