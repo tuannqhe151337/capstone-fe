@@ -7,6 +7,7 @@ import {
 } from "../../providers/store/api/annualsAPI";
 import { useEffect } from "react";
 import { ApexOptions } from "apexcharts";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
 
 export const AnnualReportDetailChartPage: React.FC = () => {
   // Get annual report detail
@@ -56,6 +57,13 @@ export const AnnualReportDetailChartPage: React.FC = () => {
             labels: annual.data.map(
               (item: AnnualReportChart) => item.costType.name
             ),
+            yaxis: {
+              labels: {
+                formatter: (val) => {
+                  return formatViMoney(val);
+                },
+              },
+            },
           }}
           series={annual.data.map((item: AnnualReportChart) => item.totalCost)}
           type="donut"
