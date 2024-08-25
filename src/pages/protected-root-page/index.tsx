@@ -75,6 +75,7 @@ export const ProtectedRootPage: React.FC = () => {
           />
         </div>
         <div
+          className="overflow-y-hidden"
           style={{ width: width ? window.innerWidth - width - 1 : undefined }}
         >
           <Outlet />

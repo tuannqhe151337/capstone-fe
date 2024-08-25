@@ -53,7 +53,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
     }
 
     setListChosenCostType(listCostType);
-  }, [chosenCostTypeIdList]);
+  }, [costTypeResult, chosenCostTypeIdList]);
 
   const dataChart: ApexAxisChartSeries = useMemo(() => {
     const dataChart: ApexAxisChartSeries = [];

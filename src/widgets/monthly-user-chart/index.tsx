@@ -1,14 +1,14 @@
+import React, { useEffect, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import { YearFilter } from "../../entities/year-filter";
 import { cn } from "../../shared/utils/cn";
-import { useEffect, useMemo, useState } from "react";
 import { useLazyGetMonthlyUserStatsQuery } from "../../providers/store/api/dashboardAPI";
 
 interface Props {
   className?: string;
 }
 
-export const MonthlyUserChart: React.FC<Props> = ({ className }) => {
+export const MonthlyUserChart: React.FC<Props> = React.memo(({ className }) => {
   // Select year
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
@@ -105,4 +105,4 @@ export const MonthlyUserChart: React.FC<Props> = ({ className }) => {
       />
     </div>
   );
-};
+});
