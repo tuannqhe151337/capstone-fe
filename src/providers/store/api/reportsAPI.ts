@@ -6,6 +6,7 @@ import {
   LocalStorageItemKey,
   PaginationResponse,
 } from "./type";
+import { trimObject } from "../../../shared/utils/trim-object";
 
 export interface ListReportParameters {
   query?: string;
@@ -270,7 +271,7 @@ const reportsAPI = createApi({
         query: (reviewExpenseBody) => ({
           url: "report/expense-approval",
           method: "PUT",
-          body: reviewExpenseBody,
+          body: trimObject(reviewExpenseBody),
         }),
         invalidatesTags: ["actual-cost"],
       }),
@@ -279,7 +280,7 @@ const reportsAPI = createApi({
         query: (reviewExpenseBody) => ({
           url: "report/expense-deny",
           method: "PUT",
-          body: reviewExpenseBody,
+          body: trimObject(reviewExpenseBody),
         }),
         invalidatesTags: ["actual-cost"],
       }),
@@ -287,7 +288,7 @@ const reportsAPI = createApi({
         query: (uploadReportExpenses) => ({
           url: "report/upload",
           method: "POST",
-          body: uploadReportExpenses,
+          body: trimObject(uploadReportExpenses),
         }),
         invalidatesTags: ["actual-cost", "query"],
       }),
@@ -296,7 +297,7 @@ const reportsAPI = createApi({
         query: (completeReviewReportBody) => ({
           url: "report/complete-review",
           method: "POST",
-          body: completeReviewReportBody,
+          body: trimObject(completeReviewReportBody),
         }),
         invalidatesTags: ["report-detail"],
       }),
