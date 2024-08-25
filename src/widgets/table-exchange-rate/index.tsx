@@ -226,7 +226,7 @@ export const TableExchangeRate: React.FC<Props> = ({
         >
           {monthlyExchangeRateMap.map((monthlyExchangeRate, index) => (
             <tr
-              key={index}
+              key={monthlyExchangeRate.month}
               className={clsx({
                 "group text-primary-500 hover:text-primary-600 dark:text-primary-600 dark:hover:text-primary-400 duration-200":
                   true,
