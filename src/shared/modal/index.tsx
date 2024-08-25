@@ -23,6 +23,7 @@ const animation: Variants = {
 const duration = 200; // In miliseconds
 
 interface Props {
+  containerClassName?: string;
   className?: string;
   show: boolean;
   onClose: () => any;
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export const Modal: React.FC<Props> = ({
+  containerClassName,
   className,
   show,
   onClose,
@@ -85,7 +87,10 @@ export const Modal: React.FC<Props> = ({
       {showModal &&
         ReactDOM.createPortal(
           <div
-            className={`fixed flex w-full h-full top-0 left-0 backdrop-blur z-30 cursor-pointer`}
+            className={cn(
+              `fixed flex w-full h-full top-0 left-0 backdrop-blur z-30 cursor-pointer`,
+              containerClassName
+            )}
           >
             <AnimatePresence>
               {show && (
