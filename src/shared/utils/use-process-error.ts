@@ -18,14 +18,19 @@ export const useProcessError = ({ error, isError }: Param) => {
   useEffect(() => {
     if (isError) {
       if (error && "data" in error) {
-        if (error.data && "message" in (error.data as any)) {
+        if (
+          error.data &&
+          typeof error.data === "object" &&
+          "message" in (error.data as any)
+        ) {
           setErrorMessage(
             uppercaseFirstCharacter((error.data as ErrorData).message)
           );
+          return;
         }
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
       }
+
+      setErrorMessage("Something went wrong, please try again!");
     }
   }, [isError]);
 
