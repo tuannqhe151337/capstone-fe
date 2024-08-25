@@ -67,8 +67,6 @@ export const CostTypeFilter: React.FC<Props> = ({
       loadOptions.options.unshift(defaultOption);
     }
 
-    console.log(loadOptions);
-
     return loadOptions;
   };
 

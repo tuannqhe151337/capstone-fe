@@ -53,7 +53,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
     }
 
     setListChosenCostType(listCostType);
-  }, [chosenCostTypeIdList]);
+  }, [costTypeResult, chosenCostTypeIdList]);
 
   const dataChart: ApexAxisChartSeries = useMemo(() => {
     const dataChart: ApexAxisChartSeries = [];
@@ -123,6 +123,8 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
           chart: {
             toolbar: { show: true, offsetY: 355 },
             animations: { enabled: true },
+            redrawOnParentResize: true,
+            redrawOnWindowResize: true,
           },
           dataLabels: { enabled: false },
           stroke: { curve: "smooth" },
