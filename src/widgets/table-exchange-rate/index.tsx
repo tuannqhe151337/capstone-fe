@@ -15,6 +15,7 @@ import {
 import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
 import { UpdatableMoneyAmountInput } from "./component/updatable-money-amount-input";
 import { useGetBaseCurrency } from "../../features/use-get-base-currency";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -88,6 +89,9 @@ export const TableExchangeRate: React.FC<Props> = ({
   isFetching,
   listMonthlyExchangeRate,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Get all currencies
   const { data: currencies } = useGetAllCurrencyQuery();
 
@@ -190,7 +194,7 @@ export const TableExchangeRate: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500 dark:text-primary-600 rounded-tl-lg"
             >
-              Month
+              {t("Month")}
             </th>
             {currencies?.data
               .filter(

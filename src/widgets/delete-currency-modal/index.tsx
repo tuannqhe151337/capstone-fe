@@ -9,6 +9,7 @@ import {
   Currency,
   useDeleteCurrencyMutation,
 } from "../../providers/store/api/currencyApi";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   currency: Currency;
@@ -23,6 +24,9 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Mutation
   const [deleteCurrency, { isError, isLoading, isSuccess }] =
     useDeleteCurrencyMutation();
@@ -60,21 +64,25 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete currency
+            {t("Delete currency")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the currency{" "}
+            {t("delete_currency_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{currency.name}"
+              "
+              {t("delete_currency_message.part2", {
+                currencyName: currency.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_currency_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -85,7 +93,7 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -96,7 +104,7 @@ export const DeleteCurrencyModal: React.FC<Props> = ({
               deleteCurrency({ currencyId: currency.currencyId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>

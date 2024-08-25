@@ -6,6 +6,7 @@ import TabList from "../../shared/tab-list";
 import { useEffect, useState } from "react";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -44,6 +45,9 @@ const childrenAnimation: Variants = {
 type TabId = "rate" | "currency";
 
 export const ExchangeRateRootPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
@@ -86,7 +90,7 @@ export const ExchangeRateRootPage: React.FC = () => {
             className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7"
             variants={childrenAnimation}
           >
-            Exchange rate
+            {t("Exchange rate")}
           </motion.p>
         </div>
       </BubbleBanner>
@@ -99,8 +103,8 @@ export const ExchangeRateRootPage: React.FC = () => {
           className="-mb-0.5"
           selectedItemId={selectedTabId}
           items={[
-            { id: "rate", name: "Monthly rate" },
-            { id: "currency", name: "Currency" },
+            { id: "rate", name: t("Monthly rate") },
+            { id: "currency", name: t("Currency") },
           ]}
           onItemChangeHandler={({ id }) => {
             switch (id) {

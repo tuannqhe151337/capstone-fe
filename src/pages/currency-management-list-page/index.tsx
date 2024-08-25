@@ -32,6 +32,7 @@ const staggerChildrenAnimation: Variants = {
 };
 
 export const CurrencyManagementListPage: React.FC = () => {
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
