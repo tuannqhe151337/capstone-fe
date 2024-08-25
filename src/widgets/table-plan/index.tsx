@@ -20,6 +20,7 @@ import { PlanPreviewer } from "../../entities/plan-previewer";
 import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
 import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
 import { truncateString } from "../../shared/utils/truncate-string";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -73,6 +74,10 @@ export const TablePlanManagement: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Navigation
   const navigate = useNavigate();
 
@@ -130,25 +135,25 @@ export const TablePlanManagement: React.FC<Props> = ({
               scope="col"
               className="px-20 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
-              Plan name
+              {t("Plan name")}
             </th>
             <th
               scope="col"
               className="px-12 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
             >
-              Term
+              {t("Term")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
             >
-              Department
+              {t("Department")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Version
+              {t("Version")}
             </th>
             <th scope="col" className="rounded-tr-lg">
               <IconButton
@@ -291,7 +296,7 @@ export const TablePlanManagement: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

@@ -17,6 +17,7 @@ import { downloadFileFromServer } from "../../shared/utils/download-file-from-se
 import { UploadFileStage } from "./component/upload-file-stage";
 import { TEInput } from "tw-elements-react";
 import { DisabledSelect } from "../../shared/disabled-select";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   LEFT = "left",
@@ -73,6 +74,9 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
     }
   }, [show]);
 
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Mutation
   const [createPlan, { isLoading, isError, isSuccess }] =
     useCreatePlanMutation();
@@ -113,7 +117,7 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
         {/* Header */}
         <div className="relative pt-5">
           <p className="w-fit m-auto text-xl font-bold text-primary-500 dark:text-primary-600">
-            Choose term
+            {t("Choose term")}
           </p>
           <div className="absolute top-3 right-5">
             <IconButton
@@ -220,25 +224,25 @@ export const UploadPlanModal: React.FC<Props> = ({ show, onClose }) => {
                           <TEInput
                             disabled
                             className="w-full"
-                            label="Plan name"
+                            label={t("Plan name")}
                             value={planName || ""}
                           />
                         </div>
                         <DisabledSelect
                           className="w-[300px]"
-                          label="Term"
+                          label={t("Term")}
                           value={term?.name || ""}
                           maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
-                          label="Department"
+                          label={t("Department")}
                           value={me?.department.name || ""}
                           maxLengthBeforeTrim={16}
                         />
                       </div>
                     }
-                    submitButtonText="Create new plan"
+                    submitButtonText={t("Create new plan")}
                     isLoading={isLoading}
                     expenses={expenses}
                     termName={term?.name}

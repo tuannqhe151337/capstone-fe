@@ -13,6 +13,7 @@ import { DeleteCurrencyModal } from "../delete-currency-modal";
 import { Currency } from "../../providers/store/api/currencyApi";
 import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-from-response";
 import { Tag } from "../../shared/tag";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -77,6 +78,8 @@ export const TableCurrency: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -123,25 +126,25 @@ export const TableCurrency: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              ID
+              {t("ID")}
             </th>
             <th
               scope="col"
               className="pl-12 pr-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              <p className="text-left">Name</p>
+              <p className="text-left">{t("Name")}</p>
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created at
+              {t("Created at")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Updated at
+              {t("Updated at")}
             </th>
             <th scope="col">
               <IconButton
@@ -205,7 +208,7 @@ export const TableCurrency: React.FC<Props> = ({
                     </p>
                     {currency.default && (
                       <Tag background="filled" variant="inProgress">
-                        Base currency
+                        {t("Base currency")}
                       </Tag>
                     )}
                   </div>
@@ -269,7 +272,7 @@ export const TableCurrency: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

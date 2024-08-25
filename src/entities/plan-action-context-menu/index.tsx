@@ -5,6 +5,7 @@ import { ContextMenuItem } from "../../shared/context-menu-item";
 import { FaTrash } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
 import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   className?: string;

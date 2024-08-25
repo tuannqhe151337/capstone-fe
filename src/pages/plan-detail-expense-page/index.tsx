@@ -15,6 +15,7 @@ import {
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -90,6 +91,8 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
 const pageSize = 10;
 
 export const PlanDetailExpensePage: React.FC = () => {
+
+
   // Get show upload modal method
   const { plan, setShowReuploadModal } = usePlanDetailContext();
 

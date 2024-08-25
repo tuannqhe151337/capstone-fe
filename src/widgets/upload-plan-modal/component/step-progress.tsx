@@ -3,12 +3,16 @@ import { RiCalendarScheduleFill } from "react-icons/ri";
 import { FaUpload } from "react-icons/fa";
 import { FaListUl } from "react-icons/fa6";
 import clsx from "clsx";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   stage: number;
 }
 
 export const StepProgress: React.FC<Props> = ({ stage }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   return (
     <div className="relative md:w-[800px] xl:w-[1000px] h-fit">
       <div className="absolute w-full h-full top-[23px] left-0 z-0">
@@ -55,7 +59,7 @@ export const StepProgress: React.FC<Props> = ({ stage }) => {
                 "text-primary-500": stage >= 1,
               })}
             >
-              Select term
+              {t("Select term")}
             </p>
           </div>
 
@@ -84,7 +88,7 @@ export const StepProgress: React.FC<Props> = ({ stage }) => {
                 "text-primary-500": stage >= 2,
               })}
             >
-              Upload plan
+              {t("Upload plan")}
             </p>
           </div>
 
@@ -113,7 +117,7 @@ export const StepProgress: React.FC<Props> = ({ stage }) => {
                 "text-primary-500": stage >= 3,
               })}
             >
-              Confirm expenses
+              {t("Confirm expenses")}
             </p>
           </div>
         </div>

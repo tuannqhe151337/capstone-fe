@@ -6,6 +6,7 @@ import { TEInput } from "tw-elements-react";
 import { useMeQuery } from "../../../providers/store/api/authApi";
 import { useMemo, useState } from "react";
 import { useWindowHeight } from "../../../shared/utils/use-window-height";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   hide?: boolean;
@@ -28,6 +29,9 @@ export const UploadFileStage: React.FC<Props> = ({
   onPreviousState,
   onNextStage,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Department from user's detail
   const { data: me } = useMeQuery();
 
@@ -50,7 +54,7 @@ export const UploadFileStage: React.FC<Props> = ({
           <div className="flex-1 -mb-[45px]">
             <TEInput
               className="w-full"
-              label="Plan name"
+              label={t("Plan name")}
               value={planName}
               onChange={(e) => setPlanName(e.currentTarget.value)}
               autoFocus
@@ -66,13 +70,13 @@ export const UploadFileStage: React.FC<Props> = ({
           </div>
           <DisabledSelect
             className="w-[300px]"
-            label="Term"
+            label={t("Term")}
             value={termName || ""}
             maxLengthBeforeTrim={32}
           />
           <DisabledSelect
             className="w-[200px]"
-            label="Department"
+            label={t("Department")}
             value={me?.department.name || ""}
             maxLengthBeforeTrim={16}
           />

@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useGetBaseCurrency } from "../../features/use-get-base-currency";
 import { useProcessError } from "../../shared/utils/use-process-error";
+import { useTranslation } from "react-i18next";
 
 const MonthSchema = z.string().refine(
   (month) => {
@@ -64,6 +65,9 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
   onClose,
   onCreateSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Form
   const {
     register,
@@ -135,7 +139,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
         <form className="w-full">
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              New monthly rate conversion
+              {t("New monthly rate conversion")}
             </div>
 
             <ErrorNotificationCard
@@ -161,7 +165,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                     value={value}
                     customInput={TEInput}
                     size="lg"
-                    label="Month"
+                    label={t("Month")}
                     pattern="##/####"
                     format="##/####"
                     mask="_"
@@ -255,7 +259,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                 onClose && onClose();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               type="submit"
@@ -267,7 +271,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
               className="p-3"
               onClick={handleSubmit(onSubmit)}
             >
-              {!isLoading && "New monthly rate"}
+              {!isLoading && t("New monthly rate")}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

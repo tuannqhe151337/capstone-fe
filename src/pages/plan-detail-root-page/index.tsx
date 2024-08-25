@@ -31,6 +31,7 @@ import {
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { NumericFormat } from "react-number-format";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -86,6 +87,9 @@ type ContextType = {
 };
 
 export const PlanDetailRootPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT, Role.FINANCIAL_STAFF]);
 
@@ -158,10 +162,10 @@ export const PlanDetailRootPage: React.FC = () => {
               to={`/plan-management`}
               className="font-bold opacity-70 hover:opacity-100 hover:underline duration-200"
             >
-              Plan management
+              {t("Plan management")}
             </Link>
             <span className="ml-3 text-base opacity-40">&gt;</span>
-            <span>Plan detail</span>
+            <span>{t("Plan detail")}</span>
           </p>
 
           {/* Right */}
@@ -184,7 +188,7 @@ export const PlanDetailRootPage: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap gap-3">
                 <FaDownload />
-                <p className="text-sm font-bold">Download plan</p>
+                <p className="text-sm font-bold">{t("Download plan")}</p>
               </div>
             </Button>
             {isAuthorizedToReupload && (
@@ -196,7 +200,7 @@ export const PlanDetailRootPage: React.FC = () => {
               >
                 <div className="flex flex-row flex-wrap gap-3 ">
                   <FaUpload className="mt-0.5" />
-                  <p className="text-sm font-semibold">Reupload plan</p>
+                  <p className="text-sm font-semibold">{t("Reupload plan")}</p>
                 </div>
               </Button>
             )}
@@ -236,7 +240,7 @@ export const PlanDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<RiCalendarScheduleFill className="text-4xl" />}
-            label={"Term"}
+            label={t("Term")}
             isFetching={isFetching}
             value={plan?.term.name}
             meteors
@@ -246,7 +250,7 @@ export const PlanDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaCoins className="text-4xl" />}
-            label={"Expected cost"}
+            label={t("Expected cost")}
             isFetching={isFetching}
             value={
               <NumericFormat
@@ -272,7 +276,7 @@ export const PlanDetailRootPage: React.FC = () => {
         <motion.div className="flex-1" variants={childrenAnimation}>
           <OverviewCard
             icon={<FaMoneyBillTrendUp className="text-4xl" />}
-            label={"Actual cost"}
+            label={t("Actual cost")}
             isFetching={isFetching}
             value={
               <NumericFormat
@@ -303,9 +307,9 @@ export const PlanDetailRootPage: React.FC = () => {
               className="-mb-0.5"
               selectedItemId={selectedTabId}
               items={[
-                { id: "expenses", name: "Expenses" },
-                { id: "detail", name: "Detail" },
-                { id: "version", name: "Version" },
+                { id: "expenses", name: t("Expenses") },
+                { id: "detail", name: t("Detail") },
+                { id: "version", name: t("Version") },
               ]}
               onItemChangeHandler={({ id }) => {
                 switch (id) {

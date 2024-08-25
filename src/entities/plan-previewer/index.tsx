@@ -9,6 +9,7 @@ import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-fr
 import { HiUser } from "react-icons/hi";
 import { NumericFormat } from "react-number-format";
 import { AFFIX } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -35,6 +36,9 @@ export const PlanPreviewer: React.FC<Props> = ({
   children,
   containerClassName,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Query
   const [fetchPlanDetail, { data: plan, isSuccess }] =
     useLazyGetPlanDetailQuery();
@@ -97,7 +101,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                       <FaMoneyBillTrendUp className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Expected cost
+                          {t("Expected cost")}
                         </p>
                         <div className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                           <NumericFormat
@@ -125,7 +129,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                       <FaCoins className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Actual cost
+                          {t("Actual cost")}
                         </p>
                         <div className="text-left text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                           <NumericFormat
@@ -155,7 +159,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                       <FaClock className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Created at
+                          {t("Created at")}
                         </p>
                         <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                           {(plan?.createdAt &&
@@ -170,7 +174,7 @@ export const PlanPreviewer: React.FC<Props> = ({
                       <HiUser className="text-lg text-neutral-400/30" />
                       <div className="space-y-1">
                         <p className="text-left text-xs text-neutral-400/70 dark:text-neutral-500/80">
-                          Created by
+                          {t("Created by")}
                         </p>
                         <p className="text-sm font-bold text-neutral-500/80 dark:text-neutral-400">
                           {plan?.user.username}
