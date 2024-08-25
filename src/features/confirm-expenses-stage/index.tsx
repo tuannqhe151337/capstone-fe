@@ -51,6 +51,7 @@ interface Props {
   showStatusColumn?: boolean;
   pageSize?: number;
   hide?: boolean;
+  confirmTableHeightOffset?: number;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
@@ -65,6 +66,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
   showStatusColumn,
   pageSize,
   hide,
+  confirmTableHeightOffset,
   onPreviousState,
   onNextStage,
 }) => {
@@ -83,6 +85,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
         expenses={expenses}
         hide={hide}
         pageSize={pageSize}
+        tableOffsetHeight={confirmTableHeightOffset}
         showExpenseIdColumn={showExpenseIdColumn}
         showExpenseCodeColumn={showExpenseCodeColumn}
         showStatusColumn={showStatusColumn}

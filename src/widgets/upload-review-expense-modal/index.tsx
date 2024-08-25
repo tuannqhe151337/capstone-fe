@@ -219,6 +219,7 @@ export const UploadReviewExpenseModal: React.FC<Props> = ({
                     showExpenseCodeColumn
                     showStatusColumn
                     hide={stage !== 2}
+                    confirmTableHeightOffset={290}
                     onPreviousState={() => {
                       setStage(1);
                     }}
