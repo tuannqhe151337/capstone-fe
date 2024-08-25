@@ -173,6 +173,9 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
           tooltip: {
             theme: isDarkmode ? "dark" : "light",
           },
+          grid: {
+            borderColor: isDarkmode ? "#404040" : "#e5e5e5",
+          },
         }}
         series={dataChart}
         type="area"
