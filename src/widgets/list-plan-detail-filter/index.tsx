@@ -17,6 +17,7 @@ import { StatusExpenseFilter } from "../../entities/status-expense-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { ProjectFilter } from "../../entities/project-filter";
 import { SupplierFilter } from "../../entities/supplier-filter";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -124,6 +125,9 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
   onDownloadClick,
   onReuploadClick,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Filter section
   const [showFilterBtn, setShowFillterBtn] = useState(false);
 
@@ -181,7 +185,9 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <RiDeleteRow className="text-xl" />
-                          <p className="text-sm font-semibold">Deny expense</p>
+                          <p className="text-sm font-semibold">
+                            {t("Deny expense")}
+                          </p>
                         </div>
                       </Button>
                     </motion.div>
@@ -196,7 +202,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <FaListCheck className="text-lg" />
                           <p className="text-sm font-semibold">
-                            Approve expense
+                            {t("Approve expense")}
                           </p>
                         </div>
                       </Button>
@@ -269,7 +275,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                         <FaDownload className="mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Download plan
+                          {t("Download plan")}
                         </p>
                       </div>
                     </TERipple>
@@ -284,7 +290,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                           <FaUpload className="mr-5 text-primary-500 dark:text-neutral-400" />
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Reupload plan
+                            {t("Reupload plan")}
                           </p>
                         </div>
                       </TERipple>

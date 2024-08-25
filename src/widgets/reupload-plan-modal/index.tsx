@@ -15,6 +15,7 @@ import { UploadFileStage } from "./component/upload-file-stage";
 import { TEInput } from "tw-elements-react";
 import { DisabledSelect } from "../../shared/disabled-select";
 import { useMeQuery } from "../../providers/store/api/authApi";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   LEFT = "left",
@@ -63,6 +64,9 @@ export const ReuploadPlanModal: React.FC<Props> = ({
   show,
   onClose,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Department from user's detail
   const { data: me } = useMeQuery();
 
@@ -114,7 +118,7 @@ export const ReuploadPlanModal: React.FC<Props> = ({
         {/* Header */}
         <div className="relative pt-5">
           <p className="w-fit m-auto text-xl font-bold text-primary-500 dark:text-primary-600">
-            Choose term
+            {t("Choose term")}
           </p>
           <div className="absolute top-3 right-5">
             <IconButton
@@ -198,25 +202,25 @@ export const ReuploadPlanModal: React.FC<Props> = ({
                           <TEInput
                             disabled
                             className="w-full"
-                            label="Plan name"
+                            label={t("Plan name")}
                             value={planName || ""}
                           />
                         </div>
                         <DisabledSelect
                           className="w-[300px]"
-                          label="Term"
+                          label={t("Term")}
                           value={termName || ""}
                           maxLengthBeforeTrim={32}
                         />
                         <DisabledSelect
                           className="w-[200px]"
-                          label="Department"
+                          label={t("Department")}
                           value={me?.department.name || ""}
                           maxLengthBeforeTrim={16}
                         />
                       </div>
                     }
-                    submitButtonText="Reupload plan"
+                    submitButtonText={t("Reupload plan")}
                     isLoading={isLoading}
                     expenses={expenses}
                     termName={termName}

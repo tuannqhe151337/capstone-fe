@@ -9,6 +9,7 @@ import {
 } from "../../providers/store/api/plansApi";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   plan: PlanPreview;
@@ -23,6 +24,9 @@ export const DeletePlanModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Mutation
   const [deletePlan, { isError, isLoading, isSuccess }] =
     useDeletePlanMutation();
@@ -59,21 +63,25 @@ export const DeletePlanModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete plan
+            {t("Delete plan")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the plan{" "}
+            {t("delete_plan_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{plan.name}"
+              "
+              {t("delete_plan_message.part2", {
+                planName: plan.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_plan_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -84,7 +92,7 @@ export const DeletePlanModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -95,7 +103,7 @@ export const DeletePlanModal: React.FC<Props> = ({
               deletePlan({ planId: plan.planId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>
