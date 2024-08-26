@@ -9,6 +9,7 @@ import {
 import { FaChartPie } from "react-icons/fa6";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useInView } from "react-intersection-observer";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 
 interface Props {
   year: number;
@@ -73,6 +74,9 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
     }
   }, [data, listChosenCostType, inView]);
 
+  // Dark mode
+  const isDarkmode = useDetectDarkmode();
+
   return (
     <div
       ref={ref}
@@ -98,6 +102,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
                 redrawOnParentResize: true,
                 redrawOnWindowResize: true,
               },
+              stroke: { show: isDarkmode ? false : true },
               legend: { show: false },
               labels: listChosenCostType.map(({ name }) => name) || [],
               dataLabels: { enabled: true },
@@ -109,6 +114,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
                       value: {
                         fontSize: "14px",
                         fontWeight: "bold",
+                        color: isDarkmode ? "white" : "#9ca3af",
                         formatter(val) {
                           return formatViMoney(parseFloat(val));
                         },

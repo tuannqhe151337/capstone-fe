@@ -4,6 +4,7 @@ import { cn } from "../../shared/utils/cn";
 import { YearFilter } from "../../entities/year-filter";
 import { useLazyGetDepartmentUserStatsQuery } from "../../providers/store/api/dashboardAPI";
 import { FaChartPie } from "react-icons/fa6";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 
 interface Props {
   className?: string;
@@ -26,6 +27,9 @@ export const DepartmentUserChart: React.FC<Props> = React.memo(
     const dataChart: ApexNonAxisChartSeries = useMemo(() => {
       return data?.data.map(({ numberUser }) => numberUser || 0) || [];
     }, [data]);
+
+    // Is dark mode
+    const isDarkmode = useDetectDarkmode();
 
     return (
       <div
@@ -58,6 +62,7 @@ export const DepartmentUserChart: React.FC<Props> = React.memo(
             <Chart
               options={{
                 chart: { toolbar: { show: true, offsetY: 345 } },
+                stroke: { show: isDarkmode ? false : true },
                 legend: { show: false },
                 labels:
                   data?.data.map(({ department: { name } }) => name) || [],
