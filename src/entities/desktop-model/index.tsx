@@ -16,7 +16,7 @@ interface Props {
   inView?: boolean;
 }
 
-export const DesktopModal: React.FC<Props> = ({ inView }) => {
+export const DesktopModel: React.FC<Props> = ({ inView }) => {
   const gltf = useLoader(GLTFLoader, "/3d/desktop/scene.gltf");
 
   const meshRef =
@@ -39,18 +39,22 @@ export const DesktopModal: React.FC<Props> = ({ inView }) => {
 
   return (
     <>
-      <PerspectiveCamera position={[0, 0, 0]} />
-      <ambientLight color={"#f0f9ff"} intensity={7.5} />
-      <hemisphereLight color={"#f0f9ff"} intensity={7.5} />
-      <mesh
-        ref={meshRef}
-        position={[0, -2.05, 0]}
-        rotation={[0, -Math.PI / 2 - 0.5, 0]}
-        scale={3.15}
-      >
-        <primitive object={gltf.scene} />
-      </mesh>
-      <OrbitControls enablePan={false} enableZoom={false} />
+      {inView && (
+        <>
+          <PerspectiveCamera position={[0, 0, 0]} />
+          <ambientLight color={"#f0f9ff"} intensity={7.5} />
+          <hemisphereLight color={"#f0f9ff"} intensity={7.5} />
+          <mesh
+            ref={meshRef}
+            position={[0, -2.05, 0]}
+            rotation={[0, -Math.PI / 2 - 0.5, 0]}
+            scale={3.15}
+          >
+            <primitive object={gltf.scene} />
+          </mesh>
+          <OrbitControls enablePan={false} enableZoom={false} />
+        </>
+      )}
     </>
   );
 };

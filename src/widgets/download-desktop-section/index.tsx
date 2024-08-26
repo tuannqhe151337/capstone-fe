@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Button } from "../../shared/button";
 import { FaWindows } from "react-icons/fa6";
 import { Canvas } from "@react-three/fiber";
-import { DesktopModal } from "../../entities/desktop-modal";
+import { DesktopModel } from "../../entities/desktop-model";
 import { useInView } from "react-intersection-observer";
 
 export const DownloadDesktopSection: React.FC = () => {
@@ -18,7 +18,7 @@ export const DownloadDesktopSection: React.FC = () => {
       <div className="absolute top-0 left-0 w-full h-full">
         <Canvas shadows gl={{ preserveDrawingBuffer: true }}>
           <Suspense fallback={null}>
-            <DesktopModal inView={inView} />
+            <DesktopModel inView={inView} />
           </Suspense>
         </Canvas>
       </div>
