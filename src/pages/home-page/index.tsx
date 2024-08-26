@@ -9,6 +9,7 @@ import { MonthlyUserChart } from "../../widgets/monthly-user-chart";
 import { DepartmentUserChart } from "../../widgets/department-user-chart";
 import { TopListOverviewCard } from "../../widgets/top-list-overview-card";
 import { CostTypeConsumptionSection } from "../../widgets/cost-type-consumption-section";
+import { DownloadDesktopSection } from "../../widgets/download-desktop-section";
 
 const GlobeSection = lazy(() => import("../../widgets/globe-section"));
 
@@ -61,10 +62,12 @@ export const HomePage: React.FC = () => {
       exit={AnimationStage.HIDDEN}
       variants={staggerChildrenAnimation}
     >
+      {/* Overview card */}
       <div className="px-10">
         <TopListOverviewCard />
       </div>
 
+      {/* Chart for accountant and financial staff */}
       {me?.role.code === Role.ACCOUNTANT && (
         <motion.div className="mt-10 px-10" variants={childrenAnimation}>
           <MonthlyExpectedActualCostChart />
@@ -78,6 +81,7 @@ export const HomePage: React.FC = () => {
         </div>
       )}
 
+      {/* Chart for admin */}
       {me?.role.code === Role.ADMIN && (
         <div className="flex flex-row justify-stretch items-stretch justify-items-stretch gap-5 mt-10 px-10 w-full">
           <motion.div className="flex-[2]" variants={childrenAnimation}>
@@ -89,7 +93,12 @@ export const HomePage: React.FC = () => {
         </div>
       )}
 
-      <div ref={ref} className="mt-20 mb-20">
+      {/* Download desktop section */}
+      <div className="mt-10">
+        <DownloadDesktopSection />
+      </div>
+
+      <div ref={ref} className="mt-32 mb-20">
         <div className="h-[510px]">{inView && <GlobeSection />}</div>
       </div>
     </motion.div>
