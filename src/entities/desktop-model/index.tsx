@@ -33,7 +33,7 @@ export const DesktopModel: React.FC<Props> = ({ inView }) => {
     if (inView && meshRef.current) {
       // Rotate based on time
       meshRef.current.rotation.y =
-        -Math.PI / 2 - 0.5 + clock.getElapsedTime() * 0.075; // Slow rotation speed
+        -Math.PI / 2 - 0.5 + clock.getElapsedTime() * 0.05; // Slow rotation speed
     }
   });
 

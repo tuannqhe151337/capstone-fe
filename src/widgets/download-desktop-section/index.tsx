@@ -10,18 +10,18 @@ export const DownloadDesktopSection: React.FC = () => {
   const { ref, inView } = useInView();
 
   return (
-    <div
-      ref={ref}
-      className="relative bg-primary-50 dark:bg-neutral-800/20 h-[600px] my-100 mx-10 rounded-xl"
-    >
+    <div className="relative bg-primary-50 dark:bg-neutral-800/20 h-[600px] my-100 mx-10 rounded-xl">
       {/* Desktop 3D modal */}
-      <div className="absolute top-0 left-0 w-full h-full">
+      <div className="absolute top-0 left-0 w-full h-full cursor-grab">
         <Canvas shadows gl={{ preserveDrawingBuffer: true }}>
           <Suspense fallback={null}>
             <DesktopModel inView={inView} />
           </Suspense>
         </Canvas>
       </div>
+
+      {/* 3d model will render if scroll down here */}
+      <div ref={ref} className="absolute top-20 h-[400px]"></div>
 
       <div className="flex flex-col flex-wrap items-center justify-center pt-10 pb-5 w-full h-full">
         <div className="text-center text-2xl font-bold text-primary-500 dark:text-neutral-300">
