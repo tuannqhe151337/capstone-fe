@@ -10,6 +10,7 @@ import { ExpenseTag } from "../../../entities/expense-tag";
 import { ExpenseStatusCodes } from "../../../providers/store/api/type";
 import clsx from "clsx";
 import { useWindowHeight } from "../../../shared/utils/use-window-height";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -92,6 +93,9 @@ export const ErrorExpensesTable: React.FC<Props> = ({
   showExpenseCodeColumn,
   showStatusColumn,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Page
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
@@ -192,7 +196,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                       showExpenseCodeColumn,
                   })}
                 >
-                  <div className="w-max">Code</div>
+                  <div className="w-max">{t("Code")}</div>
                 </th>
               )}
               <th
@@ -204,7 +208,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                     showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Expenses</div>
+                <div className="w-max">{t("Expenses")}</div>
               </th>
               <th
                 className={clsx({
@@ -212,7 +216,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Cost type</div>
+                <div className="w-max">{t("Cost type")}</div>
               </th>
               <th
                 className={clsx({
@@ -220,7 +224,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Unit price</div>
+                <div className="w-max">{t("Unit price")}</div>
               </th>
               <th
                 className={clsx({
@@ -228,7 +232,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Amount</div>
+                <div className="w-max">{t("Amount")}</div>
               </th>
               <th
                 className={clsx({
@@ -236,7 +240,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Total</div>
+                <div className="w-max">{t("Total")}</div>
               </th>
               <th
                 className={clsx({
@@ -244,7 +248,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Currency</div>
+                <div className="w-max">{t("Currency")}</div>
               </th>
               <th
                 className={clsx({
@@ -252,7 +256,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Project name</div>
+                <div className="w-max">{t("Project name")}</div>
               </th>
               <th
                 className={clsx({
@@ -260,7 +264,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Supplier name</div>
+                <div className="w-max">{t("Supplier name")}</div>
               </th>
               <th
                 className={clsx({
@@ -268,7 +272,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                PiC
+                {t("PiC")}
               </th>
               <th
                 className={clsx({
@@ -276,7 +280,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                   "text-sm": showStatusColumn || showExpenseCodeColumn,
                 })}
               >
-                <div className="w-max">Notes</div>
+                <div className="w-max">{t("Notes")}</div>
               </th>
               {showStatusColumn && (
                 <th
@@ -285,7 +289,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                     "text-sm": showStatusColumn || showExpenseCodeColumn,
                   })}
                 >
-                  Status
+                  {t("Status")}
                 </th>
               )}
             </tr>
