@@ -162,20 +162,22 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
             <AnimatePresence>
               {showReviewExpense && (
                 <div
-                  className="absolute right-0 top-0"
+                  className="absolute right-0 top-1"
                   style={{ width: ReviewExpenseWidth }}
                 >
                   <motion.div
-                    className="flex flex-row flex-wrap items-center"
+                    className="flex flex-row flex-wrap items-center gap-3 justify-center w-full"
                     initial={AnimationStage.HIDDEN}
                     animate={AnimationStage.VISIBLE}
                     variants={staggerChildrenAnimation}
                     transition={{ delay: 0.5 }}
                   >
-                    <motion.div variants={childrenAnimation}>
+                    <motion.div
+                      className="h-max w-max"
+                      variants={childrenAnimation}
+                    >
                       <Button
                         variant="error"
-                        containerClassName="mr-3"
                         onClick={() => {
                           onDenyExpensesClick && onDenyExpensesClick();
                         }}
@@ -189,9 +191,11 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                       </Button>
                     </motion.div>
 
-                    <motion.div variants={childrenAnimation}>
+                    <motion.div
+                      className="h-max w-max"
+                      variants={childrenAnimation}
+                    >
                       <Button
-                        containerClassName="mr-3"
                         onClick={() => {
                           onApproveExpensesClick && onApproveExpensesClick();
                         }}

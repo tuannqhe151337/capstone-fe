@@ -11,6 +11,7 @@ import {
   useLazyGetListTermWhenCreatePlanQuery,
 } from "../../providers/store/api/termApi";
 import { useWindowHeight } from "../../shared/utils/use-window-height";
+import { useDispatch } from "react-redux";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -53,9 +54,11 @@ interface Props {
 
 export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
   // Remove cache each time show this stage
+  const dispatch = useDispatch();
+
   useEffect(() => {
     if (!hide) {
-      termAPI.util.invalidateTags(["create-plan-terms"]);
+      dispatch(termAPI.util.resetApiState());
     }
   }, [hide]);
 

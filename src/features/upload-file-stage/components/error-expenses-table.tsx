@@ -136,6 +136,20 @@ export const ErrorExpensesTable: React.FC<Props> = ({
     }
   }, []);
 
+  const renderTruncateValue = useCallback((value?: string | number) => {
+    if (value) {
+      if (value.toString().length > 12) {
+        return (
+          <TETooltip className="cursor-default" title={value}>
+            {value.toString().substring(0, 8)}...
+          </TETooltip>
+        );
+      } else {
+        return <>{value}</>;
+      }
+    }
+  }, []);
+
   // Calculate optimal height for table
   const windowHeight = useWindowHeight();
 
@@ -378,7 +392,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                         {expense.costType.value ? (
                           <div
                             className={clsx({
-                              "text-sm max-w-min":
+                              "text-sm":
                                 showExpenseCodeColumn || showStatusColumn,
                             })}
                           >
@@ -514,11 +528,11 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                         {expense.project.value ? (
                           <div
                             className={clsx({
-                              "text-sm max-w-min":
+                              "text-sm":
                                 showExpenseCodeColumn || showStatusColumn,
                             })}
                           >
-                            {expense.project.value}
+                            {renderTruncateValue(expense.project.value)}
                           </div>
                         ) : (
                           <EmptyText />
@@ -537,11 +551,11 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                         {expense.supplier.value ? (
                           <div
                             className={clsx({
-                              "text-sm max-w-min":
+                              "text-sm":
                                 showExpenseCodeColumn || showStatusColumn,
                             })}
                           >
-                            {expense.supplier.value}
+                            {renderTruncateValue(expense.supplier.value)}
                           </div>
                         ) : (
                           <EmptyText />
@@ -586,7 +600,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                     {/* Status */}
                     {showStatusColumn && (
                       <td>
-                        <div className="flex flex-row flex-wrap items-center w-max gap-1">
+                        <div className="flex flex-row flex-wrap items-center justify-center w-full gap-1">
                           {expense.status.errorMessage && (
                             <TETooltip title={expense.status.errorMessage}>
                               <HiExclamationCircle className="text-xl text-red-600" />
@@ -594,7 +608,7 @@ export const ErrorExpensesTable: React.FC<Props> = ({
                           )}
                           <div
                             className={clsx({
-                              "text-sm":
+                              "w-max text-sm text-center":
                                 showExpenseCodeColumn || showStatusColumn,
                             })}
                           >

@@ -181,7 +181,7 @@ export const TableReportManagement: React.FC<Props> = ({
                     <div className="flex flex-row flex-wrap items-center ml-14 pr-5 group-hover:underline">
                       <ReportStatusIcon statusCode={report.status.code} />
                       <ReportPreviewer
-                        containerClassName="px-4 text-left w-[300px]"
+                        containerClassName="px-4 text-left"
                         reportId={report.reportId}
                       >
                         {truncateString(report.name, 38)}
