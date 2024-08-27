@@ -2,6 +2,5 @@ node_modules
 dist
 dist-ssr
 Dockerfile
-.dockerignore
 .git
 README.md
