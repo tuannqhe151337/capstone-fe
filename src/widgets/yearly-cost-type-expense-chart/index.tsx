@@ -10,6 +10,7 @@ import { FaChartPie } from "react-icons/fa6";
 import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useInView } from "react-intersection-observer";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   year: number;
@@ -22,6 +23,9 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
   className,
   chosenCostTypeIdList,
 }) => {
+  // Translation
+  const { t } = useTranslation(["home"]);
+
   // Use in view
   const { ref, inView } = useInView();
 
@@ -87,7 +91,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
     >
       <div className="flex flex-row flex-wrap w-full mt-2.5">
         <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
-          By year
+          {t("By year")}
         </p>
       </div>
       <div className="mt-10 h-full">

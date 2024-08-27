@@ -10,6 +10,7 @@ import { formatViMoney } from "../../shared/utils/format-vi-money";
 import { useConvertNumberToMonthFn } from "../../shared/utils/use-convert-number-to-month-fn";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
 import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   year: number;
@@ -22,6 +23,9 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
   className,
   chosenCostTypeIdList,
 }) => {
+  // Translation
+  const { t } = useTranslation(["home"]);
+
   // Use in view
   const { ref, inView } = useInView();
 
@@ -119,7 +123,7 @@ export const MonthlyCostTypeExpenseChart: React.FC<Props> = ({
       <div className="flex flex-row flex-wrap mb-4">
         <div>
           <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
-            By month
+            {t("By month")}
           </p>
         </div>
       </div>

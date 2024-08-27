@@ -7,6 +7,7 @@ import {
   CostTypeOption,
   SelectMultiCostType,
 } from "../../entities/select-multi-cost-type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -43,6 +44,10 @@ const childrenAnimation: Variants = {
 };
 
 export const CostTypeConsumptionSection = React.memo(() => {
+
+    // Translation
+    const { t } = useTranslation(["home"]);
+  
   // Select year
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
@@ -54,7 +59,7 @@ export const CostTypeConsumptionSection = React.memo(() => {
   return (
     <>
       <div className="text-primary-500 text-xl font-extrabold">
-        Cost type statistic
+        {t("Cost type statistic")}
       </div>
 
       <div className="flex flex-row flex-wrap items-center">
