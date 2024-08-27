@@ -15,6 +15,8 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { ExpenseActionContextMenu } from "../../entities/expense-action-context-menu";
 import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
 import { useTranslation } from "react-i18next";
+import { ExpenseNamePreviewer } from "../../entities/expense-name-previewer";
+import { TETooltip } from "tw-elements-react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -96,9 +98,8 @@ export const TableReportExpenses: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
-
-    // i18n
-    const { t } = useTranslation(["report-management"]);
+  // i18n
+  const { t } = useTranslation(["report-management"]);
 
   // Chosen expense
   const [chosenExpense, setChosenExpense] = useState<Expense>();
@@ -178,6 +179,9 @@ export const TableReportExpenses: React.FC<Props> = ({
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
               {t("Code")}
             </th>
+            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
+              {t("Department")}
+            </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               {t("Cost type")}
             </th>
@@ -198,9 +202,6 @@ export const TableReportExpenses: React.FC<Props> = ({
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               {t("PiC")}
-            </th>
-            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              {t("Notes")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
               {t("Status")}
@@ -265,11 +266,14 @@ export const TableReportExpenses: React.FC<Props> = ({
                     />
                   </th>
                 )}
-                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] max-w-min font-extrabold text-left">
                   {isFetching ? (
                     <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.name}</>
+                    <ExpenseNamePreviewer
+                      expenseName={expense.name}
+                      notes={expense.notes}
+                    />
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
@@ -283,6 +287,13 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <div className="opacity-40 font-semibold italic select-none">
                       {t("Empty")}
                     </div>
+                  )}
+                </td>
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] max-w-min font-extrabold text-left">
+                  {isFetching ? (
+                    <Skeleton className="w-[60px]" />
+                  ) : (
+                    <>{expense.department.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
@@ -364,19 +375,20 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <> {expense.pic.name}</>
                   )}
                 </td>
-                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
-                  {isFetching ? (
-                    <Skeleton className="w-[60px]" />
-                  ) : (
-                    <> {expense.notes}</>
-                  )}
-                </td>
                 <td className="px-2 py-3">
                   <div className="flex flex-row flex-wrap items-center justify-center">
                     {isFetching ? (
                       <Skeleton className="w-[60px]" />
                     ) : (
-                      <ExpenseTag statusCode={expense.status.code} />
+                      <TETooltip
+                        enabled={
+                          expense.approvedBy.name !== undefined &&
+                          expense.approvedBy.name !== null
+                        }
+                        title={`${expense.status.name} by ${expense.approvedBy.name}`}
+                      >
+                        <ExpenseTag statusCode={expense.status.code} />
+                      </TETooltip>
                     )}
                   </div>
                 </td>

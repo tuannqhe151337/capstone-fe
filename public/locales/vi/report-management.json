@@ -10,6 +10,7 @@
   "Expenses": "Chi phí",
   "Detail": "Chi tiết",
   "Code": "Mã",
+  "Department": "Phòng ban",
   "Cost type": "Loại chi phí",
   "Unit price": "Đơn giá",
   "Amount": "Số lượng",
@@ -24,6 +25,6 @@
   "Mark as reviewed": "Đánh dấu là đã kiểm tra",
   "Empty": "Trống",
   "No data found": "Không có dữ liệu.",
-  "Deny expense": "Từ chối khoản chi",
-  "Approve expense": "Đồng ý khoản chi"
+  "Deny expense": "Từ chối chi phí",
+  "Approve expense": "Đồng ý chi phí"
 }

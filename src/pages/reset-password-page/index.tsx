@@ -201,6 +201,13 @@ export const ResetPasswordPage: React.FC = () => {
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
                   autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.currentTarget.blur();
+                    } else if (e.key === "Enter") {
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
                   {...register("newPassword", { required: true })}
                 />
                 <InputValidationMessage
@@ -217,7 +224,13 @@ export const ResetPasswordPage: React.FC = () => {
                   label={t("confirmNewPassword")}
                   className="w-full bg-white dark:bg-neutral-900"
                   size="lg"
-                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") {
+                      e.currentTarget.blur();
+                    } else if (e.key === "Enter") {
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
                   {...register("confirmPassword", { required: true })}
                 />
 

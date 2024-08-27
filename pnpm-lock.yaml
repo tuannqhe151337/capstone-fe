@@ -56,6 +56,9 @@ importers:
       react-apexcharts:
         specifier: ^1.4.1
         version: 1.4.1(apexcharts@3.49.1)(react@18.3.1)
+      react-countdown:
+        specifier: ^2.3.6
+        version: 2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-countup:
         specifier: ^6.5.3
         version: 6.5.3(react@18.3.1)
@@ -2246,6 +2249,12 @@ packages:
     resolution: {integrity: sha512-1uWd07EME6XZvMfapwZmc7NgCZqDemcvicRi3wMJzXsQLvZ3L7fTHVyPy1bZdnWXM4iPjYuNE+uJ41MLKeTtnA==}
     peerDependencies:
       react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+
+  react-countdown@2.3.6:
+    resolution: {integrity: sha512-ZfX6S08Hb6x6W6eCn1hMDvxPICI/T30fd+gaeVTCR/2cGZ2WJ3f26e4ImNIMX1fHkopJrUdnRpWXP13/D39+gg==}
+    peerDependencies:
+      react: '>= 15'
+      react-dom: '>= 15'
 
   react-countup@6.5.3:
     resolution: {integrity: sha512-udnqVQitxC7QWADSPDOxVWULkLvKUWrDapn5i53HE4DPRVgs+Y5rr4bo25qEl8jSh+0l2cToJgGMx+clxPM3+w==}
@@ -5132,6 +5141,12 @@ snapshots:
     dependencies:
       prop-types: 15.8.1
       react: 18.3.1
+
+  react-countdown@2.3.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      prop-types: 15.8.1
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   react-countup@6.5.3(react@18.3.1):
     dependencies:
