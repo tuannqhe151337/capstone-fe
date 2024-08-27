@@ -83,7 +83,7 @@ export const ProjectFilter: React.FC<Props> = ({
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption]}
+        // options={[defaultOption]}
         loadOptions={loadOptions}
       />
     </div>

@@ -88,7 +88,7 @@ export const CostTypeFilter: React.FC<Props> = ({
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption]}
+        // options={[defaultOption]}
         loadOptions={loadOptions}
       />
     </div>
