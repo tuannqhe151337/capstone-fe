@@ -8,6 +8,7 @@ import clsx from "clsx";
 import { TETooltip } from "tw-elements-react";
 import { useWindowHeight } from "../../../shared/utils/use-window-height";
 import { truncateString } from "../../../shared/utils/truncate-string";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -72,6 +73,9 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
   showExpenseCodeColumn = false,
   showStatusColumn = false,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);
 
@@ -120,7 +124,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     "text-sm": isSmallText,
                   })}
                 >
-                  ID
+                  {t("ID")}
                 </th>
               )}
               {showExpenseCodeColumn && (
@@ -130,7 +134,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     "text-sm": isSmallText,
                   })}
                 >
-                  Code
+                  {t("Code")}
                 </th>
               )}
               <th
@@ -139,7 +143,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Expenses
+                {t("Expenses")}
               </th>
               <th
                 className={clsx({
@@ -147,7 +151,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Cost type
+                {t("Cost type")}
               </th>
               <th
                 className={clsx({
@@ -155,7 +159,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Unit price
+                {t("Unit price")}
               </th>
               <th
                 className={clsx({
@@ -163,7 +167,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Amount
+                {t("Amount")}
               </th>
               <th
                 className={clsx({
@@ -171,7 +175,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Total
+                {t("Total")}
               </th>
               <th
                 className={clsx({
@@ -179,7 +183,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Currency
+                {t("Currency")}
               </th>
               <th
                 className={clsx({
@@ -187,7 +191,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Project name
+                {t("Project name")}
               </th>
               <th
                 className={clsx({
@@ -195,7 +199,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Supplier name
+                {t("Supplier name")}
               </th>
               <th
                 className={clsx({
@@ -203,7 +207,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                PiC
+                {t("PiC")}
               </th>
               <th
                 className={clsx({
@@ -211,7 +215,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                   "text-sm": isSmallText,
                 })}
               >
-                Notes
+                {t("Notes")}
               </th>
               {showStatusColumn && (
                 <th
@@ -220,7 +224,7 @@ export const ConfirmExpensesTable: React.FC<Props> = ({
                     "text-sm": isSmallText,
                   })}
                 >
-                  Status
+                  {t("Status")}
                 </th>
               )}
             </tr>

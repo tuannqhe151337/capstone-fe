@@ -134,7 +134,7 @@ export const MonthlyExpectedActualCostChart: React.FC<Props> = React.memo(
         <div className="flex flex-row flex-wrap mb-8">
           <motion.div variants={childrenAnimation}>
             <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
-              Monthly expenses
+              {t("Monthly expenses")}
             </p>
           </motion.div>
           <motion.div className="ml-auto" variants={childrenAnimation}>
