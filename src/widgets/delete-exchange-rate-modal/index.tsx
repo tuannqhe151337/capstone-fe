@@ -89,7 +89,7 @@ export const DeleteExchangeRateModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -100,7 +100,7 @@ export const DeleteExchangeRateModal: React.FC<Props> = ({
               deleteExchangeRate({ month });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>
