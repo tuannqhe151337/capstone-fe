@@ -1,12 +1,13 @@
+import React, { useState } from "react";
 import { Variants, motion } from "framer-motion";
 import { MonthlyCostTypeExpenseChart } from "../../widgets/monthly-cost-type-expense-chart";
 import { YearlyCostTypeExpenseChart } from "../../widgets/yearly-cost-type-expense-chart";
 import { YearFilter } from "../../entities/year-filter";
-import { useState } from "react";
 import {
   CostTypeOption,
   SelectMultiCostType,
 } from "../../entities/select-multi-cost-type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -42,7 +43,11 @@ const childrenAnimation: Variants = {
   },
 };
 
-export const CostTypeConsumptionSection = () => {
+export const CostTypeConsumptionSection = React.memo(() => {
+
+    // Translation
+    const { t } = useTranslation(["home"]);
+  
   // Select year
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
@@ -54,7 +59,7 @@ export const CostTypeConsumptionSection = () => {
   return (
     <>
       <div className="text-primary-500 text-xl font-extrabold">
-        Cost type statistic
+        {t("Cost type statistic")}
       </div>
 
       <div className="flex flex-row flex-wrap items-center">
@@ -112,4 +117,4 @@ export const CostTypeConsumptionSection = () => {
       </motion.div>
     </>
   );
-};
+});

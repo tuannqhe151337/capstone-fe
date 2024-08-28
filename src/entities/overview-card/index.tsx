@@ -97,12 +97,12 @@ export const OverviewCard: React.FC<Props> = ({
             exit={AnimationStage.HIDDEN}
           >
             <div className="flex-1 flex flex-row flex-wrap items-center w-full h-full px-8 py-6">
-              <div className="mr-6 text-primary-300 dark:text-primary-800">
+              <div className="mr-6 text-primary-300 dark:text-primary-600">
                 {icon}
               </div>
               <div className="flex-1 flex flex-col flex-wrap gap-1">
-                <p className="text-sm font-bold text-primary-400/80">{label}</p>
-                <p className="text-base font-extrabold text-primary-500/80">
+                <p className="text-sm font-bold text-primary-400">{label}</p>
+                <p className="text-base font-extrabold text-primary-500">
                   {trimmedValue}
                 </p>
               </div>

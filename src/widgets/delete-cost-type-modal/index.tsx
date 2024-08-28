@@ -9,6 +9,7 @@ import {
   CostType,
   useDeleteCostTypeMutation,
 } from "../../providers/store/api/costTypeAPI";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   costType: CostType;
@@ -23,6 +24,9 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["cost-type-management"]);
+
   // Mutation
   const [deleteCostType, { isError, isLoading, isSuccess }] =
     useDeleteCostTypeMutation();
@@ -59,21 +63,29 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extra bold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete cost type
+            {t("Delete cost type")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the cost type{" "}
+            {/* You're going to delete the cost type{" "} */}
+            {t("delete_costType_message.part1")}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{costType.name}"
+              {/* "{costType.name}" */}"
+              {t("delete_costType_message.part2", {
+                costTypeName: costType.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_costType_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {/* This action{" "} */}
+          
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {/* be reversed. Are you sure? */}
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -84,7 +96,7 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -95,7 +107,7 @@ export const DeleteCostTypeModal: React.FC<Props> = ({
               deleteCostType({ costTypeId: costType.costTypeId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>

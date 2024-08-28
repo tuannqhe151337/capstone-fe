@@ -20,6 +20,7 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyDepartments = (total: number): Department[] => {
   const departments: Row[] = [];
@@ -72,6 +73,9 @@ const childrenAnimation: Variants = {
 };
 
 export const DepartmentManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["department-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ADMIN]);
 
@@ -106,8 +110,6 @@ export const DepartmentManagementList: React.FC = () => {
     const timeoutId = setTimeout(() => {
       const paramters: ListDepartmentParameters = {
         query: searchboxValue,
-        sortBy: "name",
-        sortType: "asc",
         page,
         pageSize: 10,
       };
@@ -152,7 +154,7 @@ export const DepartmentManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Department management
+            {t("Department management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -162,7 +164,7 @@ export const DepartmentManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New department</p>
+                <p className="text-sm font-semibold">{t("New department")}</p>
               </div>
             </Button>
           </div>

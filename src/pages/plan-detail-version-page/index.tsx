@@ -12,6 +12,7 @@ import { useInfiteLoaderWholePage } from "../../shared/hooks/use-infite-loader-w
 import { Skeleton } from "../../shared/skeleton";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { LocalStorageItemKey } from "../../providers/store/api/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -61,6 +62,9 @@ const rowAnimation: Variants = {
 const pageSize = 10;
 
 export const PlanDetailVersionPage: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Get planId from param
   const { planId } = useParams<{ planId: string }>();
 
@@ -137,7 +141,7 @@ export const PlanDetailVersionPage: React.FC = () => {
                   {data?.pagination.totalRecords}
                 </span>
                 <span className="text-base font-bold text-primary-400/80 dark:text-primary-600/90">
-                  total version
+                  {t("total version")}
                 </span>
               </motion.div>
             )}
@@ -149,14 +153,14 @@ export const PlanDetailVersionPage: React.FC = () => {
         <thead className="border-b-2 border-neutral-100 dark:border-neutral-800">
           <tr>
             <th className="py-3 text-neutral-400 font-bold text-base">
-              Version
+              {t("Version")}
             </th>
             <th className="py-3 text-neutral-400 font-bold text-base">
-              Published date
+              {t("Published date")}
             </th>
             <th></th>
             <th className="py-3 text-neutral-400 font-bold text-base text-center">
-              Uploaded by
+              {t("Uploaded by")}
             </th>
           </tr>
         </thead>

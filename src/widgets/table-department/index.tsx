@@ -10,6 +10,7 @@ import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-fr
 import { DepartmentActionContextMenu } from "../../entities/department-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -65,6 +66,9 @@ export const TableDepartment: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["department-management"]);
+
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -99,25 +103,25 @@ export const TableDepartment: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              ID
+              {t("No.")}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Name")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Name
+              {t("Created at")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created at
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Updated at
+              {t("Updated at")}
             </th>
             <th scope="col">
               <IconButton
@@ -168,11 +172,11 @@ export const TableDepartment: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {department.departmentId}
+                      {index + 1}
                     </p>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                <td className="whitespace-nowrap px-6 py-4 font-medium text-left">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -235,7 +239,7 @@ export const TableDepartment: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

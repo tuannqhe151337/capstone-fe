@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Modal } from "../../shared/modal";
 import { IconButton } from "../../shared/icon-button";
 import { IoClose } from "react-icons/io5";
@@ -11,8 +11,7 @@ import { InputValidationMessage } from "../../shared/validation-input-message";
 import { CgSpinner } from "react-icons/cg";
 import { toast } from "react-toastify";
 import { ErrorNotificationCard } from "../../shared/error-notification-card";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { AFFIX, ErrorData } from "../../providers/store/api/type";
+import { AFFIX } from "../../providers/store/api/type";
 import clsx from "clsx";
 import RadioCardOption from "../../entities/radio-card-option";
 import { RadioInput } from "../../shared/radio-input";
@@ -20,6 +19,8 @@ import {
   Currency,
   useUpdateCurrencyMutation,
 } from "../../providers/store/api/currencyApi";
+import { useProcessError } from "../../shared/utils/use-process-error";
+import { useTranslation } from "react-i18next";
 
 type FormData = {
   currencyName: string;
@@ -55,6 +56,9 @@ export const CurrencyEditModal: React.FC<Props> = ({
   onClose,
   onEditSuccessfully: onEditSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Form
   const {
     register,
@@ -100,19 +104,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
   }, [isLoading, isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
+  const errorMessage = useProcessError({ error, isError });
 
   return (
     <Modal
@@ -136,7 +128,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Update currency
+              {t("Update currency")}
             </div>
 
             <ErrorNotificationCard
@@ -157,7 +149,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
                 <TEInput
                   autoFocus
                   className="w-full"
-                  label="Currency name"
+                  label={t("Currency name")}
                   onKeyDown={(e) => {
                     if (e.key === "Escape") {
                       e.currentTarget.blur();
@@ -177,7 +169,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
               <div className="mt-3">
                 <TEInput
                   className="w-full"
-                  label="Symbol"
+                  label={t("Symbol")}
                   onKeyDown={(e) => {
                     if (e.key === "Escape") {
                       e.currentTarget.blur();
@@ -194,7 +186,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
                   radioInput={
                     <RadioInput value={AFFIX.PREFIX} {...register("affix")} />
                   }
-                  label={"Prefix"}
+                  label={t("Prefix")}
                   description={`Eg: ${
                     watch("currencySymbol") ? watch("currencySymbol") : "$"
                   }40`}
@@ -207,7 +199,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
                   radioInput={
                     <RadioInput value={AFFIX.SUFFIX} {...register("affix")} />
                   }
-                  label={"Suffix"}
+                  label={t("Suffix")}
                   description={`Eg: 40.000${
                     watch("currencySymbol") ? watch("currencySymbol") : "đ"
                   }`}
@@ -229,7 +221,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
                 onClose && onClose();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               type="submit"
@@ -238,7 +230,7 @@ export const CurrencyEditModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Update currency"}
+              {!isLoading && t("Update currency")}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

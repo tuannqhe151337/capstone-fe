@@ -10,6 +10,7 @@ import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-fr
 import { SupplierActionContextMenu } from "../../entities/supplier-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -65,6 +66,10 @@ export const TableSupplier: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["supplier-management"]);
+
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -99,25 +104,25 @@ export const TableSupplier: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              ID
+              {t("No.")}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Name")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Name
+              {t("Created at")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created at
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Updated at
+              {t("Updated at")}
             </th>
             <th scope="col">
               <IconButton
@@ -168,7 +173,7 @@ export const TableSupplier: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {supplier.supplierId}
+                      {index + 1}
                     </p>
                   )}
                 </td>
@@ -176,7 +181,7 @@ export const TableSupplier: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[400px]" />
                   ) : (
-                    <p className="font-extrabold py-2 duration-200">
+                    <p className="font-extrabold py-2 text-left duration-200">
                       {supplier.name}
                     </p>
                   )}
@@ -235,7 +240,7 @@ export const TableSupplier: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

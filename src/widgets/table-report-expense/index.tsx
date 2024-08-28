@@ -3,17 +3,16 @@ import { Pagination } from "../../shared/pagination";
 import { NumericFormat } from "react-number-format";
 import clsx from "clsx";
 import { Skeleton } from "../../shared/skeleton";
-import {
-  AFFIX,
-  Expense,
-  ExpenseStatusCodes,
-} from "../../providers/store/api/type";
+import { AFFIX, Expense } from "../../providers/store/api/type";
 import { Checkbox } from "../../shared/checkbox";
 import { ExpenseTag } from "../../entities/expense-tag";
 import { useCallback, useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { ExpenseActionContextMenu } from "../../entities/expense-action-context-menu";
 import { ExpenseCodePreviewer } from "../../entities/expense-code-previewer";
+import { useTranslation } from "react-i18next";
+import { ExpenseNamePreviewer } from "../../entities/expense-name-previewer";
+import { TETooltip } from "tw-elements-react";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -95,6 +94,9 @@ export const TableReportExpenses: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Chosen expense
   const [chosenExpense, setChosenExpense] = useState<Expense>();
 
@@ -168,37 +170,37 @@ export const TableReportExpenses: React.FC<Props> = ({
               </th>
             )}
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
-              Expenses
+              {t("Expenses")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
-              Code
+              {t("Code")}
+            </th>
+            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70 text-left">
+              {t("Department")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Cost type
+              {t("Cost type")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Unit price
+              {t("Unit price")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Amount
+              {t("Amount")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Total
+              {t("Total")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Project name
+              {t("Project name")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Supplier name
+              {t("Supplier name")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              PiC
+              {t("PiC")}
             </th>
             <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Notes
-            </th>
-            <th className="px-1 xl:px-3 lg:py-1 xl:py-3 font-bold dark:font-bold text-primary/70">
-              Status
+              {t("Status")}
             </th>
           </tr>
         </motion.thead>
@@ -260,24 +262,28 @@ export const TableReportExpenses: React.FC<Props> = ({
                     />
                   </th>
                 )}
-                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] max-w-min font-extrabold text-left">
                   {isFetching ? (
                     <Skeleton className="w-[60px]" />
                   ) : (
-                    <> {expense.name}</>
+                    <ExpenseNamePreviewer
+                      expenseName={expense.name}
+                      notes={expense.notes}
+                    />
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-extrabold text-left">
                   {isFetching ? (
                     <Skeleton className="w-[60px]" />
-                  ) : expense.expenseCode &&
-                    ExpenseStatusCodes.check(expense.status.code) !==
-                      "DENIED" ? (
-                    <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
                   ) : (
-                    <div className="opacity-40 font-semibold italic select-none">
-                      Empty
-                    </div>
+                    <ExpenseCodePreviewer expenseCode={expense.expenseCode} />
+                  )}
+                </td>
+                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] max-w-min font-extrabold text-left">
+                  {isFetching ? (
+                    <Skeleton className="w-[60px]" />
+                  ) : (
+                    <>{expense.department.name}</>
                   )}
                 </td>
                 <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] font-bold text-center">
@@ -294,6 +300,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice}
+                      decimalScale={2}
                       prefix={
                         expense.currency.affix === AFFIX.PREFIX
                           ? expense.currency.symbol
@@ -322,6 +329,7 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <NumericFormat
                       displayType="text"
                       value={expense.unitPrice * expense.amount}
+                      decimalScale={2}
                       prefix={
                         expense.currency.affix === AFFIX.PREFIX
                           ? expense.currency.symbol
@@ -357,19 +365,20 @@ export const TableReportExpenses: React.FC<Props> = ({
                     <> {expense.pic.name}</>
                   )}
                 </td>
-                <td className="px-2 py-3 xl:py-5 lg:w-min sm:w-[100px] text-sm font-bold text-center text-neutral-400 dark:text-neutral-500">
-                  {isFetching ? (
-                    <Skeleton className="w-[60px]" />
-                  ) : (
-                    <> {expense.notes}</>
-                  )}
-                </td>
                 <td className="px-2 py-3">
                   <div className="flex flex-row flex-wrap items-center justify-center">
                     {isFetching ? (
                       <Skeleton className="w-[60px]" />
                     ) : (
-                      <ExpenseTag statusCode={expense.status.code} />
+                      <TETooltip
+                        enabled={
+                          expense.approvedBy.name !== undefined &&
+                          expense.approvedBy.name !== null
+                        }
+                        title={`${expense.status.name} by ${expense.approvedBy.name}`}
+                      >
+                        <ExpenseTag statusCode={expense.status.code} />
+                      </TETooltip>
                     )}
                   </div>
                 </td>
@@ -380,7 +389,7 @@ export const TableReportExpenses: React.FC<Props> = ({
 
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
 

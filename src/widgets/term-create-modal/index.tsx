@@ -322,7 +322,9 @@ export const TermCreateModal: React.FC<Props> = ({ show, onClose }) => {
       onClose={onClose}
     >
       <div className="relative w-full h-full flex flex-col items-center justify-center px-10 py-8">
-        <div className="font-bold text-3xl text-primary-500">{t("Create term")}</div>
+        <div className="font-bold text-3xl text-primary-500">
+          {t("Create term")}
+        </div>
 
         <div className="absolute top-3 right-5">
           <IconButton

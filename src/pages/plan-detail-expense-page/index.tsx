@@ -15,6 +15,7 @@ import {
 import { usePlanDetailContext } from "../plan-detail-root-page";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useIsAuthorizedToReupload } from "../../features/use-is-authorized-to-reupload";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -90,6 +91,8 @@ const generateEmptyPlanExpenses = (total: number): Row[] => {
 const pageSize = 10;
 
 export const PlanDetailExpensePage: React.FC = () => {
+
+
   // Get show upload modal method
   const { plan, setShowReuploadModal } = usePlanDetailContext();
 
@@ -118,6 +121,8 @@ export const PlanDetailExpensePage: React.FC = () => {
   const [searchboxValue, setSearchboxValue] = useState<string>("");
   const [costTypeId, setCostTypeId] = useState<number | null>();
   const [statusId, setStatusId] = useState<number | null>();
+  const [projectId, setProjectId] = useState<number | null>();
+  const [supplierId, setSupplierId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
   // Is data empty (derived from data)
@@ -146,6 +151,16 @@ export const PlanDetailExpensePage: React.FC = () => {
           paramters.costTypeId = costTypeId;
         }
 
+        console.log(supplierId, projectId);
+
+        if (supplierId) {
+          paramters.supplierId = supplierId;
+        }
+
+        if (projectId) {
+          paramters.projectId = projectId;
+        }
+
         if (statusId) {
           paramters.statusId = statusId;
         }
@@ -154,7 +169,16 @@ export const PlanDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId, planId, currencyId]);
+  }, [
+    searchboxValue,
+    page,
+    costTypeId,
+    statusId,
+    supplierId,
+    projectId,
+    planId,
+    currencyId,
+  ]);
 
   // Authorized to show reupload button
   const isAuthorizedToReupload = useIsAuthorizedToReupload({
@@ -184,6 +208,12 @@ export const PlanDetailExpensePage: React.FC = () => {
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);
+        }}
+        onProjectIdChange={(projectId) => {
+          setProjectId(projectId);
+        }}
+        onSupplierIdChange={(supplierId) => {
+          setSupplierId(supplierId);
         }}
         onCurrencyChoose={(currency) => {
           setCurrencyId(currency?.currencyId);

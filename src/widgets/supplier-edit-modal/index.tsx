@@ -18,6 +18,8 @@ import { ErrorNotificationCard } from "../../shared/error-notification-card";
 import { ErrorData } from "../../providers/store/api/type";
 import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
 import clsx from "clsx";
+import { useProcessError } from "../../shared/utils/use-process-error";
+import { useTranslation } from "react-i18next";
 
 type FormData = {
   supplierName: string;
@@ -45,6 +47,9 @@ export const SupplierEditModal: React.FC<Props> = ({
   onClose,
   onUpdateSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["supplier-management"]);
+
   // Form
   const {
     register,
@@ -91,19 +96,7 @@ export const SupplierEditModal: React.FC<Props> = ({
   }, [isLoading, isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
+  const errorMessage = useProcessError({ error, isError });
 
   return (
     <Modal
@@ -127,7 +120,7 @@ export const SupplierEditModal: React.FC<Props> = ({
         <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              Update supplier
+              {t("Update supplier")}
             </div>
 
             <ErrorNotificationCard
@@ -146,7 +139,7 @@ export const SupplierEditModal: React.FC<Props> = ({
               <TEInput
                 autoFocus
                 className="w-full"
-                label="Supplier name"
+                label={t("Supplier name")}
                 onKeyDown={(e) => {
                   if (e.key === "Escape") {
                     e.currentTarget.blur();
@@ -173,7 +166,7 @@ export const SupplierEditModal: React.FC<Props> = ({
                 onClose && onClose();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               type="submit"
@@ -182,7 +175,7 @@ export const SupplierEditModal: React.FC<Props> = ({
               containerClassName="flex-1"
               className="p-3"
             >
-              {!isLoading && "Update supplier"}
+              {!isLoading && t("Update supplier")}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

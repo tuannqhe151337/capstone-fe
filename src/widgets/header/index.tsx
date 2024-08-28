@@ -4,6 +4,7 @@ import { LanguageChanger } from "../../features/language-changer";
 import { ThemeChanger } from "../../features/theme-changer";
 import { AccountIcon } from "../../entities/account-icon";
 import { UserGuide } from "../user-guide";
+import { ImageExplaner } from "../image-explaner";
 
 interface Props {
   onLogoutClick?: Function;
@@ -25,6 +26,7 @@ export const Header: React.FC<Props> = ({ onLogoutClick }) => {
       <div className="flex items-center ml-auto mr-10">
         <LanguageChanger />
         <UserGuide />
+        <ImageExplaner />
         <ThemeChanger />
         <DarkmodeChanger />
 

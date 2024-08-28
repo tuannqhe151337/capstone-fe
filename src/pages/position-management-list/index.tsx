@@ -18,6 +18,7 @@ import { PositionEditModal } from "../../widgets/position-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyPositions = (total: number): Position[] => {
   const positions: Row[] = [];
@@ -70,6 +71,9 @@ const childrenAnimation: Variants = {
 };
 
 export const PositionManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["position-management"]);
+
   // Query
   const [fetchPositions, { data, isFetching }] = useLazyGetListPositionQuery();
 
@@ -100,8 +104,6 @@ export const PositionManagementList: React.FC = () => {
     const timeoutId = setTimeout(() => {
       const paramters: ListPositionParameters = {
         query: searchboxValue,
-        sortBy: "name",
-        sortType: "asc",
         page,
         pageSize: 10,
       };
@@ -143,7 +145,7 @@ export const PositionManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Position management
+            {t("Position management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -153,7 +155,7 @@ export const PositionManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New Position</p>
+                <p className="text-sm font-semibold">{t("New position")}</p>
               </div>
             </Button>
           </div>

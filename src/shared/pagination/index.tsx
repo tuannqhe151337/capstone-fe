@@ -27,11 +27,15 @@ export const Pagination: React.FC<Props> = ({
 
   // Hotkeys
   useHotkeys(["shift + n", "shift + ."], () => {
-    onNext && onNext();
+    if (page && page < totalPage) {
+      onNext && onNext();
+    }
   });
 
   useHotkeys(["shift + p", "shift + ,"], () => {
-    onPrevious && onPrevious();
+    if (page && page > 1) {
+      onPrevious && onPrevious();
+    }
   });
 
   return (
@@ -42,7 +46,7 @@ export const Pagination: React.FC<Props> = ({
       )}
     >
       <Button
-        disabled={page === 1}
+        disabled={!page || page <= 1}
         variant="quaternary"
         className="flex flex-row flex-wrap items-center text-sm font-bold "
         onClick={() => {

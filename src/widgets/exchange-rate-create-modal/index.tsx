@@ -8,9 +8,8 @@ import { NumericFormat, PatternFormat } from "react-number-format";
 import { CgSpinner } from "react-icons/cg";
 import { Button } from "../../shared/button";
 import { InputRate } from "./ui/input-rate";
-import { useEffect, useState } from "react";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { AFFIX, ErrorData } from "../../providers/store/api/type";
+import { useEffect } from "react";
+import { AFFIX } from "../../providers/store/api/type";
 import {
   CreateMonthlyExchangeRateBody,
   useCreateMonthlyExchangeRateMutation,
@@ -22,6 +21,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import { useGetBaseCurrency } from "../../features/use-get-base-currency";
+import { useProcessError } from "../../shared/utils/use-process-error";
+import { useTranslation } from "react-i18next";
 
 const MonthSchema = z.string().refine(
   (month) => {
@@ -64,6 +65,9 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
   onClose,
   onCreateSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["exchange-rate"]);
+
   // Form
   const {
     register,
@@ -108,19 +112,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
   }, [isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
+  const errorMessage = useProcessError({ error, isError });
 
   // Base currency
   const baseCurrency = useGetBaseCurrency();
@@ -147,7 +139,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
         <form className="w-full">
           <div className="flex flex-col items-center w-full">
             <div className="font-bold dark:font-extra bold text-2xl text-primary-400 dark:text-primary-500/70 -mt-2.5">
-              New monthly rate conversion
+              {t("New monthly rate conversion")}
             </div>
 
             <ErrorNotificationCard
@@ -173,7 +165,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                     value={value}
                     customInput={TEInput}
                     size="lg"
-                    label="Month"
+                    label={t("Month")}
                     pattern="##/####"
                     format="##/####"
                     mask="_"
@@ -219,6 +211,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                                 className="!text-neutral-500 font-semibold"
                                 customInput={TEInput}
                                 value={value || 0}
+                                decimalScale={2}
                                 allowNegative={false}
                                 prefix={
                                   baseCurrency.affix === AFFIX.PREFIX
@@ -266,7 +259,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
                 onClose && onClose();
               }}
             >
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               type="submit"
@@ -278,7 +271,7 @@ export const ExchangeRateCreateModal: React.FC<Props> = ({
               className="p-3"
               onClick={handleSubmit(onSubmit)}
             >
-              {!isLoading && "New monthly rate"}
+              {!isLoading && t("New monthly rate")}
               {isLoading && (
                 <CgSpinner className="m-auto text-lg animate-spin" />
               )}

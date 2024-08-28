@@ -17,6 +17,7 @@ import { useGetAllProjectQuery } from "../../providers/store/api/projectsApi";
 import { useGetAllCurrencyQuery } from "../../providers/store/api/currencyApi";
 import { useGetAllSupplierQuery } from "../../providers/store/api/supplierApi";
 import { useCheckUserExistMutation } from "../../providers/store/api/plansApi";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -109,6 +110,9 @@ export const UploadFileStage: React.FC<Props> = ({
   const { data: supplierListResult } = useGetAllSupplierQuery();
   const [checkuserExist] = useCheckUserExistMutation();
 
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // UI: file over
   const [isFileOver, setIsFileOver] = useState<boolean>(false);
 
@@ -180,34 +184,38 @@ export const UploadFileStage: React.FC<Props> = ({
             currencyListResult?.data
           ) {
             // Validate data
-            const { errors, expenses, isError } = await processFile({
-              file,
-              costTypeList: costTypeListResult.data,
-              expenseStatusList: expenseStatusListResult.data,
-              projectList: projectListResult.data,
-              currencyList: currencyListResult.data,
-              supplierList: supplierListResult.data,
-              checkListUsernameExist: async (usernameList) => {
-                const { data } = await checkuserExist({ usernameList });
+            try {
+              const { errors, expenses, isError } = await processFile({
+                file,
+                costTypeList: costTypeListResult.data,
+                expenseStatusList: expenseStatusListResult.data,
+                projectList: projectListResult.data,
+                currencyList: currencyListResult.data,
+                supplierList: supplierListResult.data,
+                checkListUsernameExist: async (usernameList) => {
+                  const { data } = await checkuserExist({ usernameList });
 
-                return data?.data || [];
-              },
-              options: {
-                validateExpenseCode,
-                validateStatusCode,
-                validateExpenseId,
-              },
-            });
+                  return data?.data || [];
+                },
+                options: {
+                  validateExpenseCode,
+                  validateStatusCode,
+                  validateExpenseId,
+                },
+              });
 
-            // Set to state to show table
-            setExpenses(expenses);
-            setExpenseErrors(errors);
+              // Set to state to show table
+              setExpenses(expenses);
+              setExpenseErrors(errors);
 
-            // UI: show error table or go to next stage
-            if (isError) {
-              setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
-            } else {
-              setFileUploadStage(FileUploadStage.SUCCESS);
+              // UI: show error table or go to next stage
+              if (isError) {
+                setFileUploadStage(FileUploadStage.VALIDATION_ERROR);
+              } else {
+                setFileUploadStage(FileUploadStage.SUCCESS);
+              }
+            } catch (_) {
+              setFileUploadStage(FileUploadStage.INVALID_FORMAT_ERROR);
             }
           }
         }
@@ -258,7 +266,8 @@ export const UploadFileStage: React.FC<Props> = ({
                 >
                   <BsFillFileEarmarkArrowDownFill className="mr-3 dark:text-primary-600" />
                   <span className="text-sm dark:text-primary-500">
-                    {downloadButtonText}
+                    {/* {downloadButtonText} */}
+                    {t("Download template")}
                   </span>
                 </Button>
               </motion.div>
@@ -369,7 +378,7 @@ export const UploadFileStage: React.FC<Props> = ({
               onPreviousState && onPreviousState();
             }}
           >
-            Back
+            {t("Back")}
           </Button>
         )}
 
@@ -380,7 +389,7 @@ export const UploadFileStage: React.FC<Props> = ({
               setFileUploadStage(FileUploadStage.EMPTY);
             }}
           >
-            Upload again
+            {t("Upload again")}
           </Button>
         ) : (
           <Button
@@ -393,7 +402,7 @@ export const UploadFileStage: React.FC<Props> = ({
               onNextStage && onNextStage(expenses);
             }}
           >
-            Continue to confirm expenses
+            {t("Continue to confirm expenses")}
           </Button>
         )}
       </motion.div>

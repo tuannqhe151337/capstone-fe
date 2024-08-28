@@ -14,8 +14,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
-import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
-import { ErrorData, Role } from "../../providers/store/api/type";
+import { Role } from "../../providers/store/api/type";
 import { TEInput } from "tw-elements-react";
 import { InputValidationMessage } from "../../shared/validation-input-message";
 import RadioCardOption from "../../entities/radio-card-option";
@@ -32,6 +31,7 @@ import clsx from "clsx";
 import { Switch } from "../../shared/switch";
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { useTranslation } from "react-i18next";
+import { useProcessError } from "../../shared/utils/use-process-error";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -326,29 +326,7 @@ export const TermUpdate: React.FC = () => {
   }, [isLoading, isSuccess]);
 
   // Error message
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (isError) {
-      if (error && "data" in error && "message" in (error.data as any)) {
-        setErrorMessage(
-          uppercaseFirstCharacter((error.data as ErrorData).message)
-        );
-      } else {
-        setErrorMessage("Something went wrong, please try again!");
-      }
-    }
-  }, [isError]);
-
-  useEffect(() => {
-    if (isError) {
-      toast(errorMessage, {
-        type: "error",
-
-        theme: isDarkmode ? "dark" : "light",
-      });
-    }
-  }, [isError, errorMessage]);
+  useProcessError({ error, isError });
 
   // Handle on radio click
   function handleOnClickRadio(duration: Duration) {

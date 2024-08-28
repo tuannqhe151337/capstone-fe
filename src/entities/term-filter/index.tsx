@@ -84,7 +84,7 @@ export const TermFilter: React.FC<Props> = ({ onChange }) => {
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption]}
+        // options={[defaultOption]}
         loadOptions={loadOptions}
         additional={{
           page: 1,

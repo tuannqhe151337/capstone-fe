@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { downloadFileFromServer } from "../../shared/utils/download-file-from-server";
 import { useReportDetailContext } from "../report-detail-root-page";
 import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
+import { useMeQuery } from "../../providers/store/api/authApi";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -69,6 +70,10 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
         projectId: 0,
         name: "",
       },
+      department: {
+        departmentId: 0,
+        name: "",
+      },
       supplier: {
         supplierId: 0,
         name: "",
@@ -90,6 +95,12 @@ const generateEmptyReportExpenses = (total: number): Row[] => {
         symbol: "",
       },
       isFetching: true,
+      approvedBy: {
+        approvedById: 0,
+        name: "",
+      },
+      createdAt: "",
+      updatedAt: "",
     });
   }
 
@@ -101,6 +112,9 @@ const pageSize = 10;
 export const ReportDetailExpensePage: React.FC = () => {
   // Params
   const { reportId } = useParams<{ reportId: string }>();
+
+  // Me
+  const { data: me } = useMeQuery();
 
   // Get show upload modal method
   const { setShowReportReviewExpensesModal } = useReportDetailContext();
@@ -129,6 +143,7 @@ export const ReportDetailExpensePage: React.FC = () => {
   const [costTypeId, setCostTypeId] = useState<number | null>();
   const [currencyId, setCurrencyId] = useState<number>();
   const [statusId, setStatusId] = useState<number | null>();
+  const [departmentId, setDepartmentId] = useState<number | null>();
   const [page, setPage] = useState<number>(1);
 
   const [_showReviewExpense, setShowReviewExpense] = useState<boolean>(false);
@@ -170,6 +185,10 @@ export const ReportDetailExpensePage: React.FC = () => {
           paramters.costTypeId = costTypeId;
         }
 
+        if (departmentId) {
+          paramters.departmentId = departmentId;
+        }
+
         if (statusId) {
           paramters.statusId = statusId;
         }
@@ -179,7 +198,7 @@ export const ReportDetailExpensePage: React.FC = () => {
 
       return () => clearTimeout(timeoutId);
     }
-  }, [searchboxValue, page, costTypeId, statusId, currencyId]);
+  }, [searchboxValue, page, costTypeId, departmentId, statusId, currencyId]);
 
   // Show checkboxes for review
   const isAuthorizedAndTimeToReviewReport =
@@ -262,8 +281,10 @@ export const ReportDetailExpensePage: React.FC = () => {
                   ) !== -1;
 
                 if (expenseExists) {
-                  (draft.data[index].status.code = "APPROVED"),
-                    (draft.data[index].status.name = "Approved");
+                  draft.data[index].status.code = "APPROVED";
+                  draft.data[index].status.name = "Approved";
+                  draft.data[index].approvedBy.approvedById = me?.userId;
+                  draft.data[index].approvedBy.name = me?.username;
                 }
               });
             }
@@ -308,8 +329,10 @@ export const ReportDetailExpensePage: React.FC = () => {
                   ) !== -1;
 
                 if (expenseExists) {
-                  (draft.data[index].status.code = "DENIED"),
-                    (draft.data[index].status.name = "Denied");
+                  draft.data[index].status.code = "DENIED";
+                  draft.data[index].status.name = "Denied";
+                  draft.data[index].approvedBy.approvedById = me?.userId;
+                  draft.data[index].approvedBy.name = me?.username;
                 }
               });
             }
@@ -383,6 +406,9 @@ export const ReportDetailExpensePage: React.FC = () => {
         }}
         onCostTypeIdChange={(costTypeId) => {
           setCostTypeId(costTypeId);
+        }}
+        onDepartmentIdChange={(departmentId) => {
+          setDepartmentId(departmentId);
         }}
         onStatusIdChange={(statusId) => {
           setStatusId(statusId);

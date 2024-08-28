@@ -1,9 +1,11 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { UnexpectedErrorPage } from "../../pages/unexpected-error-page";
 
 const router = createBrowserRouter([
   // Auth pages
   {
     path: "/auth",
+    errorElement: <UnexpectedErrorPage />,
     children: [
       {
         path: "login",
@@ -61,6 +63,7 @@ const router = createBrowserRouter([
         element: <ProtectedRootPage />,
       };
     },
+    errorElement: <UnexpectedErrorPage />,
     children: [
       // Home page
       {
@@ -562,6 +565,19 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+
+  // 404 page
+  {
+    path: "*",
+    lazy: async () => {
+      const NotFoundPage = (await import("../../pages/not-found-page"))
+        .NotFoundPage;
+
+      return {
+        element: <NotFoundPage />,
+      };
+    },
   },
 ]);
 

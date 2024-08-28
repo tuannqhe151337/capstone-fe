@@ -10,6 +10,7 @@ import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-fr
 import { CostTypeActionContextMenu } from "../../entities/cost-type-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -65,6 +66,10 @@ export const TableCostType: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["cost-type-management"]);
+
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -99,25 +104,25 @@ export const TableCostType: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              ID
+              {t("No.")}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Name")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Name
+              {t("Created at")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created at
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Updated at
+              {t("Updated at")}
             </th>
             <th scope="col">
               <IconButton
@@ -134,7 +139,7 @@ export const TableCostType: React.FC<Props> = ({
         </thead>
         <tbody>
           {costTypes &&
-            costTypes.map((CostType, index) => (
+            costTypes.map((costType, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -160,7 +165,7 @@ export const TableCostType: React.FC<Props> = ({
                   setShowContextMenu(true);
                   setContextMenuLeft(e.pageX);
                   setContextMenuTop(e.pageY);
-                  setChosenCostType(CostType);
+                  setChosenCostType(costType);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-center w-[100px]">
@@ -168,7 +173,7 @@ export const TableCostType: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {CostType.costTypeId}
+                      {index + 1}
                     </p>
                   )}
                 </td>
@@ -176,8 +181,8 @@ export const TableCostType: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <p className="font-extrabold py-2 duration-200">
-                      {CostType.name}
+                    <p className="font-extrabold py-2 text-left duration-200">
+                      {costType.name}
                     </p>
                   )}
                 </td>
@@ -185,14 +190,14 @@ export const TableCostType: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(CostType.createdAt)}</div>
+                    <div>{formatISODateFromResponse(costType.createdAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
                     <Skeleton className="w-[100px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(CostType.updatedAt)}</div>
+                    <div>{formatISODateFromResponse(costType.updatedAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
@@ -212,7 +217,7 @@ export const TableCostType: React.FC<Props> = ({
                         tooltip="Edit cost type"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onEditCostType && onEditCostType(CostType);
+                          onEditCostType && onEditCostType(costType);
                         }}
                       >
                         <AiFillEdit className="text-primary-600 text-2xl" />
@@ -221,7 +226,7 @@ export const TableCostType: React.FC<Props> = ({
                         tooltip="Delete cost type"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onDeleteCostType && onDeleteCostType(CostType);
+                          onDeleteCostType && onDeleteCostType(costType);
                         }}
                       >
                         <FaTrash className="text-red-600 text-xl" />
@@ -235,7 +240,7 @@ export const TableCostType: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

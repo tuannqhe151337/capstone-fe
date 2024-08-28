@@ -19,6 +19,8 @@ import { TermPreviewer } from "../../entities/term-previewer";
 import { PlanPreviewer } from "../../entities/plan-previewer";
 import { useIsAuthorizedToReuploadFn } from "../../features/use-is-authorized-to-reupload-fn";
 import { ReloadCloudIcon } from "../../shared/icons/reload-cloud-icon";
+import { truncateString } from "../../shared/utils/truncate-string";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -72,6 +74,10 @@ export const TablePlanManagement: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Navigation
   const navigate = useNavigate();
 
@@ -127,27 +133,27 @@ export const TablePlanManagement: React.FC<Props> = ({
           <tr>
             <th
               scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
+              className="px-20 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80 rounded-tl-lg"
             >
-              Plan
+              {t("Plan name")}
+            </th>
+            <th
+              scope="col"
+              className="px-12 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Term")}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Department")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Term
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Department
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Version
+              {t("Version")}
             </th>
             <th scope="col" className="rounded-tr-lg">
               <IconButton
@@ -198,7 +204,7 @@ export const TablePlanManagement: React.FC<Props> = ({
               >
                 <td
                   className={clsx({
-                    "whitespace-nowrap px-6 py-5 font-extrabold": true,
+                    "whitespace-nowrap px-6 py-5 font-extrabold w-max": true,
                     "rounded-bl-lg": index === plans.length - 1,
                   })}
                 >
@@ -206,12 +212,14 @@ export const TablePlanManagement: React.FC<Props> = ({
                     <Skeleton className="w-[200px]" />
                   ) : (
                     <PlanPreviewer planId={plan.planId}>
-                      <div className="group-hover:underline">{plan.name}</div>
+                      <div className="group-hover:underline">
+                        {truncateString(plan.name, 38)}
+                      </div>
                     </PlanPreviewer>
                   )}
                 </td>
                 <td
-                  className="whitespace-nowrap px-6 py-5 font-bold"
+                  className="whitespace-nowrap px-7 py-5 font-bold"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {isFetching ? (
@@ -231,7 +239,7 @@ export const TablePlanManagement: React.FC<Props> = ({
                     </TermPreviewer>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-5 font-bold">
+                <td className="whitespace-nowrap px-6 py-5 text-left font-bold">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
@@ -288,7 +296,7 @@ export const TablePlanManagement: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

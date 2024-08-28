@@ -10,11 +10,14 @@ import { FaFilter } from "react-icons/fa6";
 import { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
-import { CostTypeFilter } from "../../entities/cost-type-filter";
-import { StatusPlanFilter } from "../../entities/status-plan-filter";
 import clsx from "clsx";
 import { CurrencyChanger } from "../../entities/currency-changer";
 import { Currency } from "../../providers/store/api/currencyApi";
+import { StatusExpenseFilter } from "../../entities/status-expense-filter";
+import { CostTypeFilter } from "../../entities/cost-type-filter";
+import { ProjectFilter } from "../../entities/project-filter";
+import { SupplierFilter } from "../../entities/supplier-filter";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -94,6 +97,8 @@ interface Props {
   searchboxValue?: string;
   showReupload?: boolean;
   onSearchboxChange?: (value: string) => any;
+  onProjectIdChange?: (projectId: number | null | undefined) => any;
+  onSupplierIdChange?: (supplierId: number | null | undefined) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
   onCurrencyChoose?: (currency?: Currency) => any;
@@ -110,6 +115,8 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
   searchboxValue,
   showReupload,
   onSearchboxChange,
+  onProjectIdChange,
+  onSupplierIdChange,
   onCostTypeIdChange,
   onStatusIdChange,
   onCurrencyChoose,
@@ -118,6 +125,9 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
   onDownloadClick,
   onReuploadClick,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   // Filter section
   const [showFilterBtn, setShowFillterBtn] = useState(false);
 
@@ -175,7 +185,9 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <RiDeleteRow className="text-xl" />
-                          <p className="text-sm font-semibold">Deny expense</p>
+                          <p className="text-sm font-semibold">
+                            {t("Deny expense")}
+                          </p>
                         </div>
                       </Button>
                     </motion.div>
@@ -190,7 +202,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <FaListCheck className="text-lg" />
                           <p className="text-sm font-semibold">
-                            Approve expense
+                            {t("Approve expense")}
                           </p>
                         </div>
                       </Button>
@@ -263,7 +275,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                       <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                         <FaDownload className="mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Download plan
+                          {t("Download plan")}
                         </p>
                       </div>
                     </TERipple>
@@ -278,7 +290,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center w-max px-5 py-3">
                           <FaUpload className="mr-5 text-primary-500 dark:text-neutral-400" />
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Reupload plan
+                            {t("Reupload plan")}
                           </p>
                         </div>
                       </TERipple>
@@ -304,6 +316,22 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
             >
               <motion.div className="flex justify-end mt-4">
                 <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <SupplierFilter
+                    onChange={(option) => {
+                      onSupplierIdChange && onSupplierIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <ProjectFilter
+                    onChange={(option) => {
+                      onProjectIdChange && onProjectIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div variants={childrenAnimation} className="mr-4 ">
                   <CostTypeFilter
                     onChange={(option) => {
                       onCostTypeIdChange && onCostTypeIdChange(option?.value);
@@ -312,7 +340,7 @@ export const ListPlanDetailFilter: React.FC<Props> = ({
                 </motion.div>
 
                 <motion.div variants={childrenAnimation} className="mr-4">
-                  <StatusPlanFilter
+                  <StatusExpenseFilter
                     onChange={(option) => {
                       onStatusIdChange && onStatusIdChange(option?.value);
                     }}

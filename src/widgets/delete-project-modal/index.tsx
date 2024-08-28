@@ -7,8 +7,11 @@ import {
   Project,
   useDeleteProjectMutation,
 } from "../../providers/store/api/projectsApi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { ErrorData } from "../../providers/store/api/type";
+import { uppercaseFirstCharacter } from "../../shared/utils/uppercase-first-character";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   project: Project;
@@ -23,8 +26,11 @@ export const DeleteProjectModal: React.FC<Props> = ({
   onClose,
   onDeleteSuccessfully,
 }) => {
+  // i18n
+  const { t } = useTranslation(["project-management"]);
+
   // Mutation
-  const [deleteProject, { isError, isLoading, isSuccess }] =
+  const [deleteProject, { isError, isLoading, isSuccess, error }] =
     useDeleteProjectMutation();
 
   useEffect(() => {
@@ -34,6 +40,34 @@ export const DeleteProjectModal: React.FC<Props> = ({
       onDeleteSuccessfully && onDeleteSuccessfully(project);
     }
   }, [isError, isLoading, isSuccess]);
+
+  // Error message
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  useEffect(() => {
+    if (isError) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "data" in error &&
+        error.data &&
+        typeof error.data === "object" &&
+        "message" in (error.data as any)
+      ) {
+        setErrorMessage(
+          uppercaseFirstCharacter((error.data as ErrorData).message)
+        );
+      } else {
+        setErrorMessage("Something went wrong, please try again!");
+      }
+    }
+  }, [isError]);
+
+  useEffect(() => {
+    if (isError) {
+      toast(errorMessage, { type: "error" });
+    }
+  }, [isError, errorMessage]);
 
   return (
     <Modal
@@ -59,21 +93,25 @@ export const DeleteProjectModal: React.FC<Props> = ({
             <IoIosWarning className="text-[56px] text-red-500/80 dark:text-red-700/80" />
           </div>
           <div className="font-bold dark:font-extrabold text-2xl text-red-400 dark:text-red-500/70 mt-5">
-            Delete project
+            {t("Delete project")}
           </div>
           <div className="font-semibold dark:font-bold text-red-400 dark:text-red-500 mt-5">
-            You're going to delete the Project{" "}
+            {t("delete_project_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              "{project.name}"
+              {/* "{supplier.name}" */}"
+              {t("delete_project_message.part2", {
+                projectName: project.name,
+              })}
+              "
             </span>
-            .
+            {t("delete_project_message.part3")}
           </div>
           <div className="mt-3 font-semibold dark:font-bold text-red-400 dark:text-red-500">
-            This action{" "}
+            {t("confirmation_message.part1")}{" "}
             <span className="font-extrabold text-red-500 dark:text-red-600">
-              cannot
+              {t("confirmation_message.part2")}
             </span>{" "}
-            be reversed. Are you sure?
+            {t("confirmation_message.part3")}
           </div>
         </div>
 
@@ -84,7 +122,7 @@ export const DeleteProjectModal: React.FC<Props> = ({
               onClose && onClose();
             }}
           >
-            No, cancel
+            {t("No, cancel")}
           </Button>
           <Button
             containerClassName="flex-1"
@@ -95,7 +133,7 @@ export const DeleteProjectModal: React.FC<Props> = ({
               deleteProject({ projectId: project.projectId });
             }}
           >
-            Yes, delete
+            {t("Yes, delete")}
           </Button>
         </div>
       </div>

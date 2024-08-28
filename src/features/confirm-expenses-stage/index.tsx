@@ -4,6 +4,7 @@ import { Button } from "../../shared/button";
 import { ConfirmExpensesTable } from "./components/confirm-expenses-table";
 import { CgSpinner } from "react-icons/cg";
 import { Expense } from "../upload-file-stage/type";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -51,6 +52,7 @@ interface Props {
   showStatusColumn?: boolean;
   pageSize?: number;
   hide?: boolean;
+  confirmTableHeightOffset?: number;
   onPreviousState?: () => any;
   onNextStage?: () => any;
 }
@@ -65,9 +67,13 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
   showStatusColumn,
   pageSize,
   hide,
+  confirmTableHeightOffset,
   onPreviousState,
   onNextStage,
 }) => {
+  // i18n
+  const { t } = useTranslation(["plan-management"]);
+
   return (
     <motion.div
       className="w-max"
@@ -83,6 +89,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
         expenses={expenses}
         hide={hide}
         pageSize={pageSize}
+        tableOffsetHeight={confirmTableHeightOffset}
         showExpenseIdColumn={showExpenseIdColumn}
         showExpenseCodeColumn={showExpenseCodeColumn}
         showStatusColumn={showStatusColumn}
@@ -98,7 +105,7 @@ export const ConfirmExpensesStage: React.FC<Props> = ({
             onPreviousState && onPreviousState();
           }}
         >
-          Back
+          {t("Back")}
         </Button>
         <Button
           disabled={isLoading}

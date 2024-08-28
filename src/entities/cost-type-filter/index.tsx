@@ -16,6 +16,10 @@ const DefaultOption: CostTypeOption = {
   label: "All cost type",
 };
 
+interface Additional {
+  page: number;
+}
+
 interface Props {
   className?: string;
   onChange?: (option: CostTypeOption | null) => any;
@@ -28,11 +32,16 @@ export const CostTypeFilter: React.FC<Props> = ({
   defaultOption = DefaultOption,
 }) => {
   // Fetch initial data
-  const [page, setPage] = useState<number>(1);
   const [getListCostTypeQuery, { isFetching }] = useLazyGetListCostTypeQuery();
 
   // Convert data to option
-  const loadOptions: LoadOptions<CostTypeOption, any, any> = async (query) => {
+  const loadOptions: LoadOptions<CostTypeOption, any, Additional> = async (
+    query,
+    _,
+    additional
+  ) => {
+    const page = additional?.page || 1;
+
     // Fetch data
     const data = await getListCostTypeQuery({
       page,
@@ -53,13 +62,9 @@ export const CostTypeFilter: React.FC<Props> = ({
       hasMore,
     };
 
+    // Default option
     if (page === 1 && query === "") {
       loadOptions.options.unshift(defaultOption);
-    }
-
-    // Update page
-    if (hasMore) {
-      setPage((page) => page + 1);
     }
 
     return loadOptions;
@@ -83,7 +88,7 @@ export const CostTypeFilter: React.FC<Props> = ({
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption]}
+        // options={[defaultOption]}
         loadOptions={loadOptions}
       />
     </div>

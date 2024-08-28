@@ -10,6 +10,7 @@ import { formatISODateFromResponse } from "../../shared/utils/format-iso-date-fr
 import { PositionActionContextMenu } from "../../entities/position-action-context-menu";
 import { AiFillEdit } from "react-icons/ai";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useTranslation } from "react-i18next";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -65,6 +66,9 @@ export const TablePosition: React.FC<Props> = ({
   onPrevious,
   onNext,
 }) => {
+  // i18n
+  const { t } = useTranslation(["position-management"]);
+
   // UI: show delete button
   const [hoverRowIndex, setHoverRowIndex] = useState<number>();
 
@@ -99,25 +103,25 @@ export const TablePosition: React.FC<Props> = ({
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              ID
+              {t("No.")}
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 font-extrabold text-left text-primary-500/80 dark:text-primary-600/80"
+            >
+              {t("Name")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Name
+              {t("Created at")}
             </th>
             <th
               scope="col"
               className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
             >
-              Created at
-            </th>
-            <th
-              scope="col"
-              className="px-6 py-4 font-extrabold text-primary-500/80 dark:text-primary-600/80"
-            >
-              Updated at
+              {t("Updated at")}
             </th>
             <th scope="col">
               <IconButton
@@ -134,7 +138,7 @@ export const TablePosition: React.FC<Props> = ({
         </thead>
         <tbody>
           {positions &&
-            positions.map((Position, index) => (
+            positions.map((position, index) => (
               <motion.tr
                 key={index}
                 variants={rowAnimation}
@@ -160,7 +164,7 @@ export const TablePosition: React.FC<Props> = ({
                   setShowContextMenu(true);
                   setContextMenuLeft(e.pageX);
                   setContextMenuTop(e.pageY);
-                  setChosenPosition(Position);
+                  setChosenPosition(position);
                 }}
               >
                 <td className="whitespace-nowrap px-6 py-4 font-medium text-center w-[100px]">
@@ -168,16 +172,16 @@ export const TablePosition: React.FC<Props> = ({
                     <Skeleton className="w-[100px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {Position.id}
+                      {index + 1}
                     </p>
                   )}
                 </td>
-                <td className="whitespace-nowrap px-6 py-4 font-medium">
+                <td className="whitespace-nowrap px-6 py-4 font-medium text-left">
                   {isFetching ? (
                     <Skeleton className="w-[400px]" />
                   ) : (
                     <p className="font-extrabold py-2 duration-200">
-                      {Position.name}
+                      {position.name}
                     </p>
                   )}
                 </td>
@@ -185,14 +189,14 @@ export const TablePosition: React.FC<Props> = ({
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(Position.createdAt)}</div>
+                    <div>{formatISODateFromResponse(position.createdAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 font-bold w-[250px]">
                   {isFetching ? (
                     <Skeleton className="w-[200px]" />
                   ) : (
-                    <div>{formatISODateFromResponse(Position.updatedAt)}</div>
+                    <div>{formatISODateFromResponse(position.updatedAt)}</div>
                   )}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 w-[100px]">
@@ -212,7 +216,7 @@ export const TablePosition: React.FC<Props> = ({
                         tooltip="Edit Position"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onEditPosition && onEditPosition(Position);
+                          onEditPosition && onEditPosition(position);
                         }}
                       >
                         <AiFillEdit className="text-primary-600 text-2xl" />
@@ -221,7 +225,7 @@ export const TablePosition: React.FC<Props> = ({
                         tooltip="Delete Position"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onDeletePosition && onDeletePosition(Position);
+                          onDeletePosition && onDeletePosition(position);
                         }}
                       >
                         <FaTrash className="text-red-600 text-xl" />
@@ -235,7 +239,7 @@ export const TablePosition: React.FC<Props> = ({
       </table>
       {isDataEmpty && (
         <div className="flex flex-row flex-wrap items-center justify-center w-full min-h-[250px] text-lg font-semibold text-neutral-400 italic">
-          No data found.
+          {t("No data found")}
         </div>
       )}
       {!isDataEmpty && (

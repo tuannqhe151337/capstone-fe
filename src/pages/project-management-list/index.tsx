@@ -18,6 +18,7 @@ import { ProjectEditModal } from "../../widgets/project-edit-modal";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-load";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyProjects = (total: number): Project[] => {
   const projects: Row[] = [];
@@ -70,6 +71,9 @@ const childrenAnimation: Variants = {
 };
 
 export const ProjectManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["project-management"]);
+
   // Query
   const [fetchProjects, { data, isFetching }] = useLazyGetListProjectQuery();
 
@@ -100,8 +104,6 @@ export const ProjectManagementList: React.FC = () => {
     const timeoutId = setTimeout(() => {
       const paramters: ListProjectParameters = {
         query: searchboxValue,
-        sortBy: "name",
-        sortType: "asc",
         page,
         pageSize: 10,
       };
@@ -143,7 +145,7 @@ export const ProjectManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Project management
+            {t("Project management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -153,7 +155,7 @@ export const ProjectManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New Project</p>
+                <p className="text-sm font-semibold">{t("New project")}</p>
               </div>
             </Button>
           </div>

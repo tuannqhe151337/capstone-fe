@@ -6,10 +6,12 @@ import { Pagination } from "../../shared/pagination";
 import { TermList } from "./component/term-list";
 import {
   ListTermWhenCreatePlanParameters,
+  termAPI,
   TermCreatePlan,
   useLazyGetListTermWhenCreatePlanQuery,
 } from "../../providers/store/api/termApi";
 import { useWindowHeight } from "../../shared/utils/use-window-height";
+import { useDispatch } from "react-redux";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -51,6 +53,15 @@ interface Props {
 }
 
 export const ChooseTermStage: React.FC<Props> = ({ hide, onTermSelected }) => {
+  // Remove cache each time show this stage
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!hide) {
+      dispatch(termAPI.util.resetApiState());
+    }
+  }, [hide]);
+
   // Pagination
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(5);

@@ -89,7 +89,7 @@ export const DepartmentFilter: React.FC<Props> = ({
             onChange && onChange(value);
           }
         }}
-        options={[defaultOption]}
+        // options={[defaultOption]}
         loadOptions={loadOptions}
         additional={{
           page: 1,

@@ -58,7 +58,9 @@ export const YearFilter: React.FC<Props> = ({
 
     return {
       options:
-        page === 1 ? [defaultOption, ...paginatedOptions] : paginatedOptions,
+        page === 1 && !inputValue
+          ? [defaultOption, ...paginatedOptions]
+          : paginatedOptions,
       hasMore,
       additional: { page: page + 1 },
     };

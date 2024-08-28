@@ -20,6 +20,7 @@ import { useScrollToTopOnLoad } from "../../shared/hooks/use-scroll-to-top-on-lo
 import { usePageAuthorizedForRole } from "../../features/use-page-authorized-for-role";
 import { Role } from "../../providers/store/api/type";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const generateEmptyCostTypes = (total: number): CostType[] => {
   const costTypes: Row[] = [];
@@ -72,6 +73,9 @@ const childrenAnimation: Variants = {
 };
 
 export const CostTypeManagementList: React.FC = () => {
+  // i18n
+  const { t } = useTranslation(["cost-type-management"]);
+
   // Authorized
   usePageAuthorizedForRole([Role.ACCOUNTANT]);
 
@@ -105,8 +109,6 @@ export const CostTypeManagementList: React.FC = () => {
     const timeoutId = setTimeout(() => {
       const paramters: ListCostTypeParameters = {
         query: searchboxValue,
-        sortBy: "name",
-        sortType: "asc",
         page,
         pageSize: 10,
       };
@@ -148,7 +150,7 @@ export const CostTypeManagementList: React.FC = () => {
       <BubbleBanner>
         <div className="flex flex-row flex-wrap w-full items-center mt-auto">
           <p className="text-primary dark:text-primary/70 font-extrabold text-xl w-fit ml-7">
-            Cost type management
+            {t("Cost type management")}
           </p>
           <div className="ml-auto">
             <Button
@@ -158,7 +160,7 @@ export const CostTypeManagementList: React.FC = () => {
             >
               <div className="flex flex-row flex-wrap items-center gap-2.5">
                 <FaPlusCircle className="text-xl" />
-                <p className="text-sm font-semibold">New cost type</p>
+                <p className="text-sm font-semibold">{t("New cost type")}</p>
               </div>
             </Button>
           </div>

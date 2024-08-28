@@ -7,6 +7,10 @@ import {
   useGetAllCostTypeQuery,
 } from "../../providers/store/api/costTypeAPI";
 import { FaChartPie } from "react-icons/fa6";
+import { formatViMoney } from "../../shared/utils/format-vi-money";
+import { useInView } from "react-intersection-observer";
+import { useDetectDarkmode } from "../../shared/hooks/use-detect-darkmode";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   year: number;
@@ -19,6 +23,12 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
   className,
   chosenCostTypeIdList,
 }) => {
+  // Translation
+  const { t } = useTranslation(["home"]);
+
+  // Use in view
+  const { ref, inView } = useInView();
+
   // Get cost type
   const { data: costTypeResult } = useGetAllCostTypeQuery();
 
@@ -35,7 +45,7 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
   const [listChosenCostType, setListChosenCostType] = useState<CostType[]>([]);
 
   useEffect(() => {
-    // List cost type for showing
+    // List cost type for showing (intersect withn 2 array chosenCostTypeIdList and costTypeResult.data)
     let listCostType: CostType[] = costTypeResult?.data || [];
 
     if (chosenCostTypeIdList && chosenCostTypeIdList.length > 0) {
@@ -50,22 +60,30 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
     }
 
     setListChosenCostType(listCostType);
-  }, [chosenCostTypeIdList]);
+  }, [costTypeResult, chosenCostTypeIdList]);
 
   const dataChart: ApexNonAxisChartSeries = useMemo(() => {
-    const costTypeMap: Record<string, number> = {};
+    if (inView) {
+      const costTypeMap: Record<string, number> = {};
 
-    if (data) {
-      for (let costTypeData of data.data) {
-        costTypeMap[costTypeData.costType.name] = costTypeData.totalCost;
+      if (data) {
+        for (let costTypeData of data.data) {
+          costTypeMap[costTypeData.costType.name] = costTypeData.totalCost;
+        }
       }
-    }
 
-    return listChosenCostType.map(({ name }) => costTypeMap[name] || 0) || [];
-  }, [data, listChosenCostType]);
+      return listChosenCostType.map(({ name }) => costTypeMap[name] || 0) || [];
+    } else {
+      return [];
+    }
+  }, [data, listChosenCostType, inView]);
+
+  // Dark mode
+  const isDarkmode = useDetectDarkmode();
 
   return (
     <div
+      ref={ref}
       className={cn(
         "flex flex-col w-full h-full border shadow dark:border-neutral-800 dark:shadow-[0_0_15px_rgb(0,0,0,0.3)] rounded-xl py-7 px-8",
         className
@@ -73,22 +91,46 @@ export const YearlyCostTypeExpenseChart: React.FC<Props> = ({
     >
       <div className="flex flex-row flex-wrap w-full mt-2.5">
         <p className="text-primary-500 dark:text-primary-400 font-bold text-xl">
-          By year
+          {t("By year")}
         </p>
       </div>
       <div className="mt-10 h-full">
         {/* Show chart */}
-        {data?.data && data.data.length > 0 && (
+        {inView && data?.data && data.data.length > 0 && (
           <Chart
             options={{
-              chart: { toolbar: { show: true, offsetY: 345 } },
+              chart: {
+                id: "yearly-cost-type-expense-chart",
+                toolbar: { show: true, offsetY: 328 },
+                animations: { enabled: true },
+                redrawOnParentResize: true,
+                redrawOnWindowResize: true,
+              },
+              stroke: { show: isDarkmode ? false : true },
               legend: { show: false },
               labels: listChosenCostType.map(({ name }) => name) || [],
               dataLabels: { enabled: true },
               plotOptions: {
                 pie: {
                   donut: {
-                    labels: { show: true },
+                    labels: {
+                      show: true,
+                      value: {
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        color: isDarkmode ? "white" : "#9ca3af",
+                        formatter(val) {
+                          return formatViMoney(parseFloat(val));
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              yaxis: {
+                labels: {
+                  formatter: (val) => {
+                    return formatViMoney(val);
                   },
                 },
               },

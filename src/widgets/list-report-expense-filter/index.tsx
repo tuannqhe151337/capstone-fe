@@ -7,12 +7,14 @@ import { FaDownload, FaUpload } from "react-icons/fa";
 import { useState } from "react";
 import { TERipple } from "tw-elements-react";
 import { useCloseOutside } from "../../shared/hooks/use-close-popup";
-import { StatusTermFilter } from "../../entities/status-term-filter";
 import { CostTypeFilter } from "../../entities/cost-type-filter";
 import { Button } from "../../shared/button";
 import { RiDeleteRow } from "react-icons/ri";
 import { CurrencyChanger } from "../../entities/currency-changer";
 import { Currency } from "../../providers/store/api/currencyApi";
+import { StatusExpenseFilter } from "../../entities/status-expense-filter";
+import { useTranslation } from "react-i18next";
+import { DepartmentFilter } from "../../entities/department-filter";
 
 enum AnimationStage {
   HIDDEN = "hidden",
@@ -93,6 +95,7 @@ interface Props {
   allowReviewPlan?: boolean;
   onSearchboxChange?: (value: string) => any;
   onCostTypeIdChange?: (costTypeId: number | null | undefined) => any;
+  onDepartmentIdChange?: (departmentId: number | null | undefined) => any;
   onStatusIdChange?: (statusId: number | null | undefined) => any;
   onCurrencyChoose?: (currency?: Currency) => any;
   onApproveExpensesClick?: () => any;
@@ -111,6 +114,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onSearchboxChange,
   onCostTypeIdChange,
   onStatusIdChange,
+  onDepartmentIdChange,
   onCurrencyChoose,
   onApproveExpensesClick,
   onDenyExpensesClick,
@@ -118,6 +122,9 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
   onUploadReviewReportClick,
   onMarkAsReviewed,
 }) => {
+  // i18n
+  const { t } = useTranslation(["report-management"]);
+
   // Filter section
   const [showFillterBtn, setShowFillterBtn] = useState(false);
 
@@ -155,34 +162,40 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
             <AnimatePresence>
               {showReviewExpense && (
                 <div
-                  className="absolute right-0 top-0"
+                  className="absolute right-0 top-1"
                   style={{ width: ReviewExpenseWidth }}
                 >
                   <motion.div
-                    className="flex flex-row flex-wrap items-center"
+                    className="flex flex-row flex-wrap items-center gap-3 justify-center w-full"
                     initial={AnimationStage.HIDDEN}
                     animate={AnimationStage.VISIBLE}
                     variants={staggerChildrenAnimation}
                     transition={{ delay: 0.5 }}
                   >
-                    <motion.div variants={childrenAnimation}>
+                    <motion.div
+                      className="h-max w-max"
+                      variants={childrenAnimation}
+                    >
                       <Button
                         variant="error"
-                        containerClassName="mr-3"
                         onClick={() => {
                           onDenyExpensesClick && onDenyExpensesClick();
                         }}
                       >
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <RiDeleteRow className="text-xl" />
-                          <p className="text-sm font-semibold">Deny expense</p>
+                          <p className="text-sm font-semibold">
+                            {t("Deny expense")}
+                          </p>
                         </div>
                       </Button>
                     </motion.div>
 
-                    <motion.div variants={childrenAnimation}>
+                    <motion.div
+                      className="h-max w-max"
+                      variants={childrenAnimation}
+                    >
                       <Button
-                        containerClassName="mr-3"
                         onClick={() => {
                           onApproveExpensesClick && onApproveExpensesClick();
                         }}
@@ -190,7 +203,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                         <div className="flex flex-row flex-wrap items-center gap-3">
                           <FaListCheck className="text-lg" />
                           <p className="text-sm font-semibold">
-                            Approve expense
+                            {t("Approve expense")}
                           </p>
                         </div>
                       </Button>
@@ -263,7 +276,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                           <FaUpload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Upload review file
+                            {t("Upload review file")}
                           </p>
                         </div>
                       </TERipple>
@@ -277,7 +290,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                         <FaDownload className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                         <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                          Download report
+                          {t("Download report")}
                         </p>
                       </div>
                     </TERipple>
@@ -291,7 +304,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                           <FaCheck className="text-lg mb-0.5 mr-5 text-primary-500 dark:text-neutral-400" />
 
                           <p className="mt-0.5 text-primary-500 dark:text-neutral-400">
-                            Mark as reviewed
+                            {t("Mark as reviewed")}
                           </p>
                         </div>
                       </TERipple>
@@ -317,6 +330,15 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
             >
               <motion.div className="flex justify-end mt-4">
                 <motion.div variants={childrenAnimation} className="mr-4 ">
+                  <DepartmentFilter
+                    onChange={(option) => {
+                      onDepartmentIdChange &&
+                        onDepartmentIdChange(option?.value);
+                    }}
+                  />
+                </motion.div>
+
+                <motion.div variants={childrenAnimation} className="mr-4 ">
                   <CostTypeFilter
                     onChange={(option) => {
                       onCostTypeIdChange && onCostTypeIdChange(option?.value);
@@ -325,7 +347,7 @@ export const ListReportExpenseFilter: React.FC<Props> = ({
                 </motion.div>
 
                 <motion.div variants={childrenAnimation} className="mr-4">
-                  <StatusTermFilter
+                  <StatusExpenseFilter
                     onChange={(option) => {
                       onStatusIdChange && onStatusIdChange(option?.value);
                     }}
